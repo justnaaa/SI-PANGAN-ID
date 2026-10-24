@@ -1000,6 +1000,180 @@
                 </section>
 
                 <!-- ==========================================
+                     TAB 6: CARA PENGGUNAAN & PANDUAN FITUR LENGKAP
+                     ========================================== -->
+                <section id="tab-panduan" class="tab-section hidden space-y-6">
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Buku Panduan & Dokumentasi Resmi</span>
+                                <h3 class="text-lg font-bold text-slate-900 mt-0.5">Petunjuk Teknis Penggunaan Platform SI-PANGAN PKK Yosomulyo</h3>
+                                <p class="text-xs text-slate-600 mt-1">Panduan langkah demi langkah berdasarkan peran: Pengurus PKK, Anggota Warga, dan Penilai/Juri Hackathon.</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="openModal('guideModal')" class="px-3.5 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-semibold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-window-restore"></i> Buka Mode Pop-up
+                                </button>
+                                <button onclick="openModal('reportModal')" class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1.5 border border-slate-200">
+                                    <i class="fa-solid fa-print"></i> Cetak Dokumen
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 3 Role Tabs Navigation -->
+                        <div class="flex border-b border-slate-200 mt-4 gap-2">
+                            <button onclick="switchGuideRole('pengurus')" id="btn-guide-pengurus" class="guide-role-btn px-4 py-2 text-xs font-bold border-b-2 border-emerald-700 text-emerald-800">
+                                <i class="fa-solid fa-user-shield mr-1.5"></i>1. Peran Pengurus PKK (Admin)
+                            </button>
+                            <button onclick="switchGuideRole('warga')" id="btn-guide-warga" class="guide-role-btn px-4 py-2 text-xs font-medium text-slate-500 hover:text-slate-800 border-b-2 border-transparent">
+                                <i class="fa-solid fa-users mr-1.5"></i>2. Peran Anggota Warga (PKK RT 13)
+                            </button>
+                            <button onclick="switchGuideRole('juri')" id="btn-guide-juri" class="guide-role-btn px-4 py-2 text-xs font-medium text-slate-500 hover:text-slate-800 border-b-2 border-transparent">
+                                <i class="fa-solid fa-scale-balanced mr-1.5"></i>3. Peran Juri & Penguji Sistem
+                            </button>
+                        </div>
+
+                        <!-- Content 1: Pengurus PKK -->
+                        <div id="guide-content-pengurus" class="guide-role-content pt-5 space-y-5">
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed">
+                                <strong>Tujuan Pengurus (Ibu Sartika Sari Dewi & Pengurus RT 13):</strong> Mengelola pendaftaran identitas tunggal warga, melakukan digitalisasi buku tulis kas manual dengan OCR, menentukan penerima paket bantuan pangan berdasarkan rekomendasi AI-DSS, dan mencatat transaksi simpan pinjam secara transparan.
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">A</span>
+                                        <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Registrasi Identitas Warga (Single Identity)</h4>
+                                    </div>
+                                    <ol class="list-decimal list-inside text-xs text-slate-600 space-y-1.5 pl-1">
+                                        <li>Buka menu <strong>3. Single Identity & AI</strong> dari sidebar.</li>
+                                        <li>Klik tombol biru <strong>"Registrasi SID Baru"</strong> di bagian atas tabel.</li>
+                                        <li>Masukkan nama anggota, mata pencaharian/UKM pangan, estimasi pendapatan bulanan, dan jumlah tanggungan keluarga.</li>
+                                        <li>Klik <strong>"Terbitkan Single Identity & Hitung Skor AI"</strong>. Sistem otomatis menerbitkan kode identitas (contoh: <code>SID-PKK-1308</code>) dan menghitung skor kerawanan pangan.</li>
+                                    </ol>
+                                </div>
+
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">B</span>
+                                        <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Digitalisasi Buku Kas Manual Menggunakan AI-OCR</h4>
+                                    </div>
+                                    <ol class="list-decimal list-inside text-xs text-slate-600 space-y-1.5 pl-1">
+                                        <li>Buka tab <strong>Single Identity</strong> lalu klik tombol hitam <strong>"Pindai Buku Manual (OCR)"</strong>.</li>
+                                        <li>Di jendela yang muncul, klik <strong>"Jalankan Pemindaian AI-OCR"</strong> untuk memindai foto lembaran buku kas manual.</li>
+                                        <li>Sistem Computer Vision mengekstrak baris tulisan tangan (Nama, Iuran, Catatan panen pekarangan) dengan bounding box visual dan mencocokkannya ke kode SID anggota secara otomatis.</li>
+                                        <li>Klik <strong>"Sinkronkan ke Database SID"</strong> untuk menyimpan hasil verifikasi.</li>
+                                    </ol>
+                                </div>
+
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">C</span>
+                                        <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Verifikasi Penyaluran Bansos via AI-DSS</h4>
+                                    </div>
+                                    <ol class="list-decimal list-inside text-xs text-slate-600 space-y-1.5 pl-1">
+                                        <li>Buka menu <strong>Single Identity</strong> dan gunakan filter <em>"Prioritas Utama (&ge; 75 Poin)"</em>.</li>
+                                        <li>Anggota dengan status merah adalah keluarga paling rentan yang wajib diprioritaskan menerima paket bantuan sembako atau subsidi pangan.</li>
+                                        <li>Untuk simulasi skenario khusus, buka tombol <strong>"Kalkulator AI-DSS"</strong> dan sesuaikan slider parameter ekonomi keluarga.</li>
+                                    </ol>
+                                </div>
+
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">D</span>
+                                        <h4 class="font-bold text-slate-900 text-xs sm:text-sm">Pencatatan Kas Koperasi Simpan Pinjam Bebas Human Error</h4>
+                                    </div>
+                                    <ol class="list-decimal list-inside text-xs text-slate-600 space-y-1.5 pl-1">
+                                        <li>Buka menu <strong>4. Koperasi & Log Bansos</strong>.</li>
+                                        <li>Pilih nama/SID anggota pada dropdown formulir.</li>
+                                        <li>Pilih jenis mutasi (Simpan Tabung, Pinjaman Modal UKM, atau Distribusi Bantuan Pangan).</li>
+                                        <li>Masukkan nominal dan rincian komoditas, lalu klik <strong>"Catat & Hubungkan ke SID Anggota"</strong>. Buku besar kas digital akan diperbarui seketika.</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content 2: Warga / Anggota PKK -->
+                        <div id="guide-content-warga" class="guide-role-content hidden pt-5 space-y-5">
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed">
+                                <strong>Tujuan Warga / Anggota PKK:</strong> Memeriksa status kerawanan pangan keluarga, memantau transparansi saldo simpanan koperasi, memberikan suara dalam penentuan program bulanan, serta menyampaikan masukan layanan.
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
+                                    <h4 class="font-bold text-slate-900 text-xs sm:text-sm"><i class="fa-solid fa-id-card-clip text-emerald-700 mr-1.5"></i>Mengecek Rekam Jejak Seumur Hidup</h4>
+                                    <p class="text-xs text-slate-600 leading-relaxed">
+                                        Ketik nama Anda di kolom pencarian pada menu <strong>Single Identity</strong>. Klik tombol <strong>"Rekam Jejak"</strong> pada baris data Anda untuk melihat seluruh riwayat penerimaan bantuan pangan, panen pekarangan, serta akumulasi simpan tabung yang tercatat permanen.
+                                    </p>
+                                </div>
+
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
+                                    <h4 class="font-bold text-slate-900 text-xs sm:text-sm"><i class="fa-solid fa-wallet text-emerald-700 mr-1.5"></i>Memantau Transparansi Koperasi Pangan</h4>
+                                    <p class="text-xs text-slate-600 leading-relaxed">
+                                        Pada menu <strong>Koperasi & Log Bansos</strong>, anggota dapat melihat saldo kas kelompok dan log transaksi real-time. Tidak ada lagi keraguan tentang selisih iuran bulanan karena setiap transaksi terikat pada kode SID yang bersangkutan.
+                                    </p>
+                                </div>
+
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
+                                    <h4 class="font-bold text-slate-900 text-xs sm:text-sm"><i class="fa-solid fa-check-to-slot text-emerald-700 mr-1.5"></i>Memberikan Suara (E-Voting Demokratis)</h4>
+                                    <p class="text-xs text-slate-600 leading-relaxed">
+                                        Buka menu <strong>5. E-Voting & Aspirasi</strong>. Pilih opsi program pangan yang menurut Anda paling mendesak (misal: Bibit Pekarangan vs Subsidi Bahan Kedelai UKM Tempe), lalu klik <strong>"Pilih"</strong>. Suara Anda langsung terhitung secara transparan.
+                                    </p>
+                                </div>
+
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
+                                    <h4 class="font-bold text-slate-900 text-xs sm:text-sm"><i class="fa-solid fa-comment-dots text-emerald-700 mr-1.5"></i>Menyampaikan Kritik & Saran Terbuka</h4>
+                                    <p class="text-xs text-slate-600 leading-relaxed">
+                                        Gunakan formulir umpan balik di bagian bawah menu E-Voting. Pilih kategori layanan, berikan penilaian bintang, dan tuliskan pesan aspirasi Anda. Umpan balik akan tampil terbuka di papan log aspirasi anggota.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content 3: Juri & Evaluator Demo Day -->
+                        <div id="guide-content-juri" class="guide-role-content hidden pt-5 space-y-5">
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 leading-relaxed">
+                                <strong>Panduan Reviewer / Juri Hackathon (Format 7 Menit Pitching - 3 Menit Demo - 10 Menit Q&A):</strong> Skenario pengujian cepat untuk memverifikasi fungsionalitas dan keselarasan prototipe dengan dokumen proposal PKM-PM dan laporan teknis.
+                            </div>
+
+                            <div class="space-y-3">
+                                <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0">1</span>
+                                    <div>
+                                        <h5 class="font-bold text-slate-900 text-xs">Uji Validitas Formula AI-DSS (Mengeliminasi 40% Salah Sasaran)</h5>
+                                        <p class="text-xs text-slate-600 mt-0.5">Buka <strong>Kalkulator AI-DSS</strong>. Geser pendapatan ke Rp 950.000 dan tanggungan 5 orang &rarr; amati skor melonjak ke &ge; 75 (Prioritas Utama). Geser pendapatan ke Rp 4.000.000 &rarr; skor turun ke kategori Mandiri Pangan. Formula: <code>Skor = (0.35 * Pendapatan) + (0.25 * Tanggungan) + (0.20 * Kerawanan) + (0.20 * Dampak UKM)</code>.</p>
+                                    </div>
+                                </div>
+
+                                <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0">2</span>
+                                    <div>
+                                        <h5 class="font-bold text-slate-900 text-xs">Uji Pemindai Computer Vision OCR Buku Kas Fisik</h5>
+                                        <p class="text-xs text-slate-600 mt-0.5">Buka <strong>Pemindai OCR</strong> di tab Single Identity. Klik pemindaian untuk melihat visualisasi deteksi bounding box tulisan tangan buku kas Ibu Sartika dan konversi otomatis menjadi entri terstruktur.</p>
+                                    </div>
+                                </div>
+
+                                <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0">3</span>
+                                    <div>
+                                        <h5 class="font-bold text-slate-900 text-xs">Uji Integritas Alamat Keuangan Permanen (0% Selisih Hitung)</h5>
+                                        <p class="text-xs text-slate-600 mt-0.5">Buka menu <strong>Koperasi & Log Bansos</strong>. Masukkan transaksi baru dan lihat bagaimana saldo kas bertambah/berkurang secara real-time serta otomatis tercatat di rekam jejak seumur hidup anggota terkait.</p>
+                                    </div>
+                                </div>
+
+                                <div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-md bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0">4</span>
+                                    <div>
+                                        <h5 class="font-bold text-slate-900 text-xs">Simulasi Timer Penjurian Resmi Demo Day UM Metro</h5>
+                                        <p class="text-xs text-slate-600 mt-0.5">Klik tombol <strong>"Timer Demo"</strong> di header atas. Terdapat 3 sesi resmi: 7 Menit Pitch Deck, 3 Menit Demo Purwarupa, dan 10 Menit Tanya Jawab Penguji.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ==========================================
                      TAB 7: PROFIL TIM & LOKASI MITRA
                      ========================================== -->
                 <section id="tab-tim" class="tab-section hidden space-y-6">
@@ -1231,11 +1405,7 @@
         </main>
     </div>
 
-    
-            </div>
-        </main>
-    </div>
-<!-- ==========================================
+    <!-- ==========================================
          MODAL 1: DETAIL REKAM JEJAK SINGLE IDENTITY
          ========================================== -->
     <div id="memberDetailModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
@@ -1526,6 +1696,104 @@
             <div class="flex gap-2 pt-1">
                 <button onclick="togglePitchTimer()" id="pitchStartBtn" class="flex-1 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs transition">Mulai / Jeda Timer</button>
                 <button onclick="setPitchTimer(7, 'Sesi 1: Pitching (7 Menit)')" class="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-200">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL 6: PANDUAN PENGGUNAAN CEPAT (POP-UP GUIDE)
+         ========================================== -->
+    <div id="guideModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-3xl w-full p-6 sm:p-7 shadow-xl border border-slate-200 max-h-[90vh] overflow-y-auto space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center text-sm font-bold">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Panduan Ringkas Penggunaan Platform SI-PANGAN</h3>
+                        <p class="text-xs text-slate-500">Kelurahan Yosomulyo • Universitas Muhammadiyah Metro 2026</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('guideModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Quick Start Steps -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                    <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">LANGKAH 1</span>
+                    <h4 class="font-bold text-slate-900 text-xs">Pahami Alur & Metrik</h4>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">
+                        Buka tab <strong>1. Alur Inovasi</strong> dan <strong>2. Dashboard</strong> untuk melihat bagaimana 4 masalah lapangan diselesaikan serta indeks ketahanan pangan 40 KK.
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                    <span class="px-2 py-0.5 rounded bg-blue-100 text-blue-800 font-bold text-[10px]">LANGKAH 2</span>
+                    <h4 class="font-bold text-slate-900 text-xs">Uji Single ID & AI-DSS</h4>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">
+                        Coba fitur <strong>Kalkulator AI-DSS</strong> atau klik <strong>"Rekam Jejak"</strong> pada nama warga di tab <strong>3. Single Identity</strong> untuk melihat riwayat terverifikasi seumur hidup.
+                    </p>
+                </div>
+
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 space-y-2">
+                    <span class="px-2 py-0.5 rounded bg-purple-100 text-purple-800 font-bold text-[10px]">LANGKAH 3</span>
+                    <h4 class="font-bold text-slate-900 text-xs">Simulasi Koperasi & E-Voting</h4>
+                    <p class="text-[11px] text-slate-600 leading-relaxed">
+                        Coba catat transaksi di tab <strong>4. Koperasi</strong> atau berikan hak suara di tab <strong>5. E-Voting</strong> untuk merasakan birokrasi yang transparan dan demokratis.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Detailed Guide Link -->
+            <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2 text-emerald-900">
+                    <i class="fa-solid fa-circle-info text-emerald-700 text-sm"></i>
+                    <span>Tersedia dokumentasi teknis lengkap dan analisis mendalam di file <code>penjelasan-prototype.md</code>.</span>
+                </div>
+                <button onclick="closeModal('guideModal'); switchTab('panduan');" class="px-3 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs shrink-0 transition">
+                    Buka Panduan Lengkap
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL 7: CETAK REKAP LAPORAN BULANAN
+         ========================================== -->
+    <div id="reportModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <h3 class="text-base font-bold text-slate-900">Cetak Rekapitulasi Laporan Ketahanan Pangan</h3>
+                <button onclick="closeModal('reportModal')" class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
+                <div class="flex justify-between font-medium">
+                    <span>Wilayah Kemitraan:</span>
+                    <span class="font-bold text-slate-900">PKK Anggrek 1 RT 13 RW 05 Kelurahan Yosomulyo</span>
+                </div>
+                <div class="flex justify-between font-medium">
+                    <span>Basis Data Terverifikasi:</span>
+                    <span class="font-bold text-slate-900">40 KK Pilot (Single Identity)</span>
+                </div>
+                <div class="flex justify-between font-medium">
+                    <span>Saldo Kas Koperasi Pangan:</span>
+                    <span class="font-bold text-emerald-800" id="printKasSaldo">Rp 24.500.000</span>
+                </div>
+                <div class="flex justify-between font-medium">
+                    <span>Akurasi Penyaluran AI-DSS:</span>
+                    <span class="font-bold text-slate-900">96,5% (Zero Salah Sasaran)</span>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeModal('reportModal')" class="px-4 py-2 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold">Tutup</button>
+                <button onclick="window.print()" class="px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold flex items-center gap-1.5">
+                    <i class="fa-solid fa-print"></i> Cetak / Simpan PDF
+                </button>
             </div>
         </div>
     </div>
