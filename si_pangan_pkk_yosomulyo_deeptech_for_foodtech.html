@@ -1376,6 +1376,161 @@
     </div>
 
     <!-- ==========================================
+         MODAL 3: PEMINDAI COMPUTER VISION OCR DOKUMEN BUKU KAS
+         ========================================== -->
+    <div id="ocrScannerModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-7 shadow-xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div>
+                    <span class="text-xs font-bold uppercase text-emerald-700">Computer Vision OCR Module</span>
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900">Digitalisasi Arsip Buku Catatan Manual PKK RT 13</h3>
+                </div>
+                <button onclick="closeModal('ocrScannerModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="my-4 space-y-4">
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Pengurus PKK tidak perlu mengetik ulang tabel iuran atau catatan panen secara manual. Cukup unggah foto lembaran buku tulis, dan model Computer Vision akan mendeteksi teks tulisan tangan, memvalidasi angka, lalu mengaitkannya ke kode Single Identity anggota.
+                </p>
+
+                <!-- Visual Document Inspection View (Realistic UI, NOT generic slop terminal) -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5">
+                    <!-- Document Preview with Bounding Boxes -->
+                    <div class="md:col-span-6 bg-slate-100 p-3 rounded-xl border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-600">
+                            <span><i class="fa-solid fa-image mr-1"></i>Citra Buku Kas Fisik</span>
+                            <span class="text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">Kamera 12MP</span>
+                        </div>
+                        <div class="relative bg-white rounded-lg p-3 border border-slate-300 font-mono text-[11px] space-y-1.5 select-none overflow-hidden">
+                            <div class="border-b border-dashed border-slate-300 pb-1 font-bold text-slate-800 text-[10px]">
+                                BUKU IURAN & PANEN PKK RT 13 RW 05
+                            </div>
+                            <div id="ocrBox1" class="p-1 rounded transition-all bg-emerald-50 border border-emerald-400">
+                                <span class="text-[9px] text-emerald-700 font-bold block">DETECTED: NAMA_ANGGOTA (98.4%)</span>
+                                <span>Ibu Sri Wahyuni (RT 13)</span>
+                            </div>
+                            <div id="ocrBox2" class="p-1 rounded transition-all bg-blue-50 border border-blue-400">
+                                <span class="text-[9px] text-blue-700 font-bold block">DETECTED: SIMPANAN_WAJIB (99.1%)</span>
+                                <span>Iuran Tabung: Rp 75.000</span>
+                            </div>
+                            <div id="ocrBox3" class="p-1 rounded transition-all bg-amber-50 border border-amber-400">
+                                <span class="text-[9px] text-amber-700 font-bold block">DETECTED: PANEN_PEKARANGAN (96.8%)</span>
+                                <span>Setor Panen: 3 Kg Cabai Rawit</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extracted Parsed Form -->
+                    <div class="md:col-span-6 bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between text-[11px] font-semibold text-slate-600">
+                            <span><i class="fa-solid fa-code-compare mr-1"></i>Hasil Ekstraksi OCR</span>
+                            <span class="text-slate-500 font-mono">Status: Tervalidasi</span>
+                        </div>
+
+                        <div class="space-y-1.5 text-xs">
+                            <div>
+                                <span class="text-[10px] text-slate-500 block">Single Identity Terkait:</span>
+                                <input type="text" readonly value="SID-PKK-1303 (Ibu Sri Wahyuni)" class="w-full px-2 py-1 bg-white rounded border border-slate-200 font-bold text-slate-800 text-xs">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block">Nominal Tabungan Koperasi:</span>
+                                <input type="text" readonly value="Rp 75.000" class="w-full px-2 py-1 bg-white rounded border border-slate-200 text-slate-800 text-xs">
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-500 block">Catatan Komoditas Panen:</span>
+                                <input type="text" readonly value="Setoran Panen 3 Kg Cabai Rawit Pekarangan" class="w-full px-2 py-1 bg-white rounded border border-slate-200 text-slate-800 text-xs">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-2 border-t border-slate-200">
+                    <span class="text-xs text-slate-500"><i class="fa-solid fa-check-double text-emerald-600 mr-1"></i>Akurasi rata-rata OCR: 98,4%</span>
+                    <button onclick="simulateOcrScan()" class="px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold shadow-xs flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Jalankan Pemindaian & Sinkronisasi SID</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL 4: REGISTRASI ANGGOTA SINGLE ID BARU
+         ========================================== -->
+    <div id="addMemberModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-xl border border-slate-200">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div>
+                    <span class="text-xs font-bold uppercase text-emerald-700">Integrasi Basis Data Satu Warga</span>
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900">Registrasi Single Identity Anggota PKK</h3>
+                </div>
+                <button onclick="closeModal('addMemberModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleAddMember(event)" class="space-y-3.5 mt-3.5">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap Anggota PKK</label>
+                    <input type="text" id="newMemberName" required placeholder="Contoh: Ibu Rahmawati Putri" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-emerald-600">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Usaha UKM / Mata Pencaharian Keluarga</label>
+                    <input type="text" id="newMemberUkm" required placeholder="Contoh: UKM Keripik Pisang / Olahan Tempe Rumahan" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-emerald-600">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Pendapatan Bulanan (Rp)</label>
+                        <input type="number" id="newMemberIncome" required value="1500000" step="100000" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-emerald-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Tanggungan Keluarga</label>
+                        <input type="number" id="newMemberDep" required value="3" min="1" max="10" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-emerald-600">
+                    </div>
+                </div>
+                <div class="p-3 rounded-lg bg-slate-50 border border-slate-200 text-[11px] text-slate-500">
+                    <i class="fa-solid fa-circle-info text-blue-600 mr-1"></i>
+                    Sistem akan secara otomatis menghitung Skor AI-DSS untuk memetakan apakah warga masuk kategori <em>Prioritas Bantuan</em>, <em>Waspada Pangan</em>, atau <em>Mandiri Pangan</em>.
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs sm:text-sm transition">
+                    Terbitkan Single Identity & Simpan
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL 5: TIMER DEMO DAY HACKATHON (7-3-10)
+         ========================================== -->
+    <div id="pitchModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-200 text-center space-y-3.5">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <span class="text-xs font-bold uppercase text-slate-700">Simulasi Penjurian Demo Day UM Metro</span>
+                <button onclick="closeModal('pitchModal')" class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-xs"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-600">Format Resmi: <strong>7 Menit Pitch Deck, 3 Menit Demo Purwarupa, 10 Menit Q&amp;A Juri</strong>.</p>
+            <div class="py-4 rounded-xl bg-slate-900 text-white">
+                <span id="pitchStageLabel" class="text-xs uppercase tracking-wider text-emerald-400 font-semibold block">Sesi 1: Pitching Deck (7 Menit)</span>
+                <div id="pitchTimerDisplay" class="text-4xl font-mono font-bold my-1">07:00</div>
+            </div>
+            <div class="grid grid-cols-3 gap-2 text-xs font-semibold">
+                <button onclick="setPitchTimer(7, 'Sesi 1: Pitching (7 Menit)')" class="p-2 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">7m Pitch</button>
+                <button onclick="setPitchTimer(3, 'Sesi 2: Demo Purwarupa (3 Menit)')" class="p-2 rounded-lg bg-blue-50 text-blue-800 border border-blue-200">3m Demo</button>
+                <button onclick="setPitchTimer(10, 'Sesi 3: Tanya Jawab Juri (10 Menit)')" class="p-2 rounded-lg bg-purple-50 text-purple-800 border border-purple-200">10m Q&amp;A</button>
+            </div>
+            <div class="flex gap-2 pt-1">
+                <button onclick="togglePitchTimer()" id="pitchStartBtn" class="flex-1 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs transition">Mulai / Jeda Timer</button>
+                <button onclick="setPitchTimer(7, 'Sesi 1: Pitching (7 Menit)')" class="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-200">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
          JAVASCRIPT LOGIC & INTERACTIVE DATA
          ========================================== -->
     <script>
