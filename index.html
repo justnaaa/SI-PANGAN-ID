@@ -768,6 +768,19 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- Info Counter 40 KK Sinkron Donut Chart -->
+                        <div class="flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-100 gap-2">
+                            <div class="flex items-center gap-1.5">
+                                <i class="fa-solid fa-database text-emerald-600"></i>
+                                <span>Menampilkan <strong id="membersFilteredCount" class="font-bold text-slate-900">40</strong> dari <strong class="font-bold text-slate-900">40 KK</strong> terverifikasi Single Identity (SID-PKK-1301 s.d. SID-PKK-1340)</span>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-3 text-[11px]">
+                                <span class="flex items-center gap-1 font-medium text-emerald-800"><span class="w-2 h-2 rounded-full bg-emerald-600"></span> 27 Mandiri Pangan (67.5%)</span>
+                                <span class="flex items-center gap-1 font-medium text-amber-800"><span class="w-2 h-2 rounded-full bg-amber-500"></span> 8 Waspada Pangan (20%)</span>
+                                <span class="flex items-center gap-1 font-medium text-rose-800"><span class="w-2 h-2 rounded-full bg-rose-600"></span> 5 Prioritas Bantuan (12.5%)</span>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -796,7 +809,7 @@
                                         <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI-Driven Demand Matching
                                     </span>
                                 </div>
-                                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Smart Food Market & AI Demand Forecasting</h2>
+                                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Smart Food Market & AI Demand Forecasting (Sub-Tema F)</h2>
                                 <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-3xl leading-relaxed">
                                     Platform cerdas mempertemukan produsen pangan PKK langsung dengan konsumen dan lumbung koperasi. Menggunakan prediksi kebutuhan pangan berbasis Machine Learning (AI-DSS & k-NN) untuk menjamin kepastian serapan pasar dan harga adil tanpa tengkulak.
                                 </p>
@@ -2169,138 +2182,735 @@
             }
         ];
 
-        // 2. DATA SINGLE IDENTITY ANGGOTA PKK ANGGREK 1 RT 13
+        // 2. DATA SINGLE IDENTITY ANGGOTA PKK ANGGREK 1 RT 13 (LENGKAP 40 KK - SINKRON 100% DASHBOARD)
         let membersData = [
             {
-                sid: "SID-PKK-1301",
-                name: "Ibu Sartika Sari Dewi",
-                role: "Ketua PKK Anggrek 1 & 2",
-                ukm: "Koordinator Koperasi & UKM Pangan Sehat",
-                income: 3800000,
-                dependents: 2,
-                gardenScore: 90,
-                ukmScore: 70,
-                aiScore: 18,
-                status: "MANDIRI PANGAN",
-                recommendation: "Penyedia Lumbung Pangan & Pengelola Kas",
-                savings: 2450000,
-                history: [
-                    "24 Mar 2022: Menandatangani kemitraan riset PKM-PM bersama Universitas Muhammadiyah Metro.",
-                    "12 Sep 2026: Penerbitan Single Identity & verifikasi buku kas koperasi PKK Anggrek 1.",
-                    "18 Okt 2026: Setoran panen sayur pekarangan mandiri surplus 15 Kg ke lumbung RT 13."
-                ]
+                        "sid": "SID-PKK-1301",
+                        "name": "Ibu Sartika Sari Dewi",
+                        "role": "Ketua PKK Anggrek 1 & 2",
+                        "ukm": "Koordinator Koperasi & UKM Pangan Sehat",
+                        "income": 3800000,
+                        "dependents": 2,
+                        "gardenScore": 90,
+                        "ukmScore": 70,
+                        "aiScore": 18,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Penyedia Lumbung Pangan & Pengelola Kas",
+                        "savings": 2450000,
+                        "history": [
+                                    "24 Mar 2022: Menandatangani kemitraan riset PKM-PM bersama Universitas Muhammadiyah Metro.",
+                                    "12 Sep 2026: Penerbitan Single Identity & verifikasi buku kas koperasi PKK Anggrek 1.",
+                                    "18 Okt 2026: Setoran panen sayur pekarangan mandiri surplus 15 Kg ke lumbung RT 13."
+                        ]
             },
             {
-                sid: "SID-PKK-1302",
-                name: "Ibu Siti Aminah",
-                role: "Anggota PKK RT 13",
-                ukm: "Buruh Cuci & Penjual Sayur Keliling",
-                income: 950000,
-                dependents: 5,
-                gardenScore: 25,
-                ukmScore: 85,
-                aiScore: 92,
-                status: "PRIORITAS BANTUAN",
-                recommendation: "Paket Beras Fortifikasi 10kg + Bantuan Modal UKM",
-                savings: 320000,
-                history: [
-                    "05 Agu 2026: Terdaftar Single Identity RT 13 RW 05 (Sinkronisasi KK & DTKS).",
-                    "19 Sep 2026: AI-DSS mendeteksi kenaikan tanggungan (5 jiwa) & pendapatan < garis kemiskinan.",
-                    "15 Okt 2026: Menerima paket pangan bergizi tepat sasaran (Beras 10kg + Telur 2kg)."
-                ]
+                        "sid": "SID-PKK-1302",
+                        "name": "Ibu Siti Aminah",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Buruh Cuci & Penjual Sayur Keliling",
+                        "income": 950000,
+                        "dependents": 5,
+                        "gardenScore": 25,
+                        "ukmScore": 85,
+                        "aiScore": 92,
+                        "status": "PRIORITAS BANTUAN",
+                        "recommendation": "Paket Beras Fortifikasi 10kg + Bantuan Modal UKM",
+                        "savings": 320000,
+                        "history": [
+                                    "05 Agu 2026: Terdaftar Single Identity RT 13 RW 05 (Sinkronisasi KK & DTKS).",
+                                    "19 Sep 2026: AI-DSS mendeteksi kenaikan tanggungan (5 jiwa) & pendapatan < garis kemiskinan.",
+                                    "15 Okt 2026: Menerima paket pangan bergizi tepat sasaran (Beras 10kg + Telur 2kg)."
+                        ]
             },
             {
-                sid: "SID-PKK-1303",
-                name: "Ibu Sri Wahyuni",
-                role: "Anggota PKK RT 13",
-                ukm: "UKM Pembuatan Tempe & Tahu Rumahan",
-                income: 1350000,
-                dependents: 4,
-                gardenScore: 40,
-                ukmScore: 80,
-                aiScore: 79,
-                status: "PRIORITAS BANTUAN",
-                recommendation: "Subsidi Bahan Baku Kedelai & Pinjaman Lunak PKK",
-                savings: 610000,
-                history: [
-                    "10 Agu 2026: Registrasi Single Identity & pemetaan usaha mikro olahan pangan.",
-                    "02 Okt 2026: Disetujui pinjaman modal UKM Tempe Rp 1.000.000 bebas bunga.",
-                    "20 Okt 2026: Menerima bantuan bibit pekarangan cabai & terong."
-                ]
+                        "sid": "SID-PKK-1303",
+                        "name": "Ibu Sri Wahyuni",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "UKM Pembuatan Tempe & Tahu Rumahan",
+                        "income": 1350000,
+                        "dependents": 4,
+                        "gardenScore": 40,
+                        "ukmScore": 80,
+                        "aiScore": 79,
+                        "status": "PRIORITAS BANTUAN",
+                        "recommendation": "Subsidi Bahan Baku Kedelai & Pinjaman Lunak PKK",
+                        "savings": 610000,
+                        "history": [
+                                    "10 Agu 2026: Registrasi Single Identity & pemetaan usaha mikro olahan pangan.",
+                                    "02 Okt 2026: Disetujui pinjaman modal UKM Tempe Rp 1.000.000 bebas bunga.",
+                                    "20 Okt 2026: Menerima bantuan bibit pekarangan cabai & terong."
+                        ]
             },
             {
-                sid: "SID-PKK-1304",
-                name: "Ibu Nurhayati",
-                role: "Anggota PKK RT 13",
-                ukm: "UKM Keripik Pisang & Singkong Metro",
-                income: 2100000,
-                dependents: 3,
-                gardenScore: 60,
-                ukmScore: 60,
-                aiScore: 54,
-                status: "WASPADA PANGAN",
-                recommendation: "Pendampingan Kebun Pekarangan & Tabungan Koperasi",
-                savings: 1150000,
-                history: [
-                    "14 Agu 2026: Terverifikasi Single Identity dan integrasi alamat keuangan permanen.",
-                    "28 Sep 2026: Setoran simpan tabung koperasi PKK rutin Rp 150.000."
-                ]
+                        "sid": "SID-PKK-1304",
+                        "name": "Ibu Nurhayati",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "UKM Keripik Pisang & Singkong Metro",
+                        "income": 2100000,
+                        "dependents": 3,
+                        "gardenScore": 60,
+                        "ukmScore": 60,
+                        "aiScore": 54,
+                        "status": "WASPADA PANGAN",
+                        "recommendation": "Pendampingan Kebun Pekarangan & Tabungan Koperasi",
+                        "savings": 1150000,
+                        "history": [
+                                    "14 Agu 2026: Terverifikasi Single Identity dan integrasi alamat keuangan permanen.",
+                                    "28 Sep 2026: Setoran simpan tabung koperasi PKK rutin Rp 150.000."
+                        ]
             },
             {
-                sid: "SID-PKK-1305",
-                name: "Ibu Ratna Kumala",
-                role: "Bendahara PKK Anggrek 1",
-                ukm: "Usaha Katering Sehat & Olahan Toga",
-                income: 3400000,
-                dependents: 2,
-                gardenScore: 85,
-                ukmScore: 50,
-                aiScore: 24,
-                status: "MANDIRI PANGAN",
-                recommendation: "Kontributor Lumbung Pangan RT 13",
-                savings: 1980000,
-                history: [
-                    "01 Sep 2026: Pelatihan modul pembukuan digital koperasi bebas human error.",
-                    "11 Okt 2026: Menyalurkan 10 paket sayur organik segar ke kas lumbung pangan RT 13."
-                ]
+                        "sid": "SID-PKK-1305",
+                        "name": "Ibu Ratna Kumala",
+                        "role": "Bendahara PKK Anggrek 1",
+                        "ukm": "Usaha Katering Sehat & Olahan Toga",
+                        "income": 3400000,
+                        "dependents": 2,
+                        "gardenScore": 85,
+                        "ukmScore": 50,
+                        "aiScore": 24,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Kontributor Lumbung Pangan RT 13",
+                        "savings": 1980000,
+                        "history": [
+                                    "01 Sep 2026: Pelatihan modul pembukuan digital koperasi bebas human error.",
+                                    "11 Okt 2026: Menyalurkan 10 paket sayur organik segar ke kas lumbung pangan RT 13."
+                        ]
             },
             {
-                sid: "SID-PKK-1306",
-                name: "Ibu Dewi Lestari",
-                role: "Anggota PKK RT 13",
-                ukm: "Penjahit Rumahan & Warung Sembako Kecil",
-                income: 1150000,
-                dependents: 4,
-                gardenScore: 30,
-                ukmScore: 75,
-                aiScore: 85,
-                status: "PRIORITAS BANTUAN",
-                recommendation: "Prioritas Paket Pangan & Subsidi Gizi Balita",
-                savings: 410000,
-                history: [
-                    "18 Agu 2026: Terverifikasi Single Identity RT 13 Kelurahan Yosomulyo.",
-                    "15 Okt 2026: Direkomendasikan oleh AI-DSS sebagai penerima bantuan beras tahap II."
-                ]
+                        "sid": "SID-PKK-1306",
+                        "name": "Ibu Dewi Lestari",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Penjahit Rumahan & Warung Sembako Kecil",
+                        "income": 1150000,
+                        "dependents": 4,
+                        "gardenScore": 30,
+                        "ukmScore": 75,
+                        "aiScore": 85,
+                        "status": "PRIORITAS BANTUAN",
+                        "recommendation": "Prioritas Paket Pangan & Subsidi Gizi Balita",
+                        "savings": 410000,
+                        "history": [
+                                    "18 Agu 2026: Terverifikasi Single Identity RT 13 Kelurahan Yosomulyo.",
+                                    "15 Okt 2026: Direkomendasikan oleh AI-DSS sebagai penerima bantuan beras tahap II."
+                        ]
             },
             {
-                sid: "SID-PKK-1307",
-                name: "Ibu Endang Sulastri",
-                role: "Anggota PKK RT 13",
-                ukm: "UKM Jamu Tradisional & Tanaman Toga",
-                income: 1950000,
-                dependents: 3,
-                gardenScore: 70,
-                ukmScore: 65,
-                aiScore: 48,
-                status: "WASPADA PANGAN",
-                recommendation: "Pelatihan Pengemasan Jamu & Kebun Gizi",
-                savings: 890000,
-                history: [
-                    "22 Agu 2026: Verifikasi Single Identity & sinergi kelompok dasawisma RT 13.",
-                    "09 Okt 2026: Mengikuti pendampingan budidaya tanaman obat pekarangan."
-                ]
+                        "sid": "SID-PKK-1307",
+                        "name": "Ibu Endang Sulastri",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "UKM Jamu Tradisional & Tanaman Toga",
+                        "income": 1950000,
+                        "dependents": 3,
+                        "gardenScore": 70,
+                        "ukmScore": 65,
+                        "aiScore": 48,
+                        "status": "WASPADA PANGAN",
+                        "recommendation": "Pelatihan Pengemasan Jamu & Kebun Gizi",
+                        "savings": 890000,
+                        "history": [
+                                    "22 Agu 2026: Verifikasi Single Identity & sinergi kelompok dasawisma RT 13.",
+                                    "09 Okt 2026: Mengikuti pendampingan budidaya tanaman obat pekarangan."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1308",
+                        "name": "Ibu Marsinah",
+                        "role": "Anggota Dasawisma Mawar RT 13",
+                        "ukm": "Buruh Harian Lepas & Pungut Sayur",
+                        "income": 850000,
+                        "dependents": 5,
+                        "gardenScore": 20,
+                        "ukmScore": 85,
+                        "aiScore": 90,
+                        "status": "PRIORITAS BANTUAN",
+                        "recommendation": "Paket Beras Fortifikasi 10kg & Bantuan Gizi Balita",
+                        "savings": 180000,
+                        "history": [
+                                    "15 Agu 2026: Terverifikasi Single Identity RT 13 (Sinkronisasi DTKS).",
+                                    "01 Okt 2026: AI-DSS menetapkan Klaster Prioritas Pangan Tahap 1.",
+                                    "16 Okt 2026: Penerimaan distribusi beras fortifikasi dan telur lumbung."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1309",
+                        "name": "Ibu Suparmi",
+                        "role": "Anggota Dasawisma Melati RT 13",
+                        "ukm": "Pekerja Cuci Gosok Panggilan",
+                        "income": 900000,
+                        "dependents": 4,
+                        "gardenScore": 25,
+                        "ukmScore": 80,
+                        "aiScore": 84,
+                        "status": "PRIORITAS BANTUAN",
+                        "recommendation": "Bantuan Pangan Pokok + Pelatihan Pekarangan Sayur Polybag",
+                        "savings": 210000,
+                        "history": [
+                                    "20 Agu 2026: Pendaftaran Single Identity warga rentan.",
+                                    "05 Okt 2026: Menerima paket pangan balita non-stunting dari kas koperasi.",
+                                    "18 Okt 2026: Pelatihan budidaya sayur polybag mandiri."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1310",
+                        "name": "Ibu Tri Wahyuningsih",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Penjual Gorengan & Kue Basah Keliling",
+                        "income": 1800000,
+                        "dependents": 4,
+                        "gardenScore": 45,
+                        "ukmScore": 70,
+                        "aiScore": 68,
+                        "status": "WASPADA PANGAN",
+                        "recommendation": "Subsidi Minyak Goreng Koperasi & Bibit Sayur",
+                        "savings": 750000,
+                        "history": [
+                                    "18 Agu 2026: Registrasi SID-Pangan & pemetaan usaha mikro olahan.",
+                                    "05 Okt 2026: Disetujui pinjaman modal bahan baku kue tanpa bunga.",
+                                    "17 Okt 2026: Setoran simpanan wajib koperasi."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1311",
+                        "name": "Ibu Yuliana",
+                        "role": "Anggota Dasawisma Anggrek RT 13",
+                        "ukm": "Warung Kopi & Sarapan Pagi Rumahan",
+                        "income": 2000000,
+                        "dependents": 3,
+                        "gardenScore": 50,
+                        "ukmScore": 65,
+                        "aiScore": 62,
+                        "status": "WASPADA PANGAN",
+                        "recommendation": "Kemitraan Serapan Telur & Bahan Pangan Koperasi",
+                        "savings": 890000,
+                        "history": [
+                                    "25 Agu 2026: Penerbitan Single Identity & verifikasi alamat.",
+                                    "12 Okt 2026: Pemanfaatan pekarangan rimpang herbal dan toga."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1312",
+                        "name": "Ibu Kusmiati",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Pengrajin Besek & Anyaman Bambu",
+                        "income": 1650000,
+                        "dependents": 3,
+                        "gardenScore": 55,
+                        "ukmScore": 60,
+                        "aiScore": 59,
+                        "status": "WASPADA PANGAN",
+                        "recommendation": "Bantuan Pupuk Organik Cair & Bibit Terong",
+                        "savings": 620000,
+                        "history": [
+                                    "02 Sep 2026: Validasi NIK Single Identity RT 13.",
+                                    "08 Okt 2026: Mengikuti pembinaan ketahanan pangan lumbung."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1313",
+                        "name": "Ibu Rina Marlina",
+                        "role": "Anggota Dasawisma Melati RT 13",
+                        "ukm": "Penjual Lontong Sayur Rumahan",
+                        "income": 1900000,
+                        "dependents": 4,
+                        "gardenScore": 40,
+                        "ukmScore": 75,
+                        "aiScore": 66,
+                        "status": "WASPADA PANGAN",
+                        "recommendation": "Pasokan Sayur Segar dari Kebun Anggota PKK",
+                        "savings": 810000,
+                        "history": [
+                                    "05 Sep 2026: Registrasi SID-Pangan terverifikasi.",
+                                    "14 Okt 2026: Pembelian beras koperasi harga adil bebas tengkulak."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1314",
+                        "name": "Ibu Sulastri",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Penyedia Jasa Setrika Rumahan",
+                        "income": 1750000,
+                        "dependents": 3,
+                        "gardenScore": 48,
+                        "ukmScore": 60,
+                        "aiScore": 58,
+                        "status": "WASPADA PANGAN",
+                        "recommendation": "Pemanfaatan Pekarangan Vertikultur Sayur Cepat Panen",
+                        "savings": 540000,
+                        "history": [
+                                    "08 Sep 2026: Terdaftar Single Identity RT 13.",
+                                    "16 Okt 2026: Penyaluran bibit sawi dan kangkung pekarangan."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1315",
+                        "name": "Ibu Murtini",
+                        "role": "Anggota Dasawisma Mawar RT 13",
+                        "ukm": "Penjual Jamu Gendong Tradisional",
+                        "income": 2100000,
+                        "dependents": 4,
+                        "gardenScore": 60,
+                        "ukmScore": 65,
+                        "aiScore": 56,
+                        "status": "WASPADA PANGAN",
+                        "recommendation": "Sertifikasi PIRT & Pelatihan Kemasan Botol Higienis",
+                        "savings": 920000,
+                        "history": [
+                                    "10 Sep 2026: Terbit SID-Pangan & nomor registrasi mitra.",
+                                    "18 Okt 2026: Pasokan bahan empon-empon dari lumbung mandiri."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1316",
+                        "name": "Ibu Anisa Rahmawati",
+                        "role": "Sekretaris Dasawisma Anggrek RT 13",
+                        "ukm": "Usaha Keripik Jamur Tiram",
+                        "income": 3600000,
+                        "dependents": 2,
+                        "gardenScore": 85,
+                        "ukmScore": 50,
+                        "aiScore": 22,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Mitra Suplai Produk Olahan Pangan Koperasi",
+                        "savings": 2100000,
+                        "history": [
+                                    "12 Agu 2026: Pendaftaran SID Single Identity.",
+                                    "15 Sep 2026: Integrasi stok olahan jamur ke pasar pangan koperasi."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1317",
+                        "name": "Ibu Fitri Handayani",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Budidaya Ikan Lele Bioflok Rumahan",
+                        "income": 3900000,
+                        "dependents": 3,
+                        "gardenScore": 90,
+                        "ukmScore": 40,
+                        "aiScore": 19,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Pemasok Protein Ikan Segar Lumbung RT 13",
+                        "savings": 2600000,
+                        "history": [
+                                    "15 Agu 2026: Terverifikasi SID anggota mandiri.",
+                                    "20 Sep 2026: Panen perdana 50 kg lele diserap lumbung gizi warga."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1318",
+                        "name": "Ibu Haryati",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Kios Sembako & Agen Pembayaran Digital",
+                        "income": 4200000,
+                        "dependents": 2,
+                        "gardenScore": 75,
+                        "ukmScore": 35,
+                        "aiScore": 16,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Mitra Distribusi Pangan Inklusif RT 13",
+                        "savings": 3200000,
+                        "history": [
+                                    "19 Agu 2026: Validasi Single Identity & agen transaksi tunai.",
+                                    "02 Okt 2026: Sinergi distribusi minyak & gula harga subsidi."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1319",
+                        "name": "Ibu Budiarti",
+                        "role": "Koordinator Lingkungan Hidup RT 13",
+                        "ukm": "Kebun Bibit Sayur & Kompos Organik",
+                        "income": 3500000,
+                        "dependents": 2,
+                        "gardenScore": 95,
+                        "ukmScore": 45,
+                        "aiScore": 15,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Penyedia Bibit Pekarangan & Pupuk Dasawisma",
+                        "savings": 2350000,
+                        "history": [
+                                    "22 Agu 2026: Terdaftar SID penggerak pekarangan lestari.",
+                                    "08 Okt 2026: Suplai 200 polybag bibit sayur ke anggota Dasawisma."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1320",
+                        "name": "Ibu Dwi Hastuti",
+                        "role": "Anggota Dasawisma Dahlia RT 13",
+                        "ukm": "Usaha Jahit & Konveksi Seragam",
+                        "income": 3200000,
+                        "dependents": 3,
+                        "gardenScore": 80,
+                        "ukmScore": 55,
+                        "aiScore": 28,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Penyedia Seragam PKK & Simpanan Tabungan Rutin",
+                        "savings": 1850000,
+                        "history": [
+                                    "25 Agu 2026: Verifikasi Single Identity RT 13.",
+                                    "10 Okt 2026: Setoran simpanan wajib koperasi PKK."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1321",
+                        "name": "Ibu Maryatun",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Pengolahan Sambal Pecel & Bumbu Kacang",
+                        "income": 2900000,
+                        "dependents": 2,
+                        "gardenScore": 78,
+                        "ukmScore": 50,
+                        "aiScore": 32,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Produk Olahan Bumbu Koperasi Berdaya",
+                        "savings": 1650000,
+                        "history": [
+                                    "28 Agu 2026: Terdaftar SID usaha pangan olahan.",
+                                    "12 Okt 2026: Penjualan bumbu kemasan melalui koperasi."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1322",
+                        "name": "Ibu Wahidatul",
+                        "role": "Kader Posyandu Bougenville RT 13",
+                        "ukm": "Pembuatan Susu Kedelai Sehat",
+                        "income": 3100000,
+                        "dependents": 2,
+                        "gardenScore": 82,
+                        "ukmScore": 45,
+                        "aiScore": 25,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Pemasok Minuman Gizi Posyandu & Edukasi Balita",
+                        "savings": 1950000,
+                        "history": [
+                                    "30 Agu 2026: Verifikasi SID kader pangan & posyandu.",
+                                    "15 Okt 2026: Distribusi 40 botol susu kedelai program anti-stunting."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1323",
+                        "name": "Ibu Sukarni",
+                        "role": "Anggota Dasawisma Melati RT 13",
+                        "ukm": "Toko Kelontong & Pakan Ternak",
+                        "income": 3800000,
+                        "dependents": 3,
+                        "gardenScore": 70,
+                        "ukmScore": 40,
+                        "aiScore": 23,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Mitra Pengadaan Sembako Koperasi",
+                        "savings": 2800000,
+                        "history": [
+                                    "02 Sep 2026: Penerbitan SID Single Identity warga.",
+                                    "18 Okt 2026: Pasokan pakan ayam kampung program ketahanan pangan."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1324",
+                        "name": "Ibu Ningsih",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Panggang Ayam & Bebek Ungkep Beku",
+                        "income": 3400000,
+                        "dependents": 2,
+                        "gardenScore": 75,
+                        "ukmScore": 50,
+                        "aiScore": 27,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Pemasok Makanan Siap Saji Koperasi",
+                        "savings": 2150000,
+                        "history": [
+                                    "04 Sep 2026: Terdaftar SID produsen olahan unggas.",
+                                    "11 Okt 2026: Pesanan katering pertemuan rutin PKK."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1325",
+                        "name": "Ibu Kartini",
+                        "role": "Anggota Dasawisma Mawar RT 13",
+                        "ukm": "Usaha Roti Rumahan & Donat Kentang",
+                        "income": 3000000,
+                        "dependents": 3,
+                        "gardenScore": 80,
+                        "ukmScore": 52,
+                        "aiScore": 31,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Mitra Snack Rapat Warga & Dasawisma",
+                        "savings": 1750000,
+                        "history": [
+                                    "06 Sep 2026: Verifikasi Single Identity RT 13.",
+                                    "13 Okt 2026: Serapan snack box rapat koordinasi kelurahan."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1326",
+                        "name": "Ibu Juminten",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Budidaya Jamur Tiram Kumbung",
+                        "income": 3300000,
+                        "dependents": 2,
+                        "gardenScore": 88,
+                        "ukmScore": 45,
+                        "aiScore": 21,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Pemasok Jamur Segar ke Pasar Komunitas",
+                        "savings": 2200000,
+                        "history": [
+                                    "08 Sep 2026: Registrasi SID anggota produsen.",
+                                    "14 Okt 2026: Penjualan panen jamur segar ke koperasi RT 13."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1327",
+                        "name": "Ibu Rosidah",
+                        "role": "Kader Bina Keluarga Balita RT 13",
+                        "ukm": "Katering Makanan Sehat Lansia",
+                        "income": 3700000,
+                        "dependents": 2,
+                        "gardenScore": 84,
+                        "ukmScore": 40,
+                        "aiScore": 20,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Konsultan Diet & Pengelola Dapur Sehat",
+                        "savings": 2400000,
+                        "history": [
+                                    "10 Sep 2026: Validasi identitas kader pendamping gizi.",
+                                    "16 Okt 2026: Penyiapan 30 porsi makanan sehat posyandu lansia."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1328",
+                        "name": "Ibu Sri Rejeki",
+                        "role": "Anggota Dasawisma Anggrek RT 13",
+                        "ukm": "Peternakan Ayam Petelur Skala Rumah",
+                        "income": 4100000,
+                        "dependents": 3,
+                        "gardenScore": 86,
+                        "ukmScore": 38,
+                        "aiScore": 18,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Penyedia Telur Segar untuk Paket Gizi",
+                        "savings": 2950000,
+                        "history": [
+                                    "12 Sep 2026: Penerbitan SID peternak mandiri.",
+                                    "19 Okt 2026: Suplai 20 kg telur omega ke program subsidi pangan."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1329",
+                        "name": "Ibu Partini",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Penjual Aneka Pepes Ikan & Botok",
+                        "income": 2800000,
+                        "dependents": 2,
+                        "gardenScore": 76,
+                        "ukmScore": 55,
+                        "aiScore": 34,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Mitra Konsumsi Bazar Pangan Mingguan",
+                        "savings": 1550000,
+                        "history": [
+                                    "14 Sep 2026: Terdaftar SID kuliner tradisional.",
+                                    "17 Okt 2026: Partisipasi bazar pangan murah RT 13."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1330",
+                        "name": "Ibu Maimunah",
+                        "role": "Anggota Dasawisma Melati RT 13",
+                        "ukm": "Budidaya Hidroponik Sayur Selada & Pakcoy",
+                        "income": 3500000,
+                        "dependents": 2,
+                        "gardenScore": 92,
+                        "ukmScore": 42,
+                        "aiScore": 17,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Penyuplai Sayuran Hidroponik Bebas Pestisida",
+                        "savings": 2500000,
+                        "history": [
+                                    "16 Sep 2026: Pendaftaran SID produsen modern hidroponik.",
+                                    "20 Okt 2026: Penjualan 15 kg selada segar ke pasar warga."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1331",
+                        "name": "Ibu Suhartini",
+                        "role": "Kader Lansia RT 13",
+                        "ukm": "Olahan Minuman Jahe Merah Instan",
+                        "income": 2950000,
+                        "dependents": 2,
+                        "gardenScore": 80,
+                        "ukmScore": 48,
+                        "aiScore": 30,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Produk Herbal Unggulan RT 13",
+                        "savings": 1680000,
+                        "history": [
+                                    "18 Sep 2026: Verifikasi Single Identity RT 13.",
+                                    "21 Okt 2026: Pengemasan 50 bungkus serbuk jahe herbal koperasi."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1332",
+                        "name": "Ibu Tuminah",
+                        "role": "Anggota Dasawisma Dahlia RT 13",
+                        "ukm": "Usaha Kerupuk Rambak & Rempeyek Kacang",
+                        "income": 3150000,
+                        "dependents": 3,
+                        "gardenScore": 75,
+                        "ukmScore": 50,
+                        "aiScore": 29,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Pasokan Cemilan Tradisional Koperasi",
+                        "savings": 1820000,
+                        "history": [
+                                    "20 Sep 2026: Terdaftar SID pelaku UKM rumahan.",
+                                    "15 Okt 2026: Penyaluran rempeyek ke warung mitra koperasi."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1333",
+                        "name": "Ibu Rahayu",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Giling Daging & Bakso Rumahan",
+                        "income": 4300000,
+                        "dependents": 3,
+                        "gardenScore": 78,
+                        "ukmScore": 35,
+                        "aiScore": 15,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Mitra Lumbung Protein Warga",
+                        "savings": 3400000,
+                        "history": [
+                                    "22 Sep 2026: Verifikasi Single Identity RT 13.",
+                                    "18 Okt 2026: Pengadaan bahan bakso sehat tanpa pengawet."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1334",
+                        "name": "Ibu Karsinah",
+                        "role": "Anggota Dasawisma Mawar RT 13",
+                        "ukm": "Olahan Manisan Tomat & Pepaya",
+                        "income": 2750000,
+                        "dependents": 2,
+                        "gardenScore": 82,
+                        "ukmScore": 54,
+                        "aiScore": 33,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Diversifikasi Olahan Buah Lokal",
+                        "savings": 1490000,
+                        "history": [
+                                    "24 Sep 2026: Registrasi SID anggota kreatif pangan.",
+                                    "19 Okt 2026: Pelatihan pengemasan hampa udara."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1335",
+                        "name": "Ibu Utami Dewi",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Kebun Buah Naga & Jeruk Purut",
+                        "income": 3650000,
+                        "dependents": 2,
+                        "gardenScore": 88,
+                        "ukmScore": 40,
+                        "aiScore": 19,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Penyedia Buah Segar Berkelanjutan",
+                        "savings": 2450000,
+                        "history": [
+                                    "26 Sep 2026: Terverifikasi SID lumbung buah pekarangan.",
+                                    "21 Okt 2026: Setoran panen buah naga ke lumbung warga."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1336",
+                        "name": "Ibu Mariyati",
+                        "role": "Kader Lingkungan Sehat RT 13",
+                        "ukm": "Pembuatan Minyak Kelapa Murni (VCO)",
+                        "income": 3250000,
+                        "dependents": 2,
+                        "gardenScore": 84,
+                        "ukmScore": 45,
+                        "aiScore": 24,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Produk Kesehatan Alami Koperasi",
+                        "savings": 1980000,
+                        "history": [
+                                    "28 Sep 2026: Validasi identitas pengrajin herbal.",
+                                    "17 Okt 2026: Penjualan produk VCO di gerai koperasi."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1337",
+                        "name": "Ibu Sugiyanti",
+                        "role": "Anggota Dasawisma Anggrek RT 13",
+                        "ukm": "Warung Sayur & Bumbu Dapur Segar",
+                        "income": 3450000,
+                        "dependents": 3,
+                        "gardenScore": 79,
+                        "ukmScore": 46,
+                        "aiScore": 26,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Pusat Distribusi Sayur Segar Lingkungan",
+                        "savings": 2100000,
+                        "history": [
+                                    "30 Sep 2026: Terdaftar SID jaringan distribusi pangan.",
+                                    "22 Okt 2026: Sinergi serapan sayur pekarangan anggota PKK."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1338",
+                        "name": "Ibu Ponirah",
+                        "role": "Anggota PKK RT 13",
+                        "ukm": "Pembuatan Tape Singkong Manis",
+                        "income": 2850000,
+                        "dependents": 2,
+                        "gardenScore": 80,
+                        "ukmScore": 52,
+                        "aiScore": 32,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Kuliner Tradisional Mitra PKK",
+                        "savings": 1580000,
+                        "history": [
+                                    "02 Okt 2026: Penerbitan SID Single Identity.",
+                                    "19 Okt 2026: Pemasaran tape singkong ke toko oleh-oleh Metro."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1339",
+                        "name": "Ibu Wulandari",
+                        "role": "Anggota Dasawisma Dahlia RT 13",
+                        "ukm": "Katering Nasi Kotak & Tumpeng Mini",
+                        "income": 3750000,
+                        "dependents": 2,
+                        "gardenScore": 85,
+                        "ukmScore": 42,
+                        "aiScore": 20,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Mitra Konsumsi Acara Kelurahan Yosomulyo",
+                        "savings": 2550000,
+                        "history": [
+                                    "04 Okt 2026: Verifikasi Single Identity RT 13.",
+                                    "20 Okt 2026: Pesanan tumpeng perayaan ketahanan pangan."
+                        ]
+            },
+            {
+                        "sid": "SID-PKK-1340",
+                        "name": "Ibu Ismawati",
+                        "role": "Koordinator Keagamaan PKK RT 13",
+                        "ukm": "Madu Alami & Herbal Komunitas",
+                        "income": 4050000,
+                        "dependents": 2,
+                        "gardenScore": 89,
+                        "ukmScore": 36,
+                        "aiScore": 17,
+                        "status": "MANDIRI PANGAN",
+                        "recommendation": "Penyedia Suplemen Gizi Alami Koperasi",
+                        "savings": 3100000,
+                        "history": [
+                                    "06 Okt 2026: Terdaftar SID penggerak herbal pangan.",
+                                    "23 Okt 2026: Penyediaan madu murni untuk posyandu gizi balita."
+                        ]
             }
-        ];
+];
 
         // 3. DATA TRANSAKSI KAS KOPERASI & BANSOS
         let coopBalance = 24500000;
@@ -2518,6 +3128,9 @@
                 const matchFilter = filter === 'ALL' || m.status === filter;
                 return matchText && matchFilter;
             });
+
+            const countEl = document.getElementById('membersFilteredCount');
+            if (countEl) countEl.textContent = filtered.length;
 
             tbody.innerHTML = filtered.map(m => {
                 const barColor = m.aiScore >= 75 ? 'bg-rose-600' : m.aiScore >= 45 ? 'bg-amber-600' : 'bg-emerald-600';
@@ -3159,7 +3772,7 @@
                                 <span class="line-through text-rose-400 font-mono">Rp ${p.tengkulakPrice.toLocaleString('id-ID')}</span>
                             </div>
                             <div class="flex items-baseline justify-between">
-                                <span class="text-[10px] font-bold text-emerald-400">Harga Inklusif Koperasi:</span>
+                                <span class="text-[10px] font-bold text-emerald-400">Harga Adil Anti-Tengkulak:</span>
                                 <div>
                                     <span class="font-bold text-sm text-emerald-300 font-mono">Rp ${p.price.toLocaleString('id-ID')}</span>
                                     <span class="text-[10px] text-slate-400">/${p.unit}</span>
