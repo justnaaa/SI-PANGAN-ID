@@ -117,4 +117,5 @@ Aplikasi purwarupa dibangun secara mandiri (*standalone client-side*) menggunaka
 - **Ibu Sartika Sari Dewi** (Pimpinan Mitra – Ketua PKK Anggrek 1 & 2 RT 13 RW 05 Kelurahan Yosomulyo)
 
 ---
+si_pangan_pkk_yosomulyo_deeptech_for_foodtech
 *Dikembangkan untuk memajukan ketahanan pangan keluarga Indonesia dan modernisasi birokrasi komunitas berbasis DeepTech.*
