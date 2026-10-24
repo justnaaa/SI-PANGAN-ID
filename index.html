@@ -200,10 +200,10 @@
                 </button>
 
                 <button onclick="switchTab('koperasi')" id="nav-koperasi" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors hover:bg-slate-800 text-left">
-                    <i class="fa-solid fa-vault w-4 text-center text-slate-400"></i>
+                    <i class="fa-solid fa-store w-4 text-center text-emerald-400"></i>
                     <div>
-                        <div class="leading-none text-slate-200">4. Koperasi & Log Bansos</div>
-                        <span class="text-[10px] text-slate-400">Alamat Keuangan Permanen</span>
+                        <div class="leading-none text-slate-200">4. Pasar Pangan & Koperasi</div>
+                        <span class="text-[10px] text-slate-400">Produsen-Konsumen & Kas SID</span>
                     </div>
                 </button>
 
@@ -772,9 +772,128 @@
                 </section>
 
                 <!-- ==========================================
-                     TAB 4: LAYANAN KOPERASI PANGAN & SIMPAN PINJAM
+                     TAB 4: PASAR PANGAN CERDAS & KOPERASI KAS SID
                      ========================================== -->
                 <section id="tab-koperasi" class="tab-section hidden space-y-6">
+
+                    <!-- ========================================================
+                         SMART FOOD MARKET & AI DEMAND FORECASTING (SUB-TEMA F)
+                         ======================================================== -->
+                    <div class="bg-gradient-to-br from-emerald-950 via-slate-900 to-slate-950 rounded-2xl p-6 sm:p-7 text-white shadow-md border border-emerald-700/40 space-y-6 relative overflow-hidden">
+                        <!-- Decorative background glow -->
+                        <div class="absolute -top-24 -right-24 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="absolute -bottom-24 -left-24 w-80 h-80 bg-teal-500/15 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <!-- Header & Sub-Theme F Tag -->
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/90 pb-5 relative z-10">
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2 mb-2">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-store text-emerald-400"></i>
+                                        Sub-Tema F: Smart Food Market & Inclusive Food Ecosystem
+                                    </span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+                                        <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>AI-Driven Demand Matching
+                                    </span>
+                                </div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Smart Food Market & AI Demand Forecasting</h2>
+                                <p class="text-xs sm:text-sm text-slate-300 mt-1 max-w-3xl leading-relaxed">
+                                    Platform cerdas mempertemukan produsen pangan PKK langsung dengan konsumen dan lumbung koperasi. Menggunakan prediksi kebutuhan pangan berbasis Machine Learning (AI-DSS & k-NN) untuk menjamin kepastian serapan pasar dan harga adil tanpa tengkulak.
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-3 shrink-0">
+                                <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-right">
+                                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Jangkauan Ekosistem Pasar</span>
+                                    <span class="text-xs sm:text-sm font-bold text-emerald-400 flex items-center justify-end gap-1">
+                                        <i class="fa-solid fa-users text-xs"></i> 40 KK RT 13 & 52 PKK Yosomulyo
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2A. BANNER PREDIKSI PERMINTAAN PANGAN BULANAN (AI DEMAND FORECASTING) -->
+                        <div class="space-y-3 relative z-10">
+                            <div class="flex flex-wrap items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs">
+                                        <i class="fa-solid fa-chart-line"></i>
+                                    </div>
+                                    <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">A. Prediksi Permintaan Pangan Bulanan (AI Demand Forecasting)</h3>
+                                </div>
+                                <span class="text-[11px] text-slate-300 bg-slate-800/90 border border-slate-700 px-2.5 py-1 rounded-lg">
+                                    Basis Analisis ML: <strong id="marketAiRentanCount" class="text-emerald-400">Menghitung...</strong>
+                                </span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                                <!-- Indikator 1 -->
+                                <div class="bg-slate-800/70 hover:bg-slate-800/90 border border-slate-700/80 rounded-xl p-4 transition-all space-y-1">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">1. Paket Beras & Telur Gizi</span>
+                                        <div class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-300 flex items-center justify-center text-xs">
+                                            <i class="fa-solid fa-bowl-rice"></i>
+                                        </div>
+                                    </div>
+                                    <div id="marketDemandQuota1" class="text-lg sm:text-xl font-bold text-white font-mono">Memuat...</div>
+                                    <p class="text-[11px] text-slate-400 leading-normal">
+                                        Kuota kebutuhan paket pangan pokok subsidi keluarga rentan hasil deteksi model Machine Learning k-NN.
+                                    </p>
+                                </div>
+
+                                <!-- Indikator 2 -->
+                                <div class="bg-slate-800/70 hover:bg-slate-800/90 border border-slate-700/80 rounded-xl p-4 transition-all space-y-1">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">2. Pasokan Tempe, Tahu & Sayur</span>
+                                        <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center text-xs">
+                                            <i class="fa-solid fa-carrot"></i>
+                                        </div>
+                                    </div>
+                                    <div id="marketDemandQuota2" class="text-lg sm:text-xl font-bold text-white font-mono">Memuat...</div>
+                                    <p class="text-[11px] text-slate-400 leading-normal">
+                                        Target kuota serapan rutin dari 15 UKM pangan rumah tangga & kebun pekarangan anggota PKK RT 13.
+                                    </p>
+                                </div>
+
+                                <!-- Indikator 3 -->
+                                <div class="bg-slate-800/70 hover:bg-slate-800/90 border border-slate-700/80 rounded-xl p-4 transition-all space-y-1">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-[11px] font-bold text-slate-300 uppercase tracking-wider">3. Perputaran Ekonomi Koperasi</span>
+                                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xs">
+                                            <i class="fa-solid fa-money-bill-wave"></i>
+                                        </div>
+                                    </div>
+                                    <div id="marketEconomicCirculation" class="text-lg sm:text-xl font-bold text-emerald-400 font-mono">Memuat...</div>
+                                    <p class="text-[11px] text-slate-400 leading-normal">
+                                        Estimasi omzet transaksi pangan inklusif yang berputar 100% di kas warga tanpa bocor ke perantara luar.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2B. KATALOG PASAR KOMUNITAS & PERTEMUAN PRODUSEN-KONSUMEN -->
+                        <div class="space-y-3 pt-2 border-t border-slate-800/90 relative z-10">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 rounded-lg bg-teal-500/20 text-teal-300 flex items-center justify-center text-xs">
+                                        <i class="fa-solid fa-handshake-angle"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">B. Katalog Pasar Komunitas: Pertemuan Produsen & Konsumen</h3>
+                                        <p class="text-[11px] text-slate-400">Komoditas pangan bergizi dari produsen anggota PKK terdaftar Single ID (SID) siap diserap koperasi untuk kebutuhan warga.</p>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] font-semibold text-emerald-300 bg-emerald-950/70 border border-emerald-500/30 px-2.5 py-1 rounded-md self-start sm:self-auto">
+                                    <i class="fa-solid fa-circle-check text-emerald-400 mr-1"></i>4 Produsen Terverifikasi SID Aktif
+                                </span>
+                            </div>
+
+                            <!-- Products Grid Container (populated dynamically via JS) -->
+                            <div id="marketProductsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                                <!-- Populated dynamically by renderMarketSection() -->
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                         <!-- Left Form: Input Transaksi Berbasis SID -->
                         <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs space-y-4">
@@ -796,6 +915,7 @@
                                     <label class="block text-xs font-semibold text-slate-700 mb-1">Jenis Transaksi / Layanan</label>
                                     <select id="txTypeSelect" required class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-slate-50 focus:bg-white focus:outline-none focus:border-emerald-600">
                                         <option value="SIMPANAN WAJIB/TABUNG">Simpan Tabung Anggota (+ Kas)</option>
+                                        <option value="SERAPAN PASAR UKM PANGAN">Serapan Pasar UKM Pangan Lokal (- Kas / + Lumbung)</option>
                                         <option value="PINJAMAN MODAL UKM PANGAN">Pinjaman Modal Usaha UKM Pangan (- Kas)</option>
                                         <option value="DISTRIBUSI BANTUAN PANGAN">Distribusi Paket Pangan Bergizi (Beras/Telur)</option>
                                         <option value="SETORAN PANEN PEKARANGAN">Setoran Panen Pekarangan (+ Stok Lumbung)</option>
@@ -2187,7 +2307,7 @@
             'alur': 'Alur Inovasi Hackathon DeepTech for FoodTech 2026',
             'dashboard': 'Dashboard Ketahanan Pangan & Birokrasi Digital PKK',
             'singleid': 'Direktori Single Identity & Mesin Rekomendasi AI-DSS',
-            'koperasi': 'Koperasi Simpan Pinjam & Buku Kas Transparan',
+            'koperasi': 'Pasar Pangan Inklusif, Prediksi Permintaan AI & Koperasi Kas SID',
             'feedback': 'Ruang Partisipasi Demokratis E-Voting & Feedback Warga',
             'panduan': 'Cara Penggunaan & Dokumentasi Fitur Platform',
             'tim': 'Profil Tim Inovator UM Metro & Lokasi Mitra PKK'
@@ -2210,6 +2330,9 @@
             if (tabId === 'dashboard' && !chartsInitialized) {
                 setTimeout(initDashboardCharts, 50);
                 chartsInitialized = true;
+            }
+            if (tabId === 'koperasi') {
+                renderMarketSection();
             }
 
             // Close mobile sidebar if open
@@ -2783,6 +2906,186 @@
             }, 600);
         }
 
+        // ========================================================
+        // SMART FOOD MARKET & AI DEMAND FORECASTING (SUB-TEMA F)
+        // ========================================================
+        let marketProducts = [
+            {
+                id: 'prod-1',
+                name: 'Paket Tempe & Tahu Segar Fortifikasi',
+                producerName: 'Ibu Sri Wahyuni',
+                sid: 'SID-PKK-1303',
+                stock: 45,
+                unit: 'Paket',
+                price: 15000,
+                badge: 'Protein Nabati Fortifikasi',
+                imageIcon: 'fa-cubes-stacked'
+            },
+            {
+                id: 'prod-2',
+                name: 'Sayur Organik & Cabai Pekarangan',
+                producerName: 'Ibu Sartika Sari Dewi',
+                sid: 'SID-PKK-1301',
+                stock: 25,
+                unit: 'Kg',
+                price: 12000,
+                badge: 'Panen Pekarangan Lestari',
+                imageIcon: 'fa-carrot'
+            },
+            {
+                id: 'prod-3',
+                name: 'Paket Katering Gizi Balita (Cegah Stunting)',
+                producerName: 'Ibu Ratna Kumala',
+                sid: 'SID-PKK-1305',
+                stock: 30,
+                unit: 'Paket',
+                price: 25000,
+                badge: 'Intervensi Stunting Balita',
+                imageIcon: 'fa-bowl-food'
+            },
+            {
+                id: 'prod-4',
+                name: 'Keripik Pisang & Olahan Singkong',
+                producerName: 'Ibu Nurhayati',
+                sid: 'SID-PKK-1304',
+                stock: 40,
+                unit: 'Pouch',
+                price: 10000,
+                badge: 'Produk Unggulan UKM',
+                imageIcon: 'fa-cookie-bite'
+            }
+        ];
+
+        function renderMarketSection() {
+            // A. AI Demand Forecasting Calculation from membersData
+            const prioritasCount = membersData.filter(m => m.status && m.status.includes('PRIORITAS')).length;
+            const waspadaCount = membersData.filter(m => m.status && m.status.includes('WASPADA')).length;
+            const totalRentan = prioritasCount + waspadaCount;
+
+            const totalBerasKg = (prioritasCount * 10) + (waspadaCount * 5);
+            const totalTelurKg = (prioritasCount * 2) + (waspadaCount * 1);
+            const totalPaketSayurTempe = totalRentan * 8;
+            const totalEkonomi = totalRentan * 285000;
+
+            const elRentan = document.getElementById('marketAiRentanCount');
+            if (elRentan) {
+                elRentan.textContent = `${totalRentan} KK Rentan (${prioritasCount} Kritis, ${waspadaCount} Waspada)`;
+            }
+
+            const elQuota1 = document.getElementById('marketDemandQuota1');
+            if (elQuota1) {
+                elQuota1.textContent = `${totalBerasKg} Kg Beras & ${totalTelurKg} Kg Telur`;
+            }
+
+            const elQuota2 = document.getElementById('marketDemandQuota2');
+            if (elQuota2) {
+                elQuota2.textContent = `${totalPaketSayurTempe} Paket Pangan Lokal`;
+            }
+
+            const elCirc = document.getElementById('marketEconomicCirculation');
+            if (elCirc) {
+                elCirc.textContent = `Rp ${totalEkonomi.toLocaleString('id-ID')} / Bulan`;
+            }
+
+            // B. Render Smart Food Market Products Grid
+            const grid = document.getElementById('marketProductsGrid');
+            if (!grid) return;
+
+            grid.innerHTML = marketProducts.map(p => `
+                <div class="bg-slate-800/85 hover:bg-slate-800 border border-slate-700/80 hover:border-emerald-500/60 rounded-xl p-4 transition-all duration-200 flex flex-col justify-between space-y-3 group shadow-xs">
+                    <div class="space-y-2.5">
+                        <div class="flex items-start justify-between gap-1.5">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                ${p.badge}
+                            </span>
+                            <div class="w-7 h-7 rounded-lg bg-slate-700 text-emerald-400 flex items-center justify-center text-xs shrink-0">
+                                <i class="fa-solid ${p.imageIcon}"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white text-xs sm:text-sm leading-snug group-hover:text-emerald-300 transition-colors">${p.name}</h4>
+                            <div class="flex items-center gap-1.5 mt-1.5 text-[11px] text-slate-300">
+                                <i class="fa-solid fa-circle-user text-emerald-400"></i>
+                                <span>Produsen: <strong class="text-white">${p.producerName}</strong></span>
+                            </div>
+                            <span class="inline-block mt-1 px-1.5 py-0.2 rounded font-mono text-[10px] font-semibold bg-slate-900/80 text-emerald-400 border border-emerald-500/30">
+                                ${p.sid}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-700/70 space-y-2">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-slate-400 text-[11px]">Sisa Stok:</span>
+                            <span id="stock-${p.id}" class="font-bold font-mono ${p.stock <= 10 ? 'text-rose-400' : 'text-emerald-300'}">
+                                ${p.stock} ${p.unit}
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[9px] text-slate-400 block leading-tight">Harga Koperasi</span>
+                                <span class="font-bold text-sm text-emerald-400 font-mono">Rp ${p.price.toLocaleString('id-ID')}</span>
+                                <span class="text-[10px] text-slate-400">/${p.unit}</span>
+                            </div>
+                        </div>
+                        <div class="text-[9px] bg-slate-900/70 border border-slate-700/60 text-slate-300 px-2 py-1 rounded flex items-center gap-1">
+                            <i class="fa-solid fa-arrows-split-up-and-left text-emerald-400"></i>
+                            <span>Akses Pasar: RT 13 & 52 PKK Yosomulyo</span>
+                        </div>
+                        <button onclick="handleMarketPurchase('${p.id}')" ${p.stock <= 0 ? 'disabled' : ''} class="w-full py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed text-white text-xs font-semibold shadow-xs flex items-center justify-center gap-1.5 transition active:scale-98">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <span>Serap ke Koperasi / Beli (5 ${p.unit})</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handleMarketPurchase(productId) {
+            const product = marketProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            const qtyToAbsorb = 5;
+            if (product.stock < qtyToAbsorb) {
+                showToast(`Stok ${product.name} tersisa ${product.stock} ${product.unit}, tidak mencukupi untuk diserap 5 unit!`);
+                return;
+            }
+
+            // 1. Reduce product stock
+            product.stock -= qtyToAbsorb;
+
+            // 2. Find producer member in membersData
+            const producer = membersData.find(m => m.sid === product.sid);
+            const totalCost = product.price * qtyToAbsorb;
+
+            // 3. Deduct coop cash (inventory absorbed) & credit producer savings/income
+            coopBalance -= totalCost;
+            if (producer) {
+                producer.savings += totalCost;
+                producer.history.unshift(`24 Okt 2026: Produk ${product.name} diserap pasar koperasi (${qtyToAbsorb} ${product.unit} @ Rp ${product.price.toLocaleString('id-ID')}) senilai Rp ${totalCost.toLocaleString('id-ID')} disalurkan ke konsumen warga.`);
+            }
+
+            // 4. Record new transaction in digital ledger (transactionsData)
+            const hash = `TX-${Math.floor(1000 + Math.random() * 9000)}`;
+            transactionsData.unshift({
+                hash,
+                date: "Baru saja • Real-time",
+                sid: product.sid,
+                name: product.producerName,
+                type: "SERAPAN PASAR UKM PANGAN",
+                amount: totalCost,
+                note: `Serapan pasar 5 ${product.unit} ${product.name} dari produsen ${product.sid} untuk pasar pangan inklusif`
+            });
+
+            // 5. Re-render UI components
+            renderMarketSection();
+            renderTransactions();
+            renderMembersTable();
+
+            // 6. Toast Notification
+            showToast(`Produk ${product.name} (${qtyToAbsorb} ${product.unit}) berhasil dipertemukan & diserap pasar koperasi! Kas produsen bertambah Rp ${totalCost.toLocaleString('id-ID')}.`);
+        }
+
         // ==========================================
         // KOPERASI & TRANSPARENT LEDGER
         // ==========================================
@@ -2791,8 +3094,13 @@
             if (!tbody) return;
 
             tbody.innerHTML = transactionsData.map(t => {
-                const isOut = t.type.includes('PINJAMAN') || t.type.includes('DISTRIBUSI');
-                const badgeClass = isOut ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200';
+                const isOut = t.type.includes('PINJAMAN') || t.type.includes('DISTRIBUSI') || t.type.includes('SERAPAN');
+                let badgeClass = 'bg-emerald-50 text-emerald-800 border border-emerald-200';
+                if (t.type.includes('PINJAMAN') || t.type.includes('DISTRIBUSI')) {
+                    badgeClass = 'bg-amber-50 text-amber-800 border border-amber-200';
+                } else if (t.type.includes('SERAPAN')) {
+                    badgeClass = 'bg-teal-50 text-teal-800 border border-teal-200';
+                }
                 const sign = isOut ? '-' : '+';
                 return `
                     <tr class="hover:bg-slate-50 transition-colors">
@@ -2835,8 +3143,9 @@
             if (type.includes('SIMPANAN') || type.includes('SETORAN')) {
                 coopBalance += amount;
                 member.savings += amount;
-            } else if (type.includes('PINJAMAN')) {
+            } else if (type.includes('PINJAMAN') || type.includes('SERAPAN')) {
                 coopBalance -= amount;
+                if (type.includes('SERAPAN')) member.savings += amount;
             }
 
             const hash = `TX-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -3097,6 +3406,7 @@
             renderTransactions();
             renderVoting();
             renderFeedbacks();
+            renderMarketSection();
         };
     </script>
 </body>
