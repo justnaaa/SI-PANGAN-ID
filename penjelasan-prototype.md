@@ -90,6 +90,12 @@ Bukan sekadar animasi visual, sistem mengintegrasikan **mesin Computer Vision ri
 - **Natural Language Entity Extraction:** Menggunakan algoritma ekspresi reguler untuk mengekstrak entitas penting secara otomatis (nominal uang `Rp`, nama anggota, tanggal, dan komoditas pangan seperti beras, minyak, telur).
 - **Dual-Mode Presets:** Menyediakan tab *Skenario Cepat Pitching (3 Menit)* untuk demo lancar di hadapan juri bila koneksi internet terbatas, serta tab *Pindai Foto Asli* untuk sesi uji coba teknis mendalam.
 
+### D. Smart Food Market & AI Demand Forecasting (Sub-Tema F: Inclusive Food Ecosystem)
+Sistem menjawab fokus tunggal Sub-Tema F Hackathon FoodTech 2026:
+- **Prediksi Kebutuhan Pangan Berbasis AI (Demand Forecasting):** Mengagregasi data kerawanan sosio-ekonomi 40 KK secara real-time dari model k-NN & AI-DSS untuk memprediksi kuota kebutuhan beras fortifikasi, telur, serta pasokan sayur & protein nabati bulanan.
+- **Pencocokan Produsen-Konsumen Inklusif (Smart Market Matching):** Membuka akses pasar bagi 4 produsen pangan anggota PKK binaan (Ibu Sri Wahyuni - Tempe Fortifikasi, Ibu Sartika - Sayur Pekarangan, Ibu Ratna Kumala - Katering Balita Stunting, dan Ibu Nurhayati - Olahan Keripik) yang terikat langsung pada Single Identity (SID).
+- **Penyerapan Otomatis ke Kas Koperasi Digital:** Setiap transaksi serapan pasar langsung memotong stok di katalog, mencatat arus barang di buku kas lumbung pangan (`SERAPAN PASAR UKM PANGAN`), dan mengkreditkan pendapatan langsung ke saldo tabungan produsen tanpa perantara tengkulak.
+
 ---
 
 ## 4. DAFTAR FITUR & MODUL PROTOTIPE WEBSITE
@@ -101,7 +107,7 @@ Platform SI-PANGAN yang telah dibangun terdiri dari 7 modul fungsional terintegr
 | **1** | **Alur Inovasi Hackathon (6 Tahap)** | Visualisasi interaktif alur berpikir sesuai Gambar 1 Panduan Resmi UM Metro: Tahap 1 Masalah Nyata, Tahap 2 Kebutuhan Pengguna, Tahap 3 Solusi DeepTech, Tahap 4 Prototipe MVP, Tahap 5 Uji Coba Lapangan, dan Tahap 6 Hilirisasi. Dilengkapi matriks keselarasan masalah-solusi. |
 | **2** | **Dashboard Ketahanan Pangan RT 13** | Panel analitik real-time yang memuat 4 kartu metrik utama (Total SID 40 KK, Indeks Ketahanan Pangan 88,4%, Akurasi AI 96,5%, Saldo Kas Koperasi Rp 24,5 Juta), grafik donat klasifikasi kerawanan AI, grafik batang tren kas koperasi 6 bulan, dan demografi Kelurahan Yosomulyo. |
 | **3** | **Direktori Single Identity & AI Scoring** | Database seluruh warga anggota PKK dilengkapi pencarian instan (nama/SID/usaha UKM), filter kategori status AI, pop-up modal profil rekam jejak seumur hidup, dan formulir registrasi SID baru dengan kalkulasi skor otomatis. |
-| **4** | **Koperasi Pangan & Alamat Keuangan Permanen** | Sistem kas digital bebas human error. Menyediakan formulir pencatatan transaksi (simpan tabung, pinjaman modal UKM, distribusi sembako, setoran panen) serta tabel buku besar kas yang otomatis memperbarui saldo kas kelompok secara real-time. |
+| **4** | **Pasar Pangan & Koperasi Kas SID (Sub-Tema F)** | Ekosistem pasar cerdas yang memadukan **Banner AI Demand Forecasting** (prediksi kebutuhan beras, telur, dan sayur), **Katalog Pasar Produsen-Konsumen** (4 produk pangan lokal anggota PKK), transaksi serapan pasar otomatis real-time, serta buku besar kas digital transparan. |
 | **5** | **Ruang Partisipasi E-Voting & Feedback** | Fasilitas pemungutan suara digital (*1 SID = 1 Suara*) untuk menentukan prioritas program pangan bulanan, indikator perbandingan evaluasi Pre-Test vs Post-Test (39,8% ke 91,8%), formulir penyampaian kritik/saran, dan log aspirasi warga terbuka. |
 | **6** | **Cara Penggunaan & Dokumentasi Sistem** | Panduan interaktif di dalam aplikasi yang membagi petunjuk praktis berdasarkan 3 profil peran: Pengurus PKK (Admin), Warga/Anggota, dan Penguji/Juri Hackathon. |
 | **7** | **Profil Tim & Denah Lokasi Kemitraan** | Profil lengkap tim lintas disiplin UM Metro, Dosen Pendamping (Triana Asih, S.Pd., M.Pd.), Ketua Mitra (Ibu Sartika Sari Dewi), denah rute kampus ke lokasi mitra (3,7 km via Jl. Tawes), serta rincian rencana anggaran pendanaan. |
@@ -154,19 +160,16 @@ Berikut adalah panduan operasional praktis untuk mengoperasikan prototipe websit
 3. Tabel akan menyaring hanya keluarga yang paling mendesak membutuhkan bantuan (misal: Ibu Siti Aminah dengan skor 92/100 dan Ibu Dewi Lestari dengan skor 85/100).
 4. Penyaluran paket sembako dijamin 100% tepat sasaran dan bebas dari tuduhan pilih kasih.
 
-#### 5. Mencatat Transaksi Kas Koperasi Pangan
-1. Buka menu **"4. Koperasi & Log Bansos"**.
-2. Pada formulir di sisi kiri:
-   - Pilih nama anggota terdaftar pada menu tarik-turun.
-   - Pilih jenis transaksi:  
-     - *Simpan Tabung Anggota* (+ menambah saldo kas)  
-     - *Pinjaman Modal Usaha UKM* (- mengurangi kas)  
-     - *Distribusi Paket Pangan Bergizi* (pencatatan bantuan sembako)  
-     - *Setoran Panen Pekarangan* (+ menambah stok pangan kelompok)  
-   - Masukkan nominal Rupiah.
-   - Tuliskan rincian komoditas pada kolom keterangan (misal: *Paket Beras 10kg + Telur 2kg*).
-3. Klik **"Catat & Hubungkan ke SID Anggota"**.
-4. Saldo kas di pojok kanan atas akan langsung bertambah/berkurang, transaksi baru dengan kode unik (contoh: `TX-9082`) tercatat di buku besar digital, dan riwayat tersebut otomatis tersimpan di rekam jejak seumur hidup warga terkait.
+#### 5. Mengoperasikan Pasar Pangan Cerdas & Penyerapan Produk Produsen UKM (Sub-Tema F)
+1. Buka menu **"4. Pasar Pangan & Koperasi"** pada bilah navigasi kiri.
+2. **Melihat Prediksi Permintaan Pangan (AI Demand Forecasting):**
+   - Amati 3 kartu metrik di banner atas. Sistem otomatis mengkalkulasi kuota kebutuhan beras/telur gizi, target pasokan tempe/sayur, dan estimasi perputaran kas internal berdasarkan agregasi data KK kategori Prioritas & Waspada dari model k-NN.
+3. **Melakukan Penyerapan Pasar Produk Produsen Anggota:**
+   - Pada bagian katalog produk pangan lokal (Tempe Fortifikasi Ibu Sri Wahyuni, Sayur Ibu Sartika, Katering Stunting Ibu Ratna, atau Keripik Ibu Nurhayati), klik tombol **"Serap ke Koperasi / Beli"**.
+   - **Efek Real-Time:** Sisa stok produk di UI otomatis berkurang 5 unit, transaksi baru berlabel `SERAPAN PASAR UKM PANGAN` otomatis masuk ke buku besar digital, dan saldo pendapatan produsen yang bersangkutan otomatis bertambah di profil Single Identity (SID) miliknya.
+4. **Mencatat Transaksi Kas Manual (Alamat Keuangan Permanen):**
+   - Pada formulir di sisi kiri bawah, pilih nama anggota (SID) dan jenis transaksi (*Simpan Tabung*, *Serapan Pasar UKM*, *Pinjaman Modal*, dsb.), masukkan nominal, lalu klik **"Catat & Hubungkan ke SID Anggota"**.
+   - Saldo kas koperasi di pojok kanan atas akan langsung tersinkronisasi tanpa ada resiko selisih hitung (*human error*).
 
 ---
 
