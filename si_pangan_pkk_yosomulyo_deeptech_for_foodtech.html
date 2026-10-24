@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SI-PANGAN PKK Yosomulyo | Platform Ketahanan Pangan & Birokrasi Komunitas</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                    },
+                    colors: {
+                        civic: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                            950: '#052e16',
+                        },
+                        navy: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            letter-spacing: -0.01em;
+        }
+        
+        /* Clean professional active sidebar style */
+        .sidebar-active {
+            background-color: #064e3b !important;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+        .sidebar-active i {
+            color: #34d399 !important;
+        }
+        
+        /* Subtle interactive step card */
+        .step-active {
+            border-color: #047857 !important;
+            background-color: #ffffff !important;
+            box-shadow: 0 4px 12px -2px rgba(4, 120, 87, 0.12);
+        }
+        .step-active .step-badge {
+            background-color: #047857 !important;
+            color: #ffffff !important;
+        }
+
+        /* Clean scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Print formatting */
+        @media print {
+            aside, header, #toastContainer, .no-print {
+                display: none !important;
+            }
+            main {
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-600 selection:text-white bg-slate-50 text-slate-800">
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- Mobile Top Header -->
+    <header class="lg:hidden bg-slate-900 text-white px-4 py-3 flex items-center justify-between sticky top-0 z-40 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-white text-sm">
+                <i class="fa-solid fa-seedling"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-sm tracking-tight leading-tight">SI-PANGAN PKK</h1>
+                <p class="text-[11px] text-emerald-400">Yosomulyo • UM Metro 2026</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="openModal('guideModal')" class="px-2.5 py-1.5 rounded-lg bg-emerald-700/60 text-emerald-200 text-xs font-medium">
+                <i class="fa-solid fa-book-open mr-1"></i>Panduan
+            </button>
+            <button id="mobileMenuBtn" onclick="toggleMobileSidebar()" class="p-2 rounded-lg bg-slate-800 text-slate-200 hover:text-white focus:outline-none">
+                <i class="fa-solid fa-bars text-sm"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="flex min-h-screen relative">
+        <!-- Sidebar Backdrop (Mobile) -->
+        <div id="sidebarBackdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden lg:hidden"></div>
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed lg:sticky top-0 left-0 z-50 w-72 h-screen bg-slate-900 text-slate-300 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0 shrink-0 border-r border-slate-800/80">
+            <!-- Brand Header -->
+            <div class="p-5 border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-700 flex items-center justify-center text-white text-lg shadow-sm">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-bold text-white text-base tracking-tight">SI-PANGAN</span>
+                            <span class="px-1.5 py-0.2 bg-emerald-500/20 text-emerald-400 text-[10px] font-semibold rounded border border-emerald-500/30">PKK RT 13</span>
+                        </div>
+                        <p class="text-xs text-slate-400">Kel. Yosomulyo • UM Metro</p>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
+                    <span>Inovasi Pangan & Birokrasi</span>
+                    <span class="text-emerald-400 font-medium">TKT 4-5 Valid</span>
+                </div>
+            </div>
+
+            <!-- Quick Guide Button in Sidebar -->
+            <div class="px-3 pt-3">
+                <button onclick="openModal('guideModal')" class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-emerald-950/70 border border-emerald-800/60 text-emerald-300 hover:bg-emerald-900/60 transition text-xs font-semibold">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question text-emerald-400"></i>
+                        <span>Panduan Penggunaan</span>
+                    </div>
+                    <span class="text-[10px] bg-emerald-800/80 text-emerald-200 px-1.5 py-0.5 rounded">Buka</span>
+                </button>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 px-3 py-3 space-y-1 overflow-y-auto">
+                <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 my-2">Menu Platform</p>
+                
+                <button onclick="switchTab('alur')" id="nav-alur" class="nav-btn sidebar-active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors hover:bg-slate-800 text-left">
+                    <i class="fa-solid fa-sitemap w-4 text-center text-slate-400"></i>
+                    <div>
+                        <div class="leading-none text-slate-200">1. Alur Inovasi Hackathon</div>
+                        <span class="text-[10px] text-slate-400">6 Tahap Problem-Solution Fit</span>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors hover:bg-slate-800 text-left">
+                    <i class="fa-solid fa-chart-column w-4 text-center text-slate-400"></i>
+                    <div>
+                        <div class="leading-none text-slate-200">2. Dashboard Pangan RT 13</div>
+                        <span class="text-[10px] text-slate-400">Metrik Kerawanan & Gizi</span>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('singleid')" id="nav-singleid" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors hover:bg-slate-800 text-left">
+                    <i class="fa-solid fa-id-card w-4 text-center text-slate-400"></i>
+                    <div>
+                        <div class="leading-none text-slate-200">3. Single Identity & AI</div>
+                        <span class="text-[10px] text-slate-400">Scoring ML & OCR Buku Kas</span>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('koperasi')" id="nav-koperasi" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors hover:bg-slate-800 text-left">
+                    <i class="fa-solid fa-vault w-4 text-center text-slate-400"></i>
+                    <div>
+                        <div class="leading-none text-slate-200">4. Koperasi & Log Bansos</div>
+                        <span class="text-[10px] text-slate-400">Alamat Keuangan Permanen</span>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('feedback')" id="nav-feedback" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors hover:bg-slate-800 text-left">
+                    <i class="fa-solid fa-check-to-slot w-4 text-center text-slate-400"></i>
+                    <div>
+                        <div class="leading-none text-slate-200">5. E-Voting & Aspirasi</div>
+                        <span class="text-[10px] text-slate-400">Demokrasi 1 SID = 1 Suara</span>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('panduan')" id="nav-panduan" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors hover:bg-slate-800 text-left">
+                    <i class="fa-solid fa-book w-4 text-center text-slate-400"></i>
+                    <div>
+                        <div class="leading-none text-slate-200">6. Cara Penggunaan & Fitur</div>
+                        <span class="text-[10px] text-slate-400">Panduan Lengkap Pengguna</span>
+                    </div>
+                </button>
+
+                <button onclick="switchTab('tim')" id="nav-tim" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors hover:bg-slate-800 text-left">
+                    <i class="fa-solid fa-users w-4 text-center text-slate-400"></i>
+                    <div>
+                        <div class="leading-none text-slate-200">7. Profil Tim & Lokasi</div>
+                        <span class="text-[10px] text-slate-400">UM Metro & PKK Anggrek 1</span>
+                    </div>
+                </button>
+            </nav>
+
+            <!-- Active Mitra Info Footer -->
+            <div class="p-4 border-t border-slate-800 bg-slate-950/70">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-emerald-900 border border-emerald-700 flex items-center justify-center text-emerald-300 font-bold text-xs">
+                        SD
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="text-xs font-semibold text-white truncate">Ibu Sartika Sari Dewi</p>
+                        <p class="text-[11px] text-slate-400 truncate">Ketua PKK Anggrek 1 RT 13</p>
+                    </div>
+                </div>
+                <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-800/80">
+                    <span>Pilot Basis Data:</span>
+                    <span class="text-emerald-400 font-medium">40 KK Terverifikasi</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 min-w-0 flex flex-col bg-slate-50">
+            <!-- Top Bar Desktop -->
+            <div class="bg-white border-b border-slate-200/90 px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-30">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 text-xs font-medium bg-slate-100 text-slate-700 rounded-md border border-slate-200">
+                            Universitas Muhammadiyah Metro
+                        </span>
+                        <span class="text-slate-300">•</span>
+                        <span class="text-xs text-slate-600 font-medium">
+                            Mitra Sasaran: PKK Anggrek 1 RT 13 RW 05 Kelurahan Yosomulyo
+                        </span>
+                    </div>
+                    <h2 id="pageHeaderTitle" class="text-lg sm:text-xl font-bold text-slate-900 mt-0.5 tracking-tight">
+                        Alur Inovasi Hackathon DeepTech for FoodTech 2026
+                    </h2>
+                </div>
+
+                <div class="flex items-center gap-2.5">
+                    <button onclick="openModal('guideModal')" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-semibold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>Cara Penggunaan</span>
+                    </button>
+                    <button onclick="openModal('reportModal')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-semibold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Cetak Rekap</span>
+                    </button>
+                    <button onclick="openPitchModal()" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-semibold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-stopwatch text-slate-600"></i>
+                        <span>Timer Demo</span>
+                    </button>
+                    <button onclick="switchTab('singleid'); openAiSimulatorModal();" class="px-3.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-xs">
+                        <i class="fa-solid fa-calculator"></i>
+                        <span>Uji AI-DSS</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Container -->
+            <div class="p-4 sm:p-8 space-y-6 max-w-7xl w-full mx-auto flex-1">
+
+                <!-- ==========================================
+                     TAB 1: ALUR INOVASI HACKATHON (OVERVIEW)
+                     ========================================== -->
+                <section id="tab-alur" class="tab-section space-y-6">
+                    <!-- Clean Hero Context Card (No Cheesy Neon Gradients) -->
+                    <div class="rounded-2xl bg-white p-6 sm:p-7 border border-slate-200/90 shadow-xs">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                            <div class="lg:col-span-8 space-y-3">
+                                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
+                                    <i class="fa-solid fa-award"></i> Riset Terapan PKM-PM & Hackathon DeepTech FoodTech UM Metro 2026
+                                </div>
+                                <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 leading-snug">
+                                    Satu Identitas Warga (Single Identity) & Sistem Rekomendasi Cerdas untuk Ketahanan Pangan Komunitas PKK
+                                </h3>
+                                <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">
+                                    Menjawab fakta empiris di lapangan bahwa <strong>40% penyaluran bantuan pangan dan sosial rentan tidak tepat sasaran</strong> akibat duplikasi data serta pencatatan manual buku kas di <strong>PKK Anggrek 1 RT 13 Kelurahan Yosomulyo (3.009 KK)</strong>. Platform ini mengintegrasikan satu identitas tunggal terverifikasi dengan algoritma pembobotan objektif (AI-DSS) dan digitalisasi arsip fisik (OCR).
+                                </p>
+                                <div class="pt-2 flex flex-wrap gap-2.5">
+                                    <button onclick="switchTab('singleid')" class="px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs sm:text-sm transition flex items-center gap-2">
+                                        <i class="fa-solid fa-table-list"></i> Buka Direktori Single Identity
+                                    </button>
+                                    <button onclick="switchTab('dashboard')" class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs sm:text-sm transition flex items-center gap-2 border border-slate-200">
+                                        <i class="fa-solid fa-chart-line"></i> Pantau Dashboard Metrik
+                                    </button>
+                                    <button onclick="switchTab('panduan')" class="px-4 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-600 font-medium text-xs sm:text-sm transition flex items-center gap-2 border border-slate-200">
+                                        <i class="fa-solid fa-book-open"></i> Pelajari Cara Kerja Sistem
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Key Context Numbers -->
+                            <div class="lg:col-span-4 bg-slate-50 rounded-xl p-4 border border-slate-200/80 space-y-3">
+                                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                                    <span class="text-xs font-semibold text-slate-600">Profil Wilayah & Uji Coba</span>
+                                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold text-[11px] rounded">Kel. Yosomulyo</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-center">
+                                    <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                        <p class="text-lg font-bold text-slate-900">3.009 KK</p>
+                                        <p class="text-[11px] text-slate-500">Populasi Yosomulyo</p>
+                                    </div>
+                                    <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                        <p class="text-lg font-bold text-emerald-700">52 PKK</p>
+                                        <p class="text-[11px] text-slate-500">Target Replikasi</p>
+                                    </div>
+                                    <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                        <p class="text-lg font-bold text-slate-900">40 KK</p>
+                                        <p class="text-[11px] text-slate-500">Pilot PKK RT 13</p>
+                                    </div>
+                                    <div class="bg-white p-2.5 rounded-lg border border-slate-200">
+                                        <p class="text-lg font-bold text-emerald-700">91,8%</p>
+                                        <p class="text-[11px] text-slate-500">Post-Test Mitra (>80%)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6-Step Problem-Solution Flow (Sesuai Gambar 1 Panduan Hackathon) -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-5">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Alur Berpikir Inovasi (Gambar 1 Panduan UM Metro)</span>
+                                <h3 class="text-base sm:text-lg font-bold text-slate-900">Enam Tahapan Penyelarasan Masalah & Solusi (Klik untuk Membaca Detail)</h3>
+                            </div>
+                            <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-md font-medium self-start border border-slate-200">
+                                <i class="fa-solid fa-hand-pointer text-emerald-700 mr-1"></i>Pilih salah satu tahapan
+                            </span>
+                        </div>
+
+                        <!-- 6 Step Cards -->
+                        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3" id="flowStepCards">
+                            <!-- Step 1 -->
+                            <button onclick="selectFlowStep(0)" id="step-btn-0" class="step-card step-active text-left p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 transition flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="step-badge w-6 h-6 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs">
+                                            1
+                                        </span>
+                                        <span class="text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">Masalah</span>
+                                    </div>
+                                    <h4 class="font-bold text-slate-900 text-xs">MASALAH NYATA</h4>
+                                    <p class="text-[11px] text-slate-500 mt-1 leading-snug">40% bansos rawan salah sasaran & buku manual.</p>
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-medium text-emerald-700">
+                                    <span>Detail Masalah</span>
+                                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </div>
+                            </button>
+
+                            <!-- Step 2 -->
+                            <button onclick="selectFlowStep(1)" id="step-btn-1" class="step-card text-left p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 transition flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="step-badge w-6 h-6 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs">
+                                            2
+                                        </span>
+                                        <span class="text-[10px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">Kebutuhan</span>
+                                    </div>
+                                    <h4 class="font-bold text-slate-900 text-xs">KEBUTUHAN MITRA</h4>
+                                    <p class="text-[11px] text-slate-500 mt-1 leading-snug">Satu data valid & transparansi kas koperasi.</p>
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-medium text-emerald-700">
+                                    <span>Persona Warga</span>
+                                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </div>
+                            </button>
+
+                            <!-- Step 3 -->
+                            <button onclick="selectFlowStep(2)" id="step-btn-2" class="step-card text-left p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 transition flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="step-badge w-6 h-6 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs">
+                                            3
+                                        </span>
+                                        <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Solusi</span>
+                                    </div>
+                                    <h4 class="font-bold text-slate-900 text-xs">SOLUSI DEEPTECH</h4>
+                                    <p class="text-[11px] text-slate-500 mt-1 leading-snug">Single ID, AI-DSS Pembobotan & AI-OCR.</p>
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-medium text-emerald-700">
+                                    <span>Arsitektur Sistem</span>
+                                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </div>
+                            </button>
+
+                            <!-- Step 4 -->
+                            <button onclick="selectFlowStep(3)" id="step-btn-3" class="step-card text-left p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 transition flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="step-badge w-6 h-6 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs">
+                                            4
+                                        </span>
+                                        <span class="text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">Prototipe</span>
+                                    </div>
+                                    <h4 class="font-bold text-slate-900 text-xs">PROTOTIPE MVP</h4>
+                                    <p class="text-[11px] text-slate-500 mt-1 leading-snug">Aplikasi Web & Mobile Responsive (TKT 4-5).</p>
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-medium text-emerald-700">
+                                    <span>Fitur Aplikasi</span>
+                                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </div>
+                            </button>
+
+                            <!-- Step 5 -->
+                            <button onclick="selectFlowStep(4)" id="step-btn-4" class="step-card text-left p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 transition flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="step-badge w-6 h-6 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs">
+                                            5
+                                        </span>
+                                        <span class="text-[10px] font-semibold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200">Validasi</span>
+                                    </div>
+                                    <h4 class="font-bold text-slate-900 text-xs">UJI COBA MITRA</h4>
+                                    <p class="text-[11px] text-slate-500 mt-1 leading-snug">Pre-Test 39,8% &rarr; Post-Test 91,8% (40 KK).</p>
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-medium text-emerald-700">
+                                    <span>Evaluasi Lapangan</span>
+                                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </div>
+                            </button>
+
+                            <!-- Step 6 -->
+                            <button onclick="selectFlowStep(5)" id="step-btn-5" class="step-card text-left p-3.5 rounded-xl border border-slate-200 hover:border-slate-300 transition flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="step-badge w-6 h-6 rounded-md bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-xs">
+                                            6
+                                        </span>
+                                        <span class="text-[10px] font-semibold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200">Roadmap</span>
+                                    </div>
+                                    <h4 class="font-bold text-slate-900 text-xs">HILIRISASI</h4>
+                                    <p class="text-[11px] text-slate-500 mt-1 leading-snug">Replikasi ke 52 PKK Yosomulyo & HKI.</p>
+                                </div>
+                                <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] font-medium text-emerald-700">
+                                    <span>Skalabilitas</span>
+                                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Dynamic Detail Pane for Selected Step -->
+                        <div id="flowStepDetail" class="mt-5 p-5 rounded-xl bg-slate-50 border border-slate-200/90 transition-all">
+                            <!-- Populated dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Problem-Solution Fit Matrix Table -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Matriks Keselarasan PKM-PM ke DeepTech FoodTech</span>
+                                <h3 class="text-base font-bold text-slate-900">4 Masalah Lapangan di PKK Yosomulyo vs Solusi Teknologi</h3>
+                            </div>
+                            <span class="text-xs text-slate-500 font-medium">Berdasarkan Observasi & Wawancara Bu Sartika</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">
+                                <div class="flex items-start gap-3">
+                                    <span class="w-7 h-7 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-xs shrink-0">1</span>
+                                    <div>
+                                        <span class="text-[11px] font-semibold text-rose-700 uppercase">Distribusi Bantuan Belum Tepat Sasaran</span>
+                                        <p class="text-xs text-slate-700 mt-0.5 font-medium">Penentuan penerima paket sembako pangan dan bansos masih mengandalkan subjektivitas pengurus tanpa indikator terukur, memicu kecemburuan sosial.</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between text-xs">
+                                    <span class="text-emerald-700 font-semibold"><i class="fa-solid fa-check mr-1"></i>Solusi: AI-DSS Multi-Variabel</span>
+                                    <span class="text-slate-500 font-medium">Skor Objektif 0-100</span>
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">
+                                <div class="flex items-start gap-3">
+                                    <span class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs shrink-0">2</span>
+                                    <div>
+                                        <span class="text-[11px] font-semibold text-amber-700 uppercase">Pencatatan Kerawanan Pangan Masih Manual</span>
+                                        <p class="text-xs text-slate-700 mt-0.5 font-medium">Buku tulis manual menyulitkan update ketika ada perubahan tanggungan keluarga, anak balita, atau penurunan pendapatan UKM olahan pangan.</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between text-xs">
+                                    <span class="text-emerald-700 font-semibold"><i class="fa-solid fa-check mr-1"></i>Solusi: Single Identity + Rekam Jejak</span>
+                                    <span class="text-slate-500 font-medium">Pemutakhiran Real-Time</span>
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">
+                                <div class="flex items-start gap-3">
+                                    <span class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs shrink-0">3</span>
+                                    <div>
+                                        <span class="text-[11px] font-semibold text-blue-700 uppercase">Human Error & Kurang Transparan di Koperasi</span>
+                                        <p class="text-xs text-slate-700 mt-0.5 font-medium">Iuran simpan pinjam modal UKM pangan anggota dicatat manual di buku kas, rawan selisih hitung dan sulit diaudit oleh anggota.</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between text-xs">
+                                    <span class="text-emerald-700 font-semibold"><i class="fa-solid fa-check mr-1"></i>Solusi: Alamat Keuangan Permanen SID</span>
+                                    <span class="text-slate-500 font-medium">0% Selisih Hitung</span>
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">
+                                <div class="flex items-start gap-3">
+                                    <span class="w-7 h-7 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xs shrink-0">4</span>
+                                    <div>
+                                        <span class="text-[11px] font-semibold text-purple-700 uppercase">Birokrasi Kaku & Minim Ruang Partisipasi</span>
+                                        <p class="text-xs text-slate-700 mt-0.5 font-medium">Anggota PKK sulit menyampaikan aspirasi program pangan, komplain bantuan, atau memilih program prioritas secara demokratis.</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between text-xs">
+                                    <span class="text-emerald-700 font-semibold"><i class="fa-solid fa-check mr-1"></i>Solusi: Portal E-Voting & Feedback Warga</span>
+                                    <span class="text-slate-500 font-medium">1 SID = 1 Suara Sah</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                
+            </div>
+        </main>
+    </div>
+<!-- ==========================================
+         JAVASCRIPT LOGIC & INTERACTIVE DATA
+         ========================================== -->
+    <script>
+        // 1. DATA TAHAPAN ALUR HACKATHON (GAMBAR 1 PANDUAN RESMI)
+        const flowStepsData = [
+            {
+                badge: "TAHAP 1 • MASALAH NYATA DI LAPANGAN",
+                title: "40% Bantuan Pangan Tidak Tepat Sasaran & Pembukuan PKK Manual",
+                points: [
+                    "Berdasarkan data nasional dan observasi langsung di PKK Anggrek 1 RT 13 RW 05 Kelurahan Yosomulyo, banyaknya model kartu identitas yang tidak sinkron memicu sekitar 40% bansos/sembako salah sasaran.",
+                    "Kelurahan Yosomulyo memiliki populasi 3.009 KK (10.020 jiwa) dan 52 kelompok PKK. Namun pencatatan profil warga, koperasi simpan pinjam, dan stok pangan di tingkat RT masih ditulis tangan di buku kas buku tulis.",
+                    "Dampaknya: pemutakhiran data lambat, rawan salah hitung kas, minim ruang partisipasi, dan penentuan penerima bantuan rentan politisasi/subjektif."
+                ],
+                metric: "Lokasi Mitra: PKK Anggrek 1 RT 13 RW 05 Kelurahan Yosomulyo (40 KK Pilot)"
+            },
+            {
+                badge: "TAHAP 2 • KEBUTUHAN PENGGUNA SASARAN",
+                title: "Kebutuhan Pengurus (Ibu Sartika) & Warga Pelaku UKM Pangan",
+                points: [
+                    "Pengurus PKK membutuhkan satu data terpadu seumur hidup agar tidak perlu mendata ulang secara manual setiap ada program penyaluran beras/subsidi pangan.",
+                    "Anggota PKK (mayoritas ibu rumah tangga & pelaku UKM pangan olahan) membutuhkan akses pencatatan koperasi simpan pinjam yang transparan dan dapat dicek kapan pun.",
+                    "Warga membutuhkan ruang partisipasi demokratis untuk memberikan umpan balik serta memilih program prioritas pangan secara transparan."
+                ],
+                metric: "Pengguna Sasaran: 40 Anggota PKK Anggrek 1 & 52 Kelompok PKK se-Yosomulyo"
+            },
+            {
+                badge: "TAHAP 3 • RANCANGAN SOLUSI BERBASIS DEEPTECH",
+                title: "Integrasi Single Identity, Machine Learning DSS, dan AI-OCR",
+                points: [
+                    "Single Identity Pangan (SID-Pangan): Satu identitas digital seumur hidup yang merekam riwayat sosial-ekonomi, jumlah tanggungan, konsumsi gizi, serta alamat keuangan permanen.",
+                    "Machine Learning Decision Support System (AI-DSS): Algoritma pembobotan multi-kriteria untuk menghitung skor kerawanan pangan (0-100) secara objektif tanpa campur tangan subjektivitas.",
+                    "Computer Vision OCR: Pemindaian citra lembaran buku tulis manual PKK menjadi tabel digital tervalidasi dalam hitungan detik."
+                ],
+                metric: "Teknologi Inti: Graph Single Identity + Multi-Criteria AI-DSS + Vision OCR"
+            },
+            {
+                badge: "TAHAP 4 • PENGEMBANGAN PURWARUPA / MVP (TKT 4-5)",
+                title: "Platform Web & Mobile Responsive SI-PANGAN PKK Yosomulyo",
+                points: [
+                    "Aplikasi dibangun dengan antarmuka responsif yang dapat dioperasikan melalui laptop maupun smartphone oleh pengurus dan anggota.",
+                    "Mengimplementasikan 7 modul fungsional: Alur Inovasi, Dashboard Real-time, Database Single Identity, Koperasi Digital, Portal E-Voting, Modul Panduan Mitra, dan Peta Rute Kampus-Mitra.",
+                    "Telah divalidasi pada lingkungan relevan bersama 40 anggota PKK Anggrek 1 RT 13 Kelurahan Yosomulyo."
+                ],
+                metric: "Kesiapan Teknologi: Level TKT 4 menuju 5 (Siap Uji Lapangan Penuh)"
+            },
+            {
+                badge: "TAHAP 5 • METODE UJI COBA & VALIDASI LAPANGAN",
+                title: "Hasil Pre-Test vs Post-Test pada 40 Anggota PKK Anggrek 1",
+                points: [
+                    "Pelaksanaan uji coba mencakup pengisian instrumen Pre-Test, sosialisasi modul pedoman mitra, praktik penggunaan fitur, dan evaluasi Post-Test.",
+                    "Standar indikator keberhasilan proposal menetapkan sistem layak diterapkan apabila rata-rata penilaian mencapai minimal 80%.",
+                    "Hasil evaluasi mitra menunjukkan lonjakan drastis dari 39,8% (Pre-Test) menjadi 91,8% (Post-Test), mengonfirmasi penerimaan teknologi yang sangat tinggi."
+                ],
+                metric: "Hasil Evaluasi Mitra: 91,8% Kategori Sangat Baik (>80% Target Terpenuhi)"
+            },
+            {
+                badge: "TAHAP 6 • RENCANA HILIRISASI & KOMERSIALISASI",
+                title: "Replikasi ke 52 PKK se-Yosomulyo & Integrasi Satu Data Metro",
+                points: [
+                    "Fase 1 (Bulan 1-4): Penerapan penuh di PKK Anggrek 1 & 2 RT 13 serta pengajuan Hak Cipta (HKI) Aplikasi & Modul Panduan Mitra.",
+                    "Fase 2 (Bulan 5-8): Replikasi bertahap ke 52 Kelompok PKK di Kelurahan Yosomulyo menjangkau 3.009 KK.",
+                    "Fase 3 (Bulan 9-12): Integrasi API Satu Data Ketahanan Pangan dengan Dinas Ketahanan Pangan dan Koperasi Pemerintah Kota Metro."
+                ],
+                metric: "Target Luaran: Produk Siap Pakai, HKI Terdaftar, dan Komersialisasi SaaS Komunitas"
+            }
+        ];
+
+        // 2. DATA SINGLE IDENTITY ANGGOTA PKK ANGGREK 1 RT 13
+        let membersData = [
+            {
+                sid: "SID-PKK-1301",
+                name: "Ibu Sartika Sari Dewi",
+                role: "Ketua PKK Anggrek 1 & 2",
+                ukm: "Koordinator Koperasi & UKM Pangan Sehat",
+                income: 3800000,
+                dependents: 2,
+                gardenScore: 90,
+                ukmScore: 70,
+                aiScore: 18,
+                status: "MANDIRI PANGAN",
+                recommendation: "Penyedia Lumbung Pangan & Pengelola Kas",
+                savings: 2450000,
+                history: [
+                    "24 Mar 2022: Menandatangani kemitraan riset PKM-PM bersama Universitas Muhammadiyah Metro.",
+                    "12 Sep 2026: Penerbitan Single Identity & verifikasi buku kas koperasi PKK Anggrek 1.",
+                    "18 Okt 2026: Setoran panen sayur pekarangan mandiri surplus 15 Kg ke lumbung RT 13."
+                ]
+            },
+            {
+                sid: "SID-PKK-1302",
+                name: "Ibu Siti Aminah",
+                role: "Anggota PKK RT 13",
+                ukm: "Buruh Cuci & Penjual Sayur Keliling",
+                income: 950000,
+                dependents: 5,
+                gardenScore: 25,
+                ukmScore: 85,
+                aiScore: 92,
+                status: "PRIORITAS BANTUAN",
+                recommendation: "Paket Beras Fortifikasi 10kg + Bantuan Modal UKM",
+                savings: 320000,
+                history: [
+                    "05 Agu 2026: Terdaftar Single Identity RT 13 RW 05 (Sinkronisasi KK & DTKS).",
+                    "19 Sep 2026: AI-DSS mendeteksi kenaikan tanggungan (5 jiwa) & pendapatan < garis kemiskinan.",
+                    "15 Okt 2026: Menerima paket pangan bergizi tepat sasaran (Beras 10kg + Telur 2kg)."
+                ]
+            },
+            {
+                sid: "SID-PKK-1303",
+                name: "Ibu Sri Wahyuni",
+                role: "Anggota PKK RT 13",
+                ukm: "UKM Pembuatan Tempe & Tahu Rumahan",
+                income: 1350000,
+                dependents: 4,
+                gardenScore: 40,
+                ukmScore: 80,
+                aiScore: 79,
+                status: "PRIORITAS BANTUAN",
+                recommendation: "Subsidi Bahan Baku Kedelai & Pinjaman Lunak PKK",
+                savings: 610000,
+                history: [
+                    "10 Agu 2026: Registrasi Single Identity & pemetaan usaha mikro olahan pangan.",
+                    "02 Okt 2026: Disetujui pinjaman modal UKM Tempe Rp 1.000.000 bebas bunga.",
+                    "20 Okt 2026: Menerima bantuan bibit pekarangan cabai & terong."
+                ]
+            },
+            {
+                sid: "SID-PKK-1304",
+                name: "Ibu Nurhayati",
+                role: "Anggota PKK RT 13",
+                ukm: "UKM Keripik Pisang & Singkong Metro",
+                income: 2100000,
+                dependents: 3,
+                gardenScore: 60,
+                ukmScore: 60,
+                aiScore: 54,
+                status: "WASPADA PANGAN",
+                recommendation: "Pendampingan Kebun Pekarangan & Tabungan Koperasi",
+                savings: 1150000,
+                history: [
+                    "14 Agu 2026: Terverifikasi Single Identity dan integrasi alamat keuangan permanen.",
+                    "28 Sep 2026: Setoran simpan tabung koperasi PKK rutin Rp 150.000."
+                ]
+            },
+            {
+                sid: "SID-PKK-1305",
+                name: "Ibu Ratna Kumala",
+                role: "Bendahara PKK Anggrek 1",
+                ukm: "Usaha Katering Sehat & Olahan Toga",
+                income: 3400000,
+                dependents: 2,
+                gardenScore: 85,
+                ukmScore: 50,
+                aiScore: 24,
+                status: "MANDIRI PANGAN",
+                recommendation: "Kontributor Lumbung Pangan RT 13",
+                savings: 1980000,
+                history: [
+                    "01 Sep 2026: Pelatihan modul pembukuan digital koperasi bebas human error.",
+                    "11 Okt 2026: Menyalurkan 10 paket sayur organik segar ke kas lumbung pangan RT 13."
+                ]
+            },
+            {
+                sid: "SID-PKK-1306",
+                name: "Ibu Dewi Lestari",
+                role: "Anggota PKK RT 13",
+                ukm: "Penjahit Rumahan & Warung Sembako Kecil",
+                income: 1150000,
+                dependents: 4,
+                gardenScore: 30,
+                ukmScore: 75,
+                aiScore: 85,
+                status: "PRIORITAS BANTUAN",
+                recommendation: "Prioritas Paket Pangan & Subsidi Gizi Balita",
+                savings: 410000,
+                history: [
+                    "18 Agu 2026: Terverifikasi Single Identity RT 13 Kelurahan Yosomulyo.",
+                    "15 Okt 2026: Direkomendasikan oleh AI-DSS sebagai penerima bantuan beras tahap II."
+                ]
+            },
+            {
+                sid: "SID-PKK-1307",
+                name: "Ibu Endang Sulastri",
+                role: "Anggota PKK RT 13",
+                ukm: "UKM Jamu Tradisional & Tanaman Toga",
+                income: 1950000,
+                dependents: 3,
+                gardenScore: 70,
+                ukmScore: 65,
+                aiScore: 48,
+                status: "WASPADA PANGAN",
+                recommendation: "Pelatihan Pengemasan Jamu & Kebun Gizi",
+                savings: 890000,
+                history: [
+                    "22 Agu 2026: Verifikasi Single Identity & sinergi kelompok dasawisma RT 13.",
+                    "09 Okt 2026: Mengikuti pendampingan budidaya tanaman obat pekarangan."
+                ]
+            }
+        ];
+
+        // 3. DATA TRANSAKSI KAS KOPERASI & BANSOS
+        let coopBalance = 24500000;
+        let transactionsData = [
+            {
+                hash: "TX-9081",
+                date: "24 Okt 2026, 09:15",
+                sid: "SID-PKK-1301",
+                name: "Ibu Sartika Sari Dewi",
+                type: "SIMPANAN WAJIB/TABUNG",
+                amount: 250000,
+                note: "Setoran Simpan Tabung Bulanan Pengurus"
+            },
+            {
+                hash: "TX-9080",
+                date: "22 Okt 2026, 14:30",
+                sid: "SID-PKK-1302",
+                name: "Ibu Siti Aminah",
+                type: "DISTRIBUSI BANTUAN PANGAN",
+                amount: 300000,
+                note: "Paket Beras 10kg + Telur 2kg + Minyak (Rekomendasi AI Skor 92)"
+            },
+            {
+                hash: "TX-9079",
+                date: "20 Okt 2026, 16:05",
+                sid: "SID-PKK-1303",
+                name: "Ibu Sri Wahyuni",
+                type: "PINJAMAN MODAL UKM PANGAN",
+                amount: 1000000,
+                note: "Pinjaman Lunak Bahan Baku Kedelai UKM Tempe"
+            },
+            {
+                hash: "TX-9078",
+                date: "18 Okt 2026, 10:20",
+                sid: "SID-PKK-1305",
+                name: "Ibu Ratna Kumala",
+                type: "SIMPANAN WAJIB/TABUNG",
+                amount: 350000,
+                note: "Tabungan Koperasi Pangan PKK RT 13"
+            }
+        ];
+
+        // 4. DATA E-VOTING & FEEDBACK WARGA
+        let votingPrograms = [
+            {
+                id: 1,
+                title: "Pengadaan Bibit Lele & Sayur Akuaponik Pekarangan RT 13",
+                desc: "Pemanfaatan lahan sempit warga untuk sumber protein ikan dan sayur organik mandiri",
+                votes: 19
+            },
+            {
+                id: 2,
+                title: "Subsidi Bahan Baku Kedelai & Kemasan bagi UKM Pangan PKK",
+                desc: "Mendukung 15 pelaku UKM olahan pangan rumah tangga (tempe, tahu, keripik) di RT 13",
+                votes: 13
+            },
+            {
+                id: 3,
+                title: "Lumbung Beras Fortifikasi & Paket Gizi Balita Pencegah Stunting",
+                desc: "Cadangan pangan darurat khusus keluarga kategori Prioritas Utama AI-DSS",
+                votes: 8
+            }
+        ];
+
+        let feedbacksData = [
+            {
+                name: "Ibu Siti Aminah",
+                sid: "SID-PKK-1302",
+                category: "Penyaluran Bantuan Pangan",
+                rating: 5,
+                date: "23 Okt 2026",
+                message: "Dengan sistem Single Identity ini, keluarga kami tidak lagi terlewat saat ada pembagian beras dan telur. Bantuan terasa adil dan tidak ada rasa cemburu sosial antarwarga."
+            },
+            {
+                name: "Ibu Nurhayati",
+                sid: "SID-PKK-1304",
+                category: "Transparansi Koperasi Simpan Pinjam",
+                rating: 5,
+                date: "21 Okt 2026",
+                message: "Saldo tabungan koperasi PKK dan rincian pinjaman modal sekarang bisa langsung dicek, tidak takut salah tulis di buku catatan manual lagi."
+            }
+        ];
+
+        // ==========================================
+        // TAB SWITCHING & TITLES
+        // ==========================================
+        const tabTitles = {
+            'alur': 'Alur Inovasi Hackathon DeepTech for FoodTech 2026',
+            'dashboard': 'Dashboard Ketahanan Pangan & Birokrasi Digital PKK',
+            'singleid': 'Direktori Single Identity & Mesin Rekomendasi AI-DSS',
+            'koperasi': 'Koperasi Simpan Pinjam & Buku Kas Transparan',
+            'feedback': 'Ruang Partisipasi Demokratis E-Voting & Feedback Warga',
+            'panduan': 'Cara Penggunaan & Dokumentasi Fitur Platform',
+            'tim': 'Profil Tim Inovator UM Metro & Lokasi Mitra PKK'
+        };
+
+        let chartsInitialized = false;
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+            const targetSection = document.getElementById(`tab-${tabId}`);
+            if (targetSection) targetSection.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('sidebar-active'));
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) activeBtn.classList.add('sidebar-active');
+
+            const headerTitle = document.getElementById('pageHeaderTitle');
+            if (headerTitle) headerTitle.textContent = tabTitles[tabId] || 'SI-PANGAN PKK Yosomulyo';
+
+            if (tabId === 'dashboard' && !chartsInitialized) {
+                setTimeout(initDashboardCharts, 50);
+                chartsInitialized = true;
+            }
+
+            // Close mobile sidebar if open
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.classList.contains('-translate-x-full') && window.innerWidth < 1024) {
+                toggleMobileSidebar();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            sidebar.classList.toggle('-translate-x-full');
+            backdrop.classList.toggle('hidden');
+        }
+
+        // ==========================================
+        // GUIDE ROLE TABS (PANDUAN PENGGUNAAN)
+        // ==========================================
+        function switchGuideRole(role) {
+            document.querySelectorAll('.guide-role-btn').forEach(b => {
+                b.classList.remove('border-emerald-700', 'text-emerald-800', 'font-bold');
+                b.classList.add('text-slate-500', 'border-transparent', 'font-medium');
+            });
+            const activeBtn = document.getElementById(`btn-guide-${role}`);
+            if (activeBtn) {
+                activeBtn.classList.add('border-emerald-700', 'text-emerald-800', 'font-bold');
+                activeBtn.classList.remove('text-slate-500', 'border-transparent', 'font-medium');
+            }
+
+            document.querySelectorAll('.guide-role-content').forEach(c => c.classList.add('hidden'));
+            const activeContent = document.getElementById(`guide-content-${role}`);
+            if (activeContent) activeContent.classList.remove('hidden');
+        }
+
+        // ==========================================
+        // RENDER 6-STEP HACKATHON FLOW
+        // ==========================================
+        function selectFlowStep(index) {
+            document.querySelectorAll('.step-card').forEach((card, i) => {
+                if (i === index) {
+                    card.classList.add('step-active');
+                } else {
+                    card.classList.remove('step-active');
+                }
+            });
+
+            const step = flowStepsData[index];
+            const container = document.getElementById('flowStepDetail');
+            const pointsHtml = step.points.map(p => `
+                <li class="flex items-start gap-2 text-xs sm:text-sm text-slate-700">
+                    <i class="fa-solid fa-check text-emerald-700 mt-1 shrink-0 text-xs"></i>
+                    <span>${p}</span>
+                </li>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="space-y-2 max-w-3xl">
+                        <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">${step.badge}</span>
+                        <h4 class="text-base sm:text-lg font-bold text-slate-900">${step.title}</h4>
+                        <ul class="space-y-1.5 pt-1">
+                            ${pointsHtml}
+                        </ul>
+                    </div>
+                    <div class="p-4 rounded-xl bg-white border border-slate-200 shrink-0 lg:w-72 space-y-2.5 shadow-2xs">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Indikator Terukur Tahap ${index + 1}</span>
+                        <p class="text-xs font-semibold text-slate-800">${step.metric}</p>
+                        <button onclick="switchTab('${index === 2 || index === 3 ? 'singleid' : index === 4 ? 'feedback' : index === 5 ? 'tim' : 'dashboard'}')" class="w-full py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs transition">
+                            Lihat Modul di Aplikasi <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // RENDER SINGLE IDENTITY TABLE & DETAIL
+        // ==========================================
+        function getStatusBadge(status) {
+            if (status === 'PRIORITAS BANTUAN') {
+                return `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Prioritas Utama</span>`;
+            }
+            if (status === 'WASPADA PANGAN') {
+                return `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200"><i class="fa-solid fa-circle-exclamation mr-1"></i>Waspada Pangan</span>`;
+            }
+            return `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200"><i class="fa-solid fa-shield-heart mr-1"></i>Mandiri Pangan</span>`;
+        }
+
+        function renderMembersTable() {
+            const query = (document.getElementById('searchMemberInput')?.value || '').toLowerCase();
+            const filter = document.getElementById('filterPriority')?.value || 'ALL';
+            const tbody = document.getElementById('membersTableBody');
+            if (!tbody) return;
+
+            const filtered = membersData.filter(m => {
+                const matchText = m.name.toLowerCase().includes(query) || m.sid.toLowerCase().includes(query) || m.ukm.toLowerCase().includes(query);
+                const matchFilter = filter === 'ALL' || m.status === filter;
+                return matchText && matchFilter;
+            });
+
+            tbody.innerHTML = filtered.map(m => {
+                const barColor = m.aiScore >= 75 ? 'bg-rose-600' : m.aiScore >= 45 ? 'bg-amber-600' : 'bg-emerald-600';
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="py-3 px-3.5 font-mono text-xs font-bold text-slate-900">
+                            <span class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-800">${m.sid}</span>
+                        </td>
+                        <td class="py-3 px-3.5">
+                            <div class="font-bold text-slate-900 text-xs sm:text-sm">${m.name}</div>
+                            <div class="text-[11px] text-slate-500">${m.role}</div>
+                        </td>
+                        <td class="py-3 px-3.5 text-xs text-slate-600">${m.ukm}</td>
+                        <td class="py-3 px-3.5 text-center font-semibold text-xs">${m.dependents} Jiwa</td>
+                        <td class="py-3 px-3.5">
+                            <div class="flex items-center gap-2">
+                                <div class="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                    <div class="${barColor} h-full" style="width: ${m.aiScore}%"></div>
+                                </div>
+                                <span class="text-xs font-bold text-slate-800">${m.aiScore}/100</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3.5">${getStatusBadge(m.status)}</td>
+                        <td class="py-3 px-3.5 text-right">
+                            <button onclick="openMemberDetail('${m.sid}')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs transition">
+                                <i class="fa-solid fa-address-card mr-1"></i>Rekam Jejak
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Update dropdowns
+            const optionsHtml = membersData.map(m => `<option value="${m.sid}">${m.sid} — ${m.name}</option>`).join('');
+            const txSelect = document.getElementById('txMemberSelect');
+            const fbSelect = document.getElementById('fbMemberSelect');
+            if (txSelect) txSelect.innerHTML = optionsHtml;
+            if (fbSelect) fbSelect.innerHTML = optionsHtml;
+        }
+
+        function openMemberDetail(sid) {
+            const member = membersData.find(m => m.sid === sid);
+            if (!member) return;
+
+            document.getElementById('modalMemberAvatar').textContent = member.name.replace('Ibu ', '').substring(0, 2).toUpperCase();
+            document.getElementById('modalMemberSid').textContent = member.sid;
+            document.getElementById('modalMemberName').textContent = member.name;
+            document.getElementById('modalMemberRole').textContent = `${member.role} • UKM: ${member.ukm}`;
+            document.getElementById('modalMemberIncome').textContent = `Rp ${member.income.toLocaleString('id-ID')}`;
+            document.getElementById('modalMemberDependents').textContent = `${member.dependents} Orang`;
+            document.getElementById('modalMemberAiScore').textContent = `${member.aiScore} / 100`;
+            document.getElementById('modalMemberSavings').textContent = `Rp ${member.savings.toLocaleString('id-ID')}`;
+
+            const historyContainer = document.getElementById('modalMemberHistory');
+            historyContainer.innerHTML = member.history.map(item => `
+                <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 flex items-start gap-2">
+                    <i class="fa-solid fa-check text-emerald-700 mt-0.5 text-xs"></i>
+                    <span class="text-slate-700 leading-snug">${item}</span>
+                </div>
+            `).join('');
+
+            openModal('memberDetailModal');
+        }
+
+        function handleAddMember(e) {
+            e.preventDefault();
+            const name = document.getElementById('newMemberName').value.trim();
+            const ukm = document.getElementById('newMemberUkm').value.trim();
+            const income = parseInt(document.getElementById('newMemberIncome').value, 10);
+            const dep = parseInt(document.getElementById('newMemberDep').value, 10);
+
+            // AI Scoring formula: (0.35 * Income) + (0.25 * Dep) + (0.20 * Garden) + (0.20 * Ukm)
+            const incomePts = Math.max(5, Math.round(((4000000 - Math.min(income, 4000000)) / 3500000) * 35));
+            const depPts = Math.min(25, Math.round((dep / 6) * 25));
+            const gardenPts = 10; // Default baseline
+            const ukmPts = 14;
+
+            const aiScore = Math.max(10, Math.min(98, incomePts + depPts + gardenPts + ukmPts));
+
+            let status = "MANDIRI PANGAN";
+            let recommendation = "Kontributor Lumbung & Pangan Pekarangan";
+            if (aiScore >= 75) {
+                status = "PRIORITAS BANTUAN";
+                recommendation = "Paket Bantuan Pangan Bergizi + Bantuan Modal UKM";
+            } else if (aiScore >= 45) {
+                status = "WASPADA PANGAN";
+                recommendation = "Pendampingan Bibit Pekarangan & Tabungan Koperasi";
+            }
+
+            const newSid = `SID-PKK-130${membersData.length + 1}`;
+            membersData.unshift({
+                sid: newSid,
+                name,
+                role: "Anggota PKK RT 13",
+                ukm,
+                income,
+                dependents: dep,
+                gardenScore: 50,
+                ukmScore: 70,
+                aiScore,
+                status,
+                recommendation,
+                savings: 100000,
+                history: [
+                    `24 Okt 2026: Diterbitkan Single Identity (${newSid}) tervalidasi AI-DSS dengan skor ${aiScore}/100.`
+                ]
+            });
+
+            renderMembersTable();
+            closeModal('addMemberModal');
+            showToast(`Single Identity ${newSid} (${name}) berhasil diterbitkan!`);
+            e.target.reset();
+        }
+
+        // ==========================================
+        // AI SIMULATOR & OCR SCANNER
+        // ==========================================
+        function openAiSimulatorModal() {
+            runAiSimulation();
+            openModal('aiSimulatorModal');
+        }
+
+        function runAiSimulation() {
+            const income = parseInt(document.getElementById('simIncome').value, 10);
+            const dep = parseInt(document.getElementById('simDep').value, 10);
+            const garden = parseInt(document.getElementById('simGarden').value, 10);
+            const ukm = parseInt(document.getElementById('simUkm').value, 10);
+
+            document.getElementById('simIncomeVal').textContent = `Rp ${income.toLocaleString('id-ID')}`;
+            document.getElementById('simDepVal').textContent = `${dep} Orang`;
+            document.getElementById('simGardenVal').textContent = `${garden}%`;
+            document.getElementById('simUkmVal').textContent = `${ukm}%`;
+
+            // Formal formula:
+            // Parameter 1: Pendapatan (Bobot 35%)
+            const incomeScore = ((5000000 - income) / 4500000) * 35;
+            // Parameter 2: Tanggungan (Bobot 25%)
+            const depScore = (dep / 8) * 25;
+            // Parameter 3: Kerawanan Pangan / Kebun (Bobot 20%)
+            const gardenScore = ((100 - garden) / 90) * 20;
+            // Parameter 4: Kebutuhan UKM Pangan (Bobot 20%)
+            const ukmScore = (ukm / 100) * 20;
+
+            const score = Math.min(99, Math.max(10, Math.round(incomeScore + depScore + gardenScore + ukmScore)));
+
+            const scoreEl = document.getElementById('simResultScore');
+            const badgeEl = document.getElementById('simResultBadge');
+            const descEl = document.getElementById('simResultDesc');
+
+            scoreEl.textContent = `${score} / 100`;
+
+            if (score >= 75) {
+                scoreEl.className = "text-2xl font-bold text-rose-400";
+                badgeEl.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30";
+                badgeEl.textContent = "PRIORITAS UTAMA BANTUAN PANGAN";
+                descEl.textContent = "Keputusan Sistem: Keluarga wajib masuk daftar penerima Paket Beras Fortifikasi 10kg + Telur dan Subsidi Modal UKM Koperasi PKK.";
+            } else if (score >= 50) {
+                scoreEl.className = "text-2xl font-bold text-amber-400";
+                badgeEl.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                badgeEl.textContent = "WASPADA PANGAN (PENDAMPINGAN)";
+                descEl.textContent = "Keputusan Sistem: Keluarga diarahkan menerima bantuan bibit sayur pekarangan & akses kredit mikro simpan pinjam.";
+            } else {
+                scoreEl.className = "text-2xl font-bold text-emerald-400";
+                badgeEl.className = "px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+                badgeEl.textContent = "MANDIRI / TANGGUH PANGAN";
+                descEl.textContent = "Keputusan Sistem: Tidak memerlukan subsidi bansos; didorong menjadi pemasok lumbung pangan & panen kebun PKK.";
+            }
+        }
+
+        function openOcrScannerModal() {
+            openModal('ocrScannerModal');
+        }
+
+        function simulateOcrScan() {
+            const b1 = document.getElementById('ocrBox1');
+            const b2 = document.getElementById('ocrBox2');
+            const b3 = document.getElementById('ocrBox3');
+
+            b1.classList.add('scale-102');
+            b2.classList.add('scale-102');
+            b3.classList.add('scale-102');
+
+            setTimeout(() => {
+                b1.classList.remove('scale-102');
+                b2.classList.remove('scale-102');
+                b3.classList.remove('scale-102');
+                showToast("Citra berhasil dipindai! Data tulisan tangan disinkronkan ke SID-PKK-1303 (Ibu Sri Wahyuni).");
+                closeModal('ocrScannerModal');
+            }, 600);
+        }
+
+        // ==========================================
+        // KOPERASI & TRANSPARENT LEDGER
+        // ==========================================
+        function renderTransactions() {
+            const tbody = document.getElementById('transactionsTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = transactionsData.map(t => {
+                const isOut = t.type.includes('PINJAMAN') || t.type.includes('DISTRIBUSI');
+                const badgeClass = isOut ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200';
+                const sign = isOut ? '-' : '+';
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="py-2.5 px-3">
+                            <span class="font-mono font-bold text-xs text-slate-800 block">${t.hash}</span>
+                            <span class="text-[10px] text-slate-400">${t.date}</span>
+                        </td>
+                        <td class="py-2.5 px-3">
+                            <span class="font-semibold text-slate-900 block text-xs">${t.name}</span>
+                            <span class="font-mono text-[10px] text-slate-500">${t.sid}</span>
+                        </td>
+                        <td class="py-2.5 px-3">
+                            <span class="px-1.5 py-0.2 rounded text-[10px] font-semibold ${badgeClass}">${t.type}</span>
+                            <p class="text-[11px] text-slate-500 mt-0.5">${t.note}</p>
+                        </td>
+                        <td class="py-2.5 px-3 text-right font-bold text-xs ${isOut ? 'text-amber-800' : 'text-emerald-800'}">
+                            ${sign} Rp ${t.amount.toLocaleString('id-ID')}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            const formatted = `Rp ${coopBalance.toLocaleString('id-ID')}`;
+            document.getElementById('coopLedgerBalance').textContent = formatted;
+            document.getElementById('dashSaldoKoperasi').textContent = formatted;
+            const printKas = document.getElementById('printKasSaldo');
+            if (printKas) printKas.textContent = formatted;
+        }
+
+        function handleAddTransaction(e) {
+            e.preventDefault();
+            const sid = document.getElementById('txMemberSelect').value;
+            const type = document.getElementById('txTypeSelect').value;
+            const amount = parseInt(document.getElementById('txAmountInput').value, 10);
+            const note = document.getElementById('txNoteInput').value.trim();
+
+            const member = membersData.find(m => m.sid === sid);
+            if (!member) return;
+
+            if (type.includes('SIMPANAN') || type.includes('SETORAN')) {
+                coopBalance += amount;
+                member.savings += amount;
+            } else if (type.includes('PINJAMAN')) {
+                coopBalance -= amount;
+            }
+
+            const hash = `TX-${Math.floor(1000 + Math.random() * 9000)}`;
+            transactionsData.unshift({
+                hash,
+                date: "Baru saja • Real-time",
+                sid: member.sid,
+                name: member.name,
+                type,
+                amount,
+                note
+            });
+
+            member.history.unshift(`24 Okt 2026: Transaksi ${type} senilai Rp ${amount.toLocaleString('id-ID')} (${note}) tercatat pada Alamat Keuangan Permanen.`);
+
+            renderTransactions();
+            renderMembersTable();
+            document.getElementById('txNoteInput').value = '';
+            showToast(`Transaksi ${hash} berhasil terikat ke Single ID ${member.sid}!`);
+        }
+
+        // ==========================================
+        // E-VOTING & FEEDBACK
+        // ==========================================
+        function renderVoting() {
+            const container = document.getElementById('votingOptionsContainer');
+            if (!container) return;
+
+            const totalVotes = votingPrograms.reduce((acc, item) => acc + item.votes, 0);
+
+            container.innerHTML = votingPrograms.map(item => {
+                const pct = Math.round((item.votes / totalVotes) * 100);
+                return `
+                    <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/60 space-y-2">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-xs sm:text-sm">${item.title}</h4>
+                                <p class="text-[11px] text-slate-500 mt-0.5">${item.desc}</p>
+                            </div>
+                            <button onclick="castVote(${item.id})" class="px-2.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs shrink-0 transition">
+                                <i class="fa-solid fa-check mr-1"></i>Pilih (${item.votes})
+                            </button>
+                        </div>
+                        <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                            <div class="bg-emerald-700 h-full transition-all duration-300" style="width: ${pct}%"></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] font-medium text-slate-500">
+                            <span>Partisipasi Anggota Terverifikasi</span>
+                            <span class="text-emerald-800 font-bold">${pct}% (${item.votes} Suara)</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function castVote(id) {
+            const prog = votingPrograms.find(p => p.id === id);
+            if (prog) {
+                prog.votes += 1;
+                renderVoting();
+                showToast(`Suara Single Identity Anda dicatat untuk: "${prog.title}"`);
+            }
+        }
+
+        function renderFeedbacks() {
+            const container = document.getElementById('feedbackListContainer');
+            if (!container) return;
+
+            container.innerHTML = feedbacksData.map(f => `
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-slate-900 text-xs">${f.name}</span>
+                            <span class="px-1.5 py-0.2 rounded bg-slate-200 text-slate-700 font-mono text-[10px] font-semibold">${f.sid}</span>
+                        </div>
+                        <span class="text-xs text-amber-500 font-mono">${'★'.repeat(f.rating)}</span>
+                    </div>
+                    <span class="inline-block text-[10px] font-semibold text-blue-700 bg-blue-50 px-1.5 py-0.2 rounded border border-blue-100">${f.category}</span>
+                    <p class="text-xs text-slate-600 leading-relaxed pt-0.5">"${f.message}"</p>
+                </div>
+            `).join('');
+        }
+
+        function handleAddFeedback(e) {
+            e.preventDefault();
+            const sid = document.getElementById('fbMemberSelect').value;
+            const category = document.getElementById('fbCategory').value;
+            const rating = parseInt(document.getElementById('fbRating').value, 10);
+            const message = document.getElementById('fbMessage').value.trim();
+
+            const member = membersData.find(m => m.sid === sid);
+            feedbacksData.unshift({
+                name: member ? member.name : "Anggota PKK",
+                sid,
+                category,
+                rating,
+                date: "Baru saja",
+                message
+            });
+
+            renderFeedbacks();
+            document.getElementById('fbMessage').value = '';
+            showToast("Aspirasi Anda berhasil dicatat dan dipublikasikan secara terbuka!");
+        }
+
+        // ==========================================
+        // CHARTS INITIALIZATION (CHART.JS)
+        // ==========================================
+        function initDashboardCharts() {
+            const ctx1 = document.getElementById('foodSecurityChart');
+            if (ctx1) {
+                new Chart(ctx1, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Mandiri Pangan (27 KK)', 'Waspada Pangan (8 KK)', 'Prioritas Bantuan AI (5 KK)'],
+                        datasets: [{
+                            data: [27, 8, 5],
+                            backgroundColor: ['#15803d', '#d97706', '#e11d48'],
+                            borderWidth: 2,
+                            borderColor: '#ffffff',
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { boxWidth: 10, font: { size: 10, family: 'Plus Jakarta Sans' } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const ctx2 = document.getElementById('coopTrendChart');
+            if (ctx2) {
+                new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Mei', 'Juni', 'Juli', 'Agu', 'Sep', 'Okt'],
+                        datasets: [
+                            {
+                                label: 'Kas Koperasi Simpan Tabung (Juta Rp)',
+                                data: [14.2, 16.5, 18.0, 20.4, 22.8, 24.5],
+                                backgroundColor: '#15803d',
+                                borderRadius: 6
+                            },
+                            {
+                                label: 'Distribusi Paket Pangan Bergizi (Juta Rp)',
+                                data: [4.5, 5.2, 6.8, 7.5, 8.9, 10.2],
+                                backgroundColor: '#2563eb',
+                                borderRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { size: 10, family: 'Plus Jakarta Sans' } } },
+                            x: { grid: { display: false }, ticks: { font: { size: 10, family: 'Plus Jakarta Sans' } } }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: { boxWidth: 10, font: { size: 10, family: 'Plus Jakarta Sans' } }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // ==========================================
+        // MODALS & TIMERS
+        // ==========================================
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+            }
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            }
+        }
+
+        function openAddMemberModal() {
+            openModal('addMemberModal');
+        }
+
+        function openPitchModal() {
+            openModal('pitchModal');
+        }
+
+        let pitchSeconds = 420;
+        let pitchInterval = null;
+
+        function setPitchTimer(minutes, label) {
+            clearInterval(pitchInterval);
+            pitchInterval = null;
+            pitchSeconds = minutes * 60;
+            document.getElementById('pitchStageLabel').textContent = label;
+            updatePitchDisplay();
+        }
+
+        function togglePitchTimer() {
+            if (pitchInterval) {
+                clearInterval(pitchInterval);
+                pitchInterval = null;
+            } else {
+                pitchInterval = setInterval(() => {
+                    if (pitchSeconds > 0) {
+                        pitchSeconds--;
+                        updatePitchDisplay();
+                    } else {
+                        clearInterval(pitchInterval);
+                        pitchInterval = null;
+                        showToast("Waktu sesi Demo Day selesai!");
+                    }
+                }, 1000);
+            }
+        }
+
+        function updatePitchDisplay() {
+            const mins = String(Math.floor(pitchSeconds / 60)).padStart(2, '0');
+            const secs = String(pitchSeconds % 60).padStart(2, '0');
+            document.getElementById('pitchTimerDisplay').textContent = `${mins}:${secs}`;
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = "pointer-events-auto bg-slate-900 text-white px-3.5 py-2.5 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2.5 text-xs font-medium transition-all duration-300";
+            toast.innerHTML = `
+                <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-1');
+                setTimeout(() => toast.remove(), 250);
+            }, 3200);
+        }
+
+        // Initialize on page load
+        window.onload = function () {
+            selectFlowStep(0);
+            renderMembersTable();
+            renderTransactions();
+            renderVoting();
+            renderFeedbacks();
+        };
+    </script>
+</body>
+</html>
