@@ -54,7 +54,7 @@ Sistem mengintegrasikan engine *Computer Vision OCR* yang berjalan langsung di p
 1. **Modul 1: Alur Inovasi Hackathon (6 Tahap)** — Menampilkan alur berpikir *problem-solution fit* sesuai Gambar 1 Panduan Resmi UM Metro (Masalah, Kebutuhan, Solusi, MVP, Uji Coba, Hilirisasi).
 2. **Modul 2: Dashboard Ketahanan Pangan RT 13** — Metrik analitik real-time, grafik donat status kerawanan warga, tren permodalan koperasi 6 bulan, dan demografi Kelurahan Yosomulyo.
 3. **Modul 3: Direktori Single Identity & AI Scoring** — Database seluruh anggota lengkap dengan pencarian, filter kategori prioritas AI, formulir registrasi SID baru, dan modal profil rekam jejak seumur hidup.
-4. **Modul 4: Koperasi Simpan Pinjam & Buku Kas Permanen** — Formulir transaksi kas digital (simpan tabung, pinjaman modal UKM pangan, penyaluran sembako) dan buku besar digital bebas selisih hitung.
+4. **Modul 4: Pasar Pangan Cerdas & Koperasi Kas SID (Sub-Tema F)** — Integrasi banner *AI Demand Forecasting* (prediksi kebutuhan pangan bulanan), katalog pasar cerdas 4 produk produsen UKM PKK, transaksi serapan pasar otomatis, dan buku besar kas transparan berbasis Single Identity.
 5. **Modul 5: Ruang Partisipasi E-Voting & Feedback Warga** — Sistem voting demokratis *1 SID = 1 Suara*, matriks perbandingan Pre-Test vs Post-Test (39,8% ke 91,8%), dan log aspirasi terbuka.
 6. **Modul 6: Cara Penggunaan & Dokumentasi Sistem** — Panduan operasional interaktif untuk 3 profil peran: Pengurus PKK (Admin), Warga/Anggota, dan Penguji/Juri Hackathon.
 7. **Modul 7: Profil Tim Inovator & Peta Lokasi Kemitraan** — Susunan tim lintas disiplin UM Metro, Dosen Pendamping, Pimpinan Mitra (Ibu Sartika), denah rute kampus ke lokasi mitra (3,7 km via Jl. Tawes), dan rencana alokasi anggaran.
