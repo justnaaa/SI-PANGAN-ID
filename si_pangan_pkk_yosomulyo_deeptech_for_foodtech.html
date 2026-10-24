@@ -859,6 +859,146 @@
                     </div>
                 </section>
 
+                <!-- ==========================================
+                     TAB 5: RUANG FEEDBACK & E-VOTING DEMOKRATIS
+                     ========================================== -->
+                <section id="tab-feedback" class="tab-section hidden space-y-6">
+                    <!-- Top Row: E-Voting Demokratis & Pre/Post Test Validation -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Democratic E-Voting Card -->
+                        <div class="lg:col-span-7 bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs space-y-3.5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-700">Partisipasi Demokratis Warga (1 SID = 1 Suara)</span>
+                                    <h3 class="text-base font-bold text-slate-900 mt-0.5">E-Voting Penentuan Program Prioritas Pangan PKK</h3>
+                                </div>
+                                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[11px] font-bold">Periode Aktif</span>
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Menjawab permasalahan struktur birokrasi PKK yang kaku. Setiap anggota memiliki hak suara yang sama untuk menentukan alokasi dana dan program ketahanan pangan bulanan.
+                            </p>
+
+                            <div id="votingOptionsContainer" class="space-y-3 pt-1">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Pre-Test & Post-Test Evaluation -->
+                        <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs flex flex-col justify-between space-y-4">
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-purple-700">Validasi Pengujian Mitra (N = 40 KK)</span>
+                                <h3 class="text-base font-bold text-slate-900 mt-0.5">Hasil Evaluasi Pre-Test vs Post-Test</h3>
+                                <p class="text-xs text-slate-500 mt-1">
+                                    Standar kelayakan PKM-PM & Hackathon mensyaratkan skor minimal <strong>&ge; 80%</strong>. Capaian mitra PKK Anggrek 1 mencapai <strong>91,8%</strong>.
+                                </p>
+
+                                <div class="space-y-3.5 mt-4">
+                                    <div>
+                                        <div class="flex justify-between text-xs font-medium mb-1">
+                                            <span class="text-slate-600">Kemudahan Pendataan Single Identity</span>
+                                            <span class="text-emerald-700 font-bold">Pre: 42% &rarr; Post: 92%</span>
+                                        </div>
+                                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
+                                            <div class="bg-slate-300 h-full" style="width: 42%"></div>
+                                            <div class="bg-emerald-600 h-full" style="width: 50%"></div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="flex justify-between text-xs font-medium mb-1">
+                                            <span class="text-slate-600">Transparansi Koperasi & Bantuan Pangan</span>
+                                            <span class="text-emerald-700 font-bold">Pre: 38% &rarr; Post: 94%</span>
+                                        </div>
+                                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
+                                            <div class="bg-slate-300 h-full" style="width: 38%"></div>
+                                            <div class="bg-emerald-600 h-full" style="width: 56%"></div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="flex justify-between text-xs font-medium mb-1">
+                                            <span class="text-slate-600">Kecepatan Pemutakhiran Data Lapangan</span>
+                                            <span class="text-emerald-700 font-bold">Pre: 45% &rarr; Post: 89%</span>
+                                        </div>
+                                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
+                                            <div class="bg-slate-300 h-full" style="width: 45%"></div>
+                                            <div class="bg-emerald-600 h-full" style="width: 44%"></div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <div class="flex justify-between text-xs font-medium mb-1">
+                                            <span class="text-slate-600">Kepuasan Ruang Aspirasi (Feedback)</span>
+                                            <span class="text-emerald-700 font-bold">Pre: 35% &rarr; Post: 92%</span>
+                                        </div>
+                                        <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
+                                            <div class="bg-slate-300 h-full" style="width: 35%"></div>
+                                            <div class="bg-emerald-600 h-full" style="width: 57%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs font-bold text-purple-900">Rata-rata Skor Kelayakan Mitra</p>
+                                    <p class="text-[11px] text-purple-700">Kategori: Sangat Baik / Layak Diterapkan</p>
+                                </div>
+                                <span class="text-xl font-bold text-purple-800">91,8%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Row: Aspirasi & Umpan Balik Warga -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <div class="lg:col-span-5 bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs space-y-3.5">
+                            <h3 class="text-sm sm:text-base font-bold text-slate-900">Sampaikan Umpan Balik / Aspirasi Warga</h3>
+                            <form onsubmit="handleAddFeedback(event)" class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Identitas Anggota Pengirim (SID)</label>
+                                    <select id="fbMemberSelect" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-slate-50">
+                                        <!-- Populated via JS -->
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Kategori Layanan</label>
+                                    <select id="fbCategory" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-slate-50">
+                                        <option value="Penyaluran Bantuan Pangan">Penyaluran Paket Pangan / Bansos</option>
+                                        <option value="Transparansi Koperasi Simpan Pinjam">Transparansi Koperasi Simpan Pinjam</option>
+                                        <option value="Kebun Gizi & Panen Pekarangan">Kebun Gizi & Panen Pekarangan PKK</option>
+                                        <option value="Pelayanan Administrasi PKK">Pelayanan Administrasi Surat & SID</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tingkat Kepuasan</label>
+                                    <select id="fbRating" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm bg-slate-50">
+                                        <option value="5">⭐⭐⭐⭐⭐ (5/5 - Sangat Puas & Transparan)</option>
+                                        <option value="4">⭐⭐⭐⭐ (4/5 - Puas & Terbantu)</option>
+                                        <option value="3">⭐⭐⭐ (3/5 - Cukup, Perlu Peningkatan)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Pesan Aspirasi atau Masukan</label>
+                                    <textarea id="fbMessage" rows="3" required placeholder="Tuliskan masukan Anda secara terbuka..." class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-emerald-600"></textarea>
+                                </div>
+                                <button type="submit" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs sm:text-sm font-semibold transition">
+                                    <i class="fa-solid fa-paper-plane mr-1.5"></i>Kirim Aspirasi Terverifikasi
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="lg:col-span-7 bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs space-y-3.5">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm sm:text-base font-bold text-slate-900">Log Umpan Balik Terbuka PKK Anggrek 1</h3>
+                                <span class="text-xs text-slate-500">Transparan & Dapat Ditindaklanjuti</span>
+                            </div>
+                            <div id="feedbackListContainer" class="space-y-2.5 max-h-96 overflow-y-auto pr-1">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 
             </div>
         </main>
