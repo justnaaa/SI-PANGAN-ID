@@ -695,11 +695,225 @@
                     </div>
                 </section>
 
+                <!-- ==========================================
+                     TAB 3: DATABASE SINGLE IDENTITY & AI SCORING
+                     ========================================== -->
+                <section id="tab-singleid" class="tab-section hidden space-y-6">
+                    <!-- Clean DeepTech Feature Explanation Card -->
+                    <div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-xs">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                            <div class="space-y-1 max-w-3xl">
+                                <div class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">
+                                    <i class="fa-solid fa-microchip"></i> Modul Inti: Single Identity (SID-Pangan) & AI Decision Support
+                                </div>
+                                <h3 class="text-base sm:text-lg font-bold text-slate-900">
+                                    Direktori Satu Identitas Warga & Mesin Rekomendasi Prioritas Pangan
+                                </h3>
+                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                    Setiap anggota PKK memiliki <strong>Satu Identitas Tunggal (SID)</strong> seumur hidup yang merekam data sosio-ekonomi keluarga, anggota rentan (stunting/lansia), produksi pangan pekarangan, serta rekam transaksi kas koperasi. Algoritma <strong>AI-DSS</strong> menghitung skor kerawanan pangan secara transparan dengan formula pembobotan 4 parameter.
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap gap-2 shrink-0">
+                                <button onclick="openOcrScannerModal()" class="px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold flex items-center gap-2 transition">
+                                    <i class="fa-solid fa-camera text-emerald-400"></i>
+                                    <span>Pindai Buku Manual (OCR)</span>
+                                </button>
+                                <button onclick="openAiSimulatorModal()" class="px-3.5 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold flex items-center gap-2 transition shadow-xs">
+                                    <i class="fa-solid fa-sliders"></i>
+                                    <span>Kalkulator AI-DSS</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filter Controls -->
+                    <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs space-y-4">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                            <div class="relative flex-1">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                                <input type="text" id="searchMemberInput" oninput="renderMembersTable()" placeholder="Cari Nama Anggota, Kode SID (contoh: SID-PKK-1301), atau Usaha UKM..." class="w-full pl-9 pr-4 py-2 rounded-lg border border-slate-200 text-xs sm:text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <select id="filterPriority" onchange="renderMembersTable()" class="px-3 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-700 bg-white focus:outline-none focus:border-emerald-600">
+                                    <option value="ALL">Semua Kategori Rekomendasi (AI)</option>
+                                    <option value="PRIORITAS BANTUAN">Prioritas Utama (&ge; 75 Poin)</option>
+                                    <option value="WASPADA PANGAN">Waspada Pangan (55 - 74 Poin)</option>
+                                    <option value="MANDIRI PANGAN">Mandiri / Aman Pangan (&lt; 55 Poin)</option>
+                                </select>
+                                <button onclick="openAddMemberModal()" class="px-3.5 py-2 rounded-lg bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+                                    <i class="fa-solid fa-user-plus"></i>
+                                    <span>Registrasi SID Baru</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Member Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50">
+                                        <th class="py-3 px-3.5 rounded-l-lg">Kode SID Pangan</th>
+                                        <th class="py-3 px-3.5">Nama & Peran Mitra</th>
+                                        <th class="py-3 px-3.5">Usaha UKM / Mata Pencaharian</th>
+                                        <th class="py-3 px-3.5 text-center">Tanggungan</th>
+                                        <th class="py-3 px-3.5">Skor AI-DSS</th>
+                                        <th class="py-3 px-3.5">Keputusan Sistem</th>
+                                        <th class="py-3 px-3.5 text-right rounded-r-lg">Aksi Profil</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="membersTableBody" class="divide-y divide-slate-100 text-xs sm:text-sm">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
                 
             </div>
         </main>
     </div>
 <!-- ==========================================
+         MODAL 1: DETAIL REKAM JEJAK SINGLE IDENTITY
+         ========================================== -->
+    <div id="memberDetailModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-7 shadow-xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-start justify-between gap-4 border-b border-slate-200 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold text-lg" id="modalMemberAvatar">
+                        SS
+                    </div>
+                    <div>
+                        <span id="modalMemberSid" class="px-2 py-0.5 text-xs font-mono font-bold bg-slate-900 text-emerald-400 rounded">SID-PKK-1301</span>
+                        <h3 id="modalMemberName" class="text-lg font-bold text-slate-900 mt-0.5">Nama Anggota</h3>
+                        <p id="modalMemberRole" class="text-xs text-slate-500">Peran & Alamat</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('memberDetailModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Single Identity Metrics -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 my-4">
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-[11px] text-slate-500 block">Pendapatan Keluarga</span>
+                    <span id="modalMemberIncome" class="font-bold text-slate-900 text-xs sm:text-sm">Rp 0</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-[11px] text-slate-500 block">Tanggungan KK</span>
+                    <span id="modalMemberDependents" class="font-bold text-slate-900 text-xs sm:text-sm">0 Orang</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-[11px] text-slate-500 block">Skor AI-DSS</span>
+                    <span id="modalMemberAiScore" class="font-bold text-emerald-700 text-xs sm:text-sm">0 / 100</span>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-[11px] text-slate-500 block">Tabungan Koperasi</span>
+                    <span id="modalMemberSavings" class="font-bold text-blue-700 text-xs sm:text-sm">Rp 0</span>
+                </div>
+            </div>
+
+            <!-- Lifetime Integrated History -->
+            <div class="space-y-2.5">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    <i class="fa-solid fa-clock-rotate-left text-emerald-700 mr-1"></i> Rekam Jejak Seumur Hidup Terverifikasi (Single Identity Log)
+                </h4>
+                <div id="modalMemberHistory" class="space-y-2 text-xs">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <div class="mt-5 pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-1.5 text-xs text-slate-600">
+                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
+                    <span>Tersinkronisasi dengan Buku Kas Koperasi PKK RT 13 Yosomulyo</span>
+                </div>
+                <button onclick="closeModal('memberDetailModal')" class="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold">
+                    Tutup Profil
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL 2: SIMULATOR KALKULATOR AI-DSS PANGAN
+         ========================================== -->
+    <div id="aiSimulatorModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-xl w-full p-6 sm:p-7 shadow-xl border border-slate-200 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div>
+                    <span class="text-xs font-bold uppercase text-emerald-700">DeepTech Decision Support System (DSS)</span>
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900">Kalkulator Pembobotan Bantuan Pangan AI</h3>
+                </div>
+                <button onclick="closeModal('aiSimulatorModal')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl mt-3 text-xs text-slate-600 leading-relaxed">
+                <strong>Formula Matematis (Proposal Hal. 8):</strong><br>
+                <code>Skor_Total = (0.35 &times; Pendapatan) + (0.25 &times; Tanggungan) + (0.20 &times; Kerawanan) + (0.20 &times; Dampak_UKM)</code>
+            </div>
+
+            <div class="space-y-3.5 my-4">
+                <div>
+                    <div class="flex justify-between text-xs font-medium mb-1">
+                        <span>1. Pendapatan Rumah Tangga per Bulan (Bobot 35%)</span>
+                        <span id="simIncomeVal" class="text-emerald-700 font-bold">Rp 1.400.000</span>
+                    </div>
+                    <input type="range" id="simIncome" min="500000" max="5000000" step="100000" value="1400000" oninput="runAiSimulation()" class="w-full accent-emerald-700">
+                    <span class="text-[10px] text-slate-500">Semakin rendah pendapatan, kontribusi poin semakin tinggi (hingga 35 poin).</span>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-xs font-medium mb-1">
+                        <span>2. Jumlah Tanggungan KK / Balita / Lansia (Bobot 25%)</span>
+                        <span id="simDepVal" class="text-emerald-700 font-bold">4 Orang</span>
+                    </div>
+                    <input type="range" id="simDep" min="1" max="8" step="1" value="4" oninput="runAiSimulation()" class="w-full accent-emerald-700">
+                    <span class="text-[10px] text-slate-500">Mencegah stunting dan memperhitungkan anak sekolah & lansia (hingga 25 poin).</span>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-xs font-medium mb-1">
+                        <span>3. Skor Konsumsi Pangan & Kebun Pekarangan (Bobot 20%)</span>
+                        <span id="simGardenVal" class="text-emerald-700 font-bold">35% (Rendah)</span>
+                    </div>
+                    <input type="range" id="simGarden" min="10" max="100" step="5" value="35" oninput="runAiSimulation()" class="w-full accent-emerald-700">
+                    <span class="text-[10px] text-slate-500">Tingkat kecukupan sayur/protein mandiri dari pekarangan rumah (hingga 20 poin).</span>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-xs font-medium mb-1">
+                        <span>4. Kebutuhan Modal & Produktivitas UKM Pangan (Bobot 20%)</span>
+                        <span id="simUkmVal" class="text-emerald-700 font-bold">Tinggi (80%)</span>
+                    </div>
+                    <input type="range" id="simUkm" min="20" max="100" step="10" value="80" oninput="runAiSimulation()" class="w-full accent-emerald-700">
+                    <span class="text-[10px] text-slate-500">Peluang pemberdayaan ekonomi keluarga melalui bantuan bahan baku/koperasi (hingga 20 poin).</span>
+                </div>
+            </div>
+
+            <!-- Result Box -->
+            <div class="p-4 rounded-xl bg-slate-900 text-white space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-slate-400">Total Skor Rekomendasi (AI-DSS):</span>
+                    <span id="simResultScore" class="text-2xl font-bold text-rose-400">84 / 100</span>
+                </div>
+                <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+                    <span class="text-xs text-slate-400">Klasifikasi Keputusan:</span>
+                    <span id="simResultBadge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                        PRIORITAS UTAMA BANTUAN
+                    </span>
+                </div>
+                <p id="simResultDesc" class="text-xs text-slate-300 pt-1 leading-relaxed">
+                    Rekomendasi Kebijakan: Penyaluran Paket Beras Fortifikasi 10kg + Telur 2kg & Akses Pinjaman Lunak Bahan Baku UKM Pangan Koperasi PKK.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
          JAVASCRIPT LOGIC & INTERACTIVE DATA
          ========================================== -->
     <script>
