@@ -66,30 +66,29 @@ Kode ini berfungsi sebagai:
 - Buku riwayat rekam jejak seumur hidup (*lifetime audit trail*).
 - Alamat keuangan permanen untuk seluruh mutasi simpanan, pinjaman, dan penerimaan paket sembako.
 
-### B. Machine Learning – Smart Food-Aid Decision Support System (AI-DSS)
-Algoritma pembobotan multi-kriteria untuk mengeliminasi campur tangan subjektif dalam distribusi bantuan pangan.
+### B. Machine Learning – Dual-Mode Smart Decision Support System (AI-DSS & k-NN Classifier)
+Sistem menyediakan dua engine analisis kecerdasan buatan:
 
-$$\text{Skor Total} = (0.35 \times S_{\text{Pendapatan}}) + (0.25 \times S_{\text{Tanggungan}}) + (0.20 \times S_{\text{Kerawanan}}) + (0.20 \times S_{\text{Dampak UKM}})$$
+1. **Engine 1: Supervised Machine Learning (k-NN Classifier)**
+   Mengimplementasikan algoritma **$k$-Nearest Neighbors ($k=3$)** yang dieksekusi secara riil di sisi klien (in-browser JavaScript). Model dilatih menggunakan dataset survei sosio-ekonomi 40 KK warga RT 13 Yosomulyo dengan tahapan:
+   - **Feature Normalization:** Melakukan Min-Max Scaling pada 4 variabel (Pendapatan, Tanggungan, Konsumsi Gizi, Kebutuhan Modal UKM) ke dalam rentang $[0, 1]$.
+   - **Euclidean Distance:** Menghitung jarak geometris antara input warga baru terhadap klaster data warga yang telah tervalidasi.
+   - **Confidence Metric (%):** Menghitung probabilitas keyakinan model terhadap kelas prediksi (`Prioritas Utama Bantuan (Kritis)`, `Waspada / Pendampingan`, atau `Mandiri / Tangguh Pangan`).
 
-- **Parameter 1: Tingkat Pendapatan Keluarga (Bobot 35%)**  
-  Menilai pendapatan per kapita terhadap garis kemiskinan lokal (skor hingga 35 poin). Semakin rendah pendapatan, semakin tinggi skor kerawanan.
-- **Parameter 2: Jumlah Tanggungan Keluarga (Bobot 25%)**  
-  Memperhitungkan keberadaan balita (pencegahan stunting), anak usia sekolah, dan lansia dalam satu KK (skor hingga 25 poin).
-- **Parameter 3: Konsumsi Gizi & Panen Pekarangan (Bobot 20%)**  
-  Menilai frekuensi konsumsi pangan bergizi dan pemanfaatan kebun pekarangan mandiri (skor hingga 20 poin).
-- **Parameter 4: Produktivitas & Kebutuhan Modal UKM Pangan (Bobot 20%)**  
-  Menilai peluang peningkatan kemandirian ekonomi keluarga bila disuntik modal atau bahan baku dari koperasi (skor hingga 20 poin).
+2. **Engine 2: Multi-Criteria Decision Analysis (MCDA Formula)**
+   Algoritma pembobotan multi-kriteria linier:
+   $$\text{Skor Total} = (0.35 \times S_{\text{Pendapatan}}) + (0.25 \times S_{\text{Tanggungan}}) + (0.20 \times S_{\text{Kerawanan}}) + (0.20 \times S_{\text{Dampak UKM}})$$
+   - **Skor $\ge$ 75 (Prioritas Utama Bantuan):** Wajib menerima paket pangan bergizi (beras fortifikasi, telur, minyak) dan pendampingan intensif.
+   - **Skor 50 – 74 (Waspada Pangan / Pendampingan):** Diberikan bantuan bibit pekarangan dan akses kredit lunak modal UKM pangan.
+   - **Skor $<$ 50 (Mandiri / Tangguh Pangan):** Keluarga telah mandiri; diarahkan menjadi penyumbang stok lumbung pangan dan mentor kebun gizi.
 
-**Klasifikasi Keputusan Otomatis:**
-- **Skor $\ge$ 75 (Prioritas Utama Bantuan):** Wajib menerima paket pangan bergizi (beras fortifikasi, telur, minyak) dan pendampingan gizi intensif.
-- **Skor 50 – 74 (Waspada Pangan / Pendampingan):** Diberikan bantuan bibit pekarangan dan akses kredit lunak modal UKM pangan.
-- **Skor $<$ 50 (Mandiri / Tangguh Pangan):** Keluarga telah mandiri; diarahkan menjadi penyumbang stok lumbung pangan dan mentor kebun gizi.
-
-### C. Computer Vision – Optical Character Recognition (AI-OCR Buku PKK)
-Modul visi komputer yang mengekstrak data dari foto lembaran buku kas manual PKK:
-- Mendeteksi teks tulisan tangan (*handwriting recognition*).
-- Mengidentifikasi nama anggota, nominal iuran, serta komoditas panen pekarangan dengan *bounding box visual*.
-- Memetakan secara otomatis hasil ekstraksi ke akun SID anggota dengan akurasi pengenalan mencapai **98,4%**.
+### C. Computer Vision – Optical Character Recognition (Real Tesseract.js v5 WebAssembly)
+Bukan sekadar animasi visual, sistem mengintegrasikan **mesin Computer Vision riil**:
+- **Tesseract.js v5 WebAssembly Engine:** Berjalan langsung di memori browser pengguna tanpa memerlukan server backend Python/GPU berbayar (*Edge AI*).
+- **Pengenalan Citra Riil:** Pengguna dapat mengunggah file foto asli (struk belanja, nota warung, tulisan tangan buku kas) atau mengambil foto langsung dari kamera gawai.
+- **Progress Tracking Real-Time:** Menampilkan tahapan inisialisasi WebAssembly worker dan persentase ekstraksi karakter (0% - 100%).
+- **Natural Language Entity Extraction:** Menggunakan algoritma ekspresi reguler untuk mengekstrak entitas penting secara otomatis (nominal uang `Rp`, nama anggota, tanggal, dan komoditas pangan seperti beras, minyak, telur).
+- **Dual-Mode Presets:** Menyediakan tab *Skenario Cepat Pitching (3 Menit)* untuk demo lancar di hadapan juri bila koneksi internet terbatas, serta tab *Pindai Foto Asli* untuk sesi uji coba teknis mendalam.
 
 ---
 
@@ -108,8 +107,8 @@ Platform SI-PANGAN yang telah dibangun terdiri dari 7 modul fungsional terintegr
 | **7** | **Profil Tim & Denah Lokasi Kemitraan** | Profil lengkap tim lintas disiplin UM Metro, Dosen Pendamping (Triana Asih, S.Pd., M.Pd.), Ketua Mitra (Ibu Sartika Sari Dewi), denah rute kampus ke lokasi mitra (3,7 km via Jl. Tawes), serta rincian rencana anggaran pendanaan. |
 
 ### Fitur Interaktif Tambahan (Modal Pop-Up):
-- **Simulator AI-DSS:** Pengguna/juri dapat menggeser slider 4 parameter untuk melihat perubahan skor rekomendasi bantuan pangan secara instan.
-- **Simulator AI-OCR:** Menampilkan visualisasi deteksi tulisan tangan buku kas fisik dan konversinya ke data terstruktur.
+- **Simulator AI-DSS & Real k-NN Classifier:** Pengguna/juri dapat beralih antara Mode Machine Learning (k-NN) dengan Confidence Probability (%) dan Mode Formula Pembobotan Multikriteria.
+- **Scanner AI-OCR (Real Tesseract.js & Preset):** Memungkinkan pengujian foto dokumen asli dengan visualisasi progres pembacaan teks karakter dan deteksi entitas finansial/pangan.
 - **Timer Demo Day (7-3-10 Menit):** Penghitung waktu mundur resmi untuk simulasi presentasi juri (7 menit pitching deck, 3 menit demo purwarupa, 10 menit tanya jawab).
 - **Cetak Rekapitulasi Laporan:** Format cetak siap pakai (*print-ready*) untuk pelaporan administrasi bulanan ke Kelurahan Yosomulyo.
 
