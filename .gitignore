@@ -14,3 +14,10 @@ $RECYCLE.BIN/
 .vscode/
 .idea/
 *.swp
+
+# Private Research Documents & Reports (Not for public repo)
+laporan/
+*.pdf
+*.docx
+AyuVitania*
+Proposal_dan_Laporan*
