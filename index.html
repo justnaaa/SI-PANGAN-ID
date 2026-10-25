@@ -1887,20 +1887,22 @@
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1 text-xs flex items-center justify-between">
                             <span>Harga Tengkulak *</span>
-                            <span class="text-[10px] text-rose-600 font-bold">Bawah</span>
+                            <span id="labelTengkulakMode" class="text-[10px] text-rose-600 font-bold">Bawah</span>
                         </label>
                         <input type="number" id="newListingTengkulakPrice" readonly value="11000"
+                            oninput="validateDynamicPricing()"
                             class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-100 text-stone-600 mono-num focus:outline-none cursor-not-allowed text-xs font-semibold"
-                            title="Batas Bawah Harga Tengkulak dikunci otomatis oleh sistem">
+                            title="Batas Bawah Harga Tengkulak">
                     </div>
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1 text-xs flex items-center justify-between">
                             <span>Harga Pasar Lampung *</span>
-                            <span class="text-[10px] text-amber-600 font-bold">Atas</span>
+                            <span id="labelMarketMode" class="text-[10px] text-amber-600 font-bold">Atas</span>
                         </label>
                         <input type="number" id="newListingMarketPrice" readonly value="15500"
+                            oninput="validateDynamicPricing()"
                             class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-100 text-stone-600 mono-num focus:outline-none cursor-not-allowed text-xs font-semibold"
-                            title="Batas Atas Harga Pasar Lampung dikunci otomatis oleh sistem">
+                            title="Batas Atas Harga Pasar Lampung">
                     </div>
                     <div>
                         <label class="block font-semibold text-emerald-800 mb-1 text-xs flex items-center justify-between">
@@ -3966,42 +3968,64 @@
             const producer = members.find(m => m.sid === selectedSid || m.sidShort === selectedSid);
             if (!producer || !producer.producerCommodity) return;
 
-            const prodComm = (producer.producerCommodity || '').toLowerCase().trim();
-            if (!prodComm || prodComm === '-') return;
+            const rawComm = (producer.producerCommodity || '').trim();
+            if (!rawComm || rawComm === '-') return;
 
-            // Cari kecocokan komoditas dengan opsi di select id="newListingName"
+            const prodCommLower = rawComm.toLowerCase();
+
+            // 1. Cek apakah komoditas cocok dengan opsi yang sudah ada di select
             let matchedValue = null;
-
-            // 1. Cek exact atau partial match langsung
             for (let i = 0; i < commoditySelect.options.length; i++) {
                 const optVal = commoditySelect.options[i].value;
                 const optLower = optVal.toLowerCase();
-                if (optLower.includes(prodComm) || prodComm.includes(optLower)) {
+                if (optLower === prodCommLower || optLower.includes(prodCommLower) || prodCommLower.includes(optLower)) {
                     matchedValue = optVal;
                     break;
                 }
             }
 
-            // 2. Jika belum cocok, cek kata kunci umum khas panen RT 13
+            // 2. Cek pemetaan kata kunci bahan pokok (Beras, Cabai, Telur, Ikan, Bawang, Bayam)
             if (!matchedValue) {
                 const keywordMapping = [
-                    { keywords: ['beras', 'padi', 'ciherang'], value: 'Beras Premium Lokal (Ciherang/IR64)' },
+                    { keywords: ['beras', 'ciherang', 'padi'], value: 'Beras Premium Lokal (Ciherang/IR64)' },
                     { keywords: ['cabai', 'cabe', 'tomat'], value: 'Cabai Merah Keriting (Pekarangan)' },
-                    { keywords: ['telur', 'unggas', 'ayam'], value: 'Telur Ayam Ras Segar (Kandang RT 13)' },
-                    { keywords: ['gurame', 'ikan', 'bioflok', 'lele'], value: 'Ikan Gurame Segar (Kolam Bioflok)' },
-                    { keywords: ['bawang', 'umbi'], value: 'Bawang Merah (Panen Lokal Super)' },
-                    { keywords: ['bayam', 'sayur', 'kangkung', 'daun'], value: 'Sayur Bayam & Sayuran Hijau' }
+                    { keywords: ['telur', 'unggas'], value: 'Telur Ayam Ras Segar (Kandang RT 13)' },
+                    { keywords: ['gurame', 'ikan'], value: 'Ikan Gurame Segar (Kolam Bioflok)' },
+                    { keywords: ['bawang'], value: 'Bawang Merah (Panen Lokal Super)' },
+                    { keywords: ['bayam', 'kangkung'], value: 'Sayur Bayam & Sayuran Hijau' }
                 ];
 
                 for (const item of keywordMapping) {
-                    if (item.keywords.some(kw => prodComm.includes(kw))) {
+                    if (item.keywords.some(kw => prodCommLower.includes(kw))) {
                         matchedValue = item.value;
                         break;
                     }
                 }
             }
 
-            // Jika ditemukan komoditas yang cocok, auto-select dan trigger handleCommodityChange
+            // 3. DINAMISASI DROPDOWN KOMODITAS (AUTO-INJECT DARI PROFIL PRODUSEN):
+            // Jika komoditas produsen unik (misal: "Jamur Tiram Putih Segar Kumbung", "Jamu Tradisional", dll.)
+            // dan belum ada di dalam dropdown, otomatis buat elemen <option> baru dan tambahkan ke dropdown
+            if (!matchedValue) {
+                let optionExists = false;
+                for (let i = 0; i < commoditySelect.options.length; i++) {
+                    if (commoditySelect.options[i].value.toLowerCase() === prodCommLower) {
+                        matchedValue = commoditySelect.options[i].value;
+                        optionExists = true;
+                        break;
+                    }
+                }
+
+                if (!optionExists) {
+                    const newOption = document.createElement('option');
+                    newOption.value = rawComm;
+                    newOption.textContent = `${rawComm} (Panen Kustom)`;
+                    commoditySelect.appendChild(newOption);
+                    matchedValue = rawComm;
+                }
+            }
+
+            // 4. Otomatis pilih (auto-select) dan trigger sinkronisasi harga
             if (matchedValue) {
                 commoditySelect.value = matchedValue;
                 handleCommodityChange();
@@ -4288,54 +4312,117 @@
             if (!selectEl) return;
             const commodityName = selectEl.value;
             const intel = LAMPUNG_MARKET_INTELLIGENCE[commodityName];
-            if (!intel) return;
 
-            // 1. Sinkronisasi Kategori Pangan & Batas Kesegaran
-            const catSelect = document.getElementById('newListingCategory');
-            if (catSelect) catSelect.value = intel.category;
-
-            const freshnessInput = document.getElementById('newListingFreshness');
-            if (freshnessInput) freshnessInput.value = intel.freshnessDays;
-
-            // 2. Kunci & isi otomatis input readonly Tengkulak & Pasar Lampung
             const tengkulakInput = document.getElementById('newListingTengkulakPrice');
-            if (tengkulakInput) {
-                tengkulakInput.value = intel.tengkulakPrice;
-                tengkulakInput.readOnly = true;
-            }
-
             const marketInput = document.getElementById('newListingMarketPrice');
-            if (marketInput) {
-                marketInput.value = intel.marketLampungPrice;
-                marketInput.readOnly = true;
+            const priceInput = document.getElementById('newListingPrice');
+            const catSelect = document.getElementById('newListingCategory');
+            const freshnessInput = document.getElementById('newListingFreshness');
+
+            const tengkulakDisplay = document.getElementById('intelTengkulakDisplay');
+            const safeRangeDisplay = document.getElementById('intelSafeRangeDisplay');
+            const marketDisplay = document.getElementById('intelMarketDisplay');
+            const sourceDisplay = document.getElementById('intelSourceDisplay');
+            const statusPill = document.getElementById('intelStatusPill');
+            const labelMin = document.getElementById('gaugeLabelMin');
+            const labelMid = document.getElementById('gaugeLabelMid');
+            const labelMax = document.getElementById('gaugeLabelMax');
+            const labelTengkulakMode = document.getElementById('labelTengkulakMode');
+            const labelMarketMode = document.getElementById('labelMarketMode');
+
+            // MODE 1: BAHAN POKOK (TERKUNCI & DATA STATIS REGIONAL LAMPUNG)
+            if (intel) {
+                if (catSelect) catSelect.value = intel.category;
+                if (freshnessInput) freshnessInput.value = intel.freshnessDays;
+
+                // Kunci input readonly dan ubah background menjadi abu-abu
+                if (tengkulakInput) {
+                    tengkulakInput.readOnly = true;
+                    tengkulakInput.className = "w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-100 text-stone-600 mono-num focus:outline-none cursor-not-allowed text-xs font-semibold";
+                    tengkulakInput.value = intel.tengkulakPrice;
+                }
+
+                if (marketInput) {
+                    marketInput.readOnly = true;
+                    marketInput.className = "w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-100 text-stone-600 mono-num focus:outline-none cursor-not-allowed text-xs font-semibold";
+                    marketInput.value = intel.marketLampungPrice;
+                }
+
+                if (priceInput) priceInput.value = intel.recommendedPrice;
+
+                // Update Panel AI Market Intelligence
+                if (tengkulakDisplay) tengkulakDisplay.textContent = formatRupiah(intel.tengkulakPrice);
+                if (safeRangeDisplay) safeRangeDisplay.textContent = `${formatRupiah(intel.safeMin || intel.tengkulakPrice + 1000)} - ${formatRupiah(intel.safeMax || intel.marketLampungPrice - 1000)}`;
+                if (marketDisplay) marketDisplay.textContent = formatRupiah(intel.marketLampungPrice);
+                if (sourceDisplay) sourceDisplay.textContent = `Sumber: ${intel.dataSource}`;
+                if (statusPill) {
+                    statusPill.textContent = "Fluktuasi Terkendali (±2.4%)";
+                    statusPill.className = "px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-900/80 text-emerald-300 border border-emerald-700";
+                }
+
+                if (labelMin) labelMin.textContent = formatRupiah(intel.tengkulakPrice);
+                if (labelMid) labelMid.textContent = `Optimal: ${formatRupiah(intel.recommendedPrice)}`;
+                if (labelMax) labelMax.textContent = formatRupiah(intel.marketLampungPrice);
+
+                if (labelTengkulakMode) labelTengkulakMode.textContent = "Bawah (Kunci)";
+                if (labelMarketMode) labelMarketMode.textContent = "Atas (Kunci)";
+            } 
+            // MODE 2: PRODUK UMKM KUSTOM (HAPUS READONLY & BACKGROUND PUTIH)
+            else {
+                // Hapus atribut readonly dan ubah background menjadi putih agar produsen bisa mengetik batas harganya sendiri
+                if (tengkulakInput) {
+                    tengkulakInput.readOnly = false;
+                    tengkulakInput.className = "w-full px-3 py-2 rounded-lg border border-forest-400 ring-1 ring-forest-400/20 bg-white text-stone-900 mono-num focus:outline-none text-xs font-semibold";
+                    tengkulakInput.value = '';
+                    tengkulakInput.placeholder = "Ketik batas tengkulak";
+                }
+
+                if (marketInput) {
+                    marketInput.readOnly = false;
+                    marketInput.className = "w-full px-3 py-2 rounded-lg border border-forest-400 ring-1 ring-forest-400/20 bg-white text-stone-900 mono-num focus:outline-none text-xs font-semibold";
+                    marketInput.value = '';
+                    marketInput.placeholder = "Ketik batas pasar";
+                }
+
+                if (priceInput) {
+                    priceInput.value = '';
+                    priceInput.placeholder = "Ketik harga adil Anda";
+                }
+
+                // Teks presisi sesuai instruksi:
+                if (sourceDisplay) {
+                    sourceDisplay.textContent = "Mode Harga Kustom UMKM (Tentukan batas bawah tengkulak dan batas atas pasaran untuk produk Anda)";
+                }
+                if (statusPill) {
+                    statusPill.textContent = "Mode Kustom UMKM";
+                    statusPill.className = "px-2 py-0.5 rounded text-[9px] font-bold bg-amber-900/80 text-amber-300 border border-amber-700";
+                }
+
+                if (tengkulakDisplay) tengkulakDisplay.textContent = "Rp --";
+                if (safeRangeDisplay) safeRangeDisplay.textContent = "Tentukan Batas Sendiri";
+                if (marketDisplay) marketDisplay.textContent = "Rp --";
+                if (labelMin) labelMin.textContent = "Min (Tengkulak)";
+                if (labelMid) labelMid.textContent = "Batas Kustom Produsen";
+                if (labelMax) labelMax.textContent = "Maks (Pasar)";
+
+                if (labelTengkulakMode) labelTengkulakMode.textContent = "Bawah (Kustom)";
+                if (labelMarketMode) labelMarketMode.textContent = "Atas (Kustom)";
+
+                // Prediksi kategori ramah produk
+                if (catSelect) {
+                    const lower = commodityName.toLowerCase();
+                    if (lower.includes('jamur') || lower.includes('sayur') || lower.includes('jagung') || lower.includes('kacang')) {
+                        catSelect.value = "Sayur Pekarangan";
+                    } else if (lower.includes('lele') || lower.includes('ikan') || lower.includes('telur')) {
+                        catSelect.value = "Lauk & Protein";
+                    } else {
+                        catSelect.value = "Olahan Pangan";
+                    }
+                }
+                if (freshnessInput && !freshnessInput.value) freshnessInput.value = 7;
             }
 
-            const priceInput = document.getElementById('newListingPrice');
-            if (priceInput) priceInput.value = intel.recommendedPrice;
-
-            // 3. Update Panel AI Market Intelligence
-            const tengkulakDisplay = document.getElementById('intelTengkulakDisplay');
-            if (tengkulakDisplay) tengkulakDisplay.textContent = formatRupiah(intel.tengkulakPrice);
-
-            const safeRangeDisplay = document.getElementById('intelSafeRangeDisplay');
-            if (safeRangeDisplay) safeRangeDisplay.textContent = `${formatRupiah(intel.safeMin || intel.tengkulakPrice + 1000)} - ${formatRupiah(intel.safeMax || intel.marketLampungPrice - 1000)}`;
-
-            const marketDisplay = document.getElementById('intelMarketDisplay');
-            if (marketDisplay) marketDisplay.textContent = formatRupiah(intel.marketLampungPrice);
-
-            const sourceDisplay = document.getElementById('intelSourceDisplay');
-            if (sourceDisplay) sourceDisplay.textContent = `Sumber: ${intel.dataSource}`;
-
-            const labelMin = document.getElementById('gaugeLabelMin');
-            if (labelMin) labelMin.textContent = formatRupiah(intel.tengkulakPrice);
-
-            const labelMid = document.getElementById('gaugeLabelMid');
-            if (labelMid) labelMid.textContent = `Optimal: ${formatRupiah(intel.recommendedPrice)}`;
-
-            const labelMax = document.getElementById('gaugeLabelMax');
-            if (labelMax) labelMax.textContent = formatRupiah(intel.marketLampungPrice);
-
-            // 4. Validasi Dynamic Pricing Real-Time
+            // Validasi Dynamic Pricing Real-Time
             validateDynamicPricing();
         }
 
@@ -4350,31 +4437,67 @@
             const tengkulakInput = document.getElementById('newListingTengkulakPrice');
             const marketInput = document.getElementById('newListingMarketPrice');
 
-            if (!priceInput) return false;
+            if (!priceInput || !selectEl) return false;
 
-            const commodityName = selectEl ? selectEl.value : '';
-            const intel = LAMPUNG_MARKET_INTELLIGENCE[commodityName] || {
-                tengkulakPrice: Number(tengkulakInput?.value || 11000),
-                marketLampungPrice: Number(marketInput?.value || 15500),
-                safeMin: 12000,
-                safeMax: 15000,
-                recommendedPrice: 13000
-            };
+            const commodityName = selectEl.value;
+            const isStandard = Boolean(LAMPUNG_MARKET_INTELLIGENCE[commodityName]);
 
+            const tengkulak = Number(tengkulakInput?.value || 0);
+            const marketLampung = Number(marketInput?.value || 0);
             const price = Number(priceInput.value || 0);
-            const tengkulak = intel.tengkulakPrice;
-            const marketLampung = intel.marketLampungPrice;
 
-            // Pastikan input readonly selalu sinkron
-            if (tengkulakInput && Number(tengkulakInput.value) !== tengkulak) {
-                tengkulakInput.value = tengkulak;
+            // Update panel display values secara dinamis untuk mode kustom
+            const tengkulakDisplay = document.getElementById('intelTengkulakDisplay');
+            const marketDisplay = document.getElementById('intelMarketDisplay');
+            const safeRangeDisplay = document.getElementById('intelSafeRangeDisplay');
+            const labelMin = document.getElementById('gaugeLabelMin');
+            const labelMid = document.getElementById('gaugeLabelMid');
+            const labelMax = document.getElementById('gaugeLabelMax');
+
+            if (!isStandard) {
+                if (tengkulakDisplay) tengkulakDisplay.textContent = tengkulak > 0 ? formatRupiah(tengkulak) : 'Rp --';
+                if (marketDisplay) marketDisplay.textContent = marketLampung > 0 ? formatRupiah(marketLampung) : 'Rp --';
+                if (safeRangeDisplay) {
+                    safeRangeDisplay.textContent = (tengkulak > 0 && marketLampung > 0)
+                        ? `${formatRupiah(tengkulak)} - ${formatRupiah(marketLampung)}`
+                        : 'Tentukan Batas Sendiri';
+                }
+                if (labelMin) labelMin.textContent = tengkulak > 0 ? formatRupiah(tengkulak) : 'Min';
+                if (labelMax) labelMax.textContent = marketLampung > 0 ? formatRupiah(marketLampung) : 'Maks';
+                if (labelMid) {
+                    const mid = (tengkulak > 0 && marketLampung > 0) ? Math.round((tengkulak + marketLampung) / 2) : 0;
+                    labelMid.textContent = mid > 0 ? `Tengah: ${formatRupiah(mid)}` : 'Kisaran Adil';
+                }
             }
-            if (marketInput && Number(marketInput.value) !== marketLampung) {
-                marketInput.value = marketLampung;
+
+            // Jika mode kustom dan produsen belum mengisi batas harga tengkulak / pasar
+            if (!isStandard && (tengkulak <= 0 || marketLampung <= 0)) {
+                priceInput.className = "w-full px-3 py-2 rounded-lg border border-paddy-400 ring-1 ring-paddy-300 mono-num focus:outline-none bg-white text-stone-900 text-xs font-bold";
+                if (feedbackText) feedbackText.className = "text-[10px] text-paddy-800 font-medium leading-tight flex items-start gap-1";
+                if (feedbackIcon) feedbackIcon.className = "fa-solid fa-circle-info text-paddy-600 mt-0.5 shrink-0";
+                if (feedbackMsg) feedbackMsg.textContent = "Silakan tentukan batas harga tengkulak dan batas pasar untuk produk kustom Anda.";
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.className = "px-5 py-2 rounded-lg bg-stone-300 text-stone-500 text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-not-allowed";
+                }
+                return false;
+            }
+
+            // Jika batas pasar lebih rendah dari tengkulak (kekeliruan input pengguna)
+            if (!isStandard && tengkulak >= marketLampung) {
+                priceInput.className = "w-full px-3 py-2 rounded-lg border border-rose-500 ring-1 ring-rose-400 mono-num focus:outline-none bg-rose-50/50 text-rose-900 transition-all text-xs font-bold";
+                if (feedbackText) feedbackText.className = "text-[10px] text-rose-600 font-bold leading-tight flex items-start gap-1";
+                if (feedbackIcon) feedbackIcon.className = "fa-solid fa-circle-xmark text-rose-500 mt-0.5 shrink-0";
+                if (feedbackMsg) feedbackMsg.textContent = "Batas Harga Pasar harus lebih tinggi dari Harga Tengkulak!";
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.className = "px-5 py-2 rounded-lg bg-stone-300 text-stone-500 text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-not-allowed";
+                }
+                return false;
             }
 
             // Hitung posisi visual gauge marker (0% - 100%)
-            if (markerPin) {
+            if (markerPin && tengkulak > 0 && marketLampung > tengkulak) {
                 let markerPct = 50;
                 if (price <= tengkulak) {
                     markerPct = Math.max(5, (price / Math.max(1, tengkulak)) * 20);
@@ -4387,7 +4510,20 @@
                 markerPin.style.left = `${markerPct}%`;
             }
 
-            // Aturan Validasi Real-Time Sesuai Spesifikasi:
+            // Jika Harga Adil belum diisi
+            if (price <= 0) {
+                priceInput.className = "w-full px-3 py-2 rounded-lg border border-stone-300 mono-num focus:outline-none bg-white text-stone-900 text-xs font-bold";
+                if (feedbackText) feedbackText.className = "text-[10px] text-stone-500 font-medium leading-tight flex items-start gap-1";
+                if (feedbackIcon) feedbackIcon.className = "fa-solid fa-pen text-stone-400 mt-0.5 shrink-0";
+                if (feedbackMsg) feedbackMsg.textContent = "Ketik harga adil penjualan yang Anda inginkan.";
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.className = "px-5 py-2 rounded-lg bg-stone-300 text-stone-500 text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-not-allowed";
+                }
+                return false;
+            }
+
+            // ATURAN VALIDASI HARGA ADIL:
             // 1. Jika Harga Adil <= Tengkulak: Munculkan teks merah "Harga terlalu murah, Anda berpotensi rugi!" dan disable tombol Submit.
             if (price <= tengkulak) {
                 priceInput.className = "w-full px-3 py-2 rounded-lg border border-rose-500 ring-1 ring-rose-400 mono-num focus:outline-none bg-rose-50/50 text-rose-900 transition-all text-xs font-bold";
