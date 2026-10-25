@@ -1775,24 +1775,109 @@
                     </select>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <!-- Row 1: Dropdown Cerdas Komoditas Khas Lampung & Kategori -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold text-stone-700 mb-1">Nama Komoditas Panen *</label>
-                        <input type="text" id="newListingName" required placeholder="Contoh: Kangkung Segar Petik Pagi"
-                            class="w-full px-3 py-2 rounded-lg border border-stone-200 focus:outline-none focus:border-forest-600">
+                        <label class="block font-semibold text-stone-700 mb-1 flex items-center justify-between">
+                            <span>Nama Komoditas Pokok (Lampung) *</span>
+                            <span class="text-[10px] text-forest-700 font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-sparkles text-paddy-600"></i> AI Cerdas
+                            </span>
+                        </label>
+                        <select id="newListingName" required onchange="handleCommodityChange()"
+                            class="w-full px-3 py-2 rounded-lg border border-stone-200 bg-white font-medium text-stone-800 focus:outline-none focus:border-forest-600">
+                            <option value="Beras Premium Lokal">Beras Premium Lokal (Ciherang/IR64)</option>
+                            <option value="Cabai Merah Keriting">Cabai Merah Keriting (Pekarangan)</option>
+                            <option value="Telur Ayam Ras">Telur Ayam Ras Segar (Kandang RT 13)</option>
+                            <option value="Ikan Gurame Segar">Ikan Gurame Segar (Kolam Bioflok)</option>
+                            <option value="Bawang Merah">Bawang Merah (Panen Lokal Super)</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1">Kategori Pangan *</label>
                         <select id="newListingCategory"
                             class="w-full px-3 py-2 rounded-lg border border-stone-200 bg-white focus:outline-none focus:border-forest-600">
-                            <option value="Sayur Pekarangan">Sayur Pekarangan</option>
                             <option value="Beras & Padi">Beras & Padi (Lumbung)</option>
+                            <option value="Sayur Pekarangan">Sayur Pekarangan</option>
                             <option value="Lauk & Protein">Lauk & Protein</option>
                             <option value="Olahan Pangan">Olahan Pangan UMKM</option>
                         </select>
                     </div>
                 </div>
 
+                <!-- Panel AI Market Intelligence Regional Provinsi Lampung -->
+                <div id="aiMarketIntelligencePanel"
+                    class="p-3.5 sm:p-4 rounded-xl bg-forest-900 text-white shadow-xs space-y-3 transition-all duration-300 border border-forest-800/80">
+                    <div class="flex flex-wrap items-center justify-between gap-1">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                            <span class="text-[11px] font-bold tracking-wide uppercase text-forest-200">
+                                <i class="fa-solid fa-chart-line text-emerald-400 mr-1"></i> AI Market Intelligence • Provinsi Lampung
+                            </span>
+                        </div>
+                        <span class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-forest-800 text-forest-300 border border-forest-700/80">
+                            PIHPS & Disperindag Live
+                        </span>
+                    </div>
+
+                    <!-- 3 Benchmarks Display -->
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="p-2 rounded-lg bg-forest-800/70 border border-forest-700/60">
+                            <span class="block text-[9px] text-stone-300 uppercase font-semibold">Batas Bawah (Tengkulak)</span>
+                            <strong id="intelTengkulakDisplay" class="font-mono text-xs text-rose-300">Rp 11.000</strong>
+                        </div>
+                        <div class="p-2 rounded-lg bg-emerald-950/80 border border-emerald-600/60 ring-1 ring-emerald-500/30">
+                            <span class="block text-[9px] text-emerald-300 uppercase font-semibold">Zona Hijau (Harga Adil)</span>
+                            <strong id="intelSafeRangeDisplay" class="font-mono text-xs text-emerald-300">Rp 12.000 - Rp 15.000</strong>
+                        </div>
+                        <div class="p-2 rounded-lg bg-forest-800/70 border border-forest-700/60">
+                            <span class="block text-[9px] text-stone-300 uppercase font-semibold">Batas Atas (Pasar Lampung)</span>
+                            <strong id="intelMarketDisplay" class="font-mono text-xs text-amber-300">Rp 16.000</strong>
+                        </div>
+                    </div>
+
+                    <!-- Visual Range Bar / Dynamic Gauge Bar -->
+                    <div class="space-y-1.5 pt-1">
+                        <div class="flex justify-between items-center text-[10px] text-forest-200 font-mono">
+                            <span class="flex items-center gap-1 text-rose-300"><i class="fa-solid fa-triangle-exclamation text-[9px]"></i> Zona Rugi</span>
+                            <span class="text-emerald-300 font-bold flex items-center gap-1"><i class="fa-solid fa-shield-heart text-[9px]"></i> Zona Adil Komunitas (Rekomendasi AI)</span>
+                            <span class="flex items-center gap-1 text-amber-300">Zona Inflasi <i class="fa-solid fa-arrow-trend-up text-[9px]"></i></span>
+                        </div>
+
+                        <!-- The Tri-Color Range Bar with Sliding Real-Time Pin -->
+                        <div class="relative w-full h-3.5 bg-stone-800 rounded-full overflow-hidden flex border border-forest-700 shadow-inner">
+                            <div id="gaugeTengkulakZone" class="h-full bg-rose-500/80 transition-all duration-300" style="width: 20%;" title="Zona Terlalu Murah"></div>
+                            <div id="gaugeGreenZone" class="h-full bg-emerald-500 transition-all duration-300 relative flex items-center justify-center" style="width: 60%;" title="Zona Hijau Harga Adil">
+                                <span class="text-[8px] font-bold text-white tracking-widest uppercase opacity-90 hidden sm:inline">KORIDOR ADIL</span>
+                            </div>
+                            <div id="gaugeMarketZone" class="h-full bg-amber-500/80 transition-all duration-300" style="width: 20%;" title="Zona Inflasi Tinggi"></div>
+
+                            <!-- Real-time Price Pin Marker (Calculated & animated via JS) -->
+                            <div id="gaugePriceMarker"
+                                class="absolute top-0 bottom-0 w-3 -ml-1.5 bg-white rounded-full ring-2 ring-forest-900 shadow-md transition-all duration-200 z-10"
+                                style="left: 50%;"></div>
+                        </div>
+
+                        <div class="flex justify-between text-[9px] text-forest-300 font-mono pt-0.5">
+                            <span id="gaugeLabelMin">Rp 11.000</span>
+                            <span class="text-emerald-300 font-semibold" id="gaugeLabelMid">Optimal: Rp 13.000</span>
+                            <span id="gaugeLabelMax">Rp 16.000</span>
+                        </div>
+                    </div>
+
+                    <!-- Intelligence Source & Fluctuation Note -->
+                    <div class="pt-2 border-t border-forest-800/80 flex items-center justify-between text-[10px] text-forest-300">
+                        <span class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-database text-forest-400"></i>
+                            <span id="intelSourceDisplay">Sumber: PIHPS & Pasar Tradisional Kota Metro, Lampung</span>
+                        </span>
+                        <span id="intelStatusPill" class="px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-900/80 text-emerald-300 border border-emerald-700">
+                            Fluktuasi Terkendali (±2.4%)
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Input Panen & Dynamic Pricing Inputs -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1">Total Panen (Kg) *</label>
@@ -1801,20 +1886,24 @@
                     </div>
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1">Harga Tengkulak (Rp) *</label>
-                        <input type="number" id="newListingTengkulakPrice" min="1000" step="500" value="5000" required
-                            oninput="calculateRecommendedFairPrice()"
-                            placeholder="Contoh: 5000"
+                        <input type="number" id="newListingTengkulakPrice" min="1000" step="500" value="11000" required
+                            oninput="validateDynamicPricing()"
+                            placeholder="Contoh: 11000"
                             class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600 bg-white">
                     </div>
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1">Harga Adil (Rp/Kg) *</label>
-                        <input type="number" id="newListingPrice" min="1000" step="100" value="7000" required
-                            placeholder="Otomatis dihitung / manual"
-                            class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600 bg-white">
-                        <p class="text-[10px] sm:text-[11px] text-forest-700 mt-1.5 font-medium leading-tight flex items-start gap-1">
-                            <i class="fa-solid fa-circle-check text-forest-600 mt-0.5 shrink-0"></i>
-                            <span>Rekomendasi sistem: +40% dari harga tengkulak untuk memastikan keuntungan Anda dan keterjangkauan warga.</span>
-                        </p>
+                        <input type="number" id="newListingPrice" min="1000" step="100" value="13000" required
+                            oninput="validateDynamicPricing()"
+                            placeholder="Ketik harga jual Anda"
+                            class="w-full px-3 py-2 rounded-lg border border-emerald-600 ring-1 ring-emerald-400/30 mono-num focus:outline-none bg-white transition-all">
+                        <!-- Dynamic Validation Feedback Message -->
+                        <div id="pricingFeedbackContainer" class="mt-1.5 transition-all duration-200">
+                            <p id="pricingFeedbackText" class="text-[10px] sm:text-[11px] text-emerald-700 font-medium leading-tight flex items-start gap-1">
+                                <i id="pricingFeedbackIcon" class="fa-solid fa-circle-check text-emerald-600 mt-0.5 shrink-0"></i>
+                                <span id="pricingFeedbackMsg">Harga Inklusif! Menguntungkan Anda & terjangkau bagi warga.</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
 
@@ -1842,8 +1931,8 @@
                         class="px-3.5 py-2 rounded-lg border border-stone-300 text-stone-700 hover:bg-stone-50 text-xs font-semibold">
                         Batal
                     </button>
-                    <button type="submit"
-                        class="px-5 py-2 rounded-lg bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5">
+                    <button type="submit" id="btnSubmitNewListing"
+                        class="px-5 py-2 rounded-lg bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-stone-400">
                         <i class="fa-solid fa-check"></i> Terbitkan ke Pasar Cerdas
                     </button>
                 </div>
@@ -3271,7 +3360,12 @@
         // --- 3. MODAL CONTROLS ---
         function openModal(modalId) {
             const m = document.getElementById(modalId);
-            if (m) m.classList.remove('hidden');
+            if (m) {
+                m.classList.remove('hidden');
+                if (modalId === 'modalNewListing') {
+                    setTimeout(initAiMarketIntelligence, 30);
+                }
+            }
         }
 
         function closeModal(modalId) {
@@ -3919,17 +4013,227 @@
             showToast("Surplus Panen Dialihkan!", `${surplusKg} Kg beras dialihkan ke ${channelText.split('(')[0]}. Kas inklusi PKK bertambah ${formatRupiah(feePkk)}.`, "success");
         }
 
-        // Rekomendasi otomatis Harga Adil (+40% dari Harga Tengkulak)
-        function calculateRecommendedFairPrice() {
-            const tengkulakInput = document.getElementById('newListingTengkulakPrice');
-            const fairPriceInput = document.getElementById('newListingPrice');
-            if (!tengkulakInput || !fairPriceInput) return;
-
-            const tengkulak = Number(tengkulakInput.value);
-            if (tengkulak > 0) {
-                // Margin keuntungan 40% (Harga Tengkulak * 1.4)
-                fairPriceInput.value = Math.round(tengkulak * 1.4);
+        // =========================================================================
+        // AI MARKET INTELLIGENCE & DYNAMIC PRICING ENGINE (REGIONAL LAMPUNG)
+        // =========================================================================
+        const LAMPUNG_MARKET_INTELLIGENCE = {
+            "Beras Premium Lokal": {
+                category: "Beras & Padi",
+                unit: "Kg",
+                tengkulakPrice: 11000,
+                marketLampungPrice: 16000,
+                safeMin: 12000,
+                safeMax: 15000,
+                recommendedPrice: 13000,
+                freshnessDays: 90,
+                dataSource: "PIHPS & Disperindag Lampung (Metro)",
+                description: "Beras pulen Ciherang panen Poktan Metro, kadar air 14% standar lumbung pangan RT 13."
+            },
+            "Cabai Merah Keriting": {
+                category: "Sayur Pekarangan",
+                unit: "Kg",
+                tengkulakPrice: 25000,
+                marketLampungPrice: 45000,
+                safeMin: 30000,
+                safeMax: 40000,
+                recommendedPrice: 35000,
+                freshnessDays: 5,
+                dataSource: "Pasar Kopindo & Pasar Pasir Gintung",
+                description: "Cabai merah keriting petik segar pekarangan, pedas mantap alami bebas residu pestisida."
+            },
+            "Telur Ayam Ras": {
+                category: "Lauk & Protein",
+                unit: "Kg",
+                tengkulakPrice: 23000,
+                marketLampungPrice: 30000,
+                safeMin: 25000,
+                safeMax: 28000,
+                recommendedPrice: 26500,
+                freshnessDays: 14,
+                dataSource: "Asosiasi Peternak Layer Lampung & Pasar Cendrawasih",
+                description: "Telur ayam segar cangkang cokelat tebal langsung dari peternak binaan RT 13."
+            },
+            "Ikan Gurame Segar": {
+                category: "Lauk & Protein",
+                unit: "Kg",
+                tengkulakPrice: 32000,
+                marketLampungPrice: 48000,
+                safeMin: 36000,
+                safeMax: 44000,
+                recommendedPrice: 40000,
+                freshnessDays: 2,
+                dataSource: "Sentra Budi Daya Kolam Air Bersih Metro",
+                description: "Gurame hidup air tawar segar, daging kenyal manis, higienis untuk pemenuhan gizi keluarga."
+            },
+            "Bawang Merah": {
+                category: "Sayur Pekarangan",
+                unit: "Kg",
+                tengkulakPrice: 22000,
+                marketLampungPrice: 38000,
+                safeMin: 26000,
+                safeMax: 34000,
+                recommendedPrice: 30000,
+                freshnessDays: 30,
+                dataSource: "Pasar Induk Tani Lampung & Disperindag",
+                description: "Bawang merah kering umbi padat merah beraroma tajam, hasil panen pekarangan dasawisma."
             }
+        };
+
+        function handleCommodityChange() {
+            const selectEl = document.getElementById('newListingName');
+            if (!selectEl) return;
+            const commodityName = selectEl.value;
+            const intel = LAMPUNG_MARKET_INTELLIGENCE[commodityName];
+            if (!intel) return;
+
+            // 1. Sinkronisasi Kategori Pangan & Batas Kesegaran
+            const catSelect = document.getElementById('newListingCategory');
+            if (catSelect) catSelect.value = intel.category;
+
+            const freshnessInput = document.getElementById('newListingFreshness');
+            if (freshnessInput) freshnessInput.value = intel.freshnessDays;
+
+            // 2. Isi nilai benchmark awal ke input
+            const tengkulakInput = document.getElementById('newListingTengkulakPrice');
+            if (tengkulakInput) tengkulakInput.value = intel.tengkulakPrice;
+
+            const priceInput = document.getElementById('newListingPrice');
+            if (priceInput) priceInput.value = intel.recommendedPrice;
+
+            // 3. Update Panel AI Market Intelligence
+            const tengkulakDisplay = document.getElementById('intelTengkulakDisplay');
+            if (tengkulakDisplay) tengkulakDisplay.textContent = formatRupiah(intel.tengkulakPrice);
+
+            const safeRangeDisplay = document.getElementById('intelSafeRangeDisplay');
+            if (safeRangeDisplay) safeRangeDisplay.textContent = `${formatRupiah(intel.safeMin)} - ${formatRupiah(intel.safeMax)}`;
+
+            const marketDisplay = document.getElementById('intelMarketDisplay');
+            if (marketDisplay) marketDisplay.textContent = formatRupiah(intel.marketLampungPrice);
+
+            const sourceDisplay = document.getElementById('intelSourceDisplay');
+            if (sourceDisplay) sourceDisplay.textContent = `Sumber: ${intel.dataSource}`;
+
+            const labelMin = document.getElementById('gaugeLabelMin');
+            if (labelMin) labelMin.textContent = formatRupiah(intel.tengkulakPrice);
+
+            const labelMid = document.getElementById('gaugeLabelMid');
+            if (labelMid) labelMid.textContent = `Optimal: ${formatRupiah(intel.recommendedPrice)}`;
+
+            const labelMax = document.getElementById('gaugeLabelMax');
+            if (labelMax) labelMax.textContent = formatRupiah(intel.marketLampungPrice);
+
+            // 4. Jalankan validasi harga dan pembaruan visual gauge
+            validateDynamicPricing();
+        }
+
+        function validateDynamicPricing() {
+            const selectEl = document.getElementById('newListingName');
+            const priceInput = document.getElementById('newListingPrice');
+            const submitBtn = document.getElementById('btnSubmitNewListing');
+            const feedbackText = document.getElementById('pricingFeedbackText');
+            const feedbackIcon = document.getElementById('pricingFeedbackIcon');
+            const feedbackMsg = document.getElementById('pricingFeedbackMsg');
+            const markerPin = document.getElementById('gaugePriceMarker');
+
+            if (!selectEl || !priceInput) return;
+
+            const commodityName = selectEl.value;
+            const intel = LAMPUNG_MARKET_INTELLIGENCE[commodityName] || {
+                tengkulakPrice: Number(document.getElementById('newListingTengkulakPrice')?.value || 5000),
+                marketLampungPrice: 16000,
+                safeMin: 12000,
+                safeMax: 15000,
+                recommendedPrice: 13000
+            };
+
+            const price = Number(priceInput.value || 0);
+            const tengkulak = intel.tengkulakPrice;
+            const marketLampung = intel.marketLampungPrice;
+            const safeMin = intel.safeMin;
+            const safeMax = intel.safeMax;
+
+            // Hitung posisi visual gauge marker (0% - 100%)
+            let markerPct = 50;
+            if (price <= tengkulak) {
+                markerPct = Math.max(5, (price / Math.max(1, tengkulak)) * 20);
+            } else if (price >= marketLampung) {
+                markerPct = Math.min(95, 80 + ((price - marketLampung) / (marketLampung * 0.2 || 1)) * 15);
+            } else if (price >= safeMin && price <= safeMax) {
+                const safeSpan = Math.max(1, safeMax - safeMin);
+                markerPct = 20 + ((price - safeMin) / safeSpan) * 60;
+            } else if (price < safeMin) {
+                markerPct = 20;
+            } else {
+                markerPct = 80;
+            }
+
+            if (markerPin) {
+                markerPin.style.left = `${markerPct}%`;
+            }
+
+            // Aturan Validasi Dynamic Pricing Constraint Sesuai Spesifikasi:
+            // 1. DI BAWAH batas bawah (Tengkulak) -> Warning Merah & Disable Submit
+            if (price < tengkulak) {
+                priceInput.className = "w-full px-3 py-2 rounded-lg border border-rose-500 ring-1 ring-rose-300 mono-num focus:outline-none bg-rose-50/40 text-rose-900 transition-all";
+                if (feedbackText) feedbackText.className = "text-[10px] sm:text-[11px] text-rose-600 font-bold leading-tight flex items-start gap-1";
+                if (feedbackIcon) feedbackIcon.className = "fa-solid fa-circle-xmark text-rose-500 mt-0.5 shrink-0";
+                if (feedbackMsg) feedbackMsg.textContent = "Harga terlalu murah (di bawah standar tengkulak). Anda berpotensi rugi!";
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.className = "px-5 py-2 rounded-lg bg-stone-300 text-stone-500 text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-not-allowed";
+                }
+                return false;
+            }
+
+            // 2. DI ATAS batas atas (Pasar Lampung) -> Warning Merah & Disable Submit
+            if (price > marketLampung) {
+                priceInput.className = "w-full px-3 py-2 rounded-lg border border-rose-500 ring-1 ring-rose-300 mono-num focus:outline-none bg-rose-50/40 text-rose-900 transition-all";
+                if (feedbackText) feedbackText.className = "text-[10px] sm:text-[11px] text-rose-600 font-bold leading-tight flex items-start gap-1";
+                if (feedbackIcon) feedbackIcon.className = "fa-solid fa-circle-xmark text-rose-500 mt-0.5 shrink-0";
+                if (feedbackMsg) feedbackMsg.textContent = "Harga melebihi rata-rata pasar Lampung. Sistem menolak harga inflasi tinggi!";
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.className = "px-5 py-2 rounded-lg bg-stone-300 text-stone-500 text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-not-allowed";
+                }
+                return false;
+            }
+
+            // 3. DI ZONA HIJAU (Range Aman Rekomendasi AI) -> Teks Hijau & Aktifkan Submit
+            if (price >= safeMin && price <= safeMax) {
+                priceInput.className = "w-full px-3 py-2 rounded-lg border border-emerald-600 ring-1 ring-emerald-400/40 mono-num focus:outline-none bg-white text-stone-900 transition-all";
+                if (feedbackText) feedbackText.className = "text-[10px] sm:text-[11px] text-emerald-700 font-medium leading-tight flex items-start gap-1";
+                if (feedbackIcon) feedbackIcon.className = "fa-solid fa-circle-check text-emerald-600 mt-0.5 shrink-0";
+                if (feedbackMsg) feedbackMsg.textContent = "Harga Inklusif! Menguntungkan Anda & terjangkau bagi warga.";
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.className = "px-5 py-2 rounded-lg bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer";
+                }
+                return true;
+            }
+
+            // 4. Di antara tengkulak dan safeMin, atau antara safeMax dan marketLampung
+            priceInput.className = "w-full px-3 py-2 rounded-lg border border-paddy-400 ring-1 ring-paddy-300/40 mono-num focus:outline-none bg-white text-stone-900 transition-all";
+            if (feedbackText) feedbackText.className = "text-[10px] sm:text-[11px] text-paddy-800 font-medium leading-tight flex items-start gap-1";
+            if (feedbackIcon) feedbackIcon.className = "fa-solid fa-circle-info text-paddy-600 mt-0.5 shrink-0";
+            if (price < safeMin) {
+                if (feedbackMsg) feedbackMsg.textContent = `Harga mendekati batas tengkulak. Disarankan masuk Zona Hijau (${formatRupiah(safeMin)} - ${formatRupiah(safeMax)}).`;
+            } else {
+                if (feedbackMsg) feedbackMsg.textContent = `Harga mendekati plafon pasar Lampung. Disarankan turunkan ke Zona Hijau (${formatRupiah(safeMin)} - ${formatRupiah(safeMax)}).`;
+            }
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.className = "px-5 py-2 rounded-lg bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer";
+            }
+            return true;
+        }
+
+        // Alias compatibility
+        function calculateRecommendedFairPrice() {
+            validateDynamicPricing();
+        }
+
+        function initAiMarketIntelligence() {
+            handleCommodityChange();
         }
 
         function handleCreateListing(e) {
@@ -3943,13 +4247,24 @@
             const price = Number(document.getElementById('newListingPrice').value);
             const tengkulak = Number(document.getElementById('newListingTengkulakPrice').value || 0);
 
-            // Validasi: Harga Adil harus lebih tinggi dari Harga Tengkulak
-            if (price <= tengkulak) {
+            const intel = LAMPUNG_MARKET_INTELLIGENCE[name];
+
+            // Validasi Dynamic Pricing Constraint Real-Time
+            if (intel) {
+                if (price < intel.tengkulakPrice) {
+                    showToast("Validasi Harga Ditolak", "Harga terlalu murah (di bawah standar tengkulak). Anda berpotensi rugi!", "error");
+                    return;
+                }
+                if (price > intel.marketLampungPrice) {
+                    showToast("Validasi Harga Ditolak", "Harga melebihi rata-rata pasar Lampung. Sistem menolak harga inflasi tinggi!", "error");
+                    return;
+                }
+            } else if (price <= tengkulak) {
                 showToast("Validasi Harga Ditolak", "Harga Adil harus lebih tinggi dari Harga Tengkulak agar Anda tidak rugi!", "error");
                 return;
             }
 
-            const freshness = Number(document.getElementById('newListingFreshness').value || 3);
+            const freshness = Number(document.getElementById('newListingFreshness').value || (intel ? intel.freshnessDays : 3));
             const loc = document.getElementById('newListingLocation').value;
             const desc = document.getElementById('newListingDesc').value;
 
@@ -3971,7 +4286,7 @@
                 distanceKm: producer ? producer.distanceKm : 0.25,
                 isSpecialCase: false,
                 caseTag: `Panen Baru (${producerSid})`,
-                description: desc || 'Panen segar pekarangan berkualitas.',
+                description: desc || (intel ? intel.description : 'Panen segar berkualitas.'),
                 icon: category === 'Beras & Padi' ? 'fa-wheat-awn' : category === 'Lauk & Protein' ? 'fa-fish' : 'fa-seedling'
             };
 
@@ -4601,9 +4916,18 @@
         function applyOcrToListingForm() {
             closeModal('modalOcrScan');
             openModal('modalNewListing');
-            document.getElementById('newListingName').value = document.getElementById('ocrParsedCommodity').textContent;
+            const selectEl = document.getElementById('newListingName');
+            const parsed = (document.getElementById('ocrParsedCommodity')?.textContent || '').toLowerCase();
+            if (selectEl) {
+                if (parsed.includes('beras')) selectEl.value = 'Beras Premium Lokal';
+                else if (parsed.includes('cabai')) selectEl.value = 'Cabai Merah Keriting';
+                else if (parsed.includes('telur')) selectEl.value = 'Telur Ayam Ras';
+                else if (parsed.includes('gurame') || parsed.includes('ikan') || parsed.includes('lele')) selectEl.value = 'Ikan Gurame Segar';
+                else if (parsed.includes('bawang')) selectEl.value = 'Bawang Merah';
+                else selectEl.value = 'Cabai Merah Keriting';
+                handleCommodityChange();
+            }
             document.getElementById('newListingQtyKg').value = 50;
-            document.getElementById('newListingPrice').value = 7500;
             showToast("Data OCR Diterapkan", "Formulir posting panen terisi otomatis dari hasil pindai.", "info");
         }
 
