@@ -1071,102 +1071,156 @@
                     </div>
                 </div>
 
-                <!-- Historical Surplus Prediction Engine Simulator -->
-                <div class="bg-white rounded-2xl p-6 sm:p-7 border border-stone-200/80 shadow-xs space-y-5">
-                    <div
-                        class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
+                                <!-- AI Surplus Prediction Engine (Mesin Prediksi Surplus Historis) -->
+                <div class="bg-white rounded-2xl p-6 sm:p-7 border border-stone-200/80 shadow-xs space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-4">
                         <div>
-                            <h3 class="serif-heading text-lg sm:text-xl font-bold text-stone-900">
-                                Simulator Mesin Prediksi Surplus Historis (Surplus Prediction Engine)
+                            <h3 class="serif-heading text-lg sm:text-xl font-bold text-stone-900 flex items-center gap-2">
+                                <i class="fa-solid fa-chart-pie text-forest-700"></i> AI Surplus Prediction Engine
                             </h3>
-                            <p class="text-xs text-stone-500">
-                                Simulasi daya serap konsumsi 40 KK RT 13 vs proyeksi panen musiman untuk memitigasi
-                                risiko pembusukan dan anjloknya harga
+                            <p class="text-xs text-stone-500 mt-0.5">
+                                Mesin Prediksi Surplus Historis: Simulasi daya serap konsumsi warga RT 13 vs estimasi proyeksi panen untuk membedakan serapan lokal vs surplus spillover
                             </p>
                         </div>
-                        <span
-                            class="px-2 py-0.5 rounded bg-paddy-50 border border-paddy-200 text-paddy-800 text-xs font-bold">
-                            Simulasi Interaktif
-                        </span>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Mesin Prediksi Aktif
+                            </span>
+                        </div>
                     </div>
 
-                    <!-- Simulator Controls -->
-                    <div
-                        class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-stone-50 p-4 rounded-xl border border-stone-200/70">
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-700 mb-1">Pilih Komoditas Panen</label>
-                            <select id="simCommoditySelect" onchange="runSurplusSimulation()"
-                                class="w-full px-3 py-2 rounded-lg border border-stone-200 text-xs bg-white focus:outline-none focus:border-forest-600">
-                                <option value="BERAS">Padi Sawah / Beras Ciherang</option>
-                                <option value="BAYAM">Sayur Bayam & Kangkung Pekarangan</option>
-                                <option value="CABAI">Cabai Rawit & Tomat Polybag</option>
-                                <option value="LELE">Ikan Lele Segar Bioflok</option>
-                            </select>
-                        </div>
+                    <!-- Input Controls -->
+                    <div class="p-5 rounded-2xl bg-stone-50 border border-stone-200/80 space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+                            <div>
+                                <label class="block text-xs font-semibold text-stone-700 mb-1.5 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-wheat-awn text-emerald-700"></i> Estimasi Total Panen (Kg) *
+                                </label>
+                                <input type="number" id="surplusHarvestKg" min="0" step="50" value="1000"
+                                    oninput="calculateSurplusPrediction()"
+                                    class="w-full h-11 px-3.5 py-2 rounded-xl border border-stone-300 mono-num text-sm font-bold text-stone-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 bg-white shadow-xs">
+                            </div>
 
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-700 mb-1">Kondisi Musim / Cuaca</label>
-                            <select id="simSeasonSelect" onchange="runSurplusSimulation()"
-                                class="w-full px-3 py-2 rounded-lg border border-stone-200 text-xs bg-white focus:outline-none focus:border-forest-600">
-                                <option value="PANEN_RAYA">Panen Raya Normal (Hasil Maksimal +25%)</option>
-                                <option value="GAGAL_IKLIM">Anomali Cuaca / Kemarau Basah (-20%)</option>
-                                <option value="STABIL">Produksi Bulanan Stabil (Standar)</option>
-                            </select>
-                        </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-stone-700 mb-1.5 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-users text-forest-700"></i> Rata-rata Konsumsi Warga RT 13 (Kg) *
+                                </label>
+                                <input type="number" id="surplusDemandKg" min="0" step="50" value="600"
+                                    oninput="calculateSurplusPrediction()"
+                                    class="w-full h-11 px-3.5 py-2 rounded-xl border border-stone-300 mono-num text-sm font-bold text-stone-800 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 bg-white shadow-xs">
+                            </div>
 
-                        <div>
-                            <label class="block text-xs font-semibold text-stone-700 mb-1">Luas Lahan / Populasi
-                                Tanam</label>
-                            <input type="range" id="simScaleRange" min="50" max="200" value="100"
-                                oninput="runSurplusSimulation()" class="w-full accent-forest-700">
-                            <div class="flex justify-between text-[10px] text-stone-500 font-mono">
-                                <span>50%</span>
-                                <span id="simScaleLabel" class="font-bold text-forest-800">100% (Kapasitas
-                                    Standar)</span>
-                                <span>200%</span>
+                            <div>
+                                <button type="button" onclick="calculateSurplusPrediction()"
+                                    class="w-full h-11 px-4 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-98 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm hover:shadow transition-all duration-150">
+                                    <i class="fa-solid fa-wand-magic-sparkles text-paddy-300"></i>
+                                    <span>Jalankan Prediksi AI</span>
+                                </button>
                             </div>
                         </div>
+
+                        <!-- Skenario Cepat Preset -->
+                        <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-stone-200/60 text-xs">
+                            <span class="text-[11px] font-semibold text-stone-500">Preset Skenario Uji Coba:</span>
+                            <button type="button" onclick="setSurplusScenario(1000, 600)"
+                                class="px-2.5 py-1 rounded-lg bg-white border border-stone-200 text-stone-700 hover:border-emerald-500 hover:text-emerald-700 font-medium text-[11px] transition-all flex items-center gap-1 shadow-2xs">
+                                <i class="fa-solid fa-circle-check text-emerald-600 text-[10px]"></i> Kasus Bapak A: Beras 1.000 Kg (Surplus 400 Kg)
+                            </button>
+                            <button type="button" onclick="setSurplusScenario(450, 600)"
+                                class="px-2.5 py-1 rounded-lg bg-white border border-stone-200 text-stone-700 hover:border-amber-500 hover:text-amber-700 font-medium text-[11px] transition-all flex items-center gap-1 shadow-2xs">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-500 text-[10px]"></i> Kasus Defisit: Panen 450 Kg (Defisit 150 Kg)
+                            </button>
+                            <button type="button" onclick="setSurplusScenario(600, 600)"
+                                class="px-2.5 py-1 rounded-lg bg-white border border-stone-200 text-stone-700 hover:border-forest-500 hover:text-forest-700 font-medium text-[11px] transition-all flex items-center gap-1 shadow-2xs">
+                                <i class="fa-solid fa-scale-balanced text-forest-600 text-[10px]"></i> Kasus Seimbang: Panen Pas 600 Kg (100% Lokal)
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Simulator Live Results -->
+                    <!-- Simulator Live Metric Cards -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                        <div class="p-4 rounded-xl bg-forest-50 border border-forest-200 space-y-1">
-                            <span class="text-xs text-forest-700 font-semibold block">Proyeksi Total Panen</span>
-                            <div id="simHarvestResult"
-                                class="serif-heading text-2xl font-bold text-forest-900 mono-num">1.000 Kg</div>
-                            <span class="text-[10px] text-forest-600">Dari 10 Produsen RT 13</span>
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/90 space-y-1 shadow-2xs">
+                            <span class="text-xs text-slate-600 font-semibold block flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-boxes-stacked text-slate-500 text-[10px]"></i> Estimasi Total Panen
+                            </span>
+                            <div id="surplusDisplayTotal" class="serif-heading text-2xl font-bold text-slate-800 mono-num">1.000 Kg</div>
+                            <span class="text-[10px] text-slate-500">Volume Panen Masuk</span>
                         </div>
 
-                        <div class="p-4 rounded-xl bg-stone-100 border border-stone-200 space-y-1">
-                            <span class="text-xs text-stone-600 font-semibold block">Kapasitas Konsumsi Warga RT
-                                13</span>
-                            <div id="simLocalDemandResult"
-                                class="serif-heading text-2xl font-bold text-stone-800 mono-num">600 Kg</div>
-                            <span class="text-[10px] text-stone-500">Kebutuhan 40 KK per bulan</span>
+                        <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-1 shadow-2xs">
+                            <span class="text-xs text-emerald-800 font-semibold block flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-house-chimney text-emerald-600 text-[10px]"></i> Serapan Konsumsi Lokal RT 13
+                            </span>
+                            <div id="surplusDisplayLocal" class="serif-heading text-2xl font-bold text-emerald-900 mono-num">600 Kg</div>
+                            <span id="surplusDisplayLocalSub" class="text-[10px] text-emerald-700 font-semibold">Terserap oleh 40 KK</span>
                         </div>
 
-                        <div class="p-4 rounded-xl bg-paddy-50 border border-paddy-200 space-y-1">
-                            <span class="text-xs text-paddy-800 font-semibold block">Prediksi Luapan Surplus
-                                (Spillover)</span>
-                            <div id="simSpilloverResult"
-                                class="serif-heading text-2xl font-bold text-paddy-900 mono-num">400 Kg</div>
-                            <span class="text-[10px] text-paddy-700 font-semibold">Wajib dialihkan ke luar RT</span>
+                        <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1 shadow-2xs">
+                            <span class="text-xs text-amber-800 font-semibold block flex items-center justify-center gap-1">
+                                <i class="fa-solid fa-arrows-split-up-and-left text-amber-600 text-[10px]"></i> Status / Luapan Surplus
+                            </span>
+                            <div id="surplusDisplayDiff" class="serif-heading text-2xl font-bold text-amber-900 mono-num">+400 Kg</div>
+                            <span id="surplusDisplayDiffSub" class="text-[10px] text-amber-700 font-semibold">Spillover ke Pasar Luar</span>
                         </div>
                     </div>
 
-                    <!-- AI Directive Recommendation Box -->
-                    <div class="p-3.5 rounded-xl bg-forest-900 text-white flex items-start gap-3">
-                        <div
-                            class="w-7 h-7 rounded-lg bg-forest-800 text-forest-300 flex items-center justify-center shrink-0 text-xs">
-                            <i class="fa-solid fa-bullhorn"></i>
+                    <!-- Result Display: Visual Progress Bar (Rasio % Lokal vs % Luar) -->
+                    <div class="p-4 sm:p-5 rounded-2xl bg-white border border-stone-200 space-y-3 shadow-2xs">
+                        <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-stone-800">Visual Rasio Distribusi Pangan:</span>
+                                <span id="surplusRatioPill" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                    60% Lokal • 40% Luar
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-3 text-[11px] font-medium">
+                                <span class="flex items-center gap-1.5 text-emerald-800">
+                                    <span class="w-3 h-3 rounded-full bg-emerald-600 inline-block shadow-2xs"></span> Serapan Warga RT 13 (Lokal)
+                                </span>
+                                <span class="flex items-center gap-1.5 text-amber-800">
+                                    <span class="w-3 h-3 rounded-full bg-amber-500 inline-block shadow-2xs"></span> Spillover Pasar Luar
+                                </span>
+                            </div>
                         </div>
-                        <div class="space-y-0.5">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-forest-300">Rekomendasi
-                                Strategis AI</span>
-                            <p id="simRecommendationText" class="text-xs text-forest-100 leading-relaxed">
-                                Sistem merekomendasikan penerbitan pre-order ke Koperasi Kota Metro dan 52 RT Kelurahan
-                                Yosomulyo 14 hari sebelum panen tiba guna mengunci harga jual Rp 12.500/kg tanpa
-                                tengkulak.
+
+                        <!-- Progress Bar Container -->
+                        <div class="relative w-full h-6 bg-slate-100 rounded-full overflow-hidden flex border border-stone-200 shadow-inner">
+                            <div id="surplusBarLocal"
+                                class="h-full bg-emerald-600 transition-all duration-500 flex items-center justify-center text-[10px] font-bold text-white tracking-wide shadow-xs"
+                                style="width: 60%;" title="Serapan Konsumsi Warga RT 13">
+                                <span id="surplusBarLocalText">Lokal: 60%</span>
+                            </div>
+                            <div id="surplusBarSpillover"
+                                class="h-full bg-amber-500 transition-all duration-500 flex items-center justify-center text-[10px] font-bold text-white tracking-wide shadow-xs"
+                                style="width: 40%;" title="Luapan Surplus (Spillover Pasar Luar)">
+                                <span id="surplusBarSpilloverText">Luar: 40%</span>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center text-[11px] font-mono">
+                            <span id="surplusLabelLocalDetail" class="text-emerald-700 font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-arrow-down-short-wide text-emerald-600"></i> Serapan Lokal: 600 Kg (60%)
+                            </span>
+                            <span id="surplusLabelSpilloverDetail" class="text-amber-700 font-semibold flex items-center gap-1">
+                                Spillover Pasar Luar: 400 Kg (40%) <i class="fa-solid fa-arrow-up-right-from-square text-amber-600"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic AI Recommendation Feedback Banner -->
+                    <div id="surplusResultBox" class="p-4 sm:p-5 rounded-2xl bg-emerald-50/90 border-2 border-emerald-300 text-emerald-950 flex items-start gap-3 shadow-xs transition-all duration-300">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded inline-block font-mono">
+                                Hasil Analisis AI • Surplus Pangan Komunitas
+                            </span>
+                            <p class="text-xs sm:text-sm text-emerald-900 font-bold leading-relaxed">
+                                Kebutuhan Lokal Terpenuhi. Terdapat SURPLUS 400 Kg. Rekomendasi Sistem: Alihkan sisa pasokan (Spillover) ke Koperasi Kelurahan Yosomulyo.
+                            </p>
+                            <p class="text-[11px] text-emerald-700">
+                                Distribusi surplus ke pasar luar menjaga stabilitas harga di tingkat petani sekaligus mencegah risiko pembusukan bahan pangan.
                             </p>
                         </div>
                     </div>
@@ -4832,6 +4886,147 @@
             showToast("Bantuan Disalurkan!", `Penyaluran bantuan senilai ${formatRupiah(costAmount)} berhasil. Rotasi round-robin diaktifkan: antrean digeser ke warga berikutnya.`, "success");
         }
 
+        // --- 5.5 AI SURPLUS PREDICTION ENGINE LOGIC ---
+        function calculateSurplusPrediction() {
+            const harvestInput = document.getElementById('surplusHarvestKg');
+            const demandInput = document.getElementById('surplusDemandKg');
+
+            const harvest = Math.max(0, Number(harvestInput?.value || 1000));
+            const demand = Math.max(0, Number(demandInput?.value || 600));
+
+            // Hitung selisih: Total Panen dikurangi Konsumsi Lokal
+            const surplus = harvest - demand;
+
+            // Hitung persentase rasio serapan lokal vs spillover pasar luar
+            let localPct = 0;
+            let spilloverPct = 0;
+
+            if (harvest > 0) {
+                if (surplus > 0) {
+                    localPct = Math.round((demand / harvest) * 100);
+                    spilloverPct = 100 - localPct;
+                } else {
+                    localPct = 100;
+                    spilloverPct = 0;
+                }
+            }
+
+            // Perbarui Metric Cards
+            const displayTotal = document.getElementById('surplusDisplayTotal');
+            const displayLocal = document.getElementById('surplusDisplayLocal');
+            const displayDiff = document.getElementById('surplusDisplayDiff');
+            const displayLocalSub = document.getElementById('surplusDisplayLocalSub');
+            const displayDiffSub = document.getElementById('surplusDisplayDiffSub');
+
+            if (displayTotal) displayTotal.textContent = `${harvest.toLocaleString('id-ID')} Kg`;
+            if (displayLocal) displayLocal.textContent = `${Math.min(harvest, demand).toLocaleString('id-ID')} Kg`;
+
+            if (displayDiff) {
+                if (surplus > 0) {
+                    displayDiff.textContent = `+${surplus.toLocaleString('id-ID')} Kg`;
+                    displayDiff.className = "serif-heading text-2xl font-bold text-emerald-800 mono-num";
+                    if (displayDiffSub) displayDiffSub.textContent = "Surplus Spillover ke Luar";
+                } else if (surplus === 0) {
+                    displayDiff.textContent = "0 Kg";
+                    displayDiff.className = "serif-heading text-2xl font-bold text-forest-700 mono-num";
+                    if (displayDiffSub) displayDiffSub.textContent = "Pasokan Seimbang (100% Lokal)";
+                } else {
+                    displayDiff.textContent = `${surplus.toLocaleString('id-ID')} Kg`;
+                    displayDiff.className = "serif-heading text-2xl font-bold text-amber-700 mono-num";
+                    if (displayDiffSub) displayDiffSub.textContent = `Defisit ${(demand - harvest).toLocaleString('id-ID')} Kg`;
+                }
+            }
+
+            // Perbarui Progress Bar secara real-time
+            const barLocal = document.getElementById('surplusBarLocal');
+            const barSpillover = document.getElementById('surplusBarSpillover');
+            const barLocalText = document.getElementById('surplusBarLocalText');
+            const barSpilloverText = document.getElementById('surplusBarSpilloverText');
+            const ratioPill = document.getElementById('surplusRatioPill');
+            const labelLocalDetail = document.getElementById('surplusLabelLocalDetail');
+            const labelSpilloverDetail = document.getElementById('surplusLabelSpilloverDetail');
+
+            if (barLocal) {
+                barLocal.style.width = `${localPct}%`;
+                if (barLocalText) barLocalText.textContent = localPct > 15 ? `Lokal: ${localPct}%` : `${localPct}%`;
+            }
+            if (barSpillover) {
+                barSpillover.style.width = `${spilloverPct}%`;
+                if (barSpilloverText) barSpilloverText.textContent = spilloverPct > 15 ? `Luar: ${spilloverPct}%` : (spilloverPct > 0 ? `${spilloverPct}%` : '');
+            }
+
+            if (ratioPill) {
+                ratioPill.textContent = `${localPct}% Lokal • ${spilloverPct}% Luar`;
+                ratioPill.className = surplus > 0
+                    ? 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300'
+                    : 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300';
+            }
+
+            if (labelLocalDetail) {
+                labelLocalDetail.innerHTML = `<i class="fa-solid fa-arrow-down-short-wide text-emerald-600"></i> Serapan Lokal: ${Math.min(harvest, demand).toLocaleString('id-ID')} Kg (${localPct}%)`;
+            }
+            if (labelSpilloverDetail) {
+                labelSpilloverDetail.innerHTML = `Spillover Pasar Luar: ${Math.max(0, surplus).toLocaleString('id-ID')} Kg (${spilloverPct}%) <i class="fa-solid fa-arrow-up-right-from-square text-amber-600"></i>`;
+            }
+
+            // Area hasil (Result Display): Teks hijau tebal vs teks peringatan kuning
+            const resultBox = document.getElementById('surplusResultBox');
+            if (resultBox) {
+                if (surplus > 0) {
+                    resultBox.className = "p-4 sm:p-5 rounded-2xl bg-emerald-50/90 border-2 border-emerald-300 text-emerald-950 flex items-start gap-3 shadow-xs transition-all duration-300";
+                    resultBox.innerHTML = `
+                        <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded inline-block font-mono">
+                                Hasil Analisis AI • Surplus Pangan Komunitas
+                            </span>
+                            <p class="text-xs sm:text-sm text-emerald-900 font-bold leading-relaxed">
+                                Kebutuhan Lokal Terpenuhi. Terdapat SURPLUS ${surplus.toLocaleString('id-ID')} Kg. Rekomendasi Sistem: Alihkan sisa pasokan (Spillover) ke Koperasi Kelurahan Yosomulyo.
+                            </p>
+                            <p class="text-[11px] text-emerald-700">
+                                Distribusi surplus ke pasar luar menjaga stabilitas harga di tingkat petani sekaligus mencegah risiko pembusukan bahan pangan.
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    resultBox.className = "p-4 sm:p-5 rounded-2xl bg-amber-50/90 border-2 border-amber-300 text-amber-950 flex items-start gap-3 shadow-xs transition-all duration-300";
+                    resultBox.innerHTML = `
+                        <div class="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded inline-block font-mono">
+                                Hasil Analisis AI • Peringatan Defisit Pasokan
+                            </span>
+                            <p class="text-xs sm:text-sm text-amber-900 font-bold leading-relaxed">
+                                Pasokan Defisit. Seluruh ${harvest.toLocaleString('id-ID')} Kg panen akan terserap habis oleh warga RT 13. Tidak ada surplus untuk pasar luar.
+                            </p>
+                            <p class="text-[11px] text-amber-700">
+                                Kebutuhan warga RT 13 masih memerlukan ${(demand - harvest).toLocaleString('id-ID')} Kg tambahan pasokan dari produsen RT tetangga.
+                            </p>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Fungsi pembantu untuk memilih preset skenario
+        function setSurplusScenario(harvestKg, demandKg) {
+            const harvestInput = document.getElementById('surplusHarvestKg');
+            const demandInput = document.getElementById('surplusDemandKg');
+            if (harvestInput) harvestInput.value = harvestKg;
+            if (demandInput) demandInput.value = demandKg;
+            calculateSurplusPrediction();
+            showToast("Skenario Diterapkan", `Estimasi Panen: ${harvestKg} Kg • Konsumsi Lokal: ${demandKg} Kg`, "info");
+        }
+
+        // Alias fungsi agar kompatibel dengan pemanggilan simulasi
+        function runSurplusSimulation() {
+            calculateSurplusPrediction();
+        }
+
         function renderDemandsBoard() {
             const container = document.getElementById('demandVotingCardsContainer');
             if (!container) return;
@@ -5252,7 +5447,7 @@
             renderAiMatchingPanel();
             renderDemandsBoard();
             renderTransactionsLedger();
-            runSurplusSimulation();
+            calculateSurplusPrediction();
             updateCharts();
         }
 
