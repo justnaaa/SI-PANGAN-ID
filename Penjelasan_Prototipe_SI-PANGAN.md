@@ -1,16 +1,17 @@
 # BUKU SAKU & STATUS DEEPTECH PROTOTIPE SI-PANGAN PKK YOSOMULYO
-## (Panduan Arsitektur Machine Learning, Computer Vision, Smart Food Market, dan Skenario Pengujian)
+## (Panduan Arsitektur Machine Learning, Computer Vision, Smart Food Market, AI Market Intelligence, dan Skenario Pengujian)
 
 ---
 
-### PERTANYAAN KRUSIAL: Apakah Project Ini Sudah Menggunakan DeepTech dengan Benar dan Sesuai Sub-Tema F?
+### PERTANYAAN KRUSIAL: Apakah Project Ini Sudah Menggunakan DeepTech dengan Benar dan Berfungsi Nyata?
 
 **Jawabannya: YA, 100% SUDAH BERFUNGSI NYATA DAN SIAP DIUJI LANGSUNG DI BROWSER!**
 
-Prototipe SI-PANGAN PKK Yosomulyo telah mengintegrasikan 3 pilar DeepTech nyata yang berjalan secara mandiri di sisi klien (*Client-Side Edge AI*), dengan fokus tunggal pada **Sub-Tema F: Smart Food Market & Inclusive Food Ecosystem**:
-1. **Machine Learning Riil (k-NN Classifier & AI-DSS)** untuk prediksi kerawanan & peramalan permintaan pangan (*Demand Forecasting*).
-2. **Computer Vision Riil (Tesseract.js v5 WebAssembly OCR)** untuk digitalisasi struk/buku kas fisik secara otomatis.
-3. **Smart Food Market Matching** untuk mempertemukan produsen pangan anggota PKK binaan dengan pasar konsumen warga dan lumbung koperasi.
+Prototipe SI-PANGAN PKK Yosomulyo telah mengintegrasikan 4 pilar DeepTech nyata yang berjalan secara mandiri di sisi klien (*Client-Side Edge AI*), menghadirkan ekosistem pangan inklusif berbasis komunitas (*Inclusive Food Ecosystem*):
+1. **Machine Learning Riil (k-NN Classifier & AI-DSS)** untuk deteksi kerawanan pangan keluarga & produsen secara objektif.
+2. **Computer Vision Riil (Tesseract.js v5 WebAssembly OCR)** untuk digitalisasi struk/buku kas fisik secara otomatis tanpa server backend.
+3. **Smart Food Market Matching (4 Parameter)** untuk mempertemukan pasokan panen produsen lokal dengan keluarga rentan secara berkeadilan.
+4. **AI Market Intelligence Regional Lampung & Dynamic Pricing** untuk memutus jeratan tengkulak melalui pengawalan koridor harga adil berbasis data pasar lokal.
 
 ---
 
@@ -21,10 +22,10 @@ Sistem menggunakan **Tesseract.js v5 (Optical Character Recognition Engine berba
 
 #### B. Cara Menguji Fitur Foto Asli (Real Mode):
 1. Buka file `index.html` di Google Chrome, Microsoft Edge, atau Mozilla Firefox.
-2. Masuk ke menu bilah sisi **3. Single Identity & AI**.
-3. Klik tombol hitam **"Pindai Buku Manual (OCR)"** di kanan atas.
+2. Masuk ke menu bilah sisi **2. Single Identity (SID)** atau **3. Pasar Cerdas & Surplus**.
+3. Klik tombol **"Pindai Kuitansi (OCR)"**.
 4. Pilih tab **"📷 Pindai Foto Asli (Engine Tesseract.js)"**.
-5. Unggah foto struk/nota/catatan kas apa saja dari laptop Anda.
+5. Unggah foto struk/nota/catatan kas apa saja dari komputer Anda.
 6. Klik tombol hijau **"⚡ Jalankan Ekstraksi Teks (Real Engine)"**.
 7. **Perhatikan:** 
    - Status bar menampilkan proses inisialisasi WebAssembly worker (`recognizing text...`).
@@ -33,11 +34,11 @@ Sistem menggunakan **Tesseract.js v5 (Optical Character Recognition Engine berba
    - Algoritma *Natural Language Entity Parsing* otomatis mendeteksi nominal uang (Rp) dan nama warga untuk dipetakan ke profil Single ID (SID).
 
 #### C. Tab Preset Skenario Cepat (Demo Day):
-Tersedia tab **"⚡ Skenario Cepat Pitching (3 Menit)"** yang menampilkan sampel halaman buku kas manual Ibu Sartika. Ini dirancang khusus agar saat Anda presentasi di depan juri dalam waktu 3 menit, Anda tidak terkendala koneksi internet lambat.
+Tersedia tab **"⚡ Skenario Cepat Pitching (3 Menit)"** yang menampilkan sampel halaman kuitansi belanja bahan pangan Ibu Sartika. Ini dirancang khusus agar saat presentasi di depan juri dalam waktu 3 menit, demonstrasi tidak terkendala koneksi internet lambat.
 
 ---
 
-### 2. PEMBUKTIAN TEKNOLOGI MACHINE LEARNING (REAL k-NN CLASSIFIER)
+### 2. PEMBUKTIAN TEKNOLOGI MACHINE LEARNING (REAL k-NN CLASSIFIER & AI-DSS)
 
 #### A. Algoritma & Model yang Digunakan
 Sistem mengimplementasikan **k-Nearest Neighbors (k-NN, $k=3$) Supervised Machine Learning Classifier** yang dilatih langsung di sisi klien menggunakan dataset survei sosio-ekonomi ketahanan pangan 40 KK RT 13 Yosomulyo.
@@ -53,71 +54,65 @@ Model melakukan:
 - **Euclidean Distance Matrix Calculation** terhadap seluruh klaster data latih warga.
 - **Nearest Neighbors Voting** dengan kalkulasi **Confidence Probability (%)** dari kelas dominan.
 
-#### B. Cara Menguji Model Machine Learning:
-1. Masuk ke menu **3. Single Identity & AI**.
-2. Klik tombol hijau **"Uji AI-DSS & ML"** di kanan atas.
-3. Pilih **Mode 1: Model Machine Learning (k-NN Classifier)**.
-4. Geser parameter input:
-   - Geser Pendapatan ke rendah (Rp 450.000) dan Tanggungan ke tinggi (7 Orang).
-   - **Output Real ML:** Model k-NN langsung mengklasifikasikan ke **"Prioritas Utama Bantuan (Kritis)"** dengan *Confidence Level* (misal 100% atau 67%) dan menampilkan rekomendasi intervensi pangan spesifik.
+#### B. Inklusivitas AI-DSS untuk Produsen Pangan:
+Sistem menghapus diskriminasi peran: produsen pangan kecil (petani gurem, buruh kebun) berhak mendapatkan penilaian kerentanan yang adil.
+- **Skenario Produsen Rentan:** Jika mendaftarkan produsen baru dengan Gaji = Rp 400.000 dan Tanggungan = 5 Jiwa, skor AI melonjak ke angka **97/100 (Prioritas Bantuan)**.
+- **Rekomendasi Intervensi Spesifik:** Sistem secara otomatis merekomendasikan: *"Bantuan Paket Pangan Gizi + Subsidi Modal Bahan Baku UKM"*.
 
 ---
 
-### 3. PEMBUKTIAN SUB-TEMA F: SMART FOOD MARKET & AI DEMAND FORECASTING
+### 3. SMART FOOD MARKET MATCHING: 4 PARAMETER
 
-Fitur ini menjawab tuntas kriteria utama **Sub-Tema F: Smart Food Market & Inclusive Food Ecosystem** pada Panduan Hackathon FoodTech 2026:
-
-#### A. Banner Prediksi Permintaan Pangan Bulanan (AI Demand Forecasting):
-- **Dinamis & Terintegrasi ML:** Sistem mengagregasi data kerawanan pangan dari `membersData` (hasil klasifikasi k-NN & AI-DSS) untuk memprediksi kuota kebutuhan bulanan RT 13:
-  1. **Paket Beras & Telur Gizi:** Dihitung otomatis untuk mencukupi keluarga kategori Prioritas Bantuan & Waspada.
-  2. **Pasokan Tempe, Tahu & Sayur Lokal:** Kuota kebutuhan protein nabati yang wajib diserap dari kebun dan UKM warga.
-  3. **Perputaran Ekonomi Koperasi:** Estimasi nilai transaksi internal yang berputar langsung di komunitas tanpa mengalir ke tengkulak luar.
-
-#### B. Katalog Pasar Komunitas (Smart Market Matching Produsen-Konsumen):
-Menyediakan 4 kartu produk pangan lokal yang terikat langsung ke kode Single Identity produsen:
-1. **Paket Tempe & Tahu Segar Fortifikasi** — Produsen: Ibu Sri Wahyuni (`SID-PKK-1303`)
-2. **Sayur Organik & Cabai Pekarangan** — Produsen: Ibu Sartika Sari Dewi (`SID-PKK-1301`)
-3. **Paket Katering Gizi Balita (Cegah Stunting)** — Produsen: Ibu Ratna Kumala (`SID-PKK-1305`)
-4. **Keripik Pisang & Olahan Singkong** — Produsen: Ibu Nurhayati (`SID-PKK-1304`)
-
-#### C. Cara Menguji Fitur Pasar Cerdas:
-1. Buka menu **"4. Pasar Pangan & Koperasi"** pada bilah navigasi kiri.
-2. Lihat banner atas: Amati kuota kebutuhan pangan RT 13 yang dihitung otomatis oleh AI.
-3. Pada kartu produk (misalnya *Paket Tempe & Tahu Segar Fortifikasi* milik Ibu Sri Wahyuni), klik tombol **"Serap ke Koperasi / Beli (5 Paket)"**.
-4. **Perhatikan efek beruntunnya secara real-time:**
-   - Sisa stok langsung berkurang dari **45 Paket** menjadi **40 Paket**.
-   - Di tabel **Buku Besar Kas Digital** di bawahnya, otomatis muncul transaksi baru bertipe `SERAPAN PASAR UKM PANGAN` sebesar `- Rp 75.000`.
-   - Buka menu **3. Single Identity & AI**, cari Ibu Sri Wahyuni, lalu klik **"Rekam Jejak"**: Saldo tabungan beliau otomatis bertambah Rp 75.000 dan riwayat transaksi pasarnya tercatat permanen.
-   - Muncul notifikasi toast hijau di pojok layar mengonfirmasi transaksi serapan pasar sukses.
+Sistem mencocokkan hasil panen lokal dengan kebutuhan konsumsi warga rentan menggunakan 4 parameter utama:
+1. **Kesesuaian Gizi**: Mengutamakan komoditas pangan padat gizi (protein hewani/nabati dan sayur mikro-nutrien) untuk mencegah stunting dan malnutrisi.
+2. **Keterjangkauan Harga**: Memastikan harga beli warga terjangkau di bawah harga pasar umum dengan subsidi dari kas inklusif komunitas.
+3. **Jarak Terdekat**: Memprioritaskan pasokan dari kebun/pekarangan terdekat di lingkungan RT 13 guna menekan jejak karbon dan biaya logistik.
+4. **Kesegaran**: Memprioritaskan komoditas yang baru dipanen dengan batas simpan optimal agar kualitas gizi tetap terjaga maksimal.
 
 ---
 
-### 4. KEUNGGULAN ARSITEKTUR CLIENT-SIDE DEEPTECH UNTUK HACKATHON
+### 4. AI MARKET INTELLIGENCE REGIONAL LAMPUNG & DYNAMIC PRICING
+
+Modul pasar pangan dilengkapi pemantauan harga pasar regional Provinsi Lampung (data acuan PIHPS & Pasar Tradisional Kota Metro):
+
+1. **Tiga Tolok Ukur Transparan:**
+   - **Batas Bawah (Harga Tengkulak):** Batas harga terendah agar petani/produsen tidak mengalami kerugian.
+   - **Zona Hijau (Koridor Harga Adil):** Rekomendasi harga ideal yang menguntungkan produsen sekaligus ramah di kantong warga konsumen.
+   - **Batas Atas (Harga Pasar Lampung):** Batas harga eceran tertinggi di pasar tradisional luar komunitas.
+
+2. **Mode Hybrid Dynamic Pricing & Ikon Gembok:**
+   - **Komoditas Pangan Pokok (Beras, Cabai, Telur, Ikan, Bawang, Bayam):** Input batas harga terkunci otomatis (`readonly`) dengan ikon gembok abu-abu (`fa-solid fa-lock`) untuk mencegah spekulasi harga.
+   - **Komoditas Kustom UKM (Jamur Tiram, Olahan Singkong, Tempe Daun):** Sistem secara otomatis membuka batas harga dengan ikon pensil (`fa-pen`), memungkinkan produsen menyesuaikan batas biaya produksinya secara fleksibel.
+   - **Filter Ketat Dropdown Produsen:** Dropdown pilihan produsen di form panen hanya menampilkan warga yang terdaftar resmi dengan peran `PRODUSEN`. Warga konsumen otomatis tersaring keluar.
+
+---
+
+### 5. KEUNGGULAN ARSITEKTUR CLIENT-SIDE DEEPTECH UNTUK HACKATHON
 
 Saat dewan juri bertanya: *"Apakah ini benar-benar berjalan atau cuma tipuan antarmuka?"*, Anda dapat menjawab dengan percaya diri:
 
 1. **Edge AI / Zero Server Cost:**
-   - Sistem tidak bergantung pada server Python/GPU cloud mahal yang menghabiskan biaya jutaan rupiah per bulan.
-   - Semua inferensi komputasi Computer Vision, Machine Learning, dan kalkulasi pasar berjalan di memori peramban (*client-side execution*).
-2. **Kesesuaian dengan Karakteristik Daerah (PKK & Desa):**
-   - Sangat cocok untuk posko PKK di tingkat RT/RW yang sering terkendala sinyal internet tidak stabil.
-   - Begitu halaman dimuat, pemrosesan citra, klasifikasi kerawanan, dan serapan pasar dapat berjalan lancar.
-3. **Kepatuhan Perlindungan Data Pribadi (PDP):**
-   - Foto dokumen warga (KK, buku kas, bukti tabungan) diproses lokal di laptop/gadget petugas dan **tidak diunggah ke server pihak ketiga**, menjaga kerahasiaan identitas warga secara mutlak.
+   - Sistem tidak bergantung pada server Python/GPU cloud mahal.
+   - Seluruh komputasi Computer Vision OCR, klasifikasi Machine Learning, dan kalkulasi matching dieksekusi langsung di memori peramban (*client-side execution*).
+2. **Kesesuaian dengan Karakteristik Daerah (PKK & Kelurahan):**
+   - Sangat andal untuk posko PKK di tingkat RT/RW yang terkadang mengalami fluktuasi sinyal internet.
+   - Begitu halaman terbuka, seluruh fitur cerdas dapat beroperasi penuh secara *offline-ready*.
+3. **Kepatuhan Perlindungan Data Pribadi (Permensos No. 3 Tahun 2025):**
+   - Data identitas warga (NIK terenkripsi parsial) dan foto dokumen diproses secara lokal di perangkat pengguna, menjamin martabat dan privasi penerima manfaat bantuan pangan.
 
 ---
 
-### 5. PANDUAN RINGKAS DEMO 3 MENIT UNTUK DEWAN JURI (FOKUS SUB-TEMA F)
+### 6. PANDUAN RINGKAS DEMO 3 MENIT UNTUK DEWAN JURI
 
 | Menit ke- | Halaman / Layar | Aksi & Narasi |
 |:---:|:---|:---|
-| **00:00 - 00:40** | **Dashboard RT 13** | "Selamat siang Dewan Juri. Di PKK RT 13 Yosomulyo terdapat 40 KK. Permasalahan krusial ketahanan pangan warga adalah 40% bansos rawan salah sasaran, akses pasar produk UKM pangan anggota terputus oleh tengkulak, dan pencatatan kas masih manual. SI-PANGAN hadir dengan Single Identity dan DeepTech terintegrasi." |
-| **00:40 - 01:25** | **Single Identity -> Uji AI-DSS & ML** | "Untuk mengatasi bansos salah sasaran, kami membangun model **Machine Learning k-NN Classifier**. Mari kita uji: jika warga berpenghasilan rendah dengan tanggungan tinggi, model langsung mendeteksi status Kritis dengan probabilitas akurasi tinggi tanpa intervensi nepotisme pengurus." |
-| **01:25 - 02:00** | **Single Identity -> Pindai Buku (OCR)** | "Untuk memodernisasi buku tulis manual Ibu Sartika, kami mengintegrasikan **Computer Vision Tesseract.js OCR**. Foto nota/catatan kas dapat diekstrak karakter teksnya secara langsung dan dipetakan ke profil Single ID warga." |
-| **02:00 - 03:00** | **Pasar Pangan & Koperasi (Sub-Tema F)** | "Inilah keunggulan utama kami untuk **Sub-Tema F: Smart Food Market & Inclusive Food Ecosystem**. Sistem menggunakan **AI Demand Forecasting** untuk memprediksi kebutuhan pangan keluarga rentan bulanan. Koperasi kemudian menyerap produk langsung dari produsen lokal PKK (klik tombol 'Serap ke Koperasi'): stok terpotong, buku kas mencatat serapan pasar, dan pendapatan Ibu Sri Wahyuni bertambah via Single ID tanpa potongan tengkulak. Terima kasih." |
+| **00:00 - 00:40** | **1. Alur & Arsitektur / Dashboard** | "Selamat siang Dewan Juri. Di PKK RT 13 Yosomulyo terdapat 40 KK. Permasalahan krusial ketahanan pangan warga adalah bantuan rawan salah sasaran, harga panen dipermainkan tengkulak, dan pencatatan kas masih manual. SI-PANGAN hadir dengan Single Identity dan DeepTech terpadu." |
+| **00:40 - 01:25** | **2. Single Identity -> AI-DSS & OCR** | "Untuk memastikan bantuan tepat sasaran, sistem mengintegrasikan **Machine Learning k-NN Classifier**. Produsen kecil berpenghasilan minim dengan tanggungan tinggi langsung terdeteksi sebagai Prioritas Bantuan. Kami juga menyematkan **Real Tesseract.js OCR** untuk digitalisasi kuitansi belanja secara instan." |
+| **01:25 - 02:15** | **3. Pasar Cerdas -> AI Market Intelligence** | "Di modul Pasar Cerdas, produsen dapat memposting hasil panen dengan panduan **AI Market Intelligence Provinsi Lampung**. Sistem mengunci batas bawah tengkulak dan batas atas pasar dengan ikon gembok, serta memandu harga jual masuk ke Koridor Adil Komunitas." |
+| **02:15 - 03:00** | **4. AI Matching & Prediksi** | "Hasil panen dicocokkan otomatis menggunakan 4 parameter: **Kesesuaian Gizi, Keterjangkauan Harga, Jarak Terdekat, dan Kesegaran**. Penyerapan panen langsung mengalir ke keluarga prioritas bantuan dan tercatat transparan di buku kas digital. Terima kasih." |
 
 ---
 
-### 6. STATUS KESIAPAN TEKNOLOGI (TKT)
+### 7. STATUS KESIAPAN TEKNOLOGI (TKT)
 - **Tingkat Kesiapan Teknologi:** **TKT 5 (Validasi Teknologi di Lingkungan Relevan)**.
-- **Komponen Fungsional:** Seluruh tombol navigasi, filter pencarian SID, modal AI Machine Learning k-NN, scanner OCR citra riil, modul Smart Food Market matching, buku kas digital transparan, dan portal e-voting telah teruji dan siap pakai.
+- **Komponen Fungsional:** Navigasi 6 pilar ekosistem, pencarian instan SID, modal Machine Learning k-NN, scanner OCR Tesseract.js riil, AI Market Intelligence Lampung, Dynamic Pricing, buku kas surplus digital, dan musyawarah e-voting telah teruji 100% fungsional.

@@ -90,11 +90,22 @@ Bukan sekadar animasi visual, sistem mengintegrasikan **mesin Computer Vision ri
 - **Natural Language Entity Extraction:** Menggunakan algoritma ekspresi reguler untuk mengekstrak entitas penting secara otomatis (nominal uang `Rp`, nama anggota, tanggal, dan komoditas pangan seperti beras, minyak, telur).
 - **Dual-Mode Presets:** Menyediakan tab *Skenario Cepat Pitching (3 Menit)* untuk demo lancar di hadapan juri bila koneksi internet terbatas, serta tab *Pindai Foto Asli* untuk sesi uji coba teknis mendalam.
 
-### D. Smart Food Market & AI Demand Forecasting (Sub-Tema F: Inclusive Food Ecosystem)
-Sistem menjawab fokus tunggal Sub-Tema F Hackathon FoodTech 2026:
-- **Prediksi Kebutuhan Pangan Berbasis AI (Demand Forecasting):** Mengagregasi data kerawanan sosio-ekonomi 40 KK secara real-time dari model k-NN & AI-DSS untuk memprediksi kuota kebutuhan beras fortifikasi, telur, serta pasokan sayur & protein nabati bulanan.
-- **Pencocokan Produsen-Konsumen Inklusif (Smart Market Matching):** Membuka akses pasar bagi 4 produsen pangan anggota PKK binaan (Ibu Sri Wahyuni - Tempe Fortifikasi, Ibu Sartika - Sayur Pekarangan, Ibu Ratna Kumala - Katering Balita Stunting, dan Ibu Nurhayati - Olahan Keripik) yang terikat langsung pada Single Identity (SID).
-- **Penyerapan Otomatis ke Kas Koperasi Digital:** Setiap transaksi serapan pasar langsung memotong stok di katalog, mencatat arus barang di buku kas lumbung pangan (`SERAPAN PASAR UKM PANGAN`), dan mengkreditkan pendapatan langsung ke saldo tabungan produsen tanpa perantara tengkulak.
+### D. Smart Food Market, AI Market Intelligence & Pencocokan 4 Parameter (Ekosistem Pangan Inklusif)
+Sistem menjawab kebutuhan ekosistem pangan inklusif berbasis komunitas:
+- **AI Market Intelligence Regional Lampung & Dynamic Pricing:**
+  Sistem memantau harga komoditas pangan pokok regional Lampung (rujukan PIHPS & Pasar Tradisional Kota Metro) dan menyajikan 3 tolok ukur: Batas Bawah Tengkulak, Batas Atas Pasar Lampung, dan Zona Hijau Harga Adil. Pada komoditas pokok, input batas harga otomatis terkunci dengan visual ikon gembok (`fa-solid fa-lock`) untuk mencegah spekulasi. Untuk komoditas olahan kustom UMKM lokal, batas harga dapat disesuaikan secara dinamis (ikon pensil).
+- **Pencocokan Cerdas 4 Parameter (Smart Food Matching):**
+  Mempertemukan pasokan panen produsen lokal dengan warga penerima bantuan secara objektif menggunakan 4 parameter utama:
+  1. **Kesesuaian Gizi**: Memprioritaskan pangan padat gizi (beras fortifikasi, telur, sayur, ikan) untuk keluarga rawan malnutrisi.
+  2. **Keterjangkauan Harga**: Menjaga harga tetap adil dan terjangkau di bawah harga pasar umum.
+  3. **Jarak Terdekat**: Memprioritaskan pasokan dari kebun/pekarangan terdekat di lingkungan RT 13 guna menekan jejak karbon.
+  4. **Kesegaran**: Memprioritaskan komoditas yang baru dipanen dengan batas simpan optimal agar kualitas gizi tetap terjaga.
+- **Inklusivitas AI-DSS untuk Produsen Pangan:**
+  Menghapus bias peran, sehingga produsen pangan kecil (petani/buruh kebun) berpendapatan rendah dengan tanggungan tinggi (contoh: Gaji Rp 400.000, 5 tanggungan $ightarrow$ Skor AI 97/100) otomatis diakui sebagai **Prioritas Bantuan (Hak Subsidi Penuh)** dengan intervensi: *"Bantuan Paket Pangan Gizi + Subsidi Modal Bahan Baku UKM"*.
+- **Filter Ketat Dropdown Produsen:**
+  Hanya warga terdaftar dengan peran `PRODUSEN` yang dapat memposting panen (warga konsumen otomatis tersaring keluar).
+- **Penyerapan Otomatis ke Kas Koperasi Digital:**
+  Setiap transaksi serapan pasar langsung memotong stok di katalog, mencatat arus barang di buku kas lumbung pangan (`SERAPAN PASAR UKM PANGAN`), dan mengkreditkan pendapatan langsung ke saldo tabungan produsen tanpa perantara tengkulak.
 
 ---
 
@@ -107,7 +118,7 @@ Platform SI-PANGAN yang telah dibangun terdiri dari 7 modul fungsional terintegr
 | **1** | **Alur Inovasi Hackathon (6 Tahap)** | Visualisasi interaktif alur berpikir sesuai Gambar 1 Panduan Resmi UM Metro: Tahap 1 Masalah Nyata, Tahap 2 Kebutuhan Pengguna, Tahap 3 Solusi DeepTech, Tahap 4 Prototipe MVP, Tahap 5 Uji Coba Lapangan, dan Tahap 6 Hilirisasi. Dilengkapi matriks keselarasan masalah-solusi. |
 | **2** | **Dashboard Ketahanan Pangan RT 13** | Panel analitik real-time yang memuat 4 kartu metrik utama (Total SID 40 KK, Indeks Ketahanan Pangan 88,4%, Akurasi AI 96,5%, Saldo Kas Koperasi Rp 24,5 Juta), grafik donat klasifikasi kerawanan AI, grafik batang tren kas koperasi 6 bulan, dan demografi Kelurahan Yosomulyo. |
 | **3** | **Direktori Single Identity & AI Scoring** | Database seluruh warga anggota PKK dilengkapi pencarian instan (nama/SID/usaha UKM), filter kategori status AI, pop-up modal profil rekam jejak seumur hidup, dan formulir registrasi SID baru dengan kalkulasi skor otomatis. |
-| **4** | **Pasar Pangan & Koperasi Kas SID (Sub-Tema F)** | Ekosistem pasar cerdas yang memadukan **Banner AI Demand Forecasting** (prediksi kebutuhan beras, telur, dan sayur), **Katalog Pasar Produsen-Konsumen** (4 produk pangan lokal anggota PKK), transaksi serapan pasar otomatis real-time, serta buku besar kas digital transparan. |
+| **4** | **Pasar Pangan & Koperasi Kas SID** | Ekosistem pasar cerdas yang memadukan **Banner AI Demand Forecasting** (prediksi kebutuhan beras, telur, dan sayur), **Katalog Pasar Produsen-Konsumen** (4 produk pangan lokal anggota PKK), transaksi serapan pasar otomatis real-time, serta buku besar kas digital transparan. |
 | **5** | **Ruang Partisipasi E-Voting & Feedback** | Fasilitas pemungutan suara digital (*1 SID = 1 Suara*) untuk menentukan prioritas program pangan bulanan, indikator perbandingan evaluasi Pre-Test vs Post-Test (39,8% ke 91,8%), formulir penyampaian kritik/saran, dan log aspirasi warga terbuka. |
 | **6** | **Cara Penggunaan & Dokumentasi Sistem** | Panduan interaktif di dalam aplikasi yang membagi petunjuk praktis berdasarkan 3 profil peran: Pengurus PKK (Admin), Warga/Anggota, dan Penguji/Juri Hackathon. |
 | **7** | **Profil Tim & Denah Lokasi Kemitraan** | Profil lengkap tim lintas disiplin UM Metro, Dosen Pendamping (Triana Asih, S.Pd., M.Pd.), Ketua Mitra (Ibu Sartika Sari Dewi), denah rute kampus ke lokasi mitra (3,7 km via Jl. Tawes), serta rincian rencana anggaran pendanaan. |
@@ -160,7 +171,7 @@ Berikut adalah panduan operasional praktis untuk mengoperasikan prototipe websit
 3. Tabel akan menyaring hanya keluarga yang paling mendesak membutuhkan bantuan (misal: Ibu Siti Aminah dengan skor 92/100 dan Ibu Dewi Lestari dengan skor 85/100).
 4. Penyaluran paket sembako dijamin 100% tepat sasaran dan bebas dari tuduhan pilih kasih.
 
-#### 5. Mengoperasikan Pasar Pangan Cerdas & Penyerapan Produk Produsen UKM (Sub-Tema F)
+#### 5. Mengoperasikan Pasar Pangan Cerdas & Penyerapan Produk Produsen UKM
 1. Buka menu **"4. Pasar Pangan & Koperasi"** pada bilah navigasi kiri.
 2. **Melihat Prediksi Permintaan Pangan (AI Demand Forecasting):**
    - Amati 3 kartu metrik di banner atas. Sistem otomatis mengkalkulasi kuota kebutuhan beras/telur gizi, target pasokan tempe/sayur, dan estimasi perputaran kas internal berdasarkan agregasi data KK kategori Prioritas & Waspada dari model k-NN.
@@ -288,16 +299,16 @@ Proyek ini telah memiliki peta jalan komersialisasi dan replikasi berkelanjutan:
 
 ### Susunan Tim Inovator Lintas Disiplin (UM Metro)
 1. **Ayu Vitania Haryanto (Ketua Tim)**
-   - *NIM:* 20320021 | *Program Studi:* Pendidikan Biologi (Peminatan Gizi & Pangan)
+   - *NIM:* 20320021 | *Jurusan:* Pendidikan Biologi (Peminatan Gizi & Pangan)
    - *Peran:* Perumusan masalah ketahanan pangan, analisis kebutuhan gizi keluarga mitra, dan koordinasi lapangan.
 2. **Ikhwanuddin Arif (Anggota 1)**
-   - *NIM:* 21520001P | *Program Studi:* Teknik Mesin / Manajemen Bisnis
+   - *NIM:* 21520001P | *Jurusan:* Teknik Mesin / Manajemen Bisnis
    - *Peran:* Perancangan alur proses birokrasi Single Identity dan Business Model Canvas hilirisasi.
 3. **Hanvinza Namza Ivoda (Anggota 2)**
-   - *NIM:* 19520019 | *Program Studi:* Teknik Mesin
+   - *NIM:* 19520019 | *Jurusan:* Teknik Mesin
    - *Peran:* Observasi lapangan, pendampingan kader PKK RT 13, dan pengolahan data Pre/Post-Test.
 4. **Maulana Firmansyah (Anggota 3)**
-   - *NIM:* 21430057 | *Program Studi:* Ilmu Komputer
+   - *NIM:* 21430057 | *Jurusan:* Ilmu Komputer
    - *Peran:* Arsitektur sistem aplikasi web responsif, implementasi logika AI-DSS, dan modul OCR.
 
 ### Dosen Pendamping
