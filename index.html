@@ -93,7 +93,8 @@
     </script>
 
     <style>
-        html, body {
+        html,
+        body {
             overflow-x: clip;
             max-width: 100%;
         }
@@ -169,16 +170,23 @@
                     aria-label="Buka Menu Navigasi">
                     <i class="fa-solid fa-bars text-base"></i>
                 </button>
-                <div class="flex items-center gap-2 sm:gap-2.5 cursor-pointer min-w-0" onclick="switchTab('tab-konsep')">
-                    <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-forest-800 text-white flex items-center justify-center shadow-xs shrink-0">
+                <div class="flex items-center gap-2 sm:gap-2.5 cursor-pointer min-w-0"
+                    onclick="switchTab('tab-konsep')">
+                    <div
+                        class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-forest-800 text-white flex items-center justify-center shadow-xs shrink-0">
                         <i class="fa-solid fa-seedling text-sm text-forest-300"></i>
                     </div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5 sm:gap-2">
-                            <span class="serif-heading font-bold text-base sm:text-lg tracking-tight text-forest-900 leading-none truncate">SI-PANGAN ID</span>
-                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-forest-100 text-forest-800 border border-forest-300 shrink-0">Sub-Tema F</span>
+                            <span
+                                class="serif-heading font-bold text-base sm:text-lg tracking-tight text-forest-900 leading-none truncate">SI-PANGAN
+                                ID</span>
+                            <span
+                                class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-forest-100 text-forest-800 border border-forest-300 shrink-0">Ekosistem
+                                Pangan</span>
                         </div>
-                        <p class="text-[10px] sm:text-[11px] text-stone-500 hidden md:block leading-none mt-1 truncate">Pilot Project PKK RT 13 Kelurahan Yosomulyo • Kota Metro, Lampung</p>
+                        <p class="text-[10px] sm:text-[11px] text-stone-500 hidden md:block leading-none mt-1 truncate">
+                            Pilot Project PKK RT 13 Kelurahan Yosomulyo • Kota Metro, Lampung</p>
                     </div>
                 </div>
             </div>
@@ -209,7 +217,9 @@
                     title="Klik untuk berganti antara Mode Publik Terlindungi dan Mode Petugas Terverifikasi (Kepatuhan Permensos No. 3 Tahun 2025)">
                     <i id="privacyToggleIcon" class="fa-solid fa-shield-halved text-forest-600"></i>
                     <span id="privacyToggleLabel" class="hidden sm:inline">Mode Publik Terlindungi</span>
-                    <span class="text-[10px] px-1 py-0.2 rounded font-mono font-bold bg-white/80 border border-forest-300 text-forest-700">Permensos 3/2025</span>
+                    <span
+                        class="text-[10px] px-1 py-0.2 rounded font-mono font-bold bg-white/80 border border-forest-300 text-forest-700">Permensos
+                        3/2025</span>
                 </button>
 
                 <!-- Demo Day Pitch Timer Button -->
@@ -748,18 +758,23 @@
                             </h4>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
                                 <div class="flex flex-col justify-between">
-                                    <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Komoditas yang Dihasilkan *</label>
+                                    <label
+                                        class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Komoditas
+                                        yang Dihasilkan *</label>
                                     <input type="text" id="regCommodity"
                                         placeholder="Contoh: Sayur Bayam, Tempe, Ikan Lele"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs focus:outline-none focus:border-forest-600 bg-white">
                                 </div>
                                 <div class="flex flex-col justify-between">
-                                    <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Estimasi Kapasitas Panen (Kg/Bulan) *</label>
+                                    <label
+                                        class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Estimasi
+                                        Kapasitas Panen (Kg/Bulan) *</label>
                                     <input type="number" id="regCapacityKg" min="1" value="30"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs mono-num focus:outline-none focus:border-forest-600 bg-white">
                                 </div>
                                 <div class="flex flex-col justify-between">
-                                    <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Jarak Kebun ke Hub RT 13 (Km) *</label>
+                                    <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Jarak
+                                        Kebun ke Hub RT 13 (Km) *</label>
                                     <input type="number" id="regDistanceKm" step="0.05" min="0.05" max="3" value="0.25"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs mono-num focus:outline-none focus:border-forest-600 bg-white">
                                 </div>
@@ -774,24 +789,35 @@
                             </h4>
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                                 <div class="flex flex-col justify-between">
-                                    <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Jumlah Anggota Keluarga (Jiwa) *</label>
-                                    <input type="number" id="regFamilySize" min="1" max="12" value="4" oninput="autoDetectVulnerabilityTier()"
+                                    <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Jumlah
+                                        Anggota Keluarga (Jiwa) *</label>
+                                    <input type="number" id="regFamilySize" min="1" max="12" value="4"
+                                        oninput="autoDetectVulnerabilityTier()"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs mono-num focus:outline-none focus:border-forest-600 bg-white">
                                 </div>
                                 <div class="flex flex-col justify-between">
-                                    <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Estimasi Pendapatan / Bulan (Rp) *</label>
-                                    <input type="number" id="regIncome" min="300000" step="50000" value="2000000" oninput="autoDetectVulnerabilityTier()"
+                                    <label
+                                        class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Estimasi
+                                        Pendapatan / Bulan (Rp) *</label>
+                                    <input type="number" id="regIncome" min="300000" step="50000" value="2000000"
+                                        oninput="autoDetectVulnerabilityTier()"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs mono-num focus:outline-none focus:border-forest-600 bg-white">
                                 </div>
                                 <div class="flex flex-col justify-between">
-                                    <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Kebutuhan Pangan Pokok (Kg/bln) *</label>
-                                    <input type="number" id="regFoodNeedKg" min="10" max="100" value="35" oninput="autoDetectVulnerabilityTier()"
+                                    <label
+                                        class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Kebutuhan
+                                        Pangan Pokok (Kg/bln) *</label>
+                                    <input type="number" id="regFoodNeedKg" min="10" max="100" value="35"
+                                        oninput="autoDetectVulnerabilityTier()"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs mono-num focus:outline-none focus:border-forest-600 bg-white">
                                 </div>
                                 <div class="flex flex-col justify-between">
                                     <div class="flex items-center justify-between mb-1.5">
-                                        <label class="block text-xs font-semibold text-stone-700 leading-snug">Klasifikasi AI-DSS</label>
-                                        <span id="regAiScoreBadge" class="text-[10px] font-mono font-bold text-forest-700">Skor: --</span>
+                                        <label
+                                            class="block text-xs font-semibold text-stone-700 leading-snug">Klasifikasi
+                                            AI-DSS</label>
+                                        <span id="regAiScoreBadge"
+                                            class="text-[10px] font-mono font-bold text-forest-700">Skor: --</span>
                                     </div>
                                     <select id="regSocialTier"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs bg-white focus:outline-none focus:border-forest-600">
@@ -946,9 +972,9 @@
                     </div>
                 </div>
 
-                <!-- Star Case Studies Banner -->
+                <!-- Sorotan Kasus Unggulan -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Case Study A Notice -->
+                    <!-- Kasus A Notice -->
                     <div
                         class="p-4 rounded-xl bg-forest-50 border border-forest-200/80 space-y-1.5 flex items-start gap-3">
                         <div
@@ -966,7 +992,7 @@
                         </div>
                     </div>
 
-                    <!-- Case Study B Notice -->
+                    <!-- Kasus B Notice -->
                     <div
                         class="p-4 rounded-xl bg-paddy-50 border border-paddy-200/80 space-y-1.5 flex items-start gap-3">
                         <div
@@ -1641,7 +1667,7 @@
         </div>
     </div>
 
-    <!-- 3. MODAL SALURKAN SURPLUS 400 KG KE PASAR LUAR (CASE STUDY B) -->
+    <!-- 3. MODAL SALURKAN SURPLUS 400 KG KE PASAR LUAR (KASUS B) -->
     <div id="modalSurplusSpillover"
         class="fixed inset-0 z-50 bg-stone-900/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
         <div
@@ -1654,8 +1680,7 @@
                     <div>
                         <h3 class="font-bold text-stone-900 text-sm sm:text-base">Ekspansi Luapan Surplus Panen Raya
                             (Pasar Luar)</h3>
-                        <span class="text-[11px] text-paddy-800 font-mono font-semibold">Studi Kasus B: Beras Pulen 400
-                            Kg</span>
+                        <span class="text-[11px] text-paddy-800 font-mono font-semibold">Kasus B: Beras Pulen 400 Kg</span>
                     </div>
                 </div>
                 <button onclick="closeModal('modalSurplusSpillover')"
@@ -1768,21 +1793,28 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1">Total Panen (Kg) *</label>
                         <input type="number" id="newListingQtyKg" min="1" value="20" required
-                            class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600">
+                            class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600 bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Harga Tengkulak (Rp) *</label>
+                        <input type="number" id="newListingTengkulakPrice" min="1000" step="500" value="5000" required
+                            oninput="calculateRecommendedFairPrice()"
+                            placeholder="Contoh: 5000"
+                            class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600 bg-white">
                     </div>
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1">Harga Adil (Rp/Kg) *</label>
-                        <input type="number" id="newListingPrice" min="1000" step="500" value="8000" required
-                            class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600">
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-stone-700 mb-1">Harga Tengkulak (Rp)</label>
-                        <input type="number" id="newListingTengkulakPrice" min="1000" step="500" value="5000"
-                            class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600">
+                        <input type="number" id="newListingPrice" min="1000" step="100" value="7000" required
+                            placeholder="Otomatis dihitung / manual"
+                            class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600 bg-white">
+                        <p class="text-[10px] sm:text-[11px] text-forest-700 mt-1.5 font-medium leading-tight flex items-start gap-1">
+                            <i class="fa-solid fa-circle-check text-forest-600 mt-0.5 shrink-0"></i>
+                            <span>Rekomendasi sistem: +40% dari harga tengkulak untuk memastikan keuntungan Anda dan keterjangkauan warga.</span>
+                        </p>
                     </div>
                 </div>
 
@@ -1975,7 +2007,9 @@
     <!-- =========================================================================
          TOAST NOTIFICATION CONTAINER
          ========================================================================= -->
-    <div id="toastContainer" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:bottom-6 z-50 pointer-events-none max-w-md w-auto sm:w-96 space-y-2.5"></div>
+    <div id="toastContainer"
+        class="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:bottom-6 z-50 pointer-events-none max-w-md w-auto sm:w-96 space-y-2.5">
+    </div>
 
     <!-- =========================================================================
          INITIAL STATE DATA EMBEDDED
@@ -2765,8 +2799,8 @@
                     "freshnessDaysRemaining": 2,
                     "location": "Blok B RT 13 (0.2 km)",
                     "distanceKm": 0.2,
-                    "isCaseStudy": true,
-                    "caseTag": "Studi Kasus A: Sayur Cepat Rusak (50 Kg)",
+                    "isSpecialCase": true,
+                    "caseTag": "Kasus A: Sayur Cepat Rusak (50 Kg)",
                     "description": "Panen petik pagi bebas pestisida kimia dari pekarangan dasawisma. Daun hijau segar, kaya zat besi untuk pemenuhan gizi keluarga & balita.",
                     "icon": "fa-seedling"
                 },
@@ -2788,8 +2822,8 @@
                     "freshnessDaysRemaining": 88,
                     "location": "Area Sawah Poktan Blok C RT 13 (0.5 km)",
                     "distanceKm": 0.5,
-                    "isCaseStudy": true,
-                    "caseTag": "Studi Kasus B: Luapan Surplus Beras (1 Ton)",
+                    "isSpecialCase": true,
+                    "caseTag": "Kasus B: Luapan Surplus Beras (1 Ton)",
                     "description": "Padi varietas Ciherang panen raya Poktan RT 13. Kadar air 14% terstandar lumbung, pulen aromatik, tanpa pemutih kimia. Kuota RT 13: 600 Kg, Luapan Surplus 400 Kg dialihkan ke Koperasi Kota.",
                     "icon": "fa-wheat-awn"
                 },
@@ -2809,7 +2843,7 @@
                     "freshnessDaysRemaining": 3,
                     "location": "Blok A No. 18 RT 13 (0.25 km)",
                     "distanceKm": 0.25,
-                    "isCaseStudy": false,
+                    "isSpecialCase": false,
                     "description": "Kedelai pilihan fermentasi higienis berbalut daun pisang alami. Sumber protein nabati berkualitas tinggi untuk cegah stunting balita RT 13.",
                     "icon": "fa-cubes-stacked"
                 },
@@ -2829,7 +2863,7 @@
                     "freshnessDaysRemaining": 4,
                     "location": "Blok A No. 12 RT 13 (0.15 km)",
                     "distanceKm": 0.15,
-                    "isCaseStudy": false,
+                    "isSpecialCase": false,
                     "description": "Panen harian cabai rawit pedas alami dan tomat segar polybag pekarangan mandiri lumbung hidup PKK RT 13.",
                     "icon": "fa-pepper-hot"
                 },
@@ -2849,7 +2883,7 @@
                     "freshnessDaysRemaining": 1,
                     "location": "Blok C RT 13 (0.4 km)",
                     "distanceKm": 0.4,
-                    "isCaseStudy": false,
+                    "isSpecialCase": false,
                     "caseTag": "Protein Segar (Pak Joko - SID-RT13-006)",
                     "description": "Ikan lele budidaya bioflok air bersih tanpa pakan limbah, higienis, daging kenyal, aman untuk MPASI balita dan konsumsi keluarga.",
                     "icon": "fa-fish"
@@ -2870,7 +2904,7 @@
                     "freshnessDaysRemaining": 2,
                     "location": "Blok B No. 22 RT 13 (0.32 km)",
                     "distanceKm": 0.32,
-                    "isCaseStudy": false,
+                    "isSpecialCase": false,
                     "caseTag": "Produk Unggulan (Ibu Anisa - SID-RT13-010)",
                     "description": "Jamur tiram segar petik subuh, bebas bahan kimia, tekstur kenyal cocok untuk tumisan, krispi dan olahan sup sehat.",
                     "icon": "fa-bowl-rice"
@@ -3127,15 +3161,15 @@
             const toast = document.createElement('div');
             const bgClass = type === 'success' ? 'bg-forest-900 text-white border-forest-700 shadow-xl' :
                 type === 'warning' ? 'bg-[#3D2206] text-white border-amber-600 shadow-xl' :
-                type === 'error' ? 'bg-[#4A0E0E] text-white border-rose-700 shadow-xl' :
-                'bg-stone-900 text-white border-stone-700 shadow-xl';
+                    type === 'error' ? 'bg-[#4A0E0E] text-white border-rose-700 shadow-xl' :
+                        'bg-stone-900 text-white border-stone-700 shadow-xl';
 
             toast.className = `p-4 rounded-xl border text-xs pointer-events-auto transform transition-all duration-300 translate-y-2 opacity-0 flex items-start gap-3 ${bgClass}`;
 
             const icon = type === 'success' ? 'fa-circle-check text-forest-300' :
                 type === 'warning' ? 'fa-triangle-exclamation text-amber-300' :
-                type === 'error' ? 'fa-circle-exclamation text-rose-300' :
-                'fa-circle-info text-stone-300';
+                    type === 'error' ? 'fa-circle-exclamation text-rose-300' :
+                        'fa-circle-info text-stone-300';
 
             toast.innerHTML = `
                 <i class="fa-solid ${icon} text-base mt-0.5 shrink-0"></i>
@@ -3492,8 +3526,8 @@
                 scoreBadge.className = res.tier === 'RENTAN_PRIORITAS'
                     ? 'text-[10px] font-mono font-bold text-terracotta-700 bg-terracotta-50 px-1.5 py-0.5 rounded border border-terracotta-200'
                     : res.tier === 'WASPADA'
-                    ? 'text-[10px] font-mono font-bold text-paddy-700 bg-paddy-50 px-1.5 py-0.5 rounded border border-paddy-200'
-                    : 'text-[10px] font-mono font-bold text-forest-700 bg-forest-50 px-1.5 py-0.5 rounded border border-forest-200';
+                        ? 'text-[10px] font-mono font-bold text-paddy-700 bg-paddy-50 px-1.5 py-0.5 rounded border border-paddy-200'
+                        : 'text-[10px] font-mono font-bold text-forest-700 bg-forest-50 px-1.5 py-0.5 rounded border border-forest-200';
             }
         }
 
@@ -3589,8 +3623,8 @@
                 const pctAbsorbed = Math.min(100, Math.round((absorbed / totalHarvest) * 100));
 
                 return `
-                    <div class="bg-white rounded-2xl border ${l.isCaseStudy ? 'border-forest-400 ring-1 ring-forest-400/30' : 'border-stone-200/90'} p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-4 relative group">
-                        ${(l.isCaseStudy && l.caseTag) ? `
+                    <div class="bg-white rounded-2xl border ${l.isSpecialCase ? 'border-forest-400 ring-1 ring-forest-400/30' : 'border-stone-200/90'} p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-4 relative group">
+                        ${(l.isSpecialCase && l.caseTag) ? `
                             <div class="absolute -top-3 left-4 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-forest-800 text-white shadow-xs">
                                 ${l.caseTag}
                             </div>
@@ -3885,6 +3919,19 @@
             showToast("Surplus Panen Dialihkan!", `${surplusKg} Kg beras dialihkan ke ${channelText.split('(')[0]}. Kas inklusi PKK bertambah ${formatRupiah(feePkk)}.`, "success");
         }
 
+        // Rekomendasi otomatis Harga Adil (+40% dari Harga Tengkulak)
+        function calculateRecommendedFairPrice() {
+            const tengkulakInput = document.getElementById('newListingTengkulakPrice');
+            const fairPriceInput = document.getElementById('newListingPrice');
+            if (!tengkulakInput || !fairPriceInput) return;
+
+            const tengkulak = Number(tengkulakInput.value);
+            if (tengkulak > 0) {
+                // Margin keuntungan 40% (Harga Tengkulak * 1.4)
+                fairPriceInput.value = Math.round(tengkulak * 1.4);
+            }
+        }
+
         function handleCreateListing(e) {
             e.preventDefault();
             const producerSid = document.getElementById('newListingProducerSid').value;
@@ -3894,7 +3941,14 @@
             const category = document.getElementById('newListingCategory').value;
             const qty = Number(document.getElementById('newListingQtyKg').value);
             const price = Number(document.getElementById('newListingPrice').value);
-            const tengkulak = Number(document.getElementById('newListingTengkulakPrice').value || (price * 0.7));
+            const tengkulak = Number(document.getElementById('newListingTengkulakPrice').value || 0);
+
+            // Validasi: Harga Adil harus lebih tinggi dari Harga Tengkulak
+            if (price <= tengkulak) {
+                showToast("Validasi Harga Ditolak", "Harga Adil harus lebih tinggi dari Harga Tengkulak agar Anda tidak rugi!", "error");
+                return;
+            }
+
             const freshness = Number(document.getElementById('newListingFreshness').value || 3);
             const loc = document.getElementById('newListingLocation').value;
             const desc = document.getElementById('newListingDesc').value;
@@ -3915,7 +3969,7 @@
                 freshnessDaysRemaining: freshness,
                 location: loc,
                 distanceKm: producer ? producer.distanceKm : 0.25,
-                isCaseStudy: false,
+                isSpecialCase: false,
                 caseTag: `Panen Baru (${producerSid})`,
                 description: desc || 'Panen segar pekarangan berkualitas.',
                 icon: category === 'Beras & Padi' ? 'fa-wheat-awn' : category === 'Lauk & Protein' ? 'fa-fish' : 'fa-seedling'
@@ -3925,7 +3979,7 @@
             document.getElementById('formNewListing').reset();
             closeModal('modalNewListing');
             renderMarketListings();
-            showToast("Produk Panen Diterbitkan!", `${name} (${qty} Kg) siap dibeli warga RT 13.`, "success");
+            showToast("Produk Panen Diterbitkan!", `${name} (${qty} Kg) siap dibeli warga RT 13 dengan harga adil ${formatRupiah(price)}/kg.`, "success");
         }
 
         // TAB 4: AI MATCHING, PREDIKSI & ROUND-ROBIN ALLOCATION
