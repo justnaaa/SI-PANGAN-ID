@@ -581,8 +581,7 @@
                                         <span>2. AI Multi-Factor Food Matching</span>
                                     </td>
                                     <td class="py-3.5 px-4 text-stone-700">
-                                        Pencocokan cerdas 4 parameter: Gizi (40%) + Keterjangkauan Harga (30%) + Jarak
-                                        (20%) + Batas Kesegaran (10%).
+                                        Pencocokan cerdas 4 parameter: Gizi + Keterjangkauan Harga + Jarak + Kesegaran
                                     </td>
                                     <td class="py-3.5 px-4 text-stone-500">
                                         Bantuan disalurkan secara acak atau berbasis kedekatan personal tanpa
@@ -1769,7 +1768,7 @@
             <form id="formNewListing" onsubmit="handleCreateListing(event)" class="space-y-4 text-xs">
                 <div>
                     <label class="block font-semibold text-stone-700 mb-1">Pilih Produsen Terdaftar (SID) *</label>
-                    <select id="newListingProducerSid" required
+                    <select id="newListingProducerSid" required onchange="handleProducerSelectionChange()"
                         class="w-full px-3 py-2 rounded-lg border border-stone-200 bg-white focus:outline-none focus:border-forest-600">
                         <!-- Populated by JS -->
                     </select>
@@ -3471,7 +3470,10 @@
             if (m) {
                 m.classList.remove('hidden');
                 if (modalId === 'modalNewListing') {
-                    setTimeout(initAiMarketIntelligence, 30);
+                    setTimeout(() => {
+                        handleProducerSelectionChange();
+                        initAiMarketIntelligence();
+                    }, 30);
                 }
             }
         }
@@ -3555,8 +3557,17 @@
                         <div class="text-[10px] text-stone-400">${m.address}</div>
                     </td>
                     <td class="py-3 px-3.5">
-                        <div class="font-semibold text-stone-800">${m.role === 'PRODUSEN' ? '<span class="text-forest-700 font-bold">Produsen:</span> ' + m.producerCommodity : 'Konsumen RT 13'}</div>
-                        <div class="text-[10px] text-stone-400">${m.role === 'PRODUSEN' ? `Kapasitas: ${m.capacityKg} Kg/bln` : `Kebutuhan: ${m.monthlyFoodNeedKg} Kg/bln`}</div>
+                        ${m.role === 'PRODUSEN' ? `
+                            <div class="font-bold text-forest-800 text-xs flex items-center gap-1">
+                                <i class="fa-solid fa-wheat-awn text-paddy-600"></i> Produsen Pangan
+                            </div>
+                            <span class="inline-block mt-1 px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-full border border-amber-200">
+                                ${m.producerCommodity || 'Hasil Kebun'}
+                            </span>
+                        ` : `
+                            <div class="font-semibold text-stone-800 text-xs">Konsumen RT 13</div>
+                        `}
+                        <div class="text-[10px] text-stone-400 mt-0.5">${m.role === 'PRODUSEN' ? `Kapasitas: ${m.capacityKg} Kg/bln` : `Kebutuhan: ${m.monthlyFoodNeedKg} Kg/bln`}</div>
                     </td>
                     <td class="py-3 px-3.5 font-mono text-stone-600 text-[11px]">
                         ${getMemberDisplayNik(m)}
@@ -3945,13 +3956,68 @@
             `).join('');
         }
 
+        function handleProducerSelectionChange() {
+            const producerSelect = document.getElementById('newListingProducerSid');
+            const commoditySelect = document.getElementById('newListingName');
+            if (!producerSelect || !commoditySelect) return;
+
+            const selectedSid = producerSelect.value;
+            const members = window.membersData || (window.appState && window.appState.members) || [];
+            const producer = members.find(m => m.sid === selectedSid || m.sidShort === selectedSid);
+            if (!producer || !producer.producerCommodity) return;
+
+            const prodComm = (producer.producerCommodity || '').toLowerCase().trim();
+            if (!prodComm || prodComm === '-') return;
+
+            // Cari kecocokan komoditas dengan opsi di select id="newListingName"
+            let matchedValue = null;
+
+            // 1. Cek exact atau partial match langsung
+            for (let i = 0; i < commoditySelect.options.length; i++) {
+                const optVal = commoditySelect.options[i].value;
+                const optLower = optVal.toLowerCase();
+                if (optLower.includes(prodComm) || prodComm.includes(optLower)) {
+                    matchedValue = optVal;
+                    break;
+                }
+            }
+
+            // 2. Jika belum cocok, cek kata kunci umum khas panen RT 13
+            if (!matchedValue) {
+                const keywordMapping = [
+                    { keywords: ['beras', 'padi', 'ciherang'], value: 'Beras Premium Lokal (Ciherang/IR64)' },
+                    { keywords: ['cabai', 'cabe', 'tomat'], value: 'Cabai Merah Keriting (Pekarangan)' },
+                    { keywords: ['telur', 'unggas', 'ayam'], value: 'Telur Ayam Ras Segar (Kandang RT 13)' },
+                    { keywords: ['gurame', 'ikan', 'bioflok', 'lele'], value: 'Ikan Gurame Segar (Kolam Bioflok)' },
+                    { keywords: ['bawang', 'umbi'], value: 'Bawang Merah (Panen Lokal Super)' },
+                    { keywords: ['bayam', 'sayur', 'kangkung', 'daun'], value: 'Sayur Bayam & Sayuran Hijau' }
+                ];
+
+                for (const item of keywordMapping) {
+                    if (item.keywords.some(kw => prodComm.includes(kw))) {
+                        matchedValue = item.value;
+                        break;
+                    }
+                }
+            }
+
+            // Jika ditemukan komoditas yang cocok, auto-select dan trigger handleCommodityChange
+            if (matchedValue) {
+                commoditySelect.value = matchedValue;
+                handleCommodityChange();
+            }
+        }
+
         function populateProducerDropdown() {
             const select = document.getElementById('newListingProducerSid');
             if (!select) return;
-            const producers = window.appState.members.filter(m => m.role === 'PRODUSEN');
+            const members = window.membersData || (window.appState && window.appState.members) || [];
+            const producers = members.filter(m => m.role === 'PRODUSEN');
             select.innerHTML = producers.map(p => `
-                <option value="${p.sid}">${p.sid} — ${p.name} (${p.producerCommodity})</option>
+                <option value="${p.sid}">${p.sid} • ${p.name} (${p.producerCommodity})</option>
             `).join('');
+            // Otomatis sinkronkan komoditas produsen pertama terpilih
+            handleProducerSelectionChange();
         }
 
         function openBuyModal(listingId) {
