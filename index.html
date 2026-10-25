@@ -93,6 +93,11 @@
     </script>
 
     <style>
+        html, body {
+            overflow-x: clip;
+            max-width: 100%;
+        }
+
         body {
             background-color: #FAF8F5;
             color: #1C1917;
@@ -149,31 +154,31 @@
 </head>
 
 <body
-    class="min-h-screen flex flex-col font-sans antialiased text-stone-900 selection:bg-forest-100 selection:text-forest-900">
+    class="min-h-screen flex flex-col font-sans antialiased text-stone-900 selection:bg-forest-100 selection:text-forest-900 overflow-x-hidden">
 
     <!-- =========================================================================
          TOP BAR CONTEXT & PRIVACY CONTROL
          ========================================================================= -->
     <header
-        class="no-print sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200/80 px-4 sm:px-6 py-2.5 transition-all duration-200">
-        <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+        class="no-print sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-200/80 px-4 sm:px-6 py-2.5 transition-all duration-200 w-full overflow-hidden">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 sm:gap-4 min-w-0 w-full">
             <!-- Left: Mobile Toggle & Title -->
-            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
                 <button onclick="toggleMobileSidebar()"
                     class="lg:hidden p-2 -ml-1 rounded-lg text-stone-600 hover:bg-stone-100 hover:text-stone-900 focus:outline-none transition-colors"
                     aria-label="Buka Menu Navigasi">
                     <i class="fa-solid fa-bars text-base"></i>
                 </button>
-                <div class="flex items-center gap-2 sm:gap-2.5 cursor-pointer" onclick="switchTab('tab-konsep')">
+                <div class="flex items-center gap-2 sm:gap-2.5 cursor-pointer min-w-0" onclick="switchTab('tab-konsep')">
                     <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-forest-800 text-white flex items-center justify-center shadow-xs shrink-0">
                         <i class="fa-solid fa-seedling text-sm text-forest-300"></i>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <div class="flex items-center gap-1.5 sm:gap-2">
-                            <span class="serif-heading font-bold text-base sm:text-lg tracking-tight text-forest-900 leading-none">SI-PANGAN ID</span>
+                            <span class="serif-heading font-bold text-base sm:text-lg tracking-tight text-forest-900 leading-none truncate">SI-PANGAN ID</span>
                             <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-forest-100 text-forest-800 border border-forest-300 shrink-0">Sub-Tema F</span>
                         </div>
-                        <p class="text-[10px] sm:text-[11px] text-stone-500 hidden md:block leading-none mt-1">Pilot Project PKK RT 13 Kelurahan Yosomulyo • Kota Metro, Lampung</p>
+                        <p class="text-[10px] sm:text-[11px] text-stone-500 hidden md:block leading-none mt-1 truncate">Pilot Project PKK RT 13 Kelurahan Yosomulyo • Kota Metro, Lampung</p>
                     </div>
                 </div>
             </div>
@@ -229,7 +234,7 @@
     <!-- =========================================================================
          MAIN APPLICATION WRAPPER (SIDEBAR + CONTENT)
          ========================================================================= -->
-    <div class="flex-1 flex max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 gap-6 relative">
+    <div class="flex-1 flex max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 gap-6 relative min-w-0">
 
         <!-- =====================================================================
              LEFT SIDEBAR NAVIGATION (DESKTOP + MOBILE DRAWER)
@@ -770,26 +775,29 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                                 <div class="flex flex-col justify-between">
                                     <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Jumlah Anggota Keluarga (Jiwa) *</label>
-                                    <input type="number" id="regFamilySize" min="1" max="12" value="4"
+                                    <input type="number" id="regFamilySize" min="1" max="12" value="4" oninput="autoDetectVulnerabilityTier()"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs mono-num focus:outline-none focus:border-forest-600 bg-white">
                                 </div>
                                 <div class="flex flex-col justify-between">
                                     <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Estimasi Pendapatan / Bulan (Rp) *</label>
-                                    <input type="number" id="regIncome" min="500000" step="50000" value="2000000"
+                                    <input type="number" id="regIncome" min="300000" step="50000" value="2000000" oninput="autoDetectVulnerabilityTier()"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs mono-num focus:outline-none focus:border-forest-600 bg-white">
                                 </div>
                                 <div class="flex flex-col justify-between">
                                     <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Kebutuhan Pangan Pokok (Kg/bln) *</label>
-                                    <input type="number" id="regFoodNeedKg" min="10" max="100" value="35"
+                                    <input type="number" id="regFoodNeedKg" min="10" max="100" value="35" oninput="autoDetectVulnerabilityTier()"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs mono-num focus:outline-none focus:border-forest-600 bg-white">
                                 </div>
                                 <div class="flex flex-col justify-between">
-                                    <label class="block text-xs font-semibold text-stone-700 mb-1.5 leading-snug">Kategori Kerentanan (Otomatis/Manual)</label>
+                                    <div class="flex items-center justify-between mb-1.5">
+                                        <label class="block text-xs font-semibold text-stone-700 leading-snug">Klasifikasi AI-DSS</label>
+                                        <span id="regAiScoreBadge" class="text-[10px] font-mono font-bold text-forest-700">Skor: --</span>
+                                    </div>
                                     <select id="regSocialTier"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs bg-white focus:outline-none focus:border-forest-600">
                                         <option value="MANDIRI">Mandiri Pangan (Aman)</option>
                                         <option value="WASPADA">Waspada Pangan</option>
-                                        <option value="RENTAN_PRIORITAS">Rentan Prioritas (Hak Subsidi Pangan)</option>
+                                        <option value="RENTAN_PRIORITAS">Prioritas Bantuan (Hak Subsidi Pangan)</option>
                                     </select>
                                 </div>
                             </div>
@@ -3060,6 +3068,16 @@
          CORE JAVASCRIPT APPLICATION LOGIC
          ========================================================================= -->
     <script>
+        // --- INITIALIZE SOCIAL INCLUSION & ROUND-ROBIN ATTRIBUTES ---
+        if (window.appState && window.appState.members) {
+            window.appState.members.forEach(m => {
+                if (m.aidReceivedThisMonth === undefined) {
+                    m.aidReceivedThisMonth = false;
+                }
+            });
+            window.votingPrograms = window.appState.demands;
+        }
+
         // --- 1. UTILITY FUNCTIONS & PRIVACY HELPERS ---
         function formatRupiah(num) {
             return 'Rp ' + Number(num || 0).toLocaleString('id-ID');
@@ -3085,9 +3103,17 @@
             return member.rawNik || member.maskedNik;
         }
 
-        function getMemberTierBadge(tier) {
+        function getMemberTierBadge(tier, aidReceived = false) {
             if (tier === 'RENTAN_PRIORITAS') {
-                return '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-terracotta-100 text-terracotta-900 border border-terracotta-300">Rentan Prioritas (Hak Bantuan)</span>';
+                if (aidReceived) {
+                    return `
+                        <div class="flex flex-col gap-1 items-start">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-terracotta-100 text-terracotta-900 border border-terracotta-300">Prioritas Bantuan</span>
+                            <span class="px-1.5 py-0.2 rounded text-[9px] font-medium bg-stone-200 text-stone-700 border border-stone-300">Kebutuhan Bulan Ini: Terpenuhi</span>
+                        </div>
+                    `;
+                }
+                return '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-terracotta-100 text-terracotta-900 border border-terracotta-300">Prioritas Bantuan (Hak Bantuan)</span>';
             } else if (tier === 'WASPADA') {
                 return '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-paddy-100 text-paddy-900 border border-paddy-300">Waspada Pangan</span>';
             }
@@ -3271,6 +3297,15 @@
                 return matchSearch && matchFilter;
             });
 
+            // Rotasi Pemerataan: Jika memfilter RENTAN_PRIORITAS, prioritaskan aidReceivedThisMonth === false
+            if (roleFilter === 'RENTAN_PRIORITAS') {
+                filtered.sort((a, b) => {
+                    if (!a.aidReceivedThisMonth && b.aidReceivedThisMonth) return -1;
+                    if (a.aidReceivedThisMonth && !b.aidReceivedThisMonth) return 1;
+                    return (b.aiScore || 0) - (a.aiScore || 0);
+                });
+            }
+
             const countEl = document.getElementById('membersFilteredCount');
             if (countEl) countEl.textContent = filtered.length;
 
@@ -3297,7 +3332,7 @@
                         ${m.distanceKm} km
                     </td>
                     <td class="py-3 px-3.5">
-                        ${getMemberTierBadge(m.socialTier)}
+                        ${getMemberTierBadge(m.socialTier, m.aidReceivedThisMonth)}
                     </td>
                     <td class="py-3 px-3.5 text-right">
                         <button onclick="viewMemberDetail('${m.sid}')" class="px-2.5 py-1 rounded bg-stone-100 hover:bg-forest-100 text-stone-700 hover:text-forest-800 font-semibold text-[11px] border border-stone-200 transition">
@@ -3392,6 +3427,76 @@
             showToast("Data Acak Dimuat", "Silakan klik Daftarkan Single Identity untuk menguji registrasi sukses.", "info");
         }
 
+        // --- AI-DSS VULNERABILITY CALCULATION (REVERSE NORMALIZATION) ---
+        function calculateAiVulnerability(monthlyIncome, familySize, monthlyFoodNeedKg = 35) {
+            const income = Number(monthlyIncome) || 0;
+            const family = Math.max(1, Number(familySize) || 1);
+            const foodKg = Math.max(10, Number(monthlyFoodNeedKg) || 30);
+
+            // Reverse Normalization: Semakin KECIL pendapatan -> skor semakin tinggi (1.0)
+            // Reference: Garis kemiskinan per kapita Metro ~Rp 550.000/bln
+            const maxIncomeRef = 5000000;
+            const minIncomeRef = 400000;
+            const normIncome = Math.max(0, Math.min(1, (maxIncomeRef - income) / (maxIncomeRef - minIncomeRef)));
+
+            // Forward Normalization: Semakin BESAR tanggungan keluarga -> skor semakin tinggi (1.0)
+            const normFamily = Math.max(0, Math.min(1, (family - 1) / 5));
+
+            // Beban Kebutuhan Pangan (15kg - 60kg)
+            const normFood = Math.max(0, Math.min(1, (foodKg - 15) / 45));
+
+            // Rasio Pendapatan per Kapita
+            const perCapita = income / family;
+
+            // AI-DSS Weighted Sum Model (Income 55%, Family Dependency 30%, Food Burden 15%)
+            let rawScore = (normIncome * 55) + (normFamily * 30) + (normFood * 15);
+
+            // BPS Poverty Line / Kerentanan Pangan Booster:
+            if (perCapita < 400000) {
+                // Sangat miskin / rentan ekstrem (Gaji 500rb dgn 4 tanggungan = 125rb/kapita)
+                rawScore = Math.max(rawScore, 82 + Math.min(16, (400000 - perCapita) / 20000));
+            } else if (perCapita < 700000) {
+                rawScore = Math.max(rawScore, 65 + Math.min(15, (700000 - perCapita) / 25000));
+            }
+
+            const score = Math.round(Math.min(99, Math.max(5, rawScore)));
+
+            // Penentuan Tier Berdasarkan Skor AI-DSS
+            let tier = 'MANDIRI';
+            if (score >= 65 || perCapita < 500000) {
+                tier = 'RENTAN_PRIORITAS';
+            } else if (score >= 40 || perCapita < 1000000) {
+                tier = 'WASPADA';
+            }
+
+            return { score, tier, perCapita };
+        }
+
+        function autoDetectVulnerabilityTier() {
+            const roleEl = document.getElementById('regRole');
+            if (roleEl && roleEl.value === 'PRODUSEN') return;
+
+            const income = Number(document.getElementById('regIncome')?.value || 2000000);
+            const family = Number(document.getElementById('regFamilySize')?.value || 4);
+            const foodKg = Number(document.getElementById('regFoodNeedKg')?.value || 35);
+
+            const res = calculateAiVulnerability(income, family, foodKg);
+            const selectEl = document.getElementById('regSocialTier');
+            const scoreBadge = document.getElementById('regAiScoreBadge');
+
+            if (selectEl) {
+                selectEl.value = res.tier;
+            }
+            if (scoreBadge) {
+                scoreBadge.textContent = `Skor AI: ${res.score}/100 • ${res.tier === 'RENTAN_PRIORITAS' ? 'Prioritas Bantuan' : res.tier === 'WASPADA' ? 'Waspada' : 'Mandiri'}`;
+                scoreBadge.className = res.tier === 'RENTAN_PRIORITAS'
+                    ? 'text-[10px] font-mono font-bold text-terracotta-700 bg-terracotta-50 px-1.5 py-0.5 rounded border border-terracotta-200'
+                    : res.tier === 'WASPADA'
+                    ? 'text-[10px] font-mono font-bold text-paddy-700 bg-paddy-50 px-1.5 py-0.5 rounded border border-paddy-200'
+                    : 'text-[10px] font-mono font-bold text-forest-700 bg-forest-50 px-1.5 py-0.5 rounded border border-forest-200';
+            }
+        }
+
         function handleRegisterMember(e) {
             e.preventDefault();
             const nik = document.getElementById('regNik').value.trim();
@@ -3406,6 +3511,15 @@
             const newIndex = window.appState.members.length + 1;
             const newSid = `SID-RT13-${String(newIndex).padStart(3, '0')}`;
 
+            const familySize = Number(document.getElementById('regFamilySize')?.value || 3);
+            const monthlyIncome = Number(document.getElementById('regIncome')?.value || 2000000);
+            const monthlyFoodNeedKg = Number(document.getElementById('regFoodNeedKg')?.value || 30);
+
+            // Hitung klasifikasi kerentanan secara akurat via AI-DSS
+            const aiRes = calculateAiVulnerability(monthlyIncome, familySize, monthlyFoodNeedKg);
+            const selectedTier = document.getElementById('regSocialTier')?.value;
+            const finalTier = (role === 'PRODUSEN') ? 'MANDIRI' : (selectedTier || aiRes.tier);
+
             const newMember = {
                 sid: newSid,
                 name: name,
@@ -3416,10 +3530,12 @@
                 role: role,
                 producerCommodity: role === 'PRODUSEN' ? (document.getElementById('regCommodity').value || 'Sayur Pekarangan') : '-',
                 capacityKg: role === 'PRODUSEN' ? Number(document.getElementById('regCapacityKg').value || 30) : 0,
-                familySize: Number(document.getElementById('regFamilySize')?.value || 3),
-                monthlyIncome: Number(document.getElementById('regIncome')?.value || 2000000),
-                monthlyFoodNeedKg: Number(document.getElementById('regFoodNeedKg')?.value || 30),
-                socialTier: role === 'PRODUSEN' ? 'MANDIRI' : (document.getElementById('regSocialTier')?.value || 'MANDIRI'),
+                familySize: familySize,
+                monthlyIncome: monthlyIncome,
+                monthlyFoodNeedKg: monthlyFoodNeedKg,
+                socialTier: finalTier,
+                aiScore: aiRes.score,
+                aidReceivedThisMonth: false,
                 distanceKm: Number(document.getElementById('regDistanceKm')?.value || 0.3),
                 walletEarned: 0,
                 subsidyReceivedKg: 0,
@@ -3431,8 +3547,12 @@
             document.getElementById('dedupAlertBanner').classList.add('hidden');
             renderMembersTable();
             renderHeaderStats();
-            showToast("Single Identity Terbit!", `${name} berhasil didaftarkan dengan ID permanen ${newSid}.`, "success");
+            if (typeof renderAiMatchingPanel === 'function') renderAiMatchingPanel();
+            showToast("Single Identity Terbit!", `${name} berhasil didaftarkan sebagai ${finalTier === 'RENTAN_PRIORITAS' ? 'Prioritas Bantuan (Skor AI: ' + aiRes.score + ')' : finalTier} dengan ID ${newSid}.`, "success");
         }
+
+        // Alias for compatibility
+        window.handleAddMember = handleRegisterMember;
 
         // TAB 3: SMART FOOD MARKET LISTINGS
         let currentMarketCategory = 'ALL';
@@ -3457,8 +3577,9 @@
             });
 
             grid.innerHTML = filtered.map(l => {
+                // Show real producer name in Community Market (zero masking for trusted neighbor market)
                 const producer = window.appState.members.find(m => m.sid === l.producerSid);
-                const producerName = producer ? getMemberDisplayName(producer) : l.producerName;
+                const producerName = producer ? producer.name : l.producerName;
                 const isRiceCaseB = l.id === 'list-002';
                 const isSpinachCaseA = l.id === 'list-001';
 
@@ -3468,7 +3589,7 @@
                 const pctAbsorbed = Math.min(100, Math.round((absorbed / totalHarvest) * 100));
 
                 return `
-                    <div class="bg-white rounded-2xl border ${l.isCaseStudy ? 'border-forest-400 ring-1 ring-forest-400/30' : 'border-stone-200/80'} p-5 shadow-xs flex flex-col justify-between space-y-4 relative group">
+                    <div class="bg-white rounded-2xl border ${l.isCaseStudy ? 'border-forest-400 ring-1 ring-forest-400/30' : 'border-stone-200/90'} p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-4 relative group">
                         ${(l.isCaseStudy && l.caseTag) ? `
                             <div class="absolute -top-3 left-4 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-forest-800 text-white shadow-xs">
                                 ${l.caseTag}
@@ -3487,9 +3608,9 @@
 
                             <div>
                                 <h4 class="serif-heading text-lg font-bold text-stone-900 group-hover:text-forest-800 transition">${l.commodity}</h4>
-                                <div class="flex items-center gap-1.5 text-xs text-stone-600 mt-0.5">
+                                <div class="flex items-center gap-1.5 text-xs text-stone-700 mt-1">
                                     <i class="fa-solid fa-circle-user text-forest-600"></i>
-                                    <span>${producerName}</span>
+                                    <span class="font-semibold text-stone-900">${producerName}</span>
                                     <span class="mono-num font-semibold text-stone-400">(${l.producerSid})</span>
                                 </div>
                                 <div class="flex items-center gap-2 mt-1 text-[11px] text-stone-500">
@@ -3505,19 +3626,21 @@
                                 ${l.description}
                             </p>
 
-                            <!-- Price Comparison Anti-Tengkulak -->
-                            <div class="p-3 rounded-xl bg-stone-50 border border-stone-200/70 space-y-1">
-                                <div class="flex items-center justify-between text-[11px]">
-                                    <span class="text-stone-400">Harga Tengkulak Luar:</span>
-                                    <span class="line-through text-stone-400 font-mono">${formatRupiah(l.tengkulakPrice)}/kg</span>
+                            <!-- Clean Fair Price Box (No Tengkulak Label in Public View) -->
+                            <div class="p-3.5 rounded-xl bg-stone-50/80 border border-stone-200/70 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-medium text-stone-600">Harga Jual Bersih:</span>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-forest-100 text-forest-800 border border-forest-200">
+                                        <i class="fa-solid fa-leaf text-[9px] text-forest-600"></i> Panen Komunitas RT 13
+                                    </span>
                                 </div>
                                 <div class="flex items-baseline justify-between">
-                                    <span class="text-xs font-bold text-forest-800">Harga Adil Komunitas:</span>
-                                    <span class="serif-heading text-lg font-bold text-forest-900 mono-num">${formatRupiah(l.fairPrice)}<span class="text-xs font-normal text-stone-500">/kg</span></span>
-                                </div>
-                                <div class="pt-1 text-[10px] text-forest-700 font-medium flex items-center gap-1">
-                                    <i class="fa-solid fa-shield-check"></i>
-                                    <span>Produsen untung adil, konsumen hemat vs harga pasar luar</span>
+                                    <span class="serif-heading text-xl font-bold text-forest-900 mono-num">
+                                        ${formatRupiah(l.fairPrice)}<span class="text-xs font-normal text-stone-500"> / kg</span>
+                                    </span>
+                                    <span class="text-[11px] text-forest-700 font-medium flex items-center gap-1">
+                                        <i class="fa-solid fa-circle-check text-forest-600"></i> Bebas Biaya Tengkulak
+                                    </span>
                                 </div>
                             </div>
 
@@ -3805,86 +3928,148 @@
             showToast("Produk Panen Diterbitkan!", `${name} (${qty} Kg) siap dibeli warga RT 13.`, "success");
         }
 
-        // TAB 4: AI MATCHING & SURPLUS SIMULATION
+        // TAB 4: AI MATCHING, PREDIKSI & ROUND-ROBIN ALLOCATION
         function renderAiMatchingPanel() {
             const container = document.getElementById('aiMatchingRecommendationsContainer');
             if (!container) return;
 
-            // Target vulnerable members
-            const vulnerable = window.appState.members.filter(m => m.socialTier === 'RENTAN_PRIORITAS');
-            const availableProduce = window.appState.listings.filter(l => l.availableStockKg > 0);
+            // 1. Ambil seluruh warga dengan status Prioritas Bantuan (RENTAN_PRIORITAS)
+            const vulnerable = window.appState.members
+                .filter(m => m.socialTier === 'RENTAN_PRIORITAS')
+                .map(m => {
+                    if (m.aiScore === undefined) {
+                        const ai = calculateAiVulnerability(m.monthlyIncome || 950000, m.familySize || 4, m.monthlyFoodNeedKg || 35);
+                        m.aiScore = ai.score;
+                    }
+                    if (m.aidReceivedThisMonth === undefined) {
+                        m.aidReceivedThisMonth = false;
+                    }
+                    return m;
+                });
 
-            if (vulnerable.length === 0 || availableProduce.length === 0) {
-                container.innerHTML = '<div class="col-span-2 p-6 rounded-xl bg-stone-50 text-center text-stone-500">Seluruh alokasi bantuan telah terpenuhi.</div>';
+            if (vulnerable.length === 0) {
+                container.innerHTML = '<div class="col-span-2 p-6 rounded-xl bg-stone-50 text-center text-stone-500">Tidak ada data warga dalam kategori Prioritas Bantuan.</div>';
                 return;
             }
 
-            const recs = [
+            // 2. ATURAN ROUND-ROBIN ALLOCATION:
+            // - Urutkan warga berdasarkan Skor AI tertinggi
+            // - Prioritaskan mereka yang BELUM menerima bantuan (aidReceivedThisMonth === false)
+            // - Warga yang SUDAH menerima bantuan (aidReceivedThisMonth === true) digeser ke posisi bawah
+            vulnerable.sort((a, b) => {
+                if (!a.aidReceivedThisMonth && b.aidReceivedThisMonth) return -1;
+                if (a.aidReceivedThisMonth && !b.aidReceivedThisMonth) return 1;
+                return (b.aiScore || 0) - (a.aiScore || 0);
+            });
+
+            // Paket pangan komunitas yang disesuaikan
+            const packagesPresets = [
                 {
-                    targetMember: vulnerable[0] || window.appState.members[1], // Siti Aminah
                     matchedProduce: [
                         { name: "Beras Ciherang Pulen", qtyKg: 10, priceKg: 12000, source: "Pak Hendra (SID-RT13-003)" },
                         { name: "Sayur Bayam Segar", qtyKg: 2, priceKg: 7500, source: "Ibu Sri Wahyuni (SID-RT13-002)" }
                     ],
-                    score: 96.4,
-                    scoreDetails: "Kesesuaian Gizi: 98% • Jarak: 0.18 km (95%) • Kesegaran: Petik Pagi (96%)",
+                    scoreBase: 96.4,
                     totalCost: 135000
                 },
                 {
-                    targetMember: vulnerable[1] || window.appState.members[8], // Marsinah / Dewi
                     matchedProduce: [
                         { name: "Tempe Daun & Tahu", qtyKg: 5, priceKg: 10000, source: "Ibu Ratna (SID-RT13-004)" },
                         { name: "Lele Segar Bioflok", qtyKg: 2, priceKg: 22000, source: "Pak Joko (SID-RT13-006)" }
                     ],
-                    score: 93.8,
-                    scoreDetails: "Kesesuaian Protein: 95% • Jarak: 0.28 km (92%) • Kesegaran: Segar Hari Ini (94%)",
+                    scoreBase: 94.2,
                     totalCost: 94000
+                },
+                {
+                    matchedProduce: [
+                        { name: "Beras Ciherang Pulen", qtyKg: 10, priceKg: 12000, source: "Pak Hendra (SID-RT13-003)" },
+                        { name: "Telur Ayam RT 13", qtyKg: 2, priceKg: 26000, source: "Ibu Dewi (SID-RT13-009)" }
+                    ],
+                    scoreBase: 95.8,
+                    totalCost: 172000
+                },
+                {
+                    matchedProduce: [
+                        { name: "Sayur Bayam Segar", qtyKg: 3, priceKg: 7500, source: "Ibu Sri Wahyuni (SID-RT13-002)" },
+                        { name: "Tempe Daun & Tahu", qtyKg: 4, priceKg: 10000, source: "Ibu Ratna (SID-RT13-004)" }
+                    ],
+                    scoreBase: 92.5,
+                    totalCost: 62500
                 }
             ];
 
-            container.innerHTML = recs.map((r, idx) => `
-                <div class="bg-white rounded-2xl border border-forest-300 p-5 shadow-xs space-y-3.5 flex flex-col justify-between">
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-terracotta-100 text-terracotta-900 border border-terracotta-200">
-                                Rekomendasi #${idx + 1} (Tepat Sasaran)
-                            </span>
-                            <div class="flex items-center gap-1 text-forest-800 font-mono font-bold text-xs">
-                                <i class="fa-solid fa-bolt text-paddy-500"></i> Match: ${r.score}%
-                            </div>
-                        </div>
+            // Tampilkan rekomendasi warga teratas (hingga 4 kartu alokasi)
+            const displayVulnerable = vulnerable.slice(0, 4);
 
-                        <div>
-                            <span class="text-[11px] text-stone-500 block">Penerima Manfaat Single Identity:</span>
-                            <h4 class="font-bold text-stone-900 text-sm">${getMemberDisplayName(r.targetMember)} <span class="text-stone-400 font-mono font-normal">(${r.targetMember.sid})</span></h4>
-                            <p class="text-[11px] text-stone-500">${r.targetMember.familySize} Jiwa • Kebutuhan: ${r.targetMember.monthlyFoodNeedKg} Kg/bln • ${r.targetMember.address}</p>
-                        </div>
+            container.innerHTML = displayVulnerable.map((m, idx) => {
+                const pkg = packagesPresets[idx % packagesPresets.length];
+                const matchPct = Math.min(99, Math.round((m.aiScore * 0.6) + (pkg.scoreBase * 0.4)));
+                const isFulfilled = m.aidReceivedThisMonth === true;
 
-                        <div class="p-3 rounded-xl bg-forest-50/70 border border-forest-200 space-y-1.5">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-forest-800 block">Paket Pangan Bergizi yang Diserap:</span>
-                            ${r.matchedProduce.map(p => `
-                                <div class="flex justify-between text-xs text-stone-800">
-                                    <span>${p.name} (${p.qtyKg} Kg) <span class="text-[10px] text-stone-500">dari ${p.source}</span></span>
-                                    <span class="font-mono font-bold">${formatRupiah(p.qtyKg * p.priceKg)}</span>
+                return `
+                    <div class="bg-white rounded-2xl border ${isFulfilled ? 'border-stone-200 bg-stone-50/50 opacity-90' : 'border-forest-300 ring-1 ring-forest-400/20'} p-5 shadow-xs space-y-3.5 flex flex-col justify-between transition-all">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                ${isFulfilled ? `
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-stone-700 border border-stone-300 flex items-center gap-1">
+                                        <i class="fa-solid fa-circle-check text-stone-500"></i> Kebutuhan Bulan Ini: Terpenuhi
+                                    </span>
+                                ` : `
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-terracotta-100 text-terracotta-900 border border-terracotta-200 flex items-center gap-1">
+                                        <i class="fa-solid fa-star text-terracotta-600"></i> Rekomendasi #${idx + 1} (Prioritas Utama)
+                                    </span>
+                                `}
+                                <div class="flex items-center gap-1 text-forest-800 font-mono font-bold text-xs">
+                                    <i class="fa-solid fa-bolt text-paddy-500"></i> AI Match: ${matchPct}%
                                 </div>
-                            `).join('')}
-                            <div class="pt-1.5 border-t border-forest-200 flex justify-between font-bold text-xs text-forest-900">
-                                <span>Total Alokasi Kas Inklusi:</span>
-                                <span class="font-mono">${formatRupiah(r.totalCost)}</span>
+                            </div>
+
+                            <div>
+                                <span class="text-[11px] text-stone-500 block">Penerima Manfaat Single Identity:</span>
+                                <h4 class="font-bold text-stone-900 text-sm flex items-center gap-1.5">
+                                    <span>${getMemberDisplayName(m)}</span>
+                                    <span class="text-stone-400 font-mono font-normal text-xs">(${m.sid})</span>
+                                </h4>
+                                <p class="text-[11px] text-stone-500 mt-0.5">
+                                    ${m.familySize} Jiwa • Skor AI: <strong class="text-stone-800 font-mono">${m.aiScore}/100</strong> • Kebutuhan: ${m.monthlyFoodNeedKg} Kg/bln
+                                </p>
+                                <p class="text-[10px] text-stone-400"><i class="fa-solid fa-location-dot text-stone-400 mr-1"></i>${m.address}</p>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-forest-50/70 border border-forest-200 space-y-1.5">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-forest-800 block">Paket Pangan Bergizi yang Diserap:</span>
+                                ${pkg.matchedProduce.map(p => `
+                                    <div class="flex justify-between text-xs text-stone-800">
+                                        <span>${p.name} (${p.qtyKg} Kg) <span class="text-[10px] text-stone-500">dari ${p.source}</span></span>
+                                        <span class="font-mono font-bold">${formatRupiah(p.qtyKg * p.priceKg)}</span>
+                                    </div>
+                                `).join('')}
+                                <div class="pt-1.5 border-t border-forest-200 flex justify-between font-bold text-xs text-forest-900">
+                                    <span>Total Alokasi Kas Inklusi:</span>
+                                    <span class="font-mono">${formatRupiah(pkg.totalCost)}</span>
+                                </div>
+                            </div>
+
+                            <div class="text-[10px] text-stone-500 flex items-center justify-between">
+                                <span><strong>Rotasi Pemerataan:</strong> ${isFulfilled ? 'Sudah tersalurkan (giliran berikutnya)' : 'Siap dialokasikan bulan ini'}</span>
+                                <span class="font-mono text-stone-400">${m.distanceKm || 0.2} km</span>
                             </div>
                         </div>
 
-                        <div class="text-[10px] text-stone-500">
-                            <strong>Parameter AI:</strong> ${r.scoreDetails}
-                        </div>
+                        ${isFulfilled ? `
+                            <button disabled class="w-full py-2.5 rounded-xl bg-stone-200 text-stone-500 text-xs font-semibold cursor-not-allowed flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-check"></i>
+                                <span>Bantuan Bulan Ini Telah Diterima (Rotasi Selesai)</span>
+                            </button>
+                        ` : `
+                            <button onclick="executeFoodAid('${m.sid}', ${pkg.totalCost})" class="w-full py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
+                                <i class="fa-solid fa-gift"></i>
+                                <span>Eksekusi Penyaluran Bantuan Inklusif (${formatRupiah(pkg.totalCost)})</span>
+                            </button>
+                        `}
                     </div>
-
-                    <button onclick="executeFoodAid('${r.targetMember.sid}', ${r.totalCost})" class="w-full py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs">
-                        <i class="fa-solid fa-gift"></i>
-                        <span>Eksekusi Penyaluran Bantuan Inklusif (${formatRupiah(r.totalCost)})</span>
-                    </button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function executeFoodAid(beneficiarySid, costAmount) {
@@ -3897,10 +4082,12 @@
             window.appState.danaSosialInklusi -= costAmount;
 
             if (beneficiary) {
+                // Rotasi Pemerataan: Tandai warga sudah menerima bantuan bulan ini
+                beneficiary.aidReceivedThisMonth = true;
                 beneficiary.subsidyReceivedKg = (beneficiary.subsidyReceivedKg || 0) + 12;
             }
 
-            // Record in ledger
+            // Catat ke Buku Kas / Transaksi Ekosistem
             const txId = `TX-RT13-AID${Math.floor(100 + Math.random() * 900)}`;
             window.appState.transactions.unshift({
                 id: txId,
@@ -3909,10 +4096,10 @@
                 producerSid: "MULTIPLE-PRODUSEN",
                 producerName: "Surplus Petani Lokal RT 13",
                 consumerSid: beneficiarySid,
-                consumerName: beneficiary ? beneficiary.name : "Warga Rentan Prioritas",
-                commodity: "Paket Beras Ciherang 10kg + Sayur Bayam 2kg",
+                consumerName: beneficiary ? beneficiary.name : "Warga Prioritas Bantuan",
+                commodity: "Paket Pangan Bergizi (Beras & Sayur Panen Lokal)",
                 quantityKg: 12,
-                unitPrice: 11250,
+                unitPrice: Math.round(costAmount / 12),
                 subtotal: costAmount,
                 pkkFeePercent: 0,
                 pkkFeeAmount: 0,
@@ -3923,8 +4110,9 @@
                 status: "TERVERIFIKASI_PERMENSOS_3_2025"
             });
 
+            // Re-render seluruh tampilan agar posisi round-robin bergeser ke bawah secara otomatis
             renderAll();
-            showToast("Bantuan Tersalurkan!", `Paket pangan gizi telah disalurkan ke ${beneficiary ? beneficiary.name : beneficiarySid} tanpa pungutan biaya.`, "success");
+            showToast("Bantuan Pangan Tersalurkan!", `Paket bantuan pangan berhasil disalurkan ke ${beneficiary ? beneficiary.name : beneficiarySid}. Kuota bulan ini terpenuhi dan alokasi otomatis berotasi.`, "success");
         }
 
         function runSurplusSimulation() {
@@ -4019,13 +4207,21 @@
         }
 
         function handleVoteDemand(demandId) {
-            const demand = window.appState.demands.find(d => d.id === demandId);
+            const list = window.appState.demands || window.votingPrograms || [];
+            const demand = list.find(d => d.id === demandId);
             if (!demand) return;
 
-            demand.votes += 1;
-            demand.totalDemandKg += 5;
+            // Inisialisasi baseDemandKg jika belum ada
+            if (demand.baseDemandKg === undefined) {
+                demand.baseDemandKg = Math.max(10, demand.totalDemandKg - (demand.votes * 5));
+            }
+
+            demand.votes = (demand.votes || 0) + 1;
+            // Formula estimasi rasional: Kebutuhan Estimasi = Base Kebutuhan + (Jumlah Voting * 5 kg rata-rata/KK)
+            demand.totalDemandKg = demand.baseDemandKg + (demand.votes * 5);
+
             renderDemandsBoard();
-            showToast("Suara Warga Tercatat!", `Anda telah memberikan 1 suara untuk kebutuhan ${demand.name}. Total permintaan naik menjadi ${demand.totalDemandKg} Kg.`, "success");
+            showToast("Suara Warga Tercatat!", `Anda telah memberikan 1 suara untuk kebutuhan ${demand.name}. Estimasi kebutuhan kini ${demand.totalDemandKg} Kg (${demand.votes} KK mendukung).`, "success");
         }
 
         function handleAddDemandCatalog(e) {
@@ -4035,19 +4231,36 @@
             const price = Number(document.getElementById('newDemandPrice').value);
             const targetKg = Number(document.getElementById('newDemandTargetKg').value);
 
+            // Pastikan array votingPrograms & demands sinkron
+            const existingList = window.appState.demands || window.votingPrograms || [];
+
+            // PENCEGAHAN DUPLIKASI (Case-Insensitive Check)
+            const isDuplicate = existingList.some(d => (d.name || '').trim().toLowerCase() === name.toLowerCase());
+            if (isDuplicate) {
+                showToast("Peringatan Duplikasi", "Komoditas sudah ada di daftar musyawarah, silakan lakukan voting!", "warning");
+                return;
+            }
+
+            const baseKg = targetKg > 0 ? targetKg : 40;
+            const initialVotes = 1;
+            const initialTotalKg = baseKg + (initialVotes * 5);
+
             const newDemand = {
-                id: `dem-${String(window.appState.demands.length + 1).padStart(3, '0')}`,
+                id: `dem-${String(existingList.length + 1).padStart(3, '0')}`,
                 name: name,
                 category: cat,
                 targetPriceMax: price,
-                votes: 1,
-                totalDemandKg: targetKg,
+                votes: initialVotes,
+                baseDemandKg: baseKg,
+                totalDemandKg: initialTotalKg,
                 status: "DEFISIT_LOKAL",
                 producerNotes: "Defisit / Belum Ada Produsen di RT 13 (Peluang Pasar Terbuka)",
                 voters: []
             };
 
             window.appState.demands.unshift(newDemand);
+            window.votingPrograms = window.appState.demands;
+
             document.getElementById('formAddDemandCatalog').reset();
             renderDemandsBoard();
             showToast("Sinyal Kebutuhan Terbit!", `Komoditas ${name} berhasil ditambahkan ke papan musyawarah warga RT 13.`, "success");
