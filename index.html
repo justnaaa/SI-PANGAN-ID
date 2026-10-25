@@ -974,7 +974,7 @@
 
                 <!-- Sorotan Kasus Unggulan -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Kasus A Notice -->
+                    <!-- Bayam Organik Notice -->
                     <div
                         class="p-4 rounded-xl bg-forest-50 border border-forest-200/80 space-y-1.5 flex items-start gap-3">
                         <div
@@ -992,7 +992,7 @@
                         </div>
                     </div>
 
-                    <!-- Kasus B Notice -->
+                    <!-- Beras Ciherang Notice -->
                     <div
                         class="p-4 rounded-xl bg-paddy-50 border border-paddy-200/80 space-y-1.5 flex items-start gap-3">
                         <div
@@ -1680,7 +1680,7 @@
                     <div>
                         <h3 class="font-bold text-stone-900 text-sm sm:text-base">Ekspansi Luapan Surplus Panen Raya
                             (Pasar Luar)</h3>
-                        <span class="text-[11px] text-paddy-800 font-mono font-semibold">Kasus B: Beras Pulen 400 Kg</span>
+                        <span class="text-[11px] text-paddy-800 font-mono font-semibold">Beras Pulen Ciherang 400 Kg</span>
                     </div>
                 </div>
                 <button onclick="closeModal('modalSurplusSpillover')"
@@ -1786,11 +1786,12 @@
                         </label>
                         <select id="newListingName" required onchange="handleCommodityChange()"
                             class="w-full px-3 py-2 rounded-lg border border-stone-200 bg-white font-medium text-stone-800 focus:outline-none focus:border-forest-600">
-                            <option value="Beras Premium Lokal">Beras Premium Lokal (Ciherang/IR64)</option>
-                            <option value="Cabai Merah Keriting">Cabai Merah Keriting (Pekarangan)</option>
-                            <option value="Telur Ayam Ras">Telur Ayam Ras Segar (Kandang RT 13)</option>
-                            <option value="Ikan Gurame Segar">Ikan Gurame Segar (Kolam Bioflok)</option>
-                            <option value="Bawang Merah">Bawang Merah (Panen Lokal Super)</option>
+                            <option value="Beras Premium Lokal (Ciherang/IR64)">Beras Premium Lokal (Ciherang/IR64)</option>
+                            <option value="Cabai Merah Keriting (Pekarangan)">Cabai Merah Keriting (Pekarangan)</option>
+                            <option value="Telur Ayam Ras Segar (Kandang RT 13)">Telur Ayam Ras Segar (Kandang RT 13)</option>
+                            <option value="Ikan Gurame Segar (Kolam Bioflok)">Ikan Gurame Segar (Kolam Bioflok)</option>
+                            <option value="Bawang Merah (Panen Lokal Super)">Bawang Merah (Panen Lokal Super)</option>
+                            <option value="Sayur Bayam & Sayuran Hijau">Sayur Bayam & Sayuran Hijau</option>
                         </select>
                     </div>
                     <div>
@@ -1877,31 +1878,45 @@
                     </div>
                 </div>
 
-                <!-- Input Panen & Dynamic Pricing Inputs -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-start">
+                <!-- Input Panen & Dynamic Pricing Inputs (Tengkulak & Pasar Readonly, Adil Input) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-start">
                     <div>
-                        <label class="block font-semibold text-stone-700 mb-1">Total Panen (Kg) *</label>
+                        <label class="block font-semibold text-stone-700 mb-1 text-xs">Total Panen (Kg) *</label>
                         <input type="number" id="newListingQtyKg" min="1" value="20" required
-                            class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600 bg-white">
+                            class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600 bg-white text-xs">
                     </div>
                     <div>
-                        <label class="block font-semibold text-stone-700 mb-1">Harga Tengkulak (Rp) *</label>
-                        <input type="number" id="newListingTengkulakPrice" min="1000" step="500" value="11000" required
-                            oninput="validateDynamicPricing()"
-                            placeholder="Contoh: 11000"
-                            class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600 bg-white">
+                        <label class="block font-semibold text-stone-700 mb-1 text-xs flex items-center justify-between">
+                            <span>Harga Tengkulak *</span>
+                            <span class="text-[10px] text-rose-600 font-bold">Bawah</span>
+                        </label>
+                        <input type="number" id="newListingTengkulakPrice" readonly value="11000"
+                            class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-100 text-stone-600 mono-num focus:outline-none cursor-not-allowed text-xs font-semibold"
+                            title="Batas Bawah Harga Tengkulak dikunci otomatis oleh sistem">
                     </div>
                     <div>
-                        <label class="block font-semibold text-stone-700 mb-1">Harga Adil (Rp/Kg) *</label>
+                        <label class="block font-semibold text-stone-700 mb-1 text-xs flex items-center justify-between">
+                            <span>Harga Pasar Lampung *</span>
+                            <span class="text-[10px] text-amber-600 font-bold">Atas</span>
+                        </label>
+                        <input type="number" id="newListingMarketPrice" readonly value="15500"
+                            class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-slate-100 text-stone-600 mono-num focus:outline-none cursor-not-allowed text-xs font-semibold"
+                            title="Batas Atas Harga Pasar Lampung dikunci otomatis oleh sistem">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-emerald-800 mb-1 text-xs flex items-center justify-between">
+                            <span>Harga Adil (Rp/Kg) *</span>
+                            <span class="text-[10px] text-emerald-700 font-bold">Ketik Disini</span>
+                        </label>
                         <input type="number" id="newListingPrice" min="1000" step="100" value="13000" required
                             oninput="validateDynamicPricing()"
                             placeholder="Ketik harga jual Anda"
-                            class="w-full px-3 py-2 rounded-lg border border-emerald-600 ring-1 ring-emerald-400/30 mono-num focus:outline-none bg-white transition-all">
+                            class="w-full px-3 py-2 rounded-lg border border-emerald-600 ring-1 ring-emerald-400/30 mono-num focus:outline-none bg-white transition-all text-xs font-bold">
                         <!-- Dynamic Validation Feedback Message -->
                         <div id="pricingFeedbackContainer" class="mt-1.5 transition-all duration-200">
-                            <p id="pricingFeedbackText" class="text-[10px] sm:text-[11px] text-emerald-700 font-medium leading-tight flex items-start gap-1">
+                            <p id="pricingFeedbackText" class="text-[10px] text-emerald-700 font-medium leading-tight flex items-start gap-1">
                                 <i id="pricingFeedbackIcon" class="fa-solid fa-circle-check text-emerald-600 mt-0.5 shrink-0"></i>
-                                <span id="pricingFeedbackMsg">Harga Inklusif! Menguntungkan Anda & terjangkau bagi warga.</span>
+                                <span id="pricingFeedbackMsg">Harga Inklusif! Menguntungkan Anda & hemat bagi warga</span>
                             </p>
                         </div>
                     </div>
@@ -2889,7 +2904,7 @@
                     "location": "Blok B RT 13 (0.2 km)",
                     "distanceKm": 0.2,
                     "isSpecialCase": true,
-                    "caseTag": "Kasus A: Sayur Cepat Rusak (50 Kg)",
+                    "caseTag": "Bayam Organik Petik Segar (50 Kg)",
                     "description": "Panen petik pagi bebas pestisida kimia dari pekarangan dasawisma. Daun hijau segar, kaya zat besi untuk pemenuhan gizi keluarga & balita.",
                     "icon": "fa-seedling"
                 },
@@ -2912,7 +2927,7 @@
                     "location": "Area Sawah Poktan Blok C RT 13 (0.5 km)",
                     "distanceKm": 0.5,
                     "isSpecialCase": true,
-                    "caseTag": "Kasus B: Luapan Surplus Beras (1 Ton)",
+                    "caseTag": "Beras Ciherang Lumbung RT 13 (1 Ton)",
                     "description": "Padi varietas Ciherang panen raya Poktan RT 13. Kadar air 14% terstandar lumbung, pulen aromatik, tanpa pemutih kimia. Kuota RT 13: 600 Kg, Luapan Surplus 400 Kg dialihkan ke Koperasi Kota.",
                     "icon": "fa-wheat-awn"
                 },
@@ -3191,15 +3206,108 @@
          CORE JAVASCRIPT APPLICATION LOGIC
          ========================================================================= -->
     <script>
-        // --- INITIALIZE SOCIAL INCLUSION & ROUND-ROBIN ATTRIBUTES ---
-        if (window.appState && window.appState.members) {
-            window.appState.members.forEach(m => {
+        // =========================================================================
+        // IIFE: GENERATOR 40 KK & SINKRONISASI ROTASI BANTUAN (ROUND-ROBIN)
+        // =========================================================================
+        (function initFortyKkGenerator() {
+            // 1. Sinkronisasi global window.membersData & window.appState.members
+            if (!window.membersData) {
+                window.membersData = (window.appState && window.appState.members) ? window.appState.members : [];
+            }
+            if (window.appState && !window.appState.members) {
+                window.appState.members = window.membersData;
+            }
+
+            const members = window.appState.members || [];
+
+            // 2. Verifikasi & Lengkapi hingga genap 40 KK (SID-1301 s.d. SID-1340)
+            const sampleNames = [
+                "Ibu Sartika Sari Dewi", "Ibu Sri Wahyuni", "Pak Hendra Wijaya", "Ibu Ratna Susanti",
+                "Pak Bambang Sudiro", "Pak Joko Prasetyo", "Ibu Nurul Hidayah", "Pak Agus Santoso",
+                "Ibu Dewi Lestari", "Ibu Anisa Rahmawati", "Ibu Siti Aminah", "Ibu Marsinah",
+                "Ibu Suparmi", "Pak Dedi Setiawan", "Pak Eko Prasetyo", "Ibu Wulandari",
+                "Pak Hadi Purnomo", "Pak Indra Gunawan", "Ibu Maya Safitri", "Pak Rudi Hartono",
+                "Ibu Yuliana", "Pak Slamet Riyadi", "Ibu Titik Sunarti", "Pak Budi Hartono",
+                "Ibu Tri Wahyuni", "Pak Sugeng Mulyono", "Ibu Rina Marlina", "Pak Widodo",
+                "Ibu Kusuma Wardani", "Pak Arif Rahman", "Ibu Fitri Handayani", "Pak Wahyu Hidayat",
+                "Ibu Endang Sri Rejeki", "Pak Danang Wicaksono", "Ibu Sulastri", "Pak Triyono",
+                "Ibu Sri Rahayu", "Pak Suryanto", "Ibu Ningsih", "Pak Totok Sugiyanto"
+            ];
+
+            if (members.length < 40) {
+                const target = 40;
+                for (let i = members.length; i < target; i++) {
+                    const sidIdx = i + 1;
+                    const sidCode = `SID-RT13-${String(sidIdx).padStart(3, '0')}`;
+                    const sidShort = `SID-${1300 + sidIdx}`;
+                    const name = sampleNames[i] || `Warga RT 13 KK #${sidIdx}`;
+                    
+                    const prioCount = members.filter(m => m.socialTier === 'RENTAN_PRIORITAS').length;
+                    const waspCount = members.filter(m => m.socialTier === 'WASPADA').length;
+
+                    let tier = 'MANDIRI';
+                    let income = 3500000;
+                    let family = 3;
+                    let foodKg = 30;
+
+                    if (prioCount < 5 && (i % 7 === 1 || prioCount + (target - i) <= 5)) {
+                        tier = 'RENTAN_PRIORITAS';
+                        income = 800000 + (i * 20000);
+                        family = 4 + (i % 3);
+                        foodKg = 40;
+                    } else if (waspCount < 8 && (i % 4 === 0 || waspCount + (target - i) <= 8)) {
+                        tier = 'WASPADA';
+                        income = 1800000 + (i * 30000);
+                        family = 3 + (i % 2);
+                        foodKg = 35;
+                    }
+
+                    members.push({
+                        sid: sidCode,
+                        sidShort: sidShort,
+                        name: name,
+                        publicName: `Warga ${sidCode} (${name.substring(0, 5)}...)`,
+                        nikHash: Math.random().toString(16).substring(2, 10),
+                        maskedNik: `187201********${String(sidIdx).padStart(2, '0')}`,
+                        rawNik: `187201450280${String(sidIdx).padStart(4, '0')}`,
+                        role: 'KONSUMEN',
+                        producerCommodity: '-',
+                        capacityKg: 0,
+                        familySize: family,
+                        monthlyIncome: income,
+                        monthlyFoodNeedKg: foodKg,
+                        socialTier: tier,
+                        aidReceivedThisMonth: false,
+                        distanceKm: Number((0.1 + (i * 0.02)).toFixed(2)),
+                        walletEarned: 0,
+                        subsidyReceivedKg: 0,
+                        address: `Jl. Wolter Monginsidi RT 13 Metro Pusat`
+                    });
+                }
+            }
+
+            // 3. Pastikan setiap KK memiliki properti aidReceivedThisMonth: false dan sidShort
+            members.forEach((m, idx) => {
                 if (m.aidReceivedThisMonth === undefined) {
                     m.aidReceivedThisMonth = false;
                 }
+                if (!m.sidShort) {
+                    m.sidShort = `SID-${1300 + idx + 1}`;
+                }
+                // Hitung AI-DSS score awal
+                const normInc = Math.max(0, Math.min(1, (5000000 - Math.max(0, m.monthlyIncome || 0)) / 4700000));
+                const normFam = Math.max(0, Math.min(1, ((m.familySize || 1) - 1) / 5));
+                const perCap = (m.monthlyIncome || 0) / Math.max(1, m.familySize || 1);
+                let score = Math.round((normInc * 55) + (normFam * 35) + 10);
+                if (perCap <= 300000) score = Math.max(score, 90 + Math.min(8, Math.round((300000 - perCap) / 30000)));
+                else if (perCap <= 500000) score = Math.max(score, 75 + Math.round(((500000 - perCap) / 200000) * 15));
+                m.aiScore = score;
             });
+
+            window.appState.members = members;
+            window.membersData = members;
             window.votingPrograms = window.appState.demands;
-        }
+        })();
 
         // --- 1. UTILITY FUNCTIONS & PRIVACY HELPERS ---
         function formatRupiah(num) {
@@ -3561,30 +3669,33 @@
             const family = Math.max(1, Number(familySize) || 1);
             const foodKg = Math.max(10, Number(monthlyFoodNeedKg) || 30);
 
-            // Reverse Normalization: Semakin KECIL pendapatan -> skor semakin tinggi (1.0)
-            // Reference: Garis kemiskinan per kapita Metro ~Rp 550.000/bln
+            // Normalisasi Terbalik Berimbang:
+            // Gaji makin KECIL dan Tanggungan makin BESAR -> Skor AI mendekati 100 (Masuk kategori PRIORITAS BANTUAN)
             const maxIncomeRef = 5000000;
-            const minIncomeRef = 400000;
-            const normIncome = Math.max(0, Math.min(1, (maxIncomeRef - income) / (maxIncomeRef - minIncomeRef)));
+            const minIncomeRef = 300000;
+            const normIncome = Math.max(0, Math.min(1, (maxIncomeRef - Math.max(0, income)) / (maxIncomeRef - minIncomeRef)));
 
-            // Forward Normalization: Semakin BESAR tanggungan keluarga -> skor semakin tinggi (1.0)
-            const normFamily = Math.max(0, Math.min(1, (family - 1) / 5));
+            // Tanggungan: makin BESAR tanggungan -> skor makin tinggi
+            const maxFamilyRef = 6;
+            const normFamily = Math.max(0, Math.min(1, (family - 1) / (maxFamilyRef - 1)));
 
             // Beban Kebutuhan Pangan (15kg - 60kg)
             const normFood = Math.max(0, Math.min(1, (foodKg - 15) / 45));
 
-            // Rasio Pendapatan per Kapita
+            // Rasio Pendapatan per Kapita (Indikator Utama BPS Lampung: ~Rp 550.000/kapita)
             const perCapita = income / family;
 
-            // AI-DSS Weighted Sum Model (Income 55%, Family Dependency 30%, Food Burden 15%)
-            let rawScore = (normIncome * 55) + (normFamily * 30) + (normFood * 15);
+            // AI-DSS Weighted Sum Model (Income 55%, Family Dependency 35%, Food Burden 10%)
+            let rawScore = (normIncome * 55) + (normFamily * 35) + (normFood * 10);
 
             // BPS Poverty Line / Kerentanan Pangan Booster:
-            if (perCapita < 400000) {
-                // Sangat miskin / rentan ekstrem (Gaji 500rb dgn 4 tanggungan = 125rb/kapita)
-                rawScore = Math.max(rawScore, 82 + Math.min(16, (400000 - perCapita) / 20000));
-            } else if (perCapita < 700000) {
-                rawScore = Math.max(rawScore, 65 + Math.min(15, (700000 - perCapita) / 25000));
+            // Gaji Rp 500.000 dengan 4 tanggungan = Rp 125.000/kapita -> Skor mendekati 95-98 (PRIORITAS BANTUAN)
+            if (perCapita <= 300000) {
+                rawScore = Math.max(rawScore, 90 + Math.min(9, ((300000 - perCapita) / 300000) * 9));
+            } else if (perCapita <= 500000) {
+                rawScore = Math.max(rawScore, 75 + (((500000 - perCapita) / 200000) * 15));
+            } else if (perCapita <= 800000) {
+                rawScore = Math.max(rawScore, 50 + (((800000 - perCapita) / 300000) * 20));
             }
 
             const score = Math.round(Math.min(99, Math.max(5, rawScore)));
@@ -3638,6 +3749,7 @@
             const role = document.getElementById('regRole').value;
             const newIndex = window.appState.members.length + 1;
             const newSid = `SID-RT13-${String(newIndex).padStart(3, '0')}`;
+            const newSidShort = `SID-${1300 + newIndex}`;
 
             const familySize = Number(document.getElementById('regFamilySize')?.value || 3);
             const monthlyIncome = Number(document.getElementById('regIncome')?.value || 2000000);
@@ -3645,11 +3757,15 @@
 
             // Hitung klasifikasi kerentanan secara akurat via AI-DSS
             const aiRes = calculateAiVulnerability(monthlyIncome, familySize, monthlyFoodNeedKg);
-            const selectedTier = document.getElementById('regSocialTier')?.value;
-            const finalTier = (role === 'PRODUSEN') ? 'MANDIRI' : (selectedTier || aiRes.tier);
+            
+            // Logika Penentuan Status: AI-DSS menentukan klasifikasi warga secara akurat
+            const finalTier = (role === 'PRODUSEN') ? 'MANDIRI' : aiRes.tier;
+            const selectEl = document.getElementById('regSocialTier');
+            if (selectEl) selectEl.value = finalTier;
 
             const newMember = {
                 sid: newSid,
+                sidShort: newSidShort,
                 name: name,
                 publicName: `Warga ${newSid} (${name.substring(0, 5)}...)`,
                 nikHash: Math.random().toString(16).substring(2, 10),
@@ -3671,6 +3787,7 @@
             };
 
             window.appState.members.unshift(newMember);
+            window.membersData = window.appState.members;
             document.getElementById('formRegisterMember').reset();
             document.getElementById('dedupAlertBanner').classList.add('hidden');
             renderMembersTable();
@@ -3681,6 +3798,7 @@
 
         // Alias for compatibility
         window.handleAddMember = handleRegisterMember;
+        window.handleRegisterMember = handleRegisterMember;
 
         // TAB 3: SMART FOOD MARKET LISTINGS
         let currentMarketCategory = 'ALL';
@@ -4017,11 +4135,11 @@
         // AI MARKET INTELLIGENCE & DYNAMIC PRICING ENGINE (REGIONAL LAMPUNG)
         // =========================================================================
         const LAMPUNG_MARKET_INTELLIGENCE = {
-            "Beras Premium Lokal": {
+            "Beras Premium Lokal (Ciherang/IR64)": {
                 category: "Beras & Padi",
                 unit: "Kg",
                 tengkulakPrice: 11000,
-                marketLampungPrice: 16000,
+                marketLampungPrice: 15500,
                 safeMin: 12000,
                 safeMax: 15000,
                 recommendedPrice: 13000,
@@ -4029,55 +4147,75 @@
                 dataSource: "PIHPS & Disperindag Lampung (Metro)",
                 description: "Beras pulen Ciherang panen Poktan Metro, kadar air 14% standar lumbung pangan RT 13."
             },
-            "Cabai Merah Keriting": {
+            "Cabai Merah Keriting (Pekarangan)": {
                 category: "Sayur Pekarangan",
                 unit: "Kg",
                 tengkulakPrice: 25000,
                 marketLampungPrice: 45000,
-                safeMin: 30000,
-                safeMax: 40000,
+                safeMin: 28000,
+                safeMax: 42000,
                 recommendedPrice: 35000,
                 freshnessDays: 5,
                 dataSource: "Pasar Kopindo & Pasar Pasir Gintung",
-                description: "Cabai merah keriting petik segar pekarangan, pedas mantap alami bebas residu pestisida."
+                description: "Cabai merah keriting petik segar pekarangan, pedas mantap alami bebas residu sintetis."
             },
-            "Telur Ayam Ras": {
+            "Telur Ayam Ras Segar (Kandang RT 13)": {
                 category: "Lauk & Protein",
                 unit: "Kg",
                 tengkulakPrice: 23000,
-                marketLampungPrice: 30000,
-                safeMin: 25000,
+                marketLampungPrice: 29000,
+                safeMin: 24500,
                 safeMax: 28000,
-                recommendedPrice: 26500,
+                recommendedPrice: 26000,
                 freshnessDays: 14,
                 dataSource: "Asosiasi Peternak Layer Lampung & Pasar Cendrawasih",
                 description: "Telur ayam segar cangkang cokelat tebal langsung dari peternak binaan RT 13."
             },
-            "Ikan Gurame Segar": {
+            "Ikan Gurame Segar (Kolam Bioflok)": {
                 category: "Lauk & Protein",
                 unit: "Kg",
-                tengkulakPrice: 32000,
-                marketLampungPrice: 48000,
-                safeMin: 36000,
-                safeMax: 44000,
-                recommendedPrice: 40000,
+                tengkulakPrice: 28000,
+                marketLampungPrice: 38000,
+                safeMin: 30000,
+                safeMax: 36000,
+                recommendedPrice: 33000,
                 freshnessDays: 2,
-                dataSource: "Sentra Budi Daya Kolam Air Bersih Metro",
+                dataSource: "Sentra Bioflok Metro Pusat",
                 description: "Gurame hidup air tawar segar, daging kenyal manis, higienis untuk pemenuhan gizi keluarga."
             },
-            "Bawang Merah": {
+            "Bawang Merah (Panen Lokal Super)": {
                 category: "Sayur Pekarangan",
                 unit: "Kg",
-                tengkulakPrice: 22000,
-                marketLampungPrice: 38000,
-                safeMin: 26000,
-                safeMax: 34000,
-                recommendedPrice: 30000,
+                tengkulakPrice: 18000,
+                marketLampungPrice: 28000,
+                safeMin: 20000,
+                safeMax: 26000,
+                recommendedPrice: 23000,
                 freshnessDays: 30,
                 dataSource: "Pasar Induk Tani Lampung & Disperindag",
                 description: "Bawang merah kering umbi padat merah beraroma tajam, hasil panen pekarangan dasawisma."
+            },
+            "Sayur Bayam & Sayuran Hijau": {
+                category: "Sayur Pekarangan",
+                unit: "Kg",
+                tengkulakPrice: 3000,
+                marketLampungPrice: 8000,
+                safeMin: 4000,
+                safeMax: 7000,
+                recommendedPrice: 5000,
+                freshnessDays: 2,
+                dataSource: "Petani Sayur Daun Metro",
+                description: "Sayur bayam dan sayuran hijau petik subuh segar bebas pestisida sintetis."
             }
         };
+
+        // Aliases for compatibility
+        LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Lokal"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Lokal (Ciherang/IR64)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Cabai Merah Keriting"] = LAMPUNG_MARKET_INTELLIGENCE["Cabai Merah Keriting (Pekarangan)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Telur Ayam Ras"] = LAMPUNG_MARKET_INTELLIGENCE["Telur Ayam Ras Segar (Kandang RT 13)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Ikan Gurame Segar"] = LAMPUNG_MARKET_INTELLIGENCE["Ikan Gurame Segar (Kolam Bioflok)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Bawang Merah"] = LAMPUNG_MARKET_INTELLIGENCE["Bawang Merah (Panen Lokal Super)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Cabut"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"];
 
         function handleCommodityChange() {
             const selectEl = document.getElementById('newListingName');
@@ -4093,9 +4231,18 @@
             const freshnessInput = document.getElementById('newListingFreshness');
             if (freshnessInput) freshnessInput.value = intel.freshnessDays;
 
-            // 2. Isi nilai benchmark awal ke input
+            // 2. Kunci & isi otomatis input readonly Tengkulak & Pasar Lampung
             const tengkulakInput = document.getElementById('newListingTengkulakPrice');
-            if (tengkulakInput) tengkulakInput.value = intel.tengkulakPrice;
+            if (tengkulakInput) {
+                tengkulakInput.value = intel.tengkulakPrice;
+                tengkulakInput.readOnly = true;
+            }
+
+            const marketInput = document.getElementById('newListingMarketPrice');
+            if (marketInput) {
+                marketInput.value = intel.marketLampungPrice;
+                marketInput.readOnly = true;
+            }
 
             const priceInput = document.getElementById('newListingPrice');
             if (priceInput) priceInput.value = intel.recommendedPrice;
@@ -4105,7 +4252,7 @@
             if (tengkulakDisplay) tengkulakDisplay.textContent = formatRupiah(intel.tengkulakPrice);
 
             const safeRangeDisplay = document.getElementById('intelSafeRangeDisplay');
-            if (safeRangeDisplay) safeRangeDisplay.textContent = `${formatRupiah(intel.safeMin)} - ${formatRupiah(intel.safeMax)}`;
+            if (safeRangeDisplay) safeRangeDisplay.textContent = `${formatRupiah(intel.safeMin || intel.tengkulakPrice + 1000)} - ${formatRupiah(intel.safeMax || intel.marketLampungPrice - 1000)}`;
 
             const marketDisplay = document.getElementById('intelMarketDisplay');
             if (marketDisplay) marketDisplay.textContent = formatRupiah(intel.marketLampungPrice);
@@ -4122,7 +4269,7 @@
             const labelMax = document.getElementById('gaugeLabelMax');
             if (labelMax) labelMax.textContent = formatRupiah(intel.marketLampungPrice);
 
-            // 4. Jalankan validasi harga dan pembaruan visual gauge
+            // 4. Validasi Dynamic Pricing Real-Time
             validateDynamicPricing();
         }
 
@@ -4134,13 +4281,15 @@
             const feedbackIcon = document.getElementById('pricingFeedbackIcon');
             const feedbackMsg = document.getElementById('pricingFeedbackMsg');
             const markerPin = document.getElementById('gaugePriceMarker');
+            const tengkulakInput = document.getElementById('newListingTengkulakPrice');
+            const marketInput = document.getElementById('newListingMarketPrice');
 
-            if (!selectEl || !priceInput) return;
+            if (!priceInput) return false;
 
-            const commodityName = selectEl.value;
+            const commodityName = selectEl ? selectEl.value : '';
             const intel = LAMPUNG_MARKET_INTELLIGENCE[commodityName] || {
-                tengkulakPrice: Number(document.getElementById('newListingTengkulakPrice')?.value || 5000),
-                marketLampungPrice: 16000,
+                tengkulakPrice: Number(tengkulakInput?.value || 11000),
+                marketLampungPrice: Number(marketInput?.value || 15500),
                 safeMin: 12000,
                 safeMax: 15000,
                 recommendedPrice: 13000
@@ -4149,35 +4298,36 @@
             const price = Number(priceInput.value || 0);
             const tengkulak = intel.tengkulakPrice;
             const marketLampung = intel.marketLampungPrice;
-            const safeMin = intel.safeMin;
-            const safeMax = intel.safeMax;
 
-            // Hitung posisi visual gauge marker (0% - 100%)
-            let markerPct = 50;
-            if (price <= tengkulak) {
-                markerPct = Math.max(5, (price / Math.max(1, tengkulak)) * 20);
-            } else if (price >= marketLampung) {
-                markerPct = Math.min(95, 80 + ((price - marketLampung) / (marketLampung * 0.2 || 1)) * 15);
-            } else if (price >= safeMin && price <= safeMax) {
-                const safeSpan = Math.max(1, safeMax - safeMin);
-                markerPct = 20 + ((price - safeMin) / safeSpan) * 60;
-            } else if (price < safeMin) {
-                markerPct = 20;
-            } else {
-                markerPct = 80;
+            // Pastikan input readonly selalu sinkron
+            if (tengkulakInput && Number(tengkulakInput.value) !== tengkulak) {
+                tengkulakInput.value = tengkulak;
+            }
+            if (marketInput && Number(marketInput.value) !== marketLampung) {
+                marketInput.value = marketLampung;
             }
 
+            // Hitung posisi visual gauge marker (0% - 100%)
             if (markerPin) {
+                let markerPct = 50;
+                if (price <= tengkulak) {
+                    markerPct = Math.max(5, (price / Math.max(1, tengkulak)) * 20);
+                } else if (price >= marketLampung) {
+                    markerPct = Math.min(95, 80 + ((price - marketLampung) / (marketLampung * 0.2 || 1)) * 15);
+                } else {
+                    const span = Math.max(1, marketLampung - tengkulak);
+                    markerPct = 20 + ((price - tengkulak) / span) * 60;
+                }
                 markerPin.style.left = `${markerPct}%`;
             }
 
-            // Aturan Validasi Dynamic Pricing Constraint Sesuai Spesifikasi:
-            // 1. DI BAWAH batas bawah (Tengkulak) -> Warning Merah & Disable Submit
-            if (price < tengkulak) {
-                priceInput.className = "w-full px-3 py-2 rounded-lg border border-rose-500 ring-1 ring-rose-300 mono-num focus:outline-none bg-rose-50/40 text-rose-900 transition-all";
-                if (feedbackText) feedbackText.className = "text-[10px] sm:text-[11px] text-rose-600 font-bold leading-tight flex items-start gap-1";
+            // Aturan Validasi Real-Time Sesuai Spesifikasi:
+            // 1. Jika Harga Adil <= Tengkulak: Munculkan teks merah "Harga terlalu murah, Anda berpotensi rugi!" dan disable tombol Submit.
+            if (price <= tengkulak) {
+                priceInput.className = "w-full px-3 py-2 rounded-lg border border-rose-500 ring-1 ring-rose-400 mono-num focus:outline-none bg-rose-50/50 text-rose-900 transition-all text-xs font-bold";
+                if (feedbackText) feedbackText.className = "text-[10px] text-rose-600 font-bold leading-tight flex items-start gap-1";
                 if (feedbackIcon) feedbackIcon.className = "fa-solid fa-circle-xmark text-rose-500 mt-0.5 shrink-0";
-                if (feedbackMsg) feedbackMsg.textContent = "Harga terlalu murah (di bawah standar tengkulak). Anda berpotensi rugi!";
+                if (feedbackMsg) feedbackMsg.textContent = "Harga terlalu murah, Anda berpotensi rugi!";
                 if (submitBtn) {
                     submitBtn.disabled = true;
                     submitBtn.className = "px-5 py-2 rounded-lg bg-stone-300 text-stone-500 text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-not-allowed";
@@ -4185,12 +4335,12 @@
                 return false;
             }
 
-            // 2. DI ATAS batas atas (Pasar Lampung) -> Warning Merah & Disable Submit
-            if (price > marketLampung) {
-                priceInput.className = "w-full px-3 py-2 rounded-lg border border-rose-500 ring-1 ring-rose-300 mono-num focus:outline-none bg-rose-50/40 text-rose-900 transition-all";
-                if (feedbackText) feedbackText.className = "text-[10px] sm:text-[11px] text-rose-600 font-bold leading-tight flex items-start gap-1";
+            // 2. Jika Harga Adil >= Pasar Lampung: Munculkan teks merah "Harga melebihi rata-rata pasar. Sistem menolak inflasi!" dan disable tombol Submit.
+            if (price >= marketLampung) {
+                priceInput.className = "w-full px-3 py-2 rounded-lg border border-rose-500 ring-1 ring-rose-400 mono-num focus:outline-none bg-rose-50/50 text-rose-900 transition-all text-xs font-bold";
+                if (feedbackText) feedbackText.className = "text-[10px] text-rose-600 font-bold leading-tight flex items-start gap-1";
                 if (feedbackIcon) feedbackIcon.className = "fa-solid fa-circle-xmark text-rose-500 mt-0.5 shrink-0";
-                if (feedbackMsg) feedbackMsg.textContent = "Harga melebihi rata-rata pasar Lampung. Sistem menolak harga inflasi tinggi!";
+                if (feedbackMsg) feedbackMsg.textContent = "Harga melebihi rata-rata pasar. Sistem menolak inflasi!";
                 if (submitBtn) {
                     submitBtn.disabled = true;
                     submitBtn.className = "px-5 py-2 rounded-lg bg-stone-300 text-stone-500 text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-not-allowed";
@@ -4198,28 +4348,11 @@
                 return false;
             }
 
-            // 3. DI ZONA HIJAU (Range Aman Rekomendasi AI) -> Teks Hijau & Aktifkan Submit
-            if (price >= safeMin && price <= safeMax) {
-                priceInput.className = "w-full px-3 py-2 rounded-lg border border-emerald-600 ring-1 ring-emerald-400/40 mono-num focus:outline-none bg-white text-stone-900 transition-all";
-                if (feedbackText) feedbackText.className = "text-[10px] sm:text-[11px] text-emerald-700 font-medium leading-tight flex items-start gap-1";
-                if (feedbackIcon) feedbackIcon.className = "fa-solid fa-circle-check text-emerald-600 mt-0.5 shrink-0";
-                if (feedbackMsg) feedbackMsg.textContent = "Harga Inklusif! Menguntungkan Anda & terjangkau bagi warga.";
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.className = "px-5 py-2 rounded-lg bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer";
-                }
-                return true;
-            }
-
-            // 4. Di antara tengkulak dan safeMin, atau antara safeMax dan marketLampung
-            priceInput.className = "w-full px-3 py-2 rounded-lg border border-paddy-400 ring-1 ring-paddy-300/40 mono-num focus:outline-none bg-white text-stone-900 transition-all";
-            if (feedbackText) feedbackText.className = "text-[10px] sm:text-[11px] text-paddy-800 font-medium leading-tight flex items-start gap-1";
-            if (feedbackIcon) feedbackIcon.className = "fa-solid fa-circle-info text-paddy-600 mt-0.5 shrink-0";
-            if (price < safeMin) {
-                if (feedbackMsg) feedbackMsg.textContent = `Harga mendekati batas tengkulak. Disarankan masuk Zona Hijau (${formatRupiah(safeMin)} - ${formatRupiah(safeMax)}).`;
-            } else {
-                if (feedbackMsg) feedbackMsg.textContent = `Harga mendekati plafon pasar Lampung. Disarankan turunkan ke Zona Hijau (${formatRupiah(safeMin)} - ${formatRupiah(safeMax)}).`;
-            }
+            // 3. Jika di antara keduanya: Munculkan teks hijau "Harga Inklusif! Menguntungkan Anda & hemat bagi warga" dan enable tombol Submit.
+            priceInput.className = "w-full px-3 py-2 rounded-lg border border-emerald-600 ring-1 ring-emerald-400/40 mono-num focus:outline-none bg-white text-stone-900 transition-all text-xs font-bold";
+            if (feedbackText) feedbackText.className = "text-[10px] text-emerald-700 font-medium leading-tight flex items-start gap-1";
+            if (feedbackIcon) feedbackIcon.className = "fa-solid fa-circle-check text-emerald-600 mt-0.5 shrink-0";
+            if (feedbackMsg) feedbackMsg.textContent = "Harga Inklusif! Menguntungkan Anda & hemat bagi warga";
             if (submitBtn) {
                 submitBtn.disabled = false;
                 submitBtn.className = "px-5 py-2 rounded-lg bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5 cursor-pointer";
@@ -4245,22 +4378,18 @@
             const category = document.getElementById('newListingCategory').value;
             const qty = Number(document.getElementById('newListingQtyKg').value);
             const price = Number(document.getElementById('newListingPrice').value);
-            const tengkulak = Number(document.getElementById('newListingTengkulakPrice').value || 0);
+            const tengkulak = Number(document.getElementById('newListingTengkulakPrice')?.value || 0);
+            const marketLampung = Number(document.getElementById('newListingMarketPrice')?.value || 999999);
 
             const intel = LAMPUNG_MARKET_INTELLIGENCE[name];
 
             // Validasi Dynamic Pricing Constraint Real-Time
-            if (intel) {
-                if (price < intel.tengkulakPrice) {
-                    showToast("Validasi Harga Ditolak", "Harga terlalu murah (di bawah standar tengkulak). Anda berpotensi rugi!", "error");
-                    return;
-                }
-                if (price > intel.marketLampungPrice) {
-                    showToast("Validasi Harga Ditolak", "Harga melebihi rata-rata pasar Lampung. Sistem menolak harga inflasi tinggi!", "error");
-                    return;
-                }
-            } else if (price <= tengkulak) {
-                showToast("Validasi Harga Ditolak", "Harga Adil harus lebih tinggi dari Harga Tengkulak agar Anda tidak rugi!", "error");
+            if (price <= tengkulak) {
+                showToast("Validasi Harga Ditolak", "Harga terlalu murah, Anda berpotensi rugi!", "error");
+                return;
+            }
+            if (price >= marketLampung) {
+                showToast("Validasi Harga Ditolak", "Harga melebihi rata-rata pasar. Sistem menolak inflasi!", "error");
                 return;
             }
 
@@ -4296,6 +4425,8 @@
             renderMarketListings();
             showToast("Produk Panen Diterbitkan!", `${name} (${qty} Kg) siap dibeli warga RT 13 dengan harga adil ${formatRupiah(price)}/kg.`, "success");
         }
+
+        window.handleAddListing = handleCreateListing;
 
         // TAB 4: AI MATCHING, PREDIKSI & ROUND-ROBIN ALLOCATION
         function renderAiMatchingPanel() {
@@ -4447,7 +4578,7 @@
                 return;
             }
 
-            const beneficiary = window.appState.members.find(m => m.sid === beneficiarySid);
+            const beneficiary = window.appState.members.find(m => m.sid === beneficiarySid || m.sidShort === beneficiarySid);
             window.appState.danaSosialInklusi -= costAmount;
 
             if (beneficiary) {
@@ -4456,78 +4587,34 @@
                 beneficiary.subsidyReceivedKg = (beneficiary.subsidyReceivedKg || 0) + 12;
             }
 
-            // Catat ke Buku Kas / Transaksi Ekosistem
+            // Catat ke Buku Kas / Transaksi Ekosistem (DISTRIBUSI BANTUAN PANGAN)
             const txId = `TX-RT13-AID${Math.floor(100 + Math.random() * 900)}`;
             window.appState.transactions.unshift({
                 id: txId,
                 timestamp: "Baru Saja • Bantuan Inklusi",
-                type: "BANTUAN_INKLUSI_PANGAN",
+                type: "DISTRIBUSI_BANTUAN_PANGAN",
+                typeName: "DISTRIBUSI BANTUAN PANGAN",
                 producerSid: "MULTIPLE-PRODUSEN",
                 producerName: "Surplus Petani Lokal RT 13",
                 consumerSid: beneficiarySid,
                 consumerName: beneficiary ? beneficiary.name : "Warga Prioritas Bantuan",
                 commodity: "Paket Pangan Bergizi (Beras & Sayur Panen Lokal)",
                 quantityKg: 12,
-                unitPrice: Math.round(costAmount / 12),
+                unitPrice: 0,
                 subtotal: costAmount,
                 pkkFeePercent: 0,
                 pkkFeeAmount: 0,
                 producerNet: costAmount,
-                deliveryMethod: "Kurir Dasawisma RT 13",
+                deliveryMethod: "Diantar Pengurus PKK",
                 deliveryFee: 0,
-                totalPaid: 0,
-                status: "TERVERIFIKASI_PERMENSOS_3_2025"
+                totalPaid: costAmount,
+                status: "TERDISTRIBUSI_BANTUAN"
             });
 
-            // Re-render seluruh tampilan agar posisi round-robin bergeser ke bawah secara otomatis
             renderAll();
-            showToast("Bantuan Pangan Tersalurkan!", `Paket bantuan pangan berhasil disalurkan ke ${beneficiary ? beneficiary.name : beneficiarySid}. Kuota bulan ini terpenuhi dan alokasi otomatis berotasi.`, "success");
+            showToast("Bantuan Disalurkan!", `Penyaluran bantuan senilai ${formatRupiah(costAmount)} berhasil. Rotasi round-robin diaktifkan: antrean digeser ke warga berikutnya.`, "success");
         }
 
-        function runSurplusSimulation() {
-            const comm = document.getElementById('simCommoditySelect').value;
-            const season = document.getElementById('simSeasonSelect').value;
-            const scale = Number(document.getElementById('simScaleRange').value) / 100;
-
-            const scaleLabel = document.getElementById('simScaleLabel');
-            if (scaleLabel) scaleLabel.textContent = Math.round(scale * 100) + '% (Kapasitas)';
-
-            let baseHarvest = 1000;
-            let localDemand = 600;
-
-            if (comm === 'BAYAM') {
-                baseHarvest = 60;
-                localDemand = 35;
-            } else if (comm === 'CABAI') {
-                baseHarvest = 30;
-                localDemand = 18;
-            } else if (comm === 'LELE') {
-                baseHarvest = 80;
-                localDemand = 45;
-            }
-
-            let seasonFactor = 1.0;
-            if (season === 'PANEN_RAYA') seasonFactor = 1.25;
-            else if (season === 'GAGAL_IKLIM') seasonFactor = 0.8;
-
-            const estimatedHarvest = Math.round(baseHarvest * scale * seasonFactor);
-            const spillover = Math.max(0, estimatedHarvest - localDemand);
-
-            document.getElementById('simHarvestResult').textContent = formatKg(estimatedHarvest);
-            document.getElementById('simLocalDemandResult').textContent = formatKg(localDemand);
-            document.getElementById('simSpilloverResult').textContent = formatKg(spillover);
-
-            const recBox = document.getElementById('simRecommendationText');
-            if (recBox) {
-                if (spillover > 0) {
-                    recBox.textContent = `Sistem mendeteksi surplus ${spillover} Kg melebihi konsumsi RT 13. Strategi AI: Terbitkan sinyal pasokan ke Koperasi Pegawai Kota Metro & gerai antar-RT Yosomulyo 14 hari sebelum panen tiba.`;
-                } else {
-                    recBox.textContent = `Seluruh hasil panen (${estimatedHarvest} Kg) dapat diserap 100% oleh 40 KK RT 13 tanpa sisa spillover. Zero risiko pembusukan.`;
-                }
-            }
-        }
-
-        // TAB 5: DEMAND VOTING & ADMIN MASTER CATALOG
         function renderDemandsBoard() {
             const container = document.getElementById('demandVotingCardsContainer');
             if (!container) return;
@@ -4582,11 +4669,11 @@
 
             // Inisialisasi baseDemandKg jika belum ada
             if (demand.baseDemandKg === undefined) {
-                demand.baseDemandKg = Math.max(10, demand.totalDemandKg - (demand.votes * 5));
+                demand.baseDemandKg = Math.max(10, (demand.totalDemandKg || 50) - ((demand.votes || 0) * 5));
             }
 
             demand.votes = (demand.votes || 0) + 1;
-            // Formula estimasi rasional: Kebutuhan Estimasi = Base Kebutuhan + (Jumlah Voting * 5 kg rata-rata/KK)
+            // Formula rasional: Kebutuhan (Kg) = Base Needs + (Jumlah Vote * 5)
             demand.totalDemandKg = demand.baseDemandKg + (demand.votes * 5);
 
             renderDemandsBoard();
@@ -4595,23 +4682,27 @@
 
         function handleAddDemandCatalog(e) {
             e.preventDefault();
-            const name = document.getElementById('newDemandName').value.trim();
-            const cat = document.getElementById('newDemandCat').value;
-            const price = Number(document.getElementById('newDemandPrice').value);
-            const targetKg = Number(document.getElementById('newDemandTargetKg').value);
+            const nameInput = document.getElementById('newDemandName');
+            const name = nameInput ? nameInput.value.trim() : '';
+            if (!name) return;
 
-            // Pastikan array votingPrograms & demands sinkron
+            const cat = document.getElementById('newDemandCat').value;
+            const price = Number(document.getElementById('newDemandPrice').value) || 10000;
+            const targetKg = Number(document.getElementById('newDemandTargetKg').value) || 40;
+
             const existingList = window.appState.demands || window.votingPrograms || [];
 
-            // PENCEGAHAN DUPLIKASI (Case-Insensitive Check)
+            // PENCEGAHAN DUPLIKASI (Case-Insensitive Check):
+            // Jika ada, tolak dengan toast: "Komoditas sudah ada, silakan gunakan fitur voting!"
             const isDuplicate = existingList.some(d => (d.name || '').trim().toLowerCase() === name.toLowerCase());
             if (isDuplicate) {
-                showToast("Peringatan Duplikasi", "Komoditas sudah ada di daftar musyawarah, silakan lakukan voting!", "warning");
+                showToast("Komoditas Sudah Ada", "Komoditas sudah ada, silakan gunakan fitur voting!", "warning");
                 return;
             }
 
             const baseKg = targetKg > 0 ? targetKg : 40;
             const initialVotes = 1;
+            // Rumus rasional: Kebutuhan (Kg) = Base Needs + (Jumlah Vote * 5)
             const initialTotalKg = baseKg + (initialVotes * 5);
 
             const newDemand = {
