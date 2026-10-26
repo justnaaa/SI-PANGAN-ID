@@ -1014,27 +1014,30 @@
                 <!-- AI Market Intelligence: Prediksi Tren & Fluktuasi Harga -->
                 <div id="aiMarketFluctuationPanel" class="bg-white rounded-2xl border border-stone-200 shadow-xs overflow-hidden transition-all duration-300">
                     <!-- Panel Header -->
-                    <div class="p-5 sm:p-6 border-b border-stone-100 bg-gradient-to-r from-forest-950 via-forest-900 to-forest-850 text-white">
+                    <div class="p-5 sm:p-6 border-b border-stone-200 bg-white">
                         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                            <div class="space-y-1">
-                                <div class="flex items-center gap-2">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 uppercase tracking-wider">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                                        AI Forecaster Engine
+                            <div class="space-y-2">
+                                <div class="flex flex-wrap items-center gap-2.5">
+                                    <span class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-1 rounded-full text-xs font-semibold">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+                                        Prediksi Cerdas
                                     </span>
-                                    <span class="text-[10px] text-stone-300 font-mono">PIHPS & Disperindag Lampung</span>
+                                    <span class="text-slate-500 text-sm font-medium flex items-center gap-1.5">
+                                        <i class="fa-solid fa-database text-xs text-slate-400"></i>
+                                        Data Tren Pasar Lampung
+                                    </span>
                                 </div>
-                                <h3 class="serif-heading text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                                    <i class="fa-solid fa-chart-line text-emerald-400"></i>
-                                    AI Market Intelligence: Prediksi Tren & Fluktuasi Harga
+                                <h3 class="serif-heading text-lg sm:text-xl font-bold text-stone-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-line text-emerald-600"></i>
+                                    Prediksi Tren & Fluktuasi Harga Pasar
                                 </h3>
-                                <p class="text-xs text-forest-200 leading-relaxed max-w-2xl">
-                                    Analisis fluktuasi harga 4 komoditas strategis Lampung (H-7 s.d. Hari Ini) dan proyeksi prediktif AI (H+1 s.d. H+3) untuk memandu penyerapan panen serta perlindungan daya beli pangan warga RT 13.
+                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl">
+                                    Analisis fluktuasi harga 4 komoditas strategis Lampung (H-7 s.d. Hari Ini) dan proyeksi tren 3 hari ke depan untuk panduan penyerapan panen petani serta pengamanan daya beli pangan warga RT 13 Yosomulyo.
                                 </p>
                             </div>
 
                             <!-- Commodity Selector Pill Buttons -->
-                            <div class="flex flex-wrap items-center gap-1.5 bg-forest-900/80 p-1.5 rounded-xl border border-forest-700/60 shrink-0">
+                            <div class="flex flex-wrap items-center gap-1.5 bg-stone-100 p-1.5 rounded-xl border border-stone-200 shrink-0">
                                 <button onclick="changeFluctuationCommodity('Beras Premium Lokal (Ciherang/IR64)')"
                                     id="btnFluct-Beras"
                                     class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-emerald-600 text-white shadow-xs cursor-pointer">
@@ -1042,17 +1045,17 @@
                                 </button>
                                 <button onclick="changeFluctuationCommodity('Singkong / Ubi Kayu (Panen Lokal)')"
                                     id="btnFluct-Singkong"
-                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-300 hover:text-white hover:bg-forest-800 cursor-pointer">
+                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
                                     <i class="fa-solid fa-seedling text-xs"></i> Singkong
                                 </button>
                                 <button onclick="changeFluctuationCommodity('Jagung Manis (Pekarangan)')"
                                     id="btnFluct-Jagung"
-                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-300 hover:text-white hover:bg-forest-800 cursor-pointer">
+                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
                                     <i class="fa-solid fa-wheat-awn text-xs"></i> Jagung Manis
                                 </button>
                                 <button onclick="changeFluctuationCommodity('Sayur Bayam & Sayuran Hijau')"
                                     id="btnFluct-Sayur"
-                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-300 hover:text-white hover:bg-forest-800 cursor-pointer">
+                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
                                     <i class="fa-solid fa-leaf text-xs"></i> Sayur Bayam
                                 </button>
                             </div>
@@ -4586,7 +4589,7 @@
 
             // Update status tombol aktif
             document.querySelectorAll('.fluct-tab-btn').forEach(btn => {
-                btn.className = "fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-300 hover:text-white hover:bg-forest-800 cursor-pointer";
+                btn.className = "fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer";
             });
             const activeBtn = document.getElementById(FLUCTUATION_DATA[commodityKey].btnId);
             if (activeBtn) {
