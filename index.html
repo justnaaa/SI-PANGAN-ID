@@ -1010,6 +1010,149 @@
                 </div>
 
                 <!-- Products Grid -->
+                
+                <!-- AI Market Intelligence: Prediksi Tren & Fluktuasi Harga -->
+                <div id="aiMarketFluctuationPanel" class="bg-white rounded-2xl border border-stone-200 shadow-xs overflow-hidden transition-all duration-300">
+                    <!-- Panel Header -->
+                    <div class="p-5 sm:p-6 border-b border-stone-100 bg-gradient-to-r from-forest-950 via-forest-900 to-forest-850 text-white">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 uppercase tracking-wider">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                                        AI Forecaster Engine
+                                    </span>
+                                    <span class="text-[10px] text-stone-300 font-mono">PIHPS & Disperindag Lampung</span>
+                                </div>
+                                <h3 class="serif-heading text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-line text-emerald-400"></i>
+                                    AI Market Intelligence: Prediksi Tren & Fluktuasi Harga
+                                </h3>
+                                <p class="text-xs text-forest-200 leading-relaxed max-w-2xl">
+                                    Analisis fluktuasi harga 4 komoditas strategis Lampung (H-7 s.d. Hari Ini) dan proyeksi prediktif AI (H+1 s.d. H+3) untuk memandu penyerapan panen serta perlindungan daya beli pangan warga RT 13.
+                                </p>
+                            </div>
+
+                            <!-- Commodity Selector Pill Buttons -->
+                            <div class="flex flex-wrap items-center gap-1.5 bg-forest-900/80 p-1.5 rounded-xl border border-forest-700/60 shrink-0">
+                                <button onclick="changeFluctuationCommodity('Beras Premium Lokal (Ciherang/IR64)')"
+                                    id="btnFluct-Beras"
+                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-emerald-600 text-white shadow-xs cursor-pointer">
+                                    <i class="fa-solid fa-bowl-rice text-xs"></i> Beras
+                                </button>
+                                <button onclick="changeFluctuationCommodity('Singkong / Ubi Kayu (Panen Lokal)')"
+                                    id="btnFluct-Singkong"
+                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-300 hover:text-white hover:bg-forest-800 cursor-pointer">
+                                    <i class="fa-solid fa-seedling text-xs"></i> Singkong
+                                </button>
+                                <button onclick="changeFluctuationCommodity('Jagung Manis (Pekarangan)')"
+                                    id="btnFluct-Jagung"
+                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-300 hover:text-white hover:bg-forest-800 cursor-pointer">
+                                    <i class="fa-solid fa-wheat-awn text-xs"></i> Jagung Manis
+                                </button>
+                                <button onclick="changeFluctuationCommodity('Sayur Bayam & Sayuran Hijau')"
+                                    id="btnFluct-Sayur"
+                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-300 hover:text-white hover:bg-forest-800 cursor-pointer">
+                                    <i class="fa-solid fa-leaf text-xs"></i> Sayur Bayam
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Panel Body: Chart on Left, Advisory on Right -->
+                    <div class="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                        <!-- Left: Line Chart Canvas -->
+                        <div class="lg:col-span-7 xl:col-span-8 space-y-3">
+                            <div class="flex flex-wrap items-center justify-between gap-2 pb-1">
+                                <div class="flex items-center gap-2">
+                                    <span id="fluctCommodityTitle" class="font-bold text-stone-900 text-sm sm:text-base">
+                                        Beras Premium Lokal (Ciherang/IR64)
+                                    </span>
+                                    <span id="fluctTrendBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                        <i class="fa-solid fa-arrow-trend-up text-emerald-600 mr-1"></i> Tren Naik (+2.3%)
+                                    </span>
+                                </div>
+
+                                <!-- Legend Quick Indicator -->
+                                <div class="flex items-center gap-3 text-[11px] font-medium text-stone-500">
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-3.5 h-1 bg-emerald-600 rounded-full inline-block"></span> Historis Pasar
+                                    </span>
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <span class="w-3.5 h-1 border-t-2 border-dashed border-amber-500 inline-block"></span> Proyeksi Prediksi AI
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Canvas Wrapper with Fixed Height -->
+                            <div class="relative w-full h-64 sm:h-72 bg-stone-50/50 rounded-xl p-2 border border-stone-150">
+                                <canvas id="chartMarketFluctuation"></canvas>
+                            </div>
+
+                            <div class="flex items-center justify-between text-[11px] text-stone-500 px-1 pt-1 font-mono">
+                                <span><i class="fa-solid fa-clock-rotate-left mr-1"></i> Data Historis: H-7 s.d. Hari Ini</span>
+                                <span class="text-amber-700 font-semibold"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Machine Learning Forecasting: H+1 s.d. H+3</span>
+                            </div>
+                        </div>
+
+                        <!-- Right: Dynamic Pricing Metric & Kotak Rekomendasi Keputusan (AI Actionable Advisory) -->
+                        <div class="lg:col-span-5 xl:col-span-4 space-y-4">
+                            <!-- 3 Price Snapshot Cards -->
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center space-y-0.5">
+                                    <span class="block text-[9px] uppercase font-bold text-stone-500 tracking-wider">Harga Pengepul</span>
+                                    <strong id="fluctPengepulDisplay" class="font-mono text-xs sm:text-sm font-bold text-rose-700">Rp 11.500</strong>
+                                    <span class="block text-[8px] text-stone-400">Batas Bawah</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-forest-50 border border-forest-200 text-center space-y-0.5 ring-1 ring-forest-400/20">
+                                    <span class="block text-[9px] uppercase font-bold text-forest-800 tracking-wider">Pasar Hari Ini</span>
+                                    <strong id="fluctMarketDisplay" class="font-mono text-xs sm:text-sm font-bold text-forest-900">Rp 15.500</strong>
+                                    <span class="block text-[8px] text-forest-600 font-medium">Acuan Metro</span>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-center space-y-0.5">
+                                    <span class="block text-[9px] uppercase font-bold text-amber-800 tracking-wider">Prediksi H+3</span>
+                                    <strong id="fluctPredictionDisplay" class="font-mono text-xs sm:text-sm font-bold text-amber-700">Rp 15.850</strong>
+                                    <span id="fluctPredictionDelta" class="block text-[8px] text-emerald-700 font-bold">+Rp 350 (+2.3%)</span>
+                                </div>
+                            </div>
+
+                            <!-- KOTAK REKOMENDASI KEPUTUSAN (AI ACTIONABLE ADVISORY) -->
+                            <div class="p-4 rounded-xl bg-gradient-to-br from-stone-50 to-emerald-50/50 border border-stone-200/90 shadow-2xs space-y-3">
+                                <div class="flex items-center justify-between border-b border-stone-200/70 pb-2">
+                                    <span class="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-lightbulb text-amber-500"></i> AI Actionable Advisory
+                                    </span>
+                                    <span id="fluctVolatilityBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                                        Volatilitas Rendah
+                                    </span>
+                                </div>
+
+                                <!-- Rekomendasi Produsen -->
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-1.5 text-xs font-bold text-forest-850">
+                                        <i class="fa-solid fa-wheat-awn text-forest-600"></i>
+                                        <span>Rekomendasi Produsen (Petani / Dasawisma):</span>
+                                    </div>
+                                    <p id="fluctProducerAdvisory" class="text-xs text-stone-700 leading-relaxed pl-5 bg-white/70 p-2.5 rounded-lg border border-stone-150">
+                                        Prediksi AI: Permintaan beras pulen lumbung stabil menguat. Rekomendasi Produsen: Waktu ideal penyerapan gabah/beras dengan kepastian harga adil komunitas.
+                                    </p>
+                                </div>
+
+                                <!-- Rekomendasi Konsumen -->
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-1.5 text-xs font-bold text-terracotta-700">
+                                        <i class="fa-solid fa-cart-shopping text-terracotta-600"></i>
+                                        <span>Rekomendasi Konsumen (Warga RT 13):</span>
+                                    </div>
+                                    <p id="fluctConsumerAdvisory" class="text-xs text-stone-700 leading-relaxed pl-5 bg-white/70 p-2.5 rounded-lg border border-stone-150">
+                                        Prediksi AI: Harga Beras berpotensi naik 2% minggu depan. Rekomendasi Konsumen: Amankan stok kebutuhan pokok sekarang melalui Lumbung Mandiri RT 13.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="marketListingsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     <!-- Populated dynamically by JS -->
                 </div>
@@ -1829,16 +1972,10 @@
                         </label>
                         <select id="newListingName" required onchange="handleCommodityChange()"
                             class="w-full px-3 py-2 rounded-lg border border-stone-200 bg-white font-medium text-stone-800 focus:outline-none focus:border-forest-600">
-                            <option value="Cabai Rawit & Tomat Pekarangan">Cabai Rawit & Tomat Pekarangan</option>
-                            <option value="Sayur Bayam Cabut & Tahu">Sayur Bayam Cabut & Tahu</option>
-                            <option value="Beras Putih Pulen Panen Lokal (1 Ton)">Beras Putih Pulen Panen Lokal (1 Ton)</option>
-                            <option value="Tempe Daun & Katering Gizi Balita">Tempe Daun & Katering Gizi Balita</option>
-                            <option value="Keripik Pisang & Olahan Singkong">Keripik Pisang & Olahan Singkong</option>
-                            <option value="Ikan Lele Segar & Kangkung Air Bioflok">Ikan Lele Segar & Kangkung Air Bioflok</option>
-                            <option value="Jamu Tradisional & Rimpang Toga">Jamu Tradisional & Rimpang Toga</option>
-                            <option value="Jagung Manis & Kacang Panjang">Jagung Manis & Kacang Panjang</option>
-                            <option value="Telur Asin & Unggas Pekarangan">Telur Asin & Unggas Pekarangan</option>
-                            <option value="Jamur Tiram Putih Segar Kumbung">Jamur Tiram Putih Segar Kumbung</option>
+                            <option value="Beras Premium Lokal (Ciherang/IR64)">Beras Premium Lokal (Ciherang/IR64)</option>
+                            <option value="Singkong / Ubi Kayu (Panen Lokal)">Singkong / Ubi Kayu (Panen Lokal)</option>
+                            <option value="Jagung Manis (Pekarangan)">Jagung Manis (Pekarangan)</option>
+                            <option value="Sayur Bayam & Sayuran Hijau">Sayur Bayam & Sayuran Hijau</option>
                         </select>
                     </div>
                     <div>
@@ -1872,15 +2009,15 @@
                     <div class="grid grid-cols-3 gap-2 text-center">
                         <div class="p-2 rounded-lg bg-forest-800/70 border border-forest-700/60">
                             <span class="block text-[9px] text-stone-300 uppercase font-semibold">Batas Bawah (Pengepul)</span>
-                            <strong id="intelTengkulakDisplay" class="font-mono text-xs text-rose-300">Rp 45.000</strong>
+                            <strong id="intelTengkulakDisplay" class="font-mono text-xs text-rose-300">Rp 11.500</strong>
                         </div>
                         <div class="p-2 rounded-lg bg-emerald-950/80 border border-emerald-600/60 ring-1 ring-emerald-500/30">
                             <span class="block text-[9px] text-emerald-300 uppercase font-semibold">Zona Hijau (Harga Adil)</span>
-                            <strong id="intelSafeRangeDisplay" class="font-mono text-xs text-emerald-300">Rp 50.000 - Rp 65.000</strong>
+                            <strong id="intelSafeRangeDisplay" class="font-mono text-xs text-emerald-300">Rp 12.500 - Rp 15.000</strong>
                         </div>
                         <div class="p-2 rounded-lg bg-forest-800/70 border border-forest-700/60">
                             <span class="block text-[9px] text-stone-300 uppercase font-semibold">Batas Atas (Pasar Lampung)</span>
-                            <strong id="intelMarketDisplay" class="font-mono text-xs text-amber-300">Rp 70.000</strong>
+                            <strong id="intelMarketDisplay" class="font-mono text-xs text-amber-300">Rp 15.500</strong>
                         </div>
                     </div>
 
@@ -1907,9 +2044,9 @@
                         </div>
 
                         <div class="flex justify-between text-[9px] text-forest-300 font-mono pt-0.5">
-                            <span id="gaugeLabelMin">Rp 45.000</span>
-                            <span class="text-emerald-300 font-semibold" id="gaugeLabelMid">Optimal: Rp 55.000</span>
-                            <span id="gaugeLabelMax">Rp 70.000</span>
+                            <span id="gaugeLabelMin">Rp 11.500</span>
+                            <span class="text-emerald-300 font-semibold" id="gaugeLabelMid">Optimal: Rp 13.500</span>
+                            <span id="gaugeLabelMax">Rp 15.500</span>
                         </div>
                     </div>
 
@@ -1935,7 +2072,7 @@
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1 text-[11px] sm:text-xs whitespace-nowrap">Harga Pengepul (Bawah)</label>
                         <div class="relative">
-                            <input type="number" id="newListingTengkulakPrice" readonly value="45000"
+                            <input type="number" id="newListingTengkulakPrice" readonly value="11500"
                                 oninput="validateDynamicPricing()"
                                 class="w-full h-10 pl-3 pr-8 py-2 rounded-lg border border-slate-300 bg-slate-100 text-stone-600 mono-num focus:outline-none cursor-not-allowed text-xs font-semibold"
                                 title="Batas Bawah Harga Pengepul (Terkunci Permanen oleh AI Intelligence)">
@@ -1947,7 +2084,7 @@
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1 text-[11px] sm:text-xs whitespace-nowrap">Harga Pasar (Atas)</label>
                         <div class="relative">
-                            <input type="number" id="newListingMarketPrice" readonly value="70000"
+                            <input type="number" id="newListingMarketPrice" readonly value="15500"
                                 oninput="validateDynamicPricing()"
                                 class="w-full h-10 pl-3 pr-8 py-2 rounded-lg border border-slate-300 bg-slate-100 text-stone-600 mono-num focus:outline-none cursor-not-allowed text-xs font-semibold"
                                 title="Batas Atas Harga Pasar (Terkunci Permanen oleh AI Intelligence)">
@@ -1958,7 +2095,7 @@
                     </div>
                     <div>
                         <label class="block font-bold text-emerald-800 mb-1 text-[11px] sm:text-xs whitespace-nowrap">Harga Adil (Rp/Kg) *</label>
-                        <input type="number" id="newListingPrice" min="1000" step="100" value="55000" required
+                        <input type="number" id="newListingPrice" min="1000" step="100" value="13500" required
                             oninput="validateDynamicPricing()"
                             placeholder="Ketik harga jual Anda"
                             class="w-full h-10 px-3 py-2 rounded-lg border-2 border-emerald-600 focus:ring-2 focus:ring-emerald-500/50 mono-num focus:outline-none bg-white transition-all text-xs font-bold shadow-xs">
@@ -3484,6 +3621,11 @@
             if (tabId === 'tab-dampak') {
                 setTimeout(updateCharts, 50);
             }
+            if (tabId === 'tab-market') {
+                setTimeout(() => {
+                    renderFluctuationChart(currentFluctuationCommodity || 'Beras Premium Lokal (Ciherang/IR64)');
+                }, 50);
+            }
         }
 
         function toggleMobileSidebar() {
@@ -4063,26 +4205,20 @@
             const rawComm = (producer.producerCommodity || '').trim();
             if (!rawComm || rawComm === '-') return;
 
-            // 1. Paksa dropdown "Nama Komoditas Pokok" (#newListingName) untuk auto-select ke komoditas producerCommodity
-            let matched = false;
-            for (let i = 0; i < commoditySelect.options.length; i++) {
-                if (commoditySelect.options[i].value.toLowerCase() === rawComm.toLowerCase()) {
-                    commoditySelect.selectedIndex = i;
-                    matched = true;
-                    break;
-                }
+            // Pemetaan komoditas produsen ke 4 komoditas strategis ketahanan pangan Lampung
+            const lower = rawComm.toLowerCase();
+            let target = "Beras Premium Lokal (Ciherang/IR64)";
+            if (lower.includes("singkong") || lower.includes("ubi") || lower.includes("pisang") || lower.includes("olahan") || lower.includes("tempe") || lower.includes("jamu")) {
+                target = "Singkong / Ubi Kayu (Panen Lokal)";
+            } else if (lower.includes("jagung") || lower.includes("telur")) {
+                target = "Jagung Manis (Pekarangan)";
+            } else if (lower.includes("bayam") || lower.includes("sayur") || lower.includes("kangkung") || lower.includes("cabai") || lower.includes("lele") || lower.includes("jamur")) {
+                target = "Sayur Bayam & Sayuran Hijau";
+            } else if (lower.includes("beras") || lower.includes("padi") || lower.includes("ciherang")) {
+                target = "Beras Premium Lokal (Ciherang/IR64)";
             }
 
-            if (!matched) {
-                // Jika belum ada dalam opsi dropdown, buat elemen option baru dan auto-select
-                const newOpt = document.createElement('option');
-                newOpt.value = rawComm;
-                newOpt.textContent = rawComm;
-                commoditySelect.appendChild(newOpt);
-                commoditySelect.value = rawComm;
-            }
-
-            // 2. Panggil fungsi pengisian harga cerdas (Market Intelligence) agar input terisi otomatis
+            commoditySelect.value = target;
             handleCommodityChange();
         }
 
@@ -4284,36 +4420,10 @@
 
         // =========================================================================
         // AI MARKET INTELLIGENCE & DYNAMIC PRICING ENGINE (REGIONAL LAMPUNG)
-        // 10 Factual Commodities Matching RT 13 Producers with Strict Readonly Inputs
+        // 4 Strategic Food Security Commodities of Lampung (Beras, Singkong, Jagung, Sayuran)
         // =========================================================================
         const LAMPUNG_MARKET_INTELLIGENCE = {
-            "Cabai Rawit & Tomat Pekarangan": {
-                category: "Sayur Pekarangan",
-                unit: "Kg",
-                pengepulPrice: 45000,
-                tengkulakPrice: 45000,
-                marketLampungPrice: 70000,
-                safeMin: 50000,
-                safeMax: 65000,
-                recommendedPrice: 55000,
-                freshnessDays: 5,
-                dataSource: "Pasar Kopindo & Dasawisma RT 13",
-                description: "Cabai rawit pedas alami & tomat segar petik harian pekarangan mandiri lumbung hidup PKK RT 13."
-            },
-            "Sayur Bayam Cabut & Tahu": {
-                category: "Sayur Pekarangan",
-                unit: "Kg",
-                pengepulPrice: 4000,
-                tengkulakPrice: 4000,
-                marketLampungPrice: 9000,
-                safeMin: 5000,
-                safeMax: 8000,
-                recommendedPrice: 6500,
-                freshnessDays: 2,
-                dataSource: "Sentra Sayur Daun Metro & Pengrajin Tahu",
-                description: "Bayam cabut segar petik subuh bebas pestisida dipadu tahu kedelai murni non-pengawet."
-            },
-            "Beras Putih Pulen Panen Lokal (1 Ton)": {
+            "Beras Premium Lokal (Ciherang/IR64)": {
                 category: "Beras & Padi",
                 unit: "Kg",
                 pengepulPrice: 11500,
@@ -4326,113 +4436,294 @@
                 dataSource: "PIHPS & Lumbung Poktan Metro",
                 description: "Beras pulen Ciherang panen lumbung mandiri RT 13, kadar air 14% standar lumbung pangan."
             },
-            "Tempe Daun & Katering Gizi Balita": {
-                category: "Lauk & Protein",
-                unit: "Kg",
-                pengepulPrice: 8000,
-                tengkulakPrice: 8000,
-                marketLampungPrice: 13000,
-                safeMin: 9000,
-                safeMax: 12000,
-                recommendedPrice: 10500,
-                freshnessDays: 3,
-                dataSource: "Sentra Tempe Tradisional Metro",
-                description: "Tempe bungkus daun pisang fermentasi higienis dan menu sehat pendamping balita bergizi tinggi."
-            },
-            "Keripik Pisang & Olahan Singkong": {
+            "Singkong / Ubi Kayu (Panen Lokal)": {
                 category: "Olahan Pangan",
                 unit: "Kg",
-                pengepulPrice: 30000,
-                tengkulakPrice: 30000,
-                marketLampungPrice: 45000,
-                safeMin: 34000,
-                safeMax: 42000,
-                recommendedPrice: 38000,
-                freshnessDays: 60,
-                dataSource: "Sentra Keripik Pisang & Singkong Lampung",
-                description: "Keripik pisang kepok aneka rasa khas Lampung dan olahan singkong renyah gurih higienis."
-            },
-            "Ikan Lele Segar & Kangkung Air Bioflok": {
-                category: "Lauk & Protein",
-                unit: "Kg",
-                pengepulPrice: 20000,
-                tengkulakPrice: 20000,
-                marketLampungPrice: 28000,
-                safeMin: 22000,
-                safeMax: 26500,
-                recommendedPrice: 24000,
-                freshnessDays: 2,
-                dataSource: "Instalasi Bioflok Kolam RT 13",
-                description: "Lele hidup air tawar segar pemeliharaan bioflok dipadu kangkung air hidroponik hijau segar."
-            },
-            "Jamu Tradisional & Rimpang Toga": {
-                category: "Olahan Pangan",
-                unit: "Kg",
-                pengepulPrice: 15000,
-                tengkulakPrice: 15000,
-                marketLampungPrice: 25000,
-                safeMin: 17500,
-                safeMax: 23000,
-                recommendedPrice: 20000,
+                pengepulPrice: 2500,
+                tengkulakPrice: 2500,
+                marketLampungPrice: 5500,
+                safeMin: 3000,
+                safeMax: 5000,
+                recommendedPrice: 4000,
                 freshnessDays: 14,
-                dataSource: "Kelompok Toga PKK Metro & Pasar Cendrawasih",
-                description: "Ekstrak empon-empon jahe merah, kunyit asam, dan temulawak asli pekarangan toga binaan RT 13."
+                dataSource: "Sentra Ubi Kayu Lampung & Pasar Kopindo Metro",
+                description: "Singkong manggu / ubi kayu manis panen kebun lokal, umbi putih pulen kaya karbohidrat kompleks alami."
             },
-            "Jagung Manis & Kacang Panjang": {
+            "Jagung Manis (Pekarangan)": {
                 category: "Sayur Pekarangan",
                 unit: "Kg",
-                pengepulPrice: 5000,
-                tengkulakPrice: 5000,
-                marketLampungPrice: 10000,
-                safeMin: 6000,
-                safeMax: 9000,
-                recommendedPrice: 7500,
-                freshnessDays: 5,
-                dataSource: "Kebun Dasawisma RT 13 & Pasar Cendrawasih",
-                description: "Jagung manis renyah legit dan kacang panjang polong hijau segar bebas residu pestisida sintetis."
+                pengepulPrice: 4500,
+                tengkulakPrice: 4500,
+                marketLampungPrice: 9000,
+                safeMin: 5500,
+                safeMax: 8000,
+                recommendedPrice: 6500,
+                freshnessDays: 7,
+                dataSource: "Pasar Cendrawasih & Dasawisma RT 13",
+                description: "Jagung manis hibrida pekarangan, biji kuning rapat mengkilap rasa legit alami, kaya serat & vitamin."
             },
-            "Telur Asin & Unggas Pekarangan": {
-                category: "Lauk & Protein",
-                unit: "Kg",
-                pengepulPrice: 35000,
-                tengkulakPrice: 35000,
-                marketLampungPrice: 45000,
-                safeMin: 37500,
-                safeMax: 43000,
-                recommendedPrice: 40000,
-                freshnessDays: 21,
-                dataSource: "Peternak Bebek & Unggas Metro Pusat",
-                description: "Telur bebek asin masir gurih berkualitas tinggi dan telur unggas pekarangan kaya nutrisi alami."
-            },
-            "Jamur Tiram Putih Segar Kumbung": {
+            "Sayur Bayam & Sayuran Hijau": {
                 category: "Sayur Pekarangan",
                 unit: "Kg",
-                pengepulPrice: 18000,
-                tengkulakPrice: 18000,
-                marketLampungPrice: 28000,
-                safeMin: 20000,
-                safeMax: 26000,
-                recommendedPrice: 23000,
-                freshnessDays: 4,
-                dataSource: "Sentra Budidaya Kumbung Jamur Metro",
-                description: "Jamur tiram putih segar petik subuh langsung dari kumbung, bersih dan kenyal kaya protein nabati."
+                pengepulPrice: 3500,
+                tengkulakPrice: 3500,
+                marketLampungPrice: 8000,
+                safeMin: 4000,
+                safeMax: 7000,
+                recommendedPrice: 5500,
+                freshnessDays: 2,
+                dataSource: "Instalasi Hidroponik PKK RT 13 & Pasar Pasir Gintung",
+                description: "Sayur bayam dan sayuran hijau petik subuh segar bebas pestisida sintetis binaan PKK RT 13."
             }
         };
 
         // Aliases for compatibility
-        LAMPUNG_MARKET_INTELLIGENCE["Beras Premium (Lumbung RT 13)"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Putih Pulen Panen Lokal (1 Ton)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Beras Premium"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Putih Pulen Panen Lokal (1 Ton)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Lokal (Ciherang/IR64)"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Putih Pulen Panen Lokal (1 Ton)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Sayur Mayur (Bayam/Kangkung Hidroponik)"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Cabut & Tahu"];
-        LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Cabut & Tahu"];
-        LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Cabut Segar"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Cabut & Tahu"];
-        LAMPUNG_MARKET_INTELLIGENCE["Singkong / Ubi Kayu (Panen Lokal)"] = LAMPUNG_MARKET_INTELLIGENCE["Keripik Pisang & Olahan Singkong"];
-        LAMPUNG_MARKET_INTELLIGENCE["Singkong / Ubi Kayu"] = LAMPUNG_MARKET_INTELLIGENCE["Keripik Pisang & Olahan Singkong"];
-        LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis (Pekarangan)"] = LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis & Kacang Panjang"];
-        LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis"] = LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis & Kacang Panjang"];
-        LAMPUNG_MARKET_INTELLIGENCE["Cabai Merah Keriting (Pekarangan)"] = LAMPUNG_MARKET_INTELLIGENCE["Cabai Rawit & Tomat Pekarangan"];
-        LAMPUNG_MARKET_INTELLIGENCE["Telur Ayam Ras Segar (Kandang RT 13)"] = LAMPUNG_MARKET_INTELLIGENCE["Telur Asin & Unggas Pekarangan"];
-        LAMPUNG_MARKET_INTELLIGENCE["Ikan Gurame Segar (Kolam Bioflok)"] = LAMPUNG_MARKET_INTELLIGENCE["Ikan Lele Segar & Kangkung Air Bioflok"];
+        LAMPUNG_MARKET_INTELLIGENCE["Beras Putih Pulen Panen Lokal (1 Ton)"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Lokal (Ciherang/IR64)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Beras Premium (Lumbung RT 13)"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Lokal (Ciherang/IR64)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Beras Premium"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Lokal (Ciherang/IR64)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Singkong / Ubi Kayu"] = LAMPUNG_MARKET_INTELLIGENCE["Singkong / Ubi Kayu (Panen Lokal)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Keripik Pisang & Olahan Singkong"] = LAMPUNG_MARKET_INTELLIGENCE["Singkong / Ubi Kayu (Panen Lokal)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis"] = LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis (Pekarangan)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis & Kacang Panjang"] = LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis (Pekarangan)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Sayur Mayur (Bayam/Kangkung Hidroponik)"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"];
+        LAMPUNG_MARKET_INTELLIGENCE["Sayur Mayur"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"];
+        LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Cabut & Tahu"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"];
+        LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Cabut Segar"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"];
+        LAMPUNG_MARKET_INTELLIGENCE["Cabai Rawit & Tomat Pekarangan"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"];
+        LAMPUNG_MARKET_INTELLIGENCE["Cabai Merah Keriting (Pekarangan)"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"];
+        LAMPUNG_MARKET_INTELLIGENCE["Jamur Tiram Putih Segar Kumbung"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"];
+        LAMPUNG_MARKET_INTELLIGENCE["Ikan Lele Segar & Kangkung Air Bioflok"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"];
+        LAMPUNG_MARKET_INTELLIGENCE["Ikan Gurame Segar (Kolam Bioflok)"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"];
+        LAMPUNG_MARKET_INTELLIGENCE["Telur Asin & Unggas Pekarangan"] = LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis (Pekarangan)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Telur Ayam Ras Segar (Kandang RT 13)"] = LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis (Pekarangan)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Tempe Daun & Katering Gizi Balita"] = LAMPUNG_MARKET_INTELLIGENCE["Singkong / Ubi Kayu (Panen Lokal)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Jamu Tradisional & Rimpang Toga"] = LAMPUNG_MARKET_INTELLIGENCE["Singkong / Ubi Kayu (Panen Lokal)"];
+
+        // =========================================================================
+        // DATA HISTORIS & PREDIKSI HARGA (AI FLUCTUATION & FORECASTER)
+        // =========================================================================
+        const FLUCTUATION_DATA = {
+            "Beras Premium Lokal (Ciherang/IR64)": {
+                shortName: "Beras",
+                category: "Beras & Padi",
+                btnId: "btnFluct-Beras",
+                historical: [15000, 15100, 15100, 15200, 15300, 15400, 15400, 15500],
+                prediction: [null, null, null, null, null, null, null, 15500, 15650, 15750, 15850],
+                pengepulPrice: 11500,
+                marketPrice: 15500,
+                predictionH3: 15850,
+                deltaText: "+Rp 350 (+2.3%)",
+                trendType: "UP",
+                trendBadgeText: "Tren Naik (+2.3%)",
+                trendBadgeClass: "bg-emerald-100 text-emerald-800 border-emerald-200",
+                volatilityText: "Volatilitas Rendah (±1.2%)",
+                volatilityClass: "bg-emerald-100 text-emerald-800",
+                producerAdvisory: "Prediksi AI: Permintaan beras pulen lumbung stabil menguat. Rekomendasi Produsen: Waktu ideal penyerapan gabah/beras dengan kepastian harga adil komunitas.",
+                consumerAdvisory: "Prediksi AI: Harga Beras berpotensi naik 2% minggu depan. Rekomendasi Konsumen: Amankan stok kebutuhan pokok sekarang."
+            },
+            "Singkong / Ubi Kayu (Panen Lokal)": {
+                shortName: "Singkong",
+                category: "Olahan Pangan",
+                btnId: "btnFluct-Singkong",
+                historical: [5200, 5300, 5250, 5400, 5350, 5400, 5450, 5500],
+                prediction: [null, null, null, null, null, null, null, 5500, 5500, 5550, 5500],
+                pengepulPrice: 2500,
+                marketPrice: 5500,
+                predictionH3: 5500,
+                deltaText: "Rp 0 (Stabil)",
+                trendType: "STABLE",
+                trendBadgeText: "Tren Stabil (±0.8%)",
+                trendBadgeClass: "bg-blue-100 text-blue-800 border-blue-200",
+                volatilityText: "Volatilitas Sangat Rendah",
+                volatilityClass: "bg-blue-100 text-blue-800",
+                producerAdvisory: "Tren harga Singkong diprediksi stabil. Rekomendasi Produsen: Lanjutkan panen rutin.",
+                consumerAdvisory: "Sangat baik untuk substitusi karbohidrat hemat."
+            },
+            "Jagung Manis (Pekarangan)": {
+                shortName: "Jagung Manis",
+                category: "Sayur Pekarangan",
+                btnId: "btnFluct-Jagung",
+                historical: [7800, 8000, 8200, 8100, 8500, 8700, 8800, 9000],
+                prediction: [null, null, null, null, null, null, null, 9000, 9200, 9350, 9400],
+                pengepulPrice: 4500,
+                marketPrice: 9000,
+                predictionH3: 9400,
+                deltaText: "+Rp 400 (+4.4%)",
+                trendType: "UP",
+                trendBadgeText: "Tren Naik (+4.4%)",
+                trendBadgeClass: "bg-emerald-100 text-emerald-800 border-emerald-200",
+                volatilityText: "Volatilitas Sedang",
+                volatilityClass: "bg-amber-100 text-amber-800",
+                producerAdvisory: "Permintaan jagung manis stabil tinggi. Rekomendasi Produsen: Panen petik segar pagi hari untuk menjaga kadar gula alami & nilai jual maksimal.",
+                consumerAdvisory: "Rekomendasi Konsumen: Jagung manis pekarangan RT 13 segar dan kaya serat, alternatif menu sehat keluarga."
+            },
+            "Sayur Bayam & Sayuran Hijau": {
+                shortName: "Sayur Bayam",
+                category: "Sayur Pekarangan",
+                btnId: "btnFluct-Sayur",
+                historical: [9500, 9200, 9000, 8800, 8700, 8400, 8200, 8000],
+                prediction: [null, null, null, null, null, null, null, 8000, 7700, 7500, 7300],
+                pengepulPrice: 3500,
+                marketPrice: 8000,
+                predictionH3: 7300,
+                deltaText: "-Rp 700 (-8.7%)",
+                trendType: "DOWN",
+                trendBadgeText: "Tren Turun (-8.7%)",
+                trendBadgeClass: "bg-rose-100 text-rose-800 border-rose-200",
+                volatilityText: "Volatilitas Tinggi / Panen Melimpah",
+                volatilityClass: "bg-rose-100 text-rose-800",
+                producerAdvisory: "Volatilitas tinggi (panen melimpah). Prediksi harga turun. Rekomendasi Produsen: Segera distribusikan panen ke pasar komunitas sebelum layu/harga anjlok.",
+                consumerAdvisory: "Waktu terbaik membeli sayuran hijau hidroponik dengan harga paling hemat dan kesegaran maksimal."
+            }
+        };
+
+        let currentFluctuationCommodity = "Beras Premium Lokal (Ciherang/IR64)";
+        let fluctuationChartInstance = null;
+
+        function changeFluctuationCommodity(commodityKey) {
+            if (!FLUCTUATION_DATA[commodityKey]) return;
+            currentFluctuationCommodity = commodityKey;
+
+            // Update status tombol aktif
+            document.querySelectorAll('.fluct-tab-btn').forEach(btn => {
+                btn.className = "fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-300 hover:text-white hover:bg-forest-800 cursor-pointer";
+            });
+            const activeBtn = document.getElementById(FLUCTUATION_DATA[commodityKey].btnId);
+            if (activeBtn) {
+                activeBtn.className = "fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-emerald-600 text-white shadow-xs cursor-pointer";
+            }
+
+            renderFluctuationChart(commodityKey);
+        }
+
+        function renderFluctuationChart(commodityKey) {
+            const dataObj = FLUCTUATION_DATA[commodityKey] || FLUCTUATION_DATA["Beras Premium Lokal (Ciherang/IR64)"];
+            if (!dataObj) return;
+
+            // 1. Perbarui teks info harga & kotak advisory
+            const titleEl = document.getElementById('fluctCommodityTitle');
+            const trendBadge = document.getElementById('fluctTrendBadge');
+            const pengepulDisplay = document.getElementById('fluctPengepulDisplay');
+            const marketDisplay = document.getElementById('fluctMarketDisplay');
+            const predictionDisplay = document.getElementById('fluctPredictionDisplay');
+            const deltaDisplay = document.getElementById('fluctPredictionDelta');
+            const volatilityBadge = document.getElementById('fluctVolatilityBadge');
+            const producerAdv = document.getElementById('fluctProducerAdvisory');
+            const consumerAdv = document.getElementById('fluctConsumerAdvisory');
+
+            if (titleEl) titleEl.textContent = commodityKey;
+            if (trendBadge) {
+                trendBadge.className = `px-2 py-0.5 rounded-full text-[10px] font-bold border ${dataObj.trendBadgeClass}`;
+                const icon = dataObj.trendType === 'UP' ? 'fa-arrow-trend-up' : (dataObj.trendType === 'DOWN' ? 'fa-arrow-trend-down' : 'fa-equals');
+                trendBadge.innerHTML = `<i class="fa-solid ${icon} mr-1"></i> ${dataObj.trendBadgeText}`;
+            }
+            if (pengepulDisplay) pengepulDisplay.textContent = formatRupiah(dataObj.pengepulPrice);
+            if (marketDisplay) marketDisplay.textContent = formatRupiah(dataObj.marketPrice);
+            if (predictionDisplay) predictionDisplay.textContent = formatRupiah(dataObj.predictionH3);
+            if (deltaDisplay) deltaDisplay.textContent = dataObj.deltaText;
+            if (volatilityBadge) {
+                volatilityBadge.className = `text-[10px] font-bold px-2 py-0.5 rounded-full ${dataObj.volatilityClass}`;
+                volatilityBadge.textContent = dataObj.volatilityText;
+            }
+            if (producerAdv) producerAdv.textContent = dataObj.producerAdvisory;
+            if (consumerAdv) consumerAdv.textContent = dataObj.consumerAdvisory;
+
+            // 2. Render Chart.js Line Chart
+            const canvas = document.getElementById('chartMarketFluctuation');
+            if (!canvas) return;
+
+            if (fluctuationChartInstance) {
+                fluctuationChartInstance.destroy();
+                fluctuationChartInstance = null;
+            }
+
+            const labels = ['H-7', 'H-6', 'H-5', 'H-4', 'H-3', 'H-2', 'H-1', 'Hari Ini', 'H+1 (Prediksi)', 'H+2 (Prediksi)', 'H+3 (Prediksi)'];
+
+            const ctx = canvas.getContext('2d');
+            fluctuationChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Historis Riil Pasar Metro',
+                            data: dataObj.historical,
+                            borderColor: '#059669',
+                            backgroundColor: 'rgba(5, 150, 105, 0.08)',
+                            fill: true,
+                            tension: 0.25,
+                            borderWidth: 2.5,
+                            pointBackgroundColor: '#059669',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 1.5,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Proyeksi Prediksi AI',
+                            data: dataObj.prediction,
+                            borderColor: '#d97706',
+                            borderDash: [6, 5],
+                            backgroundColor: 'rgba(217, 119, 6, 0.08)',
+                            fill: true,
+                            tension: 0.25,
+                            borderWidth: 2.5,
+                            pointBackgroundColor: '#d97706',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 1.5,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                font: { size: 11, family: 'Inter, sans-serif', weight: '600' },
+                                color: '#44403c'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.parsed.y === null || context.parsed.y === undefined) return '';
+                                    return `${context.dataset.label}: Rp ${Number(context.parsed.y).toLocaleString('id-ID')}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 10, family: 'Inter, sans-serif' },
+                                color: '#78716c'
+                            }
+                        },
+                        y: {
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + Number(value).toLocaleString('id-ID');
+                                },
+                                font: { size: 10, family: 'monospace' },
+                                color: '#78716c'
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
         function handleCommodityChange() {
             const selectEl = document.getElementById('newListingName');
@@ -5408,6 +5699,7 @@
             renderTransactionsLedger();
             calculateSurplusPrediction();
             updateCharts();
+            renderFluctuationChart(currentFluctuationCommodity || 'Beras Premium Lokal (Ciherang/IR64)');
         }
 
         // Initialize on DOM load
