@@ -1,0 +1,170 @@
+================================================================================
+RANGKUMAN STATUS DAN SPESIFIKASI PROTOTIPE SI-PANGAN ID
+Platform Digital Ketahanan Pangan Komunitas Berbasis Single Identity,
+Machine Learning (AI-DSS & Time-Series Forecaster), dan Computer Vision (OCR)
+Lokasi Implementasi: RT 13 RW 05 Kelurahan Yosomulyo, Kota Metro, Lampung
+================================================================================
+
+I. STATUS PERKEMBANGAN PROTOTIPE (SUDAH SAMPAI MANA?)
+--------------------------------------------------------------------------------
+1. Tingkat Kesiapan Teknologi (TKT): 
+   Berada pada TKT 5 (Validasi Komponen & Sistem Penuh di Lingkungan Relevan). Seluruh pilar fungsional telah terintegrasi dalam arsitektur aplikasi web modern satu berkas (Single-Page Application: index.html), beroperasi secara reaktif, tanpa ketergantungan server luar (Zero Server Dependency / Client-Side Edge AI).
+
+2. Kesiapan Demonstrasi (Demo-Ready):
+   Aplikasi siap diuji langsung di berbagai peramban modern (Chrome, Edge, Firefox, Safari) dalam mode interaktif penuh maupun skenario uji cepat (Pitching 3 Menit).
+
+3. Integritas Data & Identitas:
+   Telah terhubung dengan pangkalan data riil 40 Kepala Keluarga (KK) RT 13 Yosomulyo yang terpetakan ke dalam kode Single Identity (SID-Pangan), lengkap dengan data geolokasi rukun tetangga, histori panen pekarangan, serta pembukuan kas komunitas.
+
+
+II. FITUR-FITUR YANG ADA DAN STATUS FUNGSIONALNYA (100% SUDAH BERJALAN)
+--------------------------------------------------------------------------------
+Berikut rincian seluruh modul fitur yang sudah aktif dan berfungsi nyata:
+
+1. Modul Beranda & Ekosistem Ketahanan Pangan (Tab 1):
+   - Status: 100% Berjalan.
+   - Fungsi: Menampilkan ringkasan metrik makro pangan RT 13 (KK rentan terproteksi, rasio serapan panen, saldo lumbung pangan), infografis alur 6 pilar inovasi, dan profil kelurahan.
+
+2. Modul Single Identity Pangan (SID-Pangan) & Direktori Warga (Tab 2):
+   - Status: 100% Berjalan.
+   - Fitur: 
+     a. Pencarian instan profil 40 KK warga berdasarkan Nama atau Nomor SID.
+     b. Filter status kerentanan (Semua, Rentan Prioritas, Waspada, Mandiri).
+     c. Modal Pendaftaran Warga & Produsen Baru yang terhubung langsung dengan kalkulator AI-DSS.
+     d. Modal Pemindai Kuitansi Belanja Pangan berbasis OCR Tesseract.js.
+     e. Kartu Identitas Digital (Digital SID Card) dengan kode identitas permanen warga seumur hidup.
+
+3. Modul Lumbung & Koperasi Simpan Pinjam Komunitas (Tab 3):
+   - Status: 100% Berjalan.
+   - Fitur:
+     a. Buku kas digital otomatis dengan Alamat Keuangan Permanen per SID.
+     b. Rekam transaksi simpanan pokok, iuran wajib, dan pinjaman bibit/pupuk bagi produsen pekarangan.
+     c. Audit mutasi kas real-time tanpa selisih hitung manual.
+
+4. Modul Pasar Pangan Komunitas & AI Forecaster (Tab 4 - Smart Food Market):
+   - Status: 100% Berjalan.
+   - Fitur Unggulan:
+     a. AI Market Fluctuation & Price Trend Forecaster: Grafik interaktif Chart.js 11 titik waktu (H-7 s.d. H+3) untuk 4 komoditas strategis Lampung.
+     b. AI Actionable Advisory: Kotak rekomendasi keputusan dua arah untuk Petani/Produsen dan Konsumen warga RT 13.
+     c. AI Surplus Prediction Engine: Simulator analitis dan terukur serapan pangan lokal vs luapan surplus ke pasar luar kota.
+     d. Smart Food Market Matching (4 Parameter): Penyaringan katalog panen berbasis Kesesuaian Gizi, Keterjangkauan Harga, Jarak Terdekat, dan Kesegaran.
+     e. Form Posting Hasil Panen Produsen: Dilengkapi pengawalan AI Market Intelligence Provinsi Lampung dengan input acuan harga yang terkunci ketat (readonly) dan Dynamic Pricing Gauge Bar (Zona Rugi, Zona Adil Komunitas, Zona Inflasi).
+     f. Transaksi Langsung: Pemesanan pangan segar langsung memotong kuota dan otomatis mencatat subsidi bagi warga penerima manfaat.
+
+5. Modul AI Surplus Prediction Engine & Pasar Luar (Tab 5):
+   - Status: 100% Berjalan.
+   - Fitur: Simulasi interaktif daya serap konsumsi 40 KK vs total panen masuk, dilengkapi visual rasio progress bar dan skenario uji kasus luapan pasokan ke Koperasi Kelurahan Yosomulyo.
+
+6. Modul Musyawarah Komunitas & E-Voting Demokrasi Pangan (Tab 6):
+   - Status: 100% Berjalan.
+   - Fitur: Penentuan program bantuan pangan bulanan melalui asas "1 SID = 1 Suara" secara transparan dan kanal penyampaian aspirasi terbuka warga.
+
+
+III. PEMETAAN TEKNOLOGI: TEKNOLOGI APA DIGUNAKAN UNTUK APA DAN DI BAGIAN MANA?
+--------------------------------------------------------------------------------
+1. HTML5 Semantik & Desain Komponen:
+   - Digunakan untuk: Fondasi struktur dokumen web, hierarki aksesibilitas, formulir interaktif, dan penataan kanvas visual.
+   - Bagian: Seluruh kerangka halaman web di index.html.
+
+2. Tailwind CSS (Aesthetic Organik & Alabaster):
+   - Digunakan untuk: Penataan gaya antarmuka modern yang bersih, kontras tinggi, dan ramah pengguna posko komunitas. Menggunakan palet warna daun (emerald/forest), kehangatan panen (amber/paddy), dan latar bersih (alabaster/stone/white) tanpa nuansa robotik.
+   - Bagian: Seluruh elemen tampilan, panel metrik, lencana status, tombol komoditas, dan jendela modal.
+
+3. Vanilla JavaScript (ES6+):
+   - Digunakan untuk: Menggerakkan seluruh logika bisnis, manajemen status reaktif (state management), manipulasi DOM instan, komputasi matriks algoritma, dan validasi dinamis tanpa memerlukan framework berat (bebas dependensi npm/node saat dijalankan).
+   - Bagian: Blok skrip logika internal pada index.html.
+
+4. Chart.js (Versi 4 via CDN):
+   - Digunakan untuk: Merender visualisasi grafik tren garis dinamis yang mulus, responsif, dan akurat untuk memproyeksikan deret waktu harga pangan.
+   - Bagian: Elemen kanvas #chartMarketFluctuation pada panel atas Tab 4 (Smart Food Market).
+
+5. Tesseract.js (Versi 5 WebAssembly Engine):
+   - Digunakan untuk: Pemrosesan Computer Vision Optical Character Recognition (OCR) langsung di memori peramban pengguna.
+   - Bagian: Modal Pemindai Kuitansi (#ocrModal) pada Tab 2 dan Tab 4.
+
+6. Font Awesome 6 (Free Vector Icons):
+   - Digunakan untuk: Ikonografi visual intuitif (ikon gembok terkunci pada harga referensi, indikator panah tren harga, ikon profil keluarga, dan status verifikasi).
+   - Bagian: Seluruh label input, tombol aksi, dan navigasi bilah sisi.
+
+
+IV. PENJELASAN MENDALAM: TEKNOLOGI OCR UNTUK APA DAN DI BAGIAN MANA?
+--------------------------------------------------------------------------------
+1. Untuk Apa OCR Digunakan?
+   - Digitalisasi Tanpa Ketik: Membantu pengurus PKK dan warga lanjut usia yang terbiasa mencatat kuitansi atau nota belanja secara fisik agar dapat langsung diubah menjadi data digital dalam hitungan detik.
+   - Ekstraksi Entitas Cerdas: Teks mentah dari hasil pemindaian kamera/foto diurai menggunakan algoritma Regex Parsing untuk menemukan nominal uang (Rp) dan mencocokkan nama penerima/toko ke profil Single Identity (SID-Pangan).
+   - Zero Server Cost & Privasi Terjamin: Pemrosesan gambar dilakukan 100% secara lokal melalui WebAssembly worker di komputer pengguna. Foto kuitansi tidak pernah diunggah ke server publik, sehingga menjamin kerahasiaan keuangan warga sesuai etika perlindungan data pribadi.
+
+2. Di Bagian Mana OCR Berada?
+   - Terletak di: Jendela Modal "Pindai Kuitansi (OCR)" yang dapat diakses melalui tombol hijau di Tab 2 (Single Identity) dan Tab 4 (Pasar Cerdas).
+   - Alur Kerja:
+     * Pengguna mengunggah foto nota/struk belanja pangan.
+     * Mesin Tesseract.js Worker menginisialisasi pustaka bahasa Indonesia (ind).
+     * Bilah kemajuan (Progress Bar) bergerak dinamis 0% - 100% menampilkan tahap rekognisi karakter.
+     * Hasil ekstraksi menampilkan teks mentah sekaligus kotak isian otomatis yang siap disimpan ke buku kas komunitas.
+
+
+V. PENJELASAN MENDALAM: TEKNOLOGI K-NN UNTUK APA DAN DI BAGIAN MANA?
+--------------------------------------------------------------------------------
+1. Untuk Apa K-NN Digunakan?
+   - Klasifikasi Kerentanan Objektif (AI-DSS): Mengeliminasi pembagian bantuan sembako yang bersifat subjektif atau titipan pengurus. Model mengklasifikasikan tingkat kerentanan pangan keluarga secara analitis dan terukur ke dalam 3 kelas:
+     a. RENTAN_PRIORITAS: Berhak menerima subsidi pangan penuh, kuota khusus, dan alokasi sembako bergizi.
+     b. WASPADA: Berhak atas potongan harga lumbung dan pendampingan bibit pekarangan.
+     c. MANDIRI: Berperan sebagai donatur kas komunitas atau pembeli dengan tarif reguler.
+   - Inklusivitas Terhadap Produsen: Petani kecil atau buruh kebun dengan pendapatan minim dan tanggungan anak banyak tetap terdeteksi secara adil sebagai "Rentan Prioritas", sehingga mereka tidak hanya dituntut memproduksi pangan tetapi juga berhak menerima perlindungan bantuan sosial.
+
+2. Rincian Formulasi Algoritma:
+   - Nilai k = 3 (Tiga tetangga terdekat).
+   - Normalisasi Fitur: Min-Max Scaling pada rentang [0, 1] terhadap 4 dimensi input:
+     * x1: Pendapatan bulanan per kapita.
+     * x2: Jumlah tanggungan jiwa dalam KK.
+     * x3: Tingkat kebutuhan pangan beras bulanan.
+     * x4: Rasio pengeluaran pangan terhadap total pendapatan.
+   - Metrik Jarak: Euclidean Distance Matrix terhadap 40 KK data latih:
+     d(x, y) = sqrt( sum( (x_i - y_i)^2 ) )
+   - Keputusan Kelas: Voting mayoritas tetangga terdekat dengan indikator tingkat keyakinan (Confidence %).
+
+3. Di Bagian Mana K-NN Berada?
+   - Terletak di: 
+     * Modal "AI-DSS Deteksi Kerentanan Keluarga" di Tab 2 (Single Identity).
+     * Fungsi otomatis calculateAiVulnerability() saat registrasi warga baru.
+     * Lencana status profil pada kartu identitas digital setiap warga.
+
+
+VI. PENJELASAN MENDALAM: MACHINE LEARNING FORECASTING & SURPLUS ENGINE
+--------------------------------------------------------------------------------
+Selain K-NN untuk klasifikasi kerentanan, terdapat 3 modul Machine Learning & Cerdas lainnya di dalam prototipe:
+
+1. AI Market Fluctuation & Price Trend Forecaster (Panel Atas Tab 4):
+   - Untuk Apa:
+     * Menganalisis pola deret waktu (Time-Series) fluktuasi harga 4 komoditas strategis Lampung:
+       1) Beras Premium Lokal (Ciherang/IR64): Tren stabil menguat perlahan (+1,9%).
+       2) Singkong / Ubi Kayu Panen Lokal: Tren stabil terkendali (+0,0%).
+       3) Jagung Manis Pekarangan: Tren fluktuatif musiman naik (+5,9%).
+       4) Sayur Bayam & Sayuran Hijau: Volatilitas tinggi karena panen melimpah turun (-6,3%).
+     * Memproyeksikan estimasi harga 3 hari ke depan (H+1, H+2, H+3) berdasarkan rekaman 7 hari historis (H-7 s.d. Hari Ini).
+     * Menyajikan "AI Actionable Advisory": Rekomendasi tindakan taktis bagi Petani/Produsen (misal: segera distribusikan bayam sebelum layu) dan bagi Konsumen RT 13 (misal: amankan stok beras sebelum potensi kenaikan minggu depan).
+   - Desain Kurva: Garis emerald solid untuk data historis dan garis amber putus-putus untuk proyeksi masa depan.
+
+2. AI Surplus Prediction Engine (Tab 4 & Tab 5):
+   - Untuk Apa:
+     * Menghitung proyeksi keseimbangan pasokan panen masuk terhadap daya serap kebutuhan konsumsi 40 KK RT 13 (600 Kg).
+     * Membagi aliran distribusi secara otomatis:
+       * Serapan Lokal RT 13: Diprioritaskan untuk pemenuhan gizi keluarga komunitas.
+       * Luapan Surplus (Spillover): Dialihkan ke Koperasi Kelurahan Yosomulyo dan Pasar Luar Kota Metro agar hasil panen tidak membusuk dan harga di tingkat petani tidak anjlok akibat oversupply lokal.
+   - Bagian: Simulator interaktif progress bar di Tab 4 dan Tab 5 dengan tombol skenario uji kasus instan (Kasus Bapak A surplus 400 Kg, Kasus Defisit 150 Kg, Kasus Seimbang 100%).
+
+3. Smart Food Market Matching Engine (Tab 4):
+   - Untuk Apa: Menjodohkan pasokan hasil panen dengan keluarga penerima manfaat berdasarkan 4 parameter berkeadilan:
+     1) Kesesuaian Gizi: Memprioritaskan komoditas tinggi mikronutrien untuk penanganan risiko stunting.
+     2) Keterjangkauan Harga: Menjamin harga beli di bawah pasar kota melalui subsidi kas komunitas.
+     3) Jarak Terdekat: Memprioritaskan kebun terdekat di lingkungan RT 13 untuk menekan ongkos angkut.
+     4) Kesegaran: Memprioritaskan panen terbaru dengan batas simpan optimal.
+
+4. AI Market Intelligence & Strict Dynamic Pricing (Modal Posting Panen):
+   - Untuk Apa: Menghindari manipulasi tengkulak dengan mengunci batas bawah harga beli pengepul dan batas atas harga pasar tradisional Kota Metro secara permanen (readonly dengan ikon gembok). Sistem memandu produsen menentukan harga di Zona Koridor Adil Komunitas melalui indikator dinamis (Gauge Bar).
+
+
+VII. KESIMPULAN KESIAPAN UNTUK PRESENTASI & PENGUJIAN
+--------------------------------------------------------------------------------
+Prototipe SI-PANGAN ID telah mengintegrasikan seluruh instrumen DeepTech for FoodTech secara utuh dan nyata. Tidak ada simulasi semu: OCR mengekstraksi teks nyata dari berkas foto struk, K-NN menghitung jarak Euclidean asli terhadap data latih warga, Chart.js menggambar kurva fluktuasi harga secara dinamis, dan Mesin Prediksi Surplus mengkalkulasi rasio distribusi panen secara real-time. Prototipe ini telah siap digunakan sebagai instrumen penelitian maupun presentasi kompetisi ilmiah.
+================================================================================

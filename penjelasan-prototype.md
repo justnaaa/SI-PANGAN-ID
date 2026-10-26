@@ -224,7 +224,7 @@ Berikut adalah panduan operasional praktis untuk mengoperasikan prototipe websit
 
 Bagi dewan juri, asesor, atau reviewer riset, berikut panduan menguji aspek fungsionalitas dan keselarasan teknologi dengan proposal:
 
-#### 1. Menguji Formula Matematis Mesin AI-DSS
+#### 1. Menguji Formula Kalkulasi Cerdas Mesin AI-DSS
 1. Klik tombol **"Uji AI-DSS"** di bilah atas (*top bar*) atau tombol di tab Single Identity.
 2. Di jendela kalkulator, lakukan simulasi skenario:
    - **Skenario Keluarga Sangat Rentan:**  
