@@ -1124,33 +1124,63 @@
                                 </p>
                             </div>
 
-                            <!-- Commodity Selector Pill Buttons -->
+                            <!-- Commodity Selector Pill Buttons (11 Komoditas Proposal Resmi) -->
                             <div
-                                class="flex flex-wrap items-center gap-1.5 bg-stone-100 p-1.5 rounded-xl border border-stone-200 shrink-0">
+                                class="flex flex-wrap items-center gap-1.5 bg-stone-100 p-1.5 rounded-xl border border-stone-200">
                                 <button onclick="changeFluctuationCommodity('Sayur Kangkung (KWT Pekarangan)')"
                                     id="btnFluct-Kangkung"
-                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 bg-emerald-600 text-white shadow-xs cursor-pointer">
-                                    <i class="fa-solid fa-leaf text-xs"></i> Sayur Kangkung KWT
+                                    class="fluct-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 bg-emerald-700 text-white shadow-xs cursor-pointer">
+                                    <i class="fa-solid fa-leaf text-[10px]"></i> Kangkung KWT
                                 </button>
-                                <button onclick="changeFluctuationCommodity('Telur Ayam Pekarangan (Ternak Warga RT 13)')"
-                                    id="btnFluct-Telur"
-                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
-                                    <i class="fa-solid fa-egg text-xs"></i> Telur Ayam
-                                </button>
-                                <button onclick="changeFluctuationCommodity('Ikan Lele Segar (Bioflok Kolam RT 13)')"
-                                    id="btnFluct-Lele"
-                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
-                                    <i class="fa-solid fa-fish text-xs"></i> Ikan Lele Bioflok
+                                <button onclick="changeFluctuationCommodity('Sayur Bayam Hijau (KWT Pekarangan)')"
+                                    id="btnFluct-Bayam"
+                                    class="fluct-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
+                                    <i class="fa-solid fa-seedling text-[10px]"></i> Bayam KWT
                                 </button>
                                 <button onclick="changeFluctuationCommodity('Cabai Rawit Merah (Pekarangan KWT)')"
                                     id="btnFluct-Cabai"
-                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
-                                    <i class="fa-solid fa-pepper-hot text-xs"></i> Cabai Rawit
+                                    class="fluct-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
+                                    <i class="fa-solid fa-pepper-hot text-[10px]"></i> Cabai Rawit
+                                </button>
+                                <button onclick="changeFluctuationCommodity('Sawi Hijau / Caisim (KWT Pekarangan)')"
+                                    id="btnFluct-Sawi"
+                                    class="fluct-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
+                                    <i class="fa-solid fa-spa text-[10px]"></i> Sawi Caisim
+                                </button>
+                                <button onclick="changeFluctuationCommodity('Daun Bawang Segar (KWT Pekarangan)')"
+                                    id="btnFluct-Bawang"
+                                    class="fluct-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
+                                    <i class="fa-solid fa-plant-wilt text-[10px]"></i> Daun Bawang
+                                </button>
+                                <button onclick="changeFluctuationCommodity('Ikan Lele Segar (Bioflok Kolam RT 13)')"
+                                    id="btnFluct-Lele"
+                                    class="fluct-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
+                                    <i class="fa-solid fa-fish text-[10px]"></i> Lele Bioflok
+                                </button>
+                                <button onclick="changeFluctuationCommodity('Ikan Nila Air Tawar (Kolam Pekarangan RT 13)')"
+                                    id="btnFluct-Nila"
+                                    class="fluct-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
+                                    <i class="fa-solid fa-water text-[10px]"></i> Nila Pekarangan
+                                </button>
+                                <button onclick="changeFluctuationCommodity('Telur Ayam Pekarangan (Ternak Warga RT 13)')"
+                                    id="btnFluct-Telur"
+                                    class="fluct-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
+                                    <i class="fa-solid fa-egg text-[10px]"></i> Telur Ayam
+                                </button>
+                                <button onclick="changeFluctuationCommodity('Ayam Pekarangan (Unggas Rakyat RT 13)')"
+                                    id="btnFluct-Ayam"
+                                    class="fluct-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
+                                    <i class="fa-solid fa-drumstick-bite text-[10px]"></i> Daging Ayam
+                                </button>
+                                <button onclick="changeFluctuationCommodity('Telur Bebek Segar (Ternak Pekarangan RT 13)')"
+                                    id="btnFluct-Bebek"
+                                    class="fluct-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
+                                    <i class="fa-solid fa-feather text-[10px]"></i> Telur Bebek
                                 </button>
                                 <button onclick="changeFluctuationCommodity('Beras Premium Ciherang (Poktan RT 13)')"
                                     id="btnFluct-Beras"
-                                    class="fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
-                                    <i class="fa-solid fa-wheat-awn text-xs"></i> Beras Ciherang
+                                    class="fluct-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all flex items-center gap-1 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer">
+                                    <i class="fa-solid fa-wheat-awn text-[10px]"></i> Beras Ciherang
                                 </button>
                             </div>
                         </div>
@@ -1164,12 +1194,11 @@
                                 <div class="flex items-center gap-2">
                                     <span id="fluctCommodityTitle"
                                         class="font-bold text-stone-900 text-sm sm:text-base">
-                                        Beras Premium Lokal (Ciherang/IR64)
+                                        Sayur Kangkung (KWT Pekarangan)
                                     </span>
                                     <span id="fluctTrendBadge"
-                                        class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-                                        <i class="fa-solid fa-arrow-trend-up text-emerald-600 mr-1"></i> Tren Naik
-                                        (+2.3%)
+                                        class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                        <i class="fa-solid fa-boxes-packing text-amber-600 mr-1"></i> Panen Serentak (Surplus)
                                     </span>
                                 </div>
 
@@ -1979,7 +2008,7 @@
                     </div>
                     <div class="flex justify-between text-paddy-800 text-[11px] bg-paddy-100/60 px-2 py-0.5 rounded">
                         <span>Kas Sosial Inklusi RT 13 (4%):</span>
-                        <span id="buyCalcPkkFee" class="font-bold">+Rp 900</span>
+                        <span id="buyCalcInklusiFee" class="font-bold">+Rp 900</span>
                     </div>
                     <div class="flex justify-between text-stone-600 text-[11px]">
                         <span>Biaya Pengiriman:</span>
@@ -4524,20 +4553,32 @@
             const rawComm = (producer.producerCommodity || '').trim();
             if (!rawComm || rawComm === '-') return;
 
-            // Pemetaan komoditas produsen ke 4 komoditas strategis ketahanan pangan Lampung
-            const lower = rawComm.toLowerCase();
-            let target = "Beras Premium Lokal (Ciherang/IR64)";
-            if (lower.includes("singkong") || lower.includes("ubi") || lower.includes("pisang") || lower.includes("olahan") || lower.includes("tempe") || lower.includes("jamu")) {
-                target = "Singkong / Ubi Kayu (Panen Lokal)";
-            } else if (lower.includes("jagung") || lower.includes("telur")) {
-                target = "Jagung Manis (Pekarangan)";
-            } else if (lower.includes("bayam") || lower.includes("sayur") || lower.includes("kangkung") || lower.includes("cabai") || lower.includes("lele") || lower.includes("jamur")) {
-                target = "Sayur Bayam & Sayuran Hijau";
-            } else if (lower.includes("beras") || lower.includes("padi") || lower.includes("ciherang")) {
-                target = "Beras Premium Lokal (Ciherang/IR64)";
+            // Cari kecocokan langsung pada opsi dropdown komoditas proposal
+            let matchedOption = Array.from(commoditySelect.options).find(opt => opt.value === rawComm);
+
+            // Jika belum persis sama, lakukan pencocokan cerdas berdasarkan kata kunci komoditas proposal
+            if (!matchedOption) {
+                const lower = rawComm.toLowerCase();
+                matchedOption = Array.from(commoditySelect.options).find(opt => {
+                    const optLower = opt.value.toLowerCase();
+                    if (lower.includes("kangkung") && optLower.includes("kangkung")) return true;
+                    if (lower.includes("bayam") && optLower.includes("bayam")) return true;
+                    if (lower.includes("cabai") && optLower.includes("cabai")) return true;
+                    if (lower.includes("sawi") && optLower.includes("sawi")) return true;
+                    if (lower.includes("bawang") && optLower.includes("bawang")) return true;
+                    if (lower.includes("lele") && optLower.includes("lele")) return true;
+                    if (lower.includes("nila") && optLower.includes("nila")) return true;
+                    if (lower.includes("telur bebek") && optLower.includes("telur bebek")) return true;
+                    if (lower.includes("telur ayam") && optLower.includes("telur ayam")) return true;
+                    if (lower.includes("ayam") && !lower.includes("telur") && optLower.includes("ayam") && !optLower.includes("telur")) return true;
+                    if ((lower.includes("beras") || lower.includes("padi") || lower.includes("ciherang")) && optLower.includes("beras")) return true;
+                    return false;
+                });
             }
 
-            commoditySelect.value = target;
+            if (matchedOption) {
+                commoditySelect.value = matchedOption.value;
+            }
             handleCommodityChange();
         }
 
@@ -4601,7 +4642,7 @@
 
             document.getElementById('buyCalcSubtotal').textContent = formatRupiah(subtotal);
             document.getElementById('buyCalcProducerNet').textContent = formatRupiah(producerNet + (deliveryOpt === 'PRODUCER_DELIVERY' ? deliveryFee : 0));
-            document.getElementById('buyCalcPkkFee').textContent = `+${formatRupiah(feePkk)} (${feePct}%)`;
+            document.getElementById('buyCalcInklusiFee').textContent = `+${formatRupiah(feePkk)} (${feePct}%)`;
             document.getElementById('buyCalcDelivery').textContent = formatRupiah(deliveryFee);
             document.getElementById('buyCalcTotalPaid').textContent = formatRupiah(totalPaid);
         }
@@ -4647,7 +4688,7 @@
                 producer.walletEarned = (producer.walletEarned || 0) + producerNet + (deliveryOpt === 'PRODUCER_DELIVERY' ? deliveryFee : 0);
             }
 
-            // 3. Update PKK Social Fund
+            // 3. Update RT 13 Social Fund
             window.appState.danaSosialInklusi += feePkk;
 
             // 4. Record Transaction in ledger
@@ -4917,7 +4958,7 @@
 
         // =========================================================================
         // DATA HISTORIS & PREDIKSI HARGA (AI FLUCTUATION & FORECASTER)
-        // 5 Komoditas Strategis Pekarangan KWT, Perikanan, Peternakan & Poktan
+        // 11 Komoditas Strategis Pekarangan KWT, Perikanan Bioflok, Unggas Rakyat & Poktan RT 13
         // =========================================================================
         const FLUCTUATION_DATA = {
             "Sayur Kangkung (KWT Pekarangan)": {
@@ -4938,23 +4979,77 @@
                 producerAdvisory: "Proyeksi 3 Hari ke Depan: RT 13 diperkirakan mengalami kelebihan pasokan (Surplus) +20 Kg Sayur Kangkung dari panen serentak anggota KWT. Tindakan Sistem: Otomatis mengalihkan 20 Kg ke Koperasi Produsen Kelurahan Yosomulyo agar sayuran tidak layu/busuk (susut pangan < 5%) dan harga petani tetap stabil.",
                 consumerAdvisory: "Pasokan sayur kangkung KWT segar melimpah dipetik subuh. Rekomendasi Konsumen: Waktu terbaik membeli sayuran segar pekarangan dengan harga hemat komunitas."
             },
-            "Telur Ayam Pekarangan (Ternak Warga RT 13)": {
-                shortName: "Telur Ayam",
-                category: "Lauk & Protein",
-                btnId: "btnFluct-Telur",
-                historical: [28000, 28200, 28500, 29000, 29200, 29500, 29800, 30000],
-                prediction: [null, null, null, null, null, null, null, 30000, 30400, 30800, 31200],
-                pengepulPrice: 22000,
-                marketPrice: 30000,
-                predictionH3: 31200,
-                deltaText: "+Rp 1.200 (+4.0%)",
+            "Sayur Bayam Hijau (KWT Pekarangan)": {
+                shortName: "Sayur Bayam KWT",
+                category: "Sayur Pekarangan",
+                btnId: "btnFluct-Bayam",
+                historical: [6500, 6600, 6800, 7000, 7000, 6900, 7000, 7000],
+                prediction: [null, null, null, null, null, null, null, 7000, 6800, 6700, 6500],
+                pengepulPrice: 3000,
+                marketPrice: 7000,
+                predictionH3: 6500,
+                deltaText: "-Rp 500 (-7.1%)",
+                trendType: "DOWN",
+                trendBadgeText: "Pasokan Melimpah",
+                trendBadgeClass: "bg-emerald-100 text-emerald-800 border-emerald-200",
+                volatilityText: "Panen Dasawisma",
+                volatilityClass: "bg-emerald-100 text-emerald-800",
+                producerAdvisory: "Panen bayam hijau pekarangan KWT mencukupi kebutuhan 40 KK. Alirkan panen harian langsung ke dapur warga rentan dan posyandu balita.",
+                consumerAdvisory: "Bayam hijau cabut bebas kimia sintetis. Waktu ideal membeli untuk mencukupi asupan zat besi keluarga."
+            },
+            "Cabai Rawit Merah (Pekarangan KWT)": {
+                shortName: "Cabai Rawit",
+                category: "Sayur Pekarangan",
+                btnId: "btnFluct-Cabai",
+                historical: [50000, 52000, 51000, 53000, 54000, 53500, 55000, 55000],
+                prediction: [null, null, null, null, null, null, null, 55000, 56000, 57000, 58000],
+                pengepulPrice: 35000,
+                marketPrice: 55000,
+                predictionH3: 58000,
+                deltaText: "+Rp 3.000 (+5.5%)",
                 trendType: "UP",
-                trendBadgeText: "Defisit Konsumsi",
+                trendBadgeText: "Tren Naik (+5.5%)",
                 trendBadgeClass: "bg-rose-100 text-rose-800 border-rose-200",
-                volatilityText: "Permintaan Tinggi",
-                volatilityClass: "bg-rose-100 text-rose-800",
-                producerAdvisory: "Proyeksi 3 Hari ke Depan: Kebutuhan konsumsi warga RT 13 diperkirakan kekurangan (Defisit) -30 Butir Telur Ayam. Tindakan Sistem: Memprioritaskan hasil ternak unggas warga RT 13 untuk memenuhi kebutuhan dapur tetangga terdekat.",
-                consumerAdvisory: "Kebutuhan telur ayam dapur warga sedang tinggi. Rekomendasi Konsumen: Amankan asupan protein keluarga langsung dari peternak pekarangan tetangga."
+                volatilityText: "Volatilitas Pasar Sedang",
+                volatilityClass: "bg-amber-100 text-amber-800",
+                producerAdvisory: "Harga cabai di pasar induk Metro bergerak naik. Rekomendasi Produsen: Petik cabai pekarangan KWT saat masak pohon untuk memperoleh nilai jual optimal.",
+                consumerAdvisory: "Harga pasar luar mengalami lonjakan. Rekomendasi Konsumen: Beli cabai segar KWT RT 13 untuk berhemat hingga Rp 10.000/kg."
+            },
+            "Sawi Hijau / Caisim (KWT Pekarangan)": {
+                shortName: "Sawi Caisim",
+                category: "Sayur Pekarangan",
+                btnId: "btnFluct-Sawi",
+                historical: [6200, 6300, 6500, 6800, 6900, 7000, 7000, 7000],
+                prediction: [null, null, null, null, null, null, null, 7000, 6900, 6700, 6600],
+                pengepulPrice: 3000,
+                marketPrice: 7000,
+                predictionH3: 6600,
+                deltaText: "-Rp 400 (-5.7%)",
+                trendType: "DOWN",
+                trendBadgeText: "Pasokan Stabil",
+                trendBadgeClass: "bg-emerald-100 text-emerald-800 border-emerald-200",
+                volatilityText: "Volatilitas Rendah",
+                volatilityClass: "bg-emerald-100 text-emerald-800",
+                producerAdvisory: "Pasokan sawi pekarangan KWT stabil. Distribusikan bertahap ke warga dan pengolah kuliner lokal RT 13.",
+                consumerAdvisory: "Sawi hijau caisim segar petik pagi, renyah dan sehat bebas residu pestisida sintetis."
+            },
+            "Daun Bawang Segar (KWT Pekarangan)": {
+                shortName: "Daun Bawang",
+                category: "Sayur Pekarangan",
+                btnId: "btnFluct-Bawang",
+                historical: [14000, 14500, 15000, 15000, 15500, 15800, 16000, 16000],
+                prediction: [null, null, null, null, null, null, null, 16000, 16200, 16500, 16800],
+                pengepulPrice: 8000,
+                marketPrice: 16000,
+                predictionH3: 16800,
+                deltaText: "+Rp 800 (+5.0%)",
+                trendType: "UP",
+                trendBadgeText: "Permintaan Naik",
+                trendBadgeClass: "bg-emerald-100 text-emerald-800 border-emerald-200",
+                volatilityText: "Volatilitas Sedang",
+                volatilityClass: "bg-emerald-100 text-emerald-800",
+                producerAdvisory: "Kebutuhan bumbu dapur segar warga tinggi. Petik daun bawang berkualitas prima dari polybag pekarangan.",
+                consumerAdvisory: "Daun bawang segar beraroma kuat langsung dari kebun tetangga dengan harga hemat komunitas."
             },
             "Ikan Lele Segar (Bioflok Kolam RT 13)": {
                 shortName: "Ikan Lele",
@@ -4974,23 +5069,77 @@
                 producerAdvisory: "Permintaan ikan lele bioflok stabil tinggi. Rekomendasi Produsen: Lakukan panen bertahap sesuai pesanan konsumsi dapur 40 KK RT 13.",
                 consumerAdvisory: "Ikan lele kolam bioflok RT 13 dibudidayakan air bersih higienis tanpa limbah, kaya asam lemak esensial untuk nutrisi balita."
             },
-            "Cabai Rawit Merah (Pekarangan KWT)": {
-                shortName: "Cabai Rawit",
-                category: "Sayur Pekarangan",
-                btnId: "btnFluct-Cabai",
-                historical: [50000, 52000, 51000, 53000, 54000, 53500, 55000, 55000],
-                prediction: [null, null, null, null, null, null, null, 55000, 56000, 57000, 58000],
-                pengepulPrice: 35000,
-                marketPrice: 55000,
-                predictionH3: 58000,
-                deltaText: "+Rp 3.000 (+5.5%)",
+            "Ikan Nila Air Tawar (Kolam Pekarangan RT 13)": {
+                shortName: "Ikan Nila",
+                category: "Lauk & Protein",
+                btnId: "btnFluct-Nila",
+                historical: [32000, 32500, 33000, 33500, 34000, 34500, 35000, 35000],
+                prediction: [null, null, null, null, null, null, null, 35000, 35200, 35500, 35800],
+                pengepulPrice: 24000,
+                marketPrice: 35000,
+                predictionH3: 35800,
+                deltaText: "+Rp 800 (+2.3%)",
                 trendType: "UP",
-                trendBadgeText: "Tren Naik (+5.5%)",
+                trendBadgeText: "Permintaan Tinggi",
+                trendBadgeClass: "bg-emerald-100 text-emerald-800 border-emerald-200",
+                volatilityText: "Volatilitas Terkendali",
+                volatilityClass: "bg-emerald-100 text-emerald-800",
+                producerAdvisory: "Ikan nila pekarangan digemari konsumen keluarga. Jaga sirkulasi kolam dan beri pakan teratur menjelang panen.",
+                consumerAdvisory: "Ikan nila segar hidup dari kolam tetangga, manis dan kaya protein hewani bebas bau lumpur."
+            },
+            "Telur Ayam Pekarangan (Ternak Warga RT 13)": {
+                shortName: "Telur Ayam",
+                category: "Lauk & Protein",
+                btnId: "btnFluct-Telur",
+                historical: [28000, 28200, 28500, 29000, 29200, 29500, 29800, 30000],
+                prediction: [null, null, null, null, null, null, null, 30000, 30400, 30800, 31200],
+                pengepulPrice: 22000,
+                marketPrice: 30000,
+                predictionH3: 31200,
+                deltaText: "+Rp 1.200 (+4.0%)",
+                trendType: "UP",
+                trendBadgeText: "Defisit Konsumsi",
                 trendBadgeClass: "bg-rose-100 text-rose-800 border-rose-200",
-                volatilityText: "Volatilitas Pasar Sedang",
-                volatilityClass: "bg-amber-100 text-amber-800",
-                producerAdvisory: "Harga cabai di pasar induk Metro bergerak naik. Rekomendasi Produsen: Petik cabai pekarangan KWT saat masak pohon untuk memperoleh nilai jual optimal.",
-                consumerAdvisory: "Harga pasar luar mengalami lonjakan. Rekomendasi Konsumen: Beli cabai segar KWT RT 13 untuk berhemat hingga Rp 10.000/kg."
+                volatilityText: "Permintaan Tinggi",
+                volatilityClass: "bg-rose-100 text-rose-800",
+                producerAdvisory: "Proyeksi 3 Hari ke Depan: Kebutuhan konsumsi warga RT 13 diperkirakan kekurangan (Defisit) -30 Butir Telur Ayam. Tindakan Sistem: Memprioritaskan hasil ternak unggas warga RT 13 untuk memenuhi kebutuhan dapur tetangga terdekat.",
+                consumerAdvisory: "Kebutuhan telur ayam dapur warga sedang tinggi. Rekomendasi Konsumen: Amankan asupan protein keluarga langsung dari peternak pekarangan tetangga."
+            },
+            "Ayam Pekarangan (Unggas Rakyat RT 13)": {
+                shortName: "Daging Ayam",
+                category: "Lauk & Protein",
+                btnId: "btnFluct-Ayam",
+                historical: [38000, 38500, 39000, 39200, 39500, 39800, 40000, 40000],
+                prediction: [null, null, null, null, null, null, null, 40000, 40500, 41000, 41500],
+                pengepulPrice: 28000,
+                marketPrice: 40000,
+                predictionH3: 41500,
+                deltaText: "+Rp 1.500 (+3.8%)",
+                trendType: "UP",
+                trendBadgeText: "Kebutuhan Tinggi",
+                trendBadgeClass: "bg-amber-100 text-amber-800 border-amber-200",
+                volatilityText: "Volatilitas Normal",
+                volatilityClass: "bg-emerald-100 text-emerald-800",
+                producerAdvisory: "Ayam kampung pekarangan siap panen bobot 1.2 - 1.5 kg. Siap diserap konsumsi warga RT 13 dan katering lokal.",
+                consumerAdvisory: "Daging ayam sehat pekarangan tanpa suntik hormon, cita rasa gurih alami untuk sop dan olahan keluarga."
+            },
+            "Telur Bebek Segar (Ternak Pekarangan RT 13)": {
+                shortName: "Telur Bebek",
+                category: "Lauk & Protein",
+                btnId: "btnFluct-Bebek",
+                historical: [30000, 30500, 31000, 31500, 32000, 32000, 32500, 33000],
+                prediction: [null, null, null, null, null, null, null, 33000, 33300, 33600, 34000],
+                pengepulPrice: 24000,
+                marketPrice: 33000,
+                predictionH3: 34000,
+                deltaText: "+Rp 1.000 (+3.0%)",
+                trendType: "UP",
+                trendBadgeText: "Tren Stabil (+3.0%)",
+                trendBadgeClass: "bg-emerald-100 text-emerald-800 border-emerald-200",
+                volatilityText: "Volatilitas Rendah",
+                volatilityClass: "bg-emerald-100 text-emerald-800",
+                producerAdvisory: "Produksi telur bebek pekarangan konsisten. Cocok untuk konsumsi segar maupun pasokan pengrajin telur asin RT 13.",
+                consumerAdvisory: "Telur bebek segar kaya nutrisi, cangkang biru bersih dan kuning telur merah oranye alami."
             },
             "Beras Premium Ciherang (Poktan RT 13)": {
                 shortName: "Beras Ciherang",
@@ -5016,7 +5165,7 @@
         FLUCTUATION_DATA["Beras Premium Lokal (Ciherang/IR64)"] = FLUCTUATION_DATA["Beras Premium Ciherang (Poktan RT 13)"];
         FLUCTUATION_DATA["Singkong / Ubi Kayu (Panen Lokal)"] = FLUCTUATION_DATA["Beras Premium Ciherang (Poktan RT 13)"];
         FLUCTUATION_DATA["Jagung Manis (Pekarangan)"] = FLUCTUATION_DATA["Sayur Kangkung (KWT Pekarangan)"];
-        FLUCTUATION_DATA["Sayur Bayam & Sayuran Hijau"] = FLUCTUATION_DATA["Sayur Kangkung (KWT Pekarangan)"];
+        FLUCTUATION_DATA["Sayur Bayam & Sayuran Hijau"] = FLUCTUATION_DATA["Sayur Bayam Hijau (KWT Pekarangan)"];
 
         let currentFluctuationCommodity = "Sayur Kangkung (KWT Pekarangan)";
         let fluctuationChartInstance = null;
