@@ -97,13 +97,21 @@ Modul simulasi keseimbangan penyerapan panen di Tab 4 & Tab 5:
 
 1. **Empat Parameter Penjodohan:**
    - **Kesesuaian Gizi**: Mengutamakan komoditas pangan padat gizi (protein dan mikronutrien) untuk pencegahan stunting.
-   - **Keterjangkauan Harga**: Memastikan harga beli warga terjangkau dengan subsidi dari kas inklusif komunitas.
+   - **Keterjangkauan Harga**: Memastikan harga beli warga terjangkau melalui transaksi langsung (P2P) bebas perantara dan bebas potongan komisi/fee (100% Zero-Profit).
    - **Jarak Terdekat**: Memprioritaskan pasokan pekarangan terdekat di lingkungan RT 13 untuk menekan ongkos angkut.
    - **Kesegaran**: Memprioritaskan komoditas yang baru dipanen dengan kualitas gizi maksimal.
 
 2. **Strict Dynamic Pricing & Penguncian Harga Referensi:**
    - Form posting panen mengunci input **Harga Pengepul (Batas Bawah)** dan **Harga Pasar (Batas Atas)** secara permanen (`readonly` dengan ikon gembok abu-abu `fa-solid fa-lock`) untuk menjaga integritas AI Market Intelligence.
    - Indikator **Dynamic Pricing Gauge Bar** memandu petani/produsen agar memasukkan harga jual di **Zona Koridor Adil Komunitas** (di atas harga pengepul dan di bawah harga pasar kota).
+
+---
+
+3. **Skema Bisnis 100% Zero-Profit (Pemberdayaan Pangan Murni):**
+   - **Bebas Potongan Komisi/Fee (0% Fee):** Platform beroperasi 100% nirlaba tanpa memungut fee transaksi atau kas ekosistem dari jual-beli pangan.
+   - **100% Pembayaran Masuk ke Dompet Produsen:** Seluruh dana yang dibayarkan konsumen diserahkan penuh ke dompet (walletEarned) petani/produsen lokal tanpa potongan apa pun.
+   - **Buku Kas / Ledger Transparan P2P Murni:** Buku besar transaksi mencatat transaksi jual-beli P2P secara transparan tanpa entri alokasi fee ke kas komunitas.
+   - **Kartu Metrik Makro Total Nilai Transaksi Pangan Warga:** Dashboard analitik memantau total nilai perputaran ekonomi pangan yang diserap langsung oleh produsen warga RT 13.
 
 ---
 

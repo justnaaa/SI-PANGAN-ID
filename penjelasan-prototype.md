@@ -101,11 +101,12 @@ Sistem menjawab kebutuhan ekosistem pangan inklusif berbasis komunitas:
   3. **Jarak Terdekat**: Memprioritaskan pasokan dari kebun/pekarangan terdekat di lingkungan RT 13 guna menekan jejak karbon.
   4. **Kesegaran**: Memprioritaskan komoditas yang baru dipanen dengan batas simpan optimal agar kualitas gizi tetap terjaga.
 - **Inklusivitas AI-DSS untuk Produsen Pangan:**
-  Menghapus bias peran, sehingga produsen pangan kecil (petani/buruh kebun) berpendapatan rendah dengan tanggungan tinggi (contoh: Gaji Rp 400.000, 5 tanggungan $ightarrow$ Skor AI 97/100) otomatis diakui sebagai **Prioritas Bantuan (Hak Subsidi Penuh)** dengan intervensi: *"Bantuan Paket Pangan Gizi + Subsidi Modal Bahan Baku UKM"*.
+  Menghapus bias peran, sehingga produsen pangan kecil (petani/buruh kebun) berpendapatan rendah dengan tanggungan tinggi (contoh: Gaji Rp 400.000, 5 tanggungan $
+ightarrow$ Skor AI 97/100) otomatis diakui sebagai **Prioritas Bantuan (Hak Subsidi Penuh)** dengan intervensi: *"Bantuan Paket Pangan Gizi + Subsidi Modal Bahan Baku UKM"*.
 - **Filter Ketat Dropdown Produsen:**
   Hanya warga terdaftar dengan peran `PRODUSEN` yang dapat memposting panen (warga konsumen otomatis tersaring keluar).
-- **Penyerapan Otomatis ke Kas Koperasi Digital:**
-  Setiap transaksi serapan pasar langsung memotong stok di katalog, mencatat arus barang di buku kas lumbung pangan (`SERAPAN PASAR UKM PANGAN`), dan mengkreditkan pendapatan langsung ke saldo tabungan produsen tanpa perantara tengkulak.
+- **Penyerapan Otomatis ke Kas Koperasi Digital & Skema 100% Zero-Profit:**
+  Setiap transaksi serapan pasar langsung memotong stok di katalog, mencatat arus barang di buku kas lumbung pangan (`SERAPAN PASAR UKM PANGAN`), dan mengkreditkan 100% nilai pembayaran langsung ke saldo dompet produsen tanpa perantara tengkulak maupun potongan fee platform (0% fee). Buku kas (Ledger) mencatat transaksi P2P murni tanpa entri pemotongan fee, serta dashboard makro memantau indikator "Total Nilai Transaksi Pangan Warga".
 
 ---
 

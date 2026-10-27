@@ -195,13 +195,13 @@
             <div class="hidden xl:flex items-center gap-3 text-xs">
                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-100/80 border border-stone-200/70">
                     <span class="w-2 h-2 rounded-full bg-forest-600 animate-pulse"></span>
-                    <span class="text-stone-500">Kas Sosial Inklusi RT 13:</span>
-                    <strong id="topBarDanaKas" class="mono-num font-bold text-forest-800">Rp 1.450.000</strong>
+                    <span class="text-stone-500">Total Transaksi Warga:</span>
+                    <strong id="topBarDanaKas" class="mono-num font-bold text-forest-800">Rp 7.840.000</strong>
                 </div>
                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-100/80 border border-stone-200/70">
-                    <span class="text-stone-500">Kas Inklusi RT 13:</span>
-                    <strong id="topBarFeePct" class="mono-num font-bold text-paddy-700">4%</strong>
-                    <span class="text-[10px] text-stone-400">(Dana Bansos)</span>
+                    <span class="text-stone-500">Skema Platform:</span>
+                    <strong id="topBarFeePct" class="mono-num font-bold text-forest-700">100% Bebas Fee</strong>
+                    <span class="text-[10px] text-stone-400">(Zero-Profit)</span>
                 </div>
                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-100/80 border border-stone-200/70">
                     <span class="text-stone-500">Pangan Tersalurkan:</span>
@@ -359,16 +359,16 @@
                     <div class="flex items-center justify-between text-[11px] font-bold text-forest-900">
                         <span class="flex items-center gap-1.5">
                             <i class="fa-solid fa-hand-holding-heart text-forest-600"></i>
-                            Dana Inklusi Pangan RT 13
+                            Pemberdayaan P2P RT 13
                         </span>
-                        <span class="mono-num text-forest-700" id="sidebarFeeBadge">4% Kas</span>
+                        <span class="mono-num text-forest-700 font-bold" id="sidebarFeeBadge">0% Fee</span>
                     </div>
                     <p class="text-[10px] text-forest-700 leading-snug">
-                        Tiap transaksi memotong kas 4% untuk membeli surplus panen KWT bagi 5 KK Rentan.
+                        100% hasil penjualan masuk langsung ke dompet produsen pangan warga tanpa potongan fee.
                     </p>
                     <div class="pt-1 flex items-center justify-between text-[11px]">
-                        <span class="text-stone-500 text-[10px]">Saldo Siap Salur:</span>
-                        <strong id="sidebarDanaKas" class="mono-num font-bold text-forest-800">Rp 1.450.000</strong>
+                        <span class="text-stone-500 text-[10px]">Total Nilai Transaksi:</span>
+                        <strong id="sidebarDanaKas" class="mono-num font-bold text-forest-800">Rp 7.840.000</strong>
                     </div>
                 </div>
 
@@ -408,8 +408,8 @@
                             Pintu 40 KK - Kelanjutan PKM-PM 2023)</strong> dengan <strong>Pasar Warga Komunitas &
                             Lumbung RT 13</strong>. Sistem ini memotong rantai perantara tengkulak yang menekan harga
                         petani pekarangan & KWT, memprediksi luapan surplus panen untuk dialihkan ke Koperasi Produsen
-                        Kelurahan Yosomulyo, serta menyisihkan <strong>Kas Inklusi RT 13 sebesar 4%</strong> guna
-                        mendanai subsidi silang pangan bergizi bagi keluarga rentan prioritas secara mandiri.
+                        Kelurahan Yosomulyo, serta menerapkan <strong>100% Transaksi Zero-Profit (Bebas Potongan Fee)</strong>
+                        guna menjamin seluruh hasil penjualan diterima utuh oleh produsen pangan lokal demi pemberdayaan murni.
                     </p>
                 </div>
 
@@ -429,7 +429,7 @@
                             TKT 5 Validasi Lapangan
                         </span>
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
                         <div class="p-4 rounded-xl bg-forest-50/60 border border-forest-200/80 space-y-1">
                             <span class="text-xs text-forest-700 font-semibold uppercase tracking-wider block">Basis
                                 Data Warga</span>
@@ -443,12 +443,17 @@
                             <div class="serif-heading text-2xl font-bold text-amber-900 mono-num">20 Produsen KWT</div>
                             <p class="text-[11px] text-stone-600">Pekarangan, Kolam Bioflok & Ternak Unggas Aktif</p>
                         </div>
+                        <div class="p-4 rounded-xl bg-forest-50/70 border border-forest-200/80 space-y-1">
+                            <span class="text-xs text-forest-700 font-semibold uppercase tracking-wider block">Total Nilai Transaksi Pangan Warga</span>
+                            <div id="tab1TotalTransaksi" class="serif-heading text-2xl font-bold text-forest-900 mono-num">Rp 7.840.000</div>
+                            <p class="text-[11px] text-stone-600">100% Diterima Produsen (Zero-Profit Platform)</p>
+                        </div>
                         <div class="p-4 rounded-xl bg-stone-50 border border-stone-200/80 space-y-1">
                             <span class="text-xs text-stone-600 font-semibold uppercase tracking-wider block">Target
                                 Transaksi</span>
                             <div class="serif-heading text-2xl font-bold text-stone-900 mono-num">&ge; 50 Transaksi
                             </div>
-                            <p class="text-[11px] text-stone-600">Tervalidasi bersama Koperasi Kelurahan Yosomulyo</p>
+                            <p class="text-[11px] text-stone-600">P2P Langsung Warga & Koperasi Yosomulyo</p>
                         </div>
                     </div>
                 </div>
@@ -523,19 +528,17 @@
 
                         <!-- Step 4 -->
                         <div
-                            class="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-2 relative group hover:border-terracotta-400 transition">
+                            class="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-2 relative group hover:border-forest-400 transition">
                             <div class="flex items-center justify-between">
                                 <span
-                                    class="mono-num text-xs font-bold px-2 py-0.5 rounded bg-terracotta-700 text-white">04</span>
-                                <i class="fa-solid fa-handshake text-terracotta-600 text-sm"></i>
+                                    class="mono-num text-xs font-bold px-2 py-0.5 rounded bg-forest-800 text-white">04</span>
+                                <i class="fa-solid fa-handshake text-forest-600 text-sm"></i>
                             </div>
-                            <h4 class="font-bold text-stone-900 text-xs sm:text-sm">Transaksi & Kas Inklusi 4%</h4>
+                            <h4 class="font-bold text-stone-900 text-xs sm:text-sm">Transaksi P2P Zero-Profit (0% Fee)</h4>
                             <p class="text-[11px] text-stone-600 leading-snug">
-                                Konsumen bayar langsung produsen (96%). Kas 4% dialokasikan ke Kas Sosial Inklusi RT 13
-                                untuk membeli surplus warga rentan.
+                                Konsumen membayar 100% langsung ke Produsen tanpa potongan fee/kas perantara. Pemberdayaan ekonomi warga murni.
                             </p>
-                            <span class="inline-block text-[10px] font-semibold text-terracotta-800">Swadaya Kas RT 13
-                                Mandiri</span>
+                            <span class="inline-block text-[10px] font-semibold text-forest-800">100% Hak Petani / Bebas Biaya</span>
                         </div>
 
                         <!-- Step 5 -->
@@ -664,20 +667,18 @@
                                             class="w-6 h-6 rounded bg-forest-100 text-forest-800 flex items-center justify-center text-xs">
                                             <i class="fa-solid fa-shield-heart"></i>
                                         </div>
-                                        <span>4. Verified Ledger & Fee Inklusi 4%</span>
+                                        <span>4. Verified Ledger P2P 100% Zero-Profit</span>
                                     </td>
                                     <td class="py-3.5 px-4 text-stone-700">
-                                        Pencatatan kas digital transparan. Fee 4% otomatis disisihkan ke Dana Sosial
-                                        Inklusi Pangan untuk menyerap panen bagi warga rentan.
+                                        Pencatatan transaksi P2P digital transparan tanpa potongan fee (0%). 100% nilai pembayaran konsumen langsung masuk ke dompet produsen lokal.
                                     </td>
                                     <td class="py-3.5 px-4 text-stone-500">
-                                        Bansos pangan tergantung penuh pada proposal bantuan dinas sosial yang sering
-                                        terlambat turun saat harga beras melonjak.
+                                        Platform komersial memotong komisi 10-20% atau tengkulak menekan harga panen di tingkat petani lokal.
                                     </td>
                                     <td class="py-3.5 px-4">
                                         <span
                                             class="inline-flex items-center gap-1 font-semibold text-forest-700 bg-forest-50 px-2 py-0.5 rounded border border-forest-200">
-                                            <i class="fa-solid fa-circle-check"></i> Rp 1.450.000 Dana Kas Mandiri
+                                            <i class="fa-solid fa-circle-check"></i> 100% Nilai ke Produsen
                                         </span>
                                     </td>
                                 </tr>
@@ -1059,11 +1060,9 @@
                             </h2>
                             <p class="text-xs sm:text-sm text-stone-600 max-w-3xl leading-relaxed">
                                 Mempertemukan langsung panen pekarangan dan kolam anggota KWT serta warga RT 13 dengan
-                                konsumen warga.
-                                Setiap transaksi memotong <strong>Kas Sosial Inklusi RT 13 (4%)</strong> yang otomatis
-                                mengalir
-                                ke <strong>Dana Sosial Inklusi Pangan</strong> untuk menjamin ketersediaan pangan
-                                keluarga rentan.
+                                konsumen warga secara <strong>100% Bebas Potongan Fee (Zero-Profit Platform)</strong>.
+                                Seluruh pembayaran konsumen langsung diterima utuh oleh produsen pangan lokal demi
+                                pemberdayaan ekonomi komunitas murni.
                             </p>
                         </div>
 
@@ -1378,7 +1377,7 @@
                             DeepTech Algorithmic Social Distribution
                         </span>
                         <div class="flex items-center gap-2">
-                            <span class="text-xs text-stone-500">Saldo Kas Inklusi:</span>
+                            <span class="text-xs text-stone-500">Saldo Kas Lumbung Warga:</span>
                             <strong id="matchingDanaKas" class="mono-num text-xs font-bold text-forest-800">Rp
                                 1.450.000</strong>
                         </div>
@@ -1390,9 +1389,9 @@
                         Algoritma multi-faktor secara otomatis mencocokkan stok surplus pangan dari produsen pekarangan
                         KWT & warga dengan <strong>Keluarga Rentan Prioritas Bantuan</strong> yang tercatat di Single
                         Identity.
-                        Didanai langsung dari <strong>Kas Sosial Inklusi RT 13 (4%)</strong> sehingga distribusi jaminan
+                        Didanai melalui <strong>Kas Lumbung Swadaya Komunitas RT 13</strong> sehingga distribusi jaminan
                         pangan
-                        berjalan mandiri tanpa kebocoran anggaran.
+                        berjalan mandiri dan terarah tanpa kebocoran anggaran.
                     </p>
 
                     <!-- Formula Pills -->
@@ -1774,13 +1773,12 @@
                     <!-- KPI 5 -->
                     <div class="bg-white p-4 rounded-xl border border-stone-200/80 shadow-xs space-y-1">
                         <div class="flex items-center justify-between text-stone-400">
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Nilai
-                                Produsen</span>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Total Nilai Transaksi Warga</span>
                             <i class="fa-solid fa-coins text-paddy-600"></i>
                         </div>
                         <div id="kpiProdusenTurnover" class="serif-heading text-lg font-bold text-forest-900 mono-num">
                             Rp 7.840.000</div>
-                        <p class="text-[10px] text-stone-500">Masuk kantong petani lokal</p>
+                        <p class="text-[10px] text-stone-500">100% diterima produsen (bebas fee)</p>
                     </div>
                 </div>
 
@@ -1810,27 +1808,25 @@
                         </div>
                     </div>
 
-                    <!-- Chart 2: Aliran Dana Inklusi Pangan -->
+                    <!-- Chart 2: Alokasi Nilai Transaksi & Kesejahteraan Pangan -->
                     <div
                         class="lg:col-span-5 bg-white p-6 rounded-2xl border border-stone-200/80 shadow-xs flex flex-col justify-between space-y-4">
                         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-3">
                             <div>
                                 <h3 class="serif-heading text-base sm:text-lg font-bold text-stone-900">
-                                    Aliran Kas Dana Inklusi Pangan
+                                    Alokasi Nilai Transaksi Pangan Komunitas
                                 </h3>
-                                <p class="text-xs text-stone-500">Sumber fee transaksi 4% vs realisasi paket bantuan
-                                    warga rentan</p>
+                                <p class="text-xs text-stone-500">100% P2P ke produsen vs penyaluran bantuan pangan warga rentan</p>
                             </div>
-                            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-forest-50 text-forest-800">Mandiri
-                                100%</span>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-forest-50 text-forest-800">Zero-Profit</span>
                         </div>
                         <div class="relative h-64 w-full flex items-center justify-center">
                             <canvas id="chartFundFlow"></canvas>
                         </div>
                         <div
                             class="pt-2 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
-                            <span>Saldo Kas Terkini: <strong id="chartCashDisplay"
-                                    class="font-bold text-forest-800 mono-num">Rp 1.450.000</strong></span>
+                            <span>Total Perputaran: <strong id="chartCashDisplay"
+                                    class="font-bold text-forest-800 mono-num">Rp 7.840.000</strong></span>
                             <span class="font-bold text-forest-700">Audit Terbuka</span>
                         </div>
                     </div>
@@ -1871,8 +1867,7 @@
                                     <th class="py-3 px-3.5">Produsen (SID)</th>
                                     <th class="py-3 px-3.5">Konsumen / Penerima (SID)</th>
                                     <th class="py-3 px-3.5">Komoditas (Kg)</th>
-                                    <th class="py-3 px-3.5 text-right">Nilai Bruto</th>
-                                    <th class="py-3 px-3.5 text-right">Kas RT 13 (4%)</th>
+                                    <th class="py-3 px-3.5 text-right">Nilai Transaksi (100% Produsen)</th>
                                     <th class="py-3 px-3.5">Metode Kirim</th>
                                     <th class="py-3 px-3.5 text-center rounded-r-lg">Status</th>
                                 </tr>
@@ -2064,12 +2059,8 @@
                         <span id="buyCalcSubtotal">Rp 22.500</span>
                     </div>
                     <div class="flex justify-between text-stone-600 text-[11px]">
-                        <span>Diterima Langsung Produsen (96%):</span>
-                        <span id="buyCalcProducerNet" class="font-bold text-forest-900">Rp 21.600</span>
-                    </div>
-                    <div class="flex justify-between text-paddy-800 text-[11px] bg-paddy-100/60 px-2 py-0.5 rounded">
-                        <span>Kas Sosial Inklusi RT 13 (4%):</span>
-                        <span id="buyCalcInklusiFee" class="font-bold">+Rp 900</span>
+                        <span>Diterima Langsung Produsen (100%):</span>
+                        <span id="buyCalcProducerNet" class="font-bold text-forest-900">Rp 22.500</span>
                     </div>
                     <div class="flex justify-between text-stone-600 text-[11px]">
                         <span>Biaya Pengiriman:</span>
@@ -2083,8 +2074,7 @@
                 </div>
 
                 <div class="text-[10px] text-stone-500 leading-tight">
-                    * Konsumen membayar langsung ke Produsen. Kas 4% disisihkan otomatis oleh sistem untuk membiayai
-                    paket gizi pangan warga rentan RT 13 (Kelanjutan PKM-PM 2023).
+                    * Transaksi langsung (P2P) 100% tanpa potongan fee ekosistem/kas perantara. 100% pembayaran dari konsumen masuk utuh ke dompet produsen lokal.
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-stone-100">
@@ -2158,11 +2148,10 @@
                 </div>
 
                 <div class="p-3 rounded-xl bg-forest-50 border border-forest-200 space-y-1">
-                    <span class="font-bold text-forest-900 block text-[11px]">Dampak Ekonomi & Kas Inklusi:</span>
+                    <span class="font-bold text-forest-900 block text-[11px]">Dampak Ekonomi & Transaksi Adil:</span>
                     <ul class="list-disc list-inside text-[11px] text-forest-800 space-y-0.5">
-                        <li>Pak Hendra (Produsen) menerima <strong>Rp 4.800.000 (96%)</strong> langsung.</li>
-                        <li>Kas Sosial Inklusi RT 13 menerima <strong>Rp 200.000 (4%)</strong> untuk paket pangan
-                            bergizi warga rentan.</li>
+                        <li>Pak Hendra (Produsen) menerima <strong>Rp 5.000.000 (100%)</strong> langsung tanpa potongan fee.</li>
+                        <li>Platform 100% Zero-Profit: Seluruh nilai transaksi masuk ke dompet produsen lokal.</li>
                         <li>Zero gabah membusuk di gudang atau dijual rugi ke pengepul.</li>
                     </ul>
                 </div>
@@ -2631,7 +2620,6 @@
         // Single Source of Truth
         window.appState = {
             "privacyMode": "PUBLIC",
-            "pkkFeePercent": 4,
             "danaSosialInklusi": 1450000,
             "members": [
                 {
@@ -3703,9 +3691,7 @@
                     "quantityKg": 4,
                     "unitPrice": 7500,
                     "subtotal": 30000,
-                    "pkkFeePercent": 4,
-                    "pkkFeeAmount": 1200,
-                    "producerNet": 28800,
+                    "producerNet": 30000,
                     "deliveryMethod": "Ambil Sendiri (Rp 0)",
                     "deliveryFee": 0,
                     "totalPaid": 30000,
@@ -3723,9 +3709,7 @@
                     "quantityKg": 20,
                     "unitPrice": 13000,
                     "subtotal": 260000,
-                    "pkkFeePercent": 4,
-                    "pkkFeeAmount": 10400,
-                    "producerNet": 249600,
+                    "producerNet": 260000,
                     "deliveryMethod": "Diantar Produsen (+Rp 2.000)",
                     "deliveryFee": 2000,
                     "totalPaid": 262000,
@@ -3743,8 +3727,6 @@
                     "quantityKg": 12,
                     "unitPrice": 12500,
                     "subtotal": 150000,
-                    "pkkFeePercent": 0,
-                    "pkkFeeAmount": 0,
                     "producerNet": 150000,
                     "deliveryMethod": "Kurir Komunitas RT",
                     "deliveryFee": 0,
@@ -3763,9 +3745,7 @@
                     "quantityKg": 5,
                     "unitPrice": 10000,
                     "subtotal": 50000,
-                    "pkkFeePercent": 4,
-                    "pkkFeeAmount": 2000,
-                    "producerNet": 48000,
+                    "producerNet": 50000,
                     "deliveryMethod": "Ambil Sendiri (Rp 0)",
                     "deliveryFee": 0,
                     "totalPaid": 50000,
@@ -3783,9 +3763,7 @@
                     "quantityKg": 3,
                     "unitPrice": 28000,
                     "subtotal": 84000,
-                    "pkkFeePercent": 4,
-                    "pkkFeeAmount": 3360,
-                    "producerNet": 80640,
+                    "producerNet": 84000,
                     "deliveryMethod": "Ambil Sendiri (Rp 0)",
                     "deliveryFee": 0,
                     "totalPaid": 84000,
@@ -4086,28 +4064,34 @@
         // --- 4. RENDERERS ---
         function renderHeaderStats() {
             const totalKg = window.appState.transactions.reduce((acc, t) => acc + (t.quantityKg || 0), 0) + 400; // include absorbed external
+            const totalTransaksi = window.appState.transactions.reduce((acc, t) => acc + (t.subtotal || 0), 0) + 5000000; // include external spillover
             const danaKas = window.appState.danaSosialInklusi;
-            const feePct = window.appState.pkkFeePercent;
+
+            const elTotalTab1 = document.getElementById('tab1TotalTransaksi');
+            if (elTotalTab1) elTotalTab1.textContent = formatRupiah(totalTransaksi);
 
             const elKas1 = document.getElementById('topBarDanaKas');
             const elKas2 = document.getElementById('sidebarDanaKas');
             const elKas3 = document.getElementById('matchingDanaKas');
             const elKas4 = document.getElementById('chartCashDisplay');
-            if (elKas1) elKas1.textContent = formatRupiah(danaKas);
-            if (elKas2) elKas2.textContent = formatRupiah(danaKas);
+            if (elKas1) elKas1.textContent = formatRupiah(totalTransaksi);
+            if (elKas2) elKas2.textContent = formatRupiah(totalTransaksi);
             if (elKas3) elKas3.textContent = formatRupiah(danaKas);
-            if (elKas4) elKas4.textContent = formatRupiah(danaKas);
+            if (elKas4) elKas4.textContent = formatRupiah(totalTransaksi);
 
             const elFee1 = document.getElementById('topBarFeePct');
             const elFee2 = document.getElementById('sidebarFeeBadge');
-            if (elFee1) elFee1.textContent = feePct + '%';
-            if (elFee2) elFee2.textContent = feePct + '% Fee';
+            if (elFee1) elFee1.textContent = '100% Bebas Fee';
+            if (elFee2) elFee2.textContent = '0% Fee';
 
             const elPangan = document.getElementById('topBarPanganTersalurkan');
             if (elPangan) elPangan.textContent = totalKg + ' Kg';
 
             const elKpiPangan = document.getElementById('kpiTotalPanganKg');
             if (elKpiPangan) elKpiPangan.textContent = totalKg + ' Kg';
+
+            const elKpiProdTurnover = document.getElementById('kpiProdusenTurnover');
+            if (elKpiProdTurnover) elKpiProdTurnover.textContent = formatRupiah(totalTransaksi);
         }
 
         // TAB 2: MEMBERS DIRECTORY TABLE
@@ -4708,10 +4692,6 @@
             const qty = Math.max(1, Number(document.getElementById('buyQtyKg')?.value || 1));
             const subtotal = qty * listing.fairPrice;
 
-            const feePct = window.appState.pkkFeePercent || 4;
-            const feePkk = Math.round(subtotal * (feePct / 100));
-            const producerNet = subtotal - feePkk;
-
             // Delivery option
             const deliveryOpt = document.querySelector('input[name="buyDeliveryOption"]:checked')?.value || 'PICKUP';
             let deliveryFee = 0;
@@ -4719,12 +4699,19 @@
             else if (deliveryOpt === 'COOP_COURIER') deliveryFee = 5000;
 
             const totalPaid = subtotal + deliveryFee;
+            const producerNet = subtotal + (deliveryOpt === 'PRODUCER_DELIVERY' ? deliveryFee : 0);
 
-            document.getElementById('buyCalcSubtotal').textContent = formatRupiah(subtotal);
-            document.getElementById('buyCalcProducerNet').textContent = formatRupiah(producerNet + (deliveryOpt === 'PRODUCER_DELIVERY' ? deliveryFee : 0));
-            document.getElementById('buyCalcInklusiFee').textContent = `+${formatRupiah(feePkk)} (${feePct}%)`;
-            document.getElementById('buyCalcDelivery').textContent = formatRupiah(deliveryFee);
-            document.getElementById('buyCalcTotalPaid').textContent = formatRupiah(totalPaid);
+            const elSubtotal = document.getElementById('buyCalcSubtotal');
+            if (elSubtotal) elSubtotal.textContent = formatRupiah(subtotal);
+
+            const elProducerNet = document.getElementById('buyCalcProducerNet');
+            if (elProducerNet) elProducerNet.textContent = formatRupiah(producerNet);
+
+            const elDelivery = document.getElementById('buyCalcDelivery');
+            if (elDelivery) elDelivery.textContent = formatRupiah(deliveryFee);
+
+            const elTotalPaid = document.getElementById('buyCalcTotalPaid');
+            if (elTotalPaid) elTotalPaid.textContent = formatRupiah(totalPaid);
         }
 
         function handleExecuteBuy(e) {
@@ -4755,23 +4742,18 @@
             }
 
             const subtotal = qty * listing.fairPrice;
-            const feePct = window.appState.pkkFeePercent || 4;
-            const feePkk = Math.round(subtotal * (feePct / 100));
-            const producerNet = subtotal - feePkk;
+            const producerTotal = subtotal + (deliveryOpt === 'PRODUCER_DELIVERY' ? deliveryFee : 0);
 
             // 1. Update listing inventory
             listing.availableStockKg -= qty;
             listing.localAbsorbedKg += qty;
 
-            // 2. Update producer wallet
+            // 2. Update producer wallet - 100% masuk ke produsen
             if (producer) {
-                producer.walletEarned = (producer.walletEarned || 0) + producerNet + (deliveryOpt === 'PRODUCER_DELIVERY' ? deliveryFee : 0);
+                producer.walletEarned = (producer.walletEarned || 0) + producerTotal;
             }
 
-            // 3. Update RT 13 Social Fund
-            window.appState.danaSosialInklusi += feePkk;
-
-            // 4. Record Transaction in ledger
+            // 3. Record Transaction in ledger (P2P murni tanpa pembagian fee ke kas komunitas)
             const txId = `TX-RT13-${Math.floor(100 + Math.random() * 900)}`;
             const now = new Date();
             const dateStr = `${now.getDate()} Okt 2026, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -4788,9 +4770,7 @@
                 quantityKg: qty,
                 unitPrice: listing.fairPrice,
                 subtotal: subtotal,
-                pkkFeePercent: feePct,
-                pkkFeeAmount: feePkk,
-                producerNet: producerNet,
+                producerNet: subtotal,
                 deliveryMethod: deliveryText,
                 deliveryFee: deliveryFee,
                 totalPaid: subtotal + deliveryFee,
@@ -4799,7 +4779,7 @@
 
             closeModal('modalBuyDirect');
             renderAll();
-            showToast("Transaksi Berhasil!", `Pembelian ${qty} ${listing.unit || 'Kg'} ${listing.commodity} sukses. Kas Sosial Inklusi RT 13 bertambah ${formatRupiah(feePkk)}.`, "success");
+            showToast("Transaksi Berhasil!", `Pembelian ${qty} ${listing.unit || 'Kg'} ${listing.commodity} sukses. 100% pembayaran (${formatRupiah(producerTotal)}) langsung masuk ke dompet produsen.`, "success");
         }
 
         function handleExecuteSurplusSpillover(e) {
@@ -4814,23 +4794,17 @@
             const surplusKg = listing.unabsorbedSurplusKg || 400;
             const wholesalePrice = 12500;
             const subtotal = surplusKg * wholesalePrice; // Rp 5.000.000
-            const feePct = 4;
-            const feePkk = Math.round(subtotal * (feePct / 100)); // Rp 200.000
-            const producerNet = subtotal - feePkk; // Rp 4.800.000
 
             // 1. Mark surplus absorbed
             listing.unabsorbedSurplusKg = 0;
 
-            // 2. Add producer earnings
+            // 2. Add producer earnings - 100% masuk ke produsen
             const producer = window.appState.members.find(m => m.sid === listing.producerSid);
             if (producer) {
-                producer.walletEarned = (producer.walletEarned || 0) + producerNet;
+                producer.walletEarned = (producer.walletEarned || 0) + subtotal;
             }
 
-            // 3. Add to RT 13 Social Fund
-            window.appState.danaSosialInklusi += feePkk;
-
-            // 4. Record in Ledger
+            // 3. Record in Ledger (P2P murni tanpa fee)
             const txId = `TX-RT13-EX${Math.floor(100 + Math.random() * 900)}`;
             window.appState.transactions.unshift({
                 id: txId,
@@ -4844,9 +4818,7 @@
                 quantityKg: surplusKg,
                 unitPrice: wholesalePrice,
                 subtotal: subtotal,
-                pkkFeePercent: feePct,
-                pkkFeeAmount: feePkk,
-                producerNet: producerNet,
+                producerNet: subtotal,
                 deliveryMethod: "Armada Angkut Koperasi",
                 deliveryFee: 0,
                 totalPaid: subtotal,
@@ -4855,7 +4827,7 @@
 
             closeModal('modalSurplusSpillover');
             renderAll();
-            showToast("Surplus Panen Dialihkan!", `${surplusKg} Kg beras dialihkan ke ${channelText.split('(')[0]}. Kas Sosial Inklusi RT 13 bertambah ${formatRupiah(feePkk)}.`, "success");
+            showToast("Surplus Panen Dialihkan!", `${surplusKg} Kg beras dialihkan ke ${channelText.split('(')[0]}. 100% pembayaran (${formatRupiah(subtotal)}) diterima langsung oleh produsen.`, "success");
         }
 
         // =========================================================================
@@ -5741,7 +5713,7 @@
                                     </div>
                                 `).join('')}
                                 <div class="pt-1.5 border-t border-forest-200 flex justify-between font-bold text-xs text-forest-900">
-                                    <span>Total Alokasi Kas Inklusi:</span>
+                                    <span>Total Alokasi Bantuan:</span>
                                     <span class="font-mono">${formatRupiah(pkg.totalCost)}</span>
                                 </div>
                             </div>
@@ -5798,8 +5770,6 @@
                 quantityKg: 12,
                 unitPrice: 0,
                 subtotal: costAmount,
-                pkkFeePercent: 0,
-                pkkFeeAmount: 0,
                 producerNet: costAmount,
                 deliveryMethod: "Diantar Pengurus RT 13 & KWT",
                 deliveryFee: 0,
@@ -6162,9 +6132,6 @@
                         <td class="py-3 px-3.5 text-right font-mono font-bold text-stone-900">
                             ${formatRupiah(t.subtotal)}
                         </td>
-                        <td class="py-3 px-3.5 text-right font-mono font-bold text-forest-800">
-                            ${t.pkkFeeAmount > 0 ? formatRupiah(t.pkkFeeAmount) : '-'}
-                        </td>
                         <td class="py-3 px-3.5 text-stone-600 text-[11px]">
                             ${t.deliveryMethod}
                         </td>
@@ -6232,21 +6199,21 @@
                 });
             }
 
-            // Chart 2: Aliran Dana Inklusi Pangan
+            // Chart 2: Alokasi Nilai Transaksi Pangan Komunitas
             const ctx2 = document.getElementById('chartFundFlow');
             if (ctx2) {
                 if (chart2Instance) chart2Instance.destroy();
 
-                const feeTotal = window.appState.transactions.reduce((acc, t) => acc + (t.pkkFeeAmount || 0), 0);
-                const aidTotal = window.appState.transactions.filter(t => t.type === 'BANTUAN_INKLUSI_PANGAN').reduce((acc, t) => acc + t.subtotal, 0);
-                const saldoKas = window.appState.danaSosialInklusi;
+                const turnoverP2P = window.appState.transactions.filter(t => t.type !== 'BANTUAN_INKLUSI_PANGAN' && t.type !== 'DISTRIBUSI_BANTUAN_PANGAN').reduce((acc, t) => acc + (t.subtotal || 0), 0) + 5000000;
+                const aidTotal = window.appState.transactions.filter(t => t.type === 'BANTUAN_INKLUSI_PANGAN' || t.type === 'DISTRIBUSI_BANTUAN_PANGAN').reduce((acc, t) => acc + (t.subtotal || 0), 0) + 390000;
+                const reserveKas = window.appState.danaSosialInklusi;
 
                 chart2Instance = new Chart(ctx2, {
                     type: 'doughnut',
                     data: {
-                        labels: ['Pemasukan Fee 4% Pasar', 'Penyaluran Bantuan Pangan', 'Saldo Cadangan Kas'],
+                        labels: ['Pendapatan Produsen Lokal (100%)', 'Penyaluran Bantuan Pangan', 'Cadangan Lumbung Komunitas'],
                         datasets: [{
-                            data: [feeTotal + 400000, aidTotal, saldoKas],
+                            data: [turnoverP2P, aidTotal, reserveKas],
                             backgroundColor: ['#2D6A4F', '#9A3412', '#B45309'],
                             borderWidth: 2,
                             borderColor: '#FFFFFF'
