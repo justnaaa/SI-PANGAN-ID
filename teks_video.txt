@@ -2,9 +2,9 @@
 TEKS NARASI VIDEO DEMO
 SI-PANGAN ID — Ekosistem Pangan Cerdas Berbasis Komunitas
 ================================================================
-Durasi Total  : ± 1 menit 34 detik
+Durasi Total  : ± 1 menit 37 detik (96,66 detik)
 Narator       : id-ID-ArdiNeural (Microsoft Edge TTS, laki-laki)
-Resolusi      : 1920 × 1080 (Full HD)
+Resolusi      : 1920 × 1080 (Full HD, 25 fps)
 Format Output : Video_Demo_Alur_Kerja_SIPANGAN_ID.mp4
 ================================================================
 
@@ -26,21 +26,28 @@ kerentanan pangan secara objektif, lengkap dengan uji
 anti-duplikasi NIK guna menjamin validitas satu data warga."
 
 ------------------------------------------------------------
-SCENE 3 — Tab 3: Pasar Warga & Transaksi 100% P2P (0:33 – 0:50)
+SCENE 3 — Tab 3: Pasar Warga & Transaksi 100% P2P (0:33 – 0:52)
 ------------------------------------------------------------
 "Beralih ke Pasar Warga Cerdas, kecerdasan buatan memprediksi
 harga komoditas dalam Koridor Harga Adil. Tersedia pemindai
-kuitansi OCR otomatis. Saat transaksi dilakukan, seratus persen
-pembayaran langsung masuk seutuhnya ke dompet produsen lokal
+kuitansi OCR otomatis untuk mencatat panen. Pada katalog pasar,
+warga dapat membeli pangan secara langsung, di mana seratus
+persen pembayaran masuk seutuhnya ke dompet produsen lokal
 tanpa potongan platform."
 
-  [VISUAL: Scroll ke katalog produk #marketListingsGrid →
-   hover di kartu produk → klik "Beli Pangan" →
-   tampilkan modal konfirmasi (fee 0%) →
-   klik konfirmasi → notifikasi sukses transaksi]
+  [VISUAL LIVE DEMO:
+   1. Prediksi AI Time-series & batas Koridor Harga Adil
+   2. Pemindaian otomatis kuitansi panen melalui OCR
+   3. Scroll ke katalog produk #marketListingsGrid
+   4. Klik tombol "Beli Langsung (Konsumen RT 13)"
+   5. Modal Beli Langsung terbuka di tengah layar
+   6. Sorotan pada kalkulasi harga: 100% diterima produsen (Rp 0 fee)
+   7. Klik tombol "Konfirmasi & Bayar Langsung"
+   8. Notifikasi toast hijau: "Transaksi Berhasil! 100% pembayaran
+      masuk ke dompet produsen"]
 
 ------------------------------------------------------------
-SCENE 4 — Tab 4: AI Matching & Prediksi Surplus (0:50 – 1:01)
+SCENE 4 — Tab 4: AI Matching & Prediksi Surplus (0:52 – 1:04)
 ------------------------------------------------------------
 "Di tab AI Matching, algoritma multi-kriteria secara otomatis
 menyalurkan stok surplus panen petani langsung ke keluarga rentan
@@ -48,14 +55,14 @@ prioritas, didukung simulator proyeksi panen untuk mencegah
 pangan terbuang percuma."
 
 ------------------------------------------------------------
-SCENE 5 — Tab 5: Musyawarah Permintaan 1 SID 1 Suara (1:01 – 1:12)
+SCENE 5 — Tab 5: Musyawarah Permintaan 1 SID 1 Suara (1:04 – 1:15)
 ------------------------------------------------------------
 "Pada tab Musyawarah Permintaan, warga menjalankan demokrasi
 pangan melalui prinsip satu SID, satu suara untuk mengusulkan
 komoditas dan voting kebutuhan pangan bersama secara transparan."
 
 ------------------------------------------------------------
-SCENE 6 — Tab 6: Evaluasi Dampak & Buku Besar P2P (1:12 – 1:25)
+SCENE 6 — Tab 6: Evaluasi Dampak & Buku Besar P2P (1:15 – 1:28)
 ------------------------------------------------------------
 "Terakhir, dashboard Evaluasi Dampak menyajikan indikator
 penurunan biaya hidup warga dan peningkatan pendapatan petani.
@@ -63,7 +70,7 @@ Seluruh transaksi terekam abadi di Buku Besar Transaksi P2P
 yang terverifikasi dan terbuka."
 
 ------------------------------------------------------------
-SCENE 7 — Penutup & Kesimpulan (1:25 – 1:34)
+SCENE 7 — Penutup & Kesimpulan (1:28 – 1:37)
 ------------------------------------------------------------
 "SI-PANGAN ID mewujudkan kedaulatan, keadilan, dan ketahanan
 pangan berkelanjutan. Terima kasih."
@@ -72,7 +79,8 @@ pangan berkelanjutan. Terima kasih."
 CATATAN TEKNIS
 ================================================================
 - Semua narasi dibacakan oleh TTS Azure (id-ID-ArdiNeural, +2% rate)
-- Tidak ada penyebutan angka nominal transaksi dalam narasi
-- Platform 100% Zero-Profit: 0% fee, 0% potongan perantara
-- Setiap scene disinkronisasi tepat dengan timeline audio
+- Durasi total video: 96,66 detik (sesuai kriteria 1 s.d. 2 menit)
+- Urutan tampilan transisi halaman: Tab 1 -> Tab 2 -> Tab 3 -> Tab 4 -> Tab 5 -> Tab 6 -> Tab 1
+- Visualisasi transaksi pembelian P2P di Tab 3 terlaksana lengkap hingga notifikasi sukses
+- 100% Zero-Profit terverifikasi di seluruh alur sistem
 ================================================================
