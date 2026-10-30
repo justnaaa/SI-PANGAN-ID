@@ -87,18 +87,21 @@ III. PEMETAAN TEKNOLOGI: TEKNOLOGI APA DIGUNAKAN UNTUK APA DAN DI BAGIAN MANA?
    - Bagian: Seluruh label input, tombol aksi, dan navigasi bilah sisi.
 
 
-VI. PENJELASAN MENDALAM: MACHINE LEARNING FORECASTING & SURPLUS ENGINE
+IV. PENJELASAN MENDALAM: TEKNOLOGI OCR UNTUK APA DAN DI BAGIAN MANA?
 --------------------------------------------------------------------------------
-Selain K-NN untuk klasifikasi kerentanan, terdapat 3 modul Machine Learning & Cerdas lainnya di dalam prototipe:
+1. Untuk Apa OCR Digunakan?
+   - Digitalisasi Tanpa Ketik: Membantu pengurus PKK dan warga lanjut usia yang terbiasa mencatat kuitansi atau nota belanja secara fisik agar dapat langsung diubah menjadi data digital dalam hitungan detik.
+   - Ekstraksi Entitas Cerdas: Teks mentah dari hasil pemindaian kamera/foto diurai menggunakan algoritma Regex Parsing untuk menemukan nominal uang (Rp) dan mencocokkan nama penerima/toko ke profil Single Identity (SID-Pangan).
+   - Zero Server Cost & Privasi Terjamin: Pemrosesan gambar dilakukan 100% secara lokal melalui WebAssembly worker di komputer pengguna. Foto kuitansi tidak pernah diunggah ke server publik, sehingga menjamin kerahasiaan keuangan warga sesuai etika perlindungan data pribadi.
 
-1. AI Market Fluctuation & Price Trend Forecaster (Panel Atas Tab 4):
-   - Untuk Apa:
-     * Menganalisis pola deret waktu (Time-Series) fluktuasi harga 11 komoditas KWT, Perikanan, dan Ternak RT 13 (termasuk Kangkung, Bayam, Cabai, Lele Bioflok, Nila, Telur Ayam, Daging Ayam, Telur Bebek, dan Beras).
-     * Memproyeksikan estimasi harga 3 hari ke depan (H+1, H+2, H+3) berdasarkan rekaman 8 hari historis.
-     * Menyajikan "AI Actionable Advisory" berdasarkan skenario riil:
-       a. Skenario Surplus: Contoh memprediksi surplus +20 Kg Sayur Kangkung dan merekomendasikan pengalihan ke Koperasi Kelurahan Yosomulyo untuk menekan food loss < 5%.
-       b. Skenario Defisit: Contoh memprediksi defisit -30 Butir Telur Ayam dan merekomendasikan prioritas pasokan bagi peternak unggas lokal RT 13.
-   - Desain Kurva: Garis emerald solid untuk data historis dan garis amber putus-putus untuk proyeksi masa depan.
+2. Di Bagian Mana OCR Berada?
+   - Terletak di: Jendela Modal "Pindai Kuitansi (OCR)" yang dapat diakses melalui tombol hijau di Tab 2 (Single Identity) dan Tab 4 (Pasar Cerdas).
+   - Alur Kerja:
+     * Pengguna mengunggah foto nota/struk belanja pangan.
+     * Mesin Tesseract.js Worker menginisialisasi pustaka bahasa Indonesia (ind).
+     * Bilah kemajuan (Progress Bar) bergerak dinamis 0% - 100% menampilkan tahap rekognisi karakter.
+     * Hasil ekstraksi menampilkan teks mentah sekaligus kotak isian otomatis yang siap disimpan ke buku kas komunitas.
+
 
 V. PENJELASAN MENDALAM: TEKNOLOGI K-NN UNTUK APA DAN DI BAGIAN MANA?
 --------------------------------------------------------------------------------
@@ -133,13 +136,11 @@ Selain K-NN untuk klasifikasi kerentanan, terdapat 3 modul Machine Learning & Ce
 
 1. AI Market Fluctuation & Price Trend Forecaster (Panel Atas Tab 4):
    - Untuk Apa:
-     * Menganalisis pola deret waktu (Time-Series) fluktuasi harga 4 komoditas strategis Lampung:
-       1) Beras Premium Lokal (Ciherang/IR64): Tren stabil menguat perlahan (+1,9%).
-       2) Singkong / Ubi Kayu Panen Lokal: Tren stabil terkendali (+0,0%).
-       3) Jagung Manis Pekarangan: Tren fluktuatif musiman naik (+5,9%).
-       4) Sayur Bayam & Sayuran Hijau: Volatilitas tinggi karena panen melimpah turun (-6,3%).
-     * Memproyeksikan estimasi harga 3 hari ke depan (H+1, H+2, H+3) berdasarkan rekaman 7 hari historis (H-7 s.d. Hari Ini).
-     * Menyajikan "AI Actionable Advisory": Rekomendasi tindakan taktis bagi Petani/Produsen (misal: segera distribusikan bayam sebelum layu) dan bagi Konsumen RT 13 (misal: amankan stok beras sebelum potensi kenaikan minggu depan).
+     * Menganalisis pola deret waktu (Time-Series) fluktuasi harga komoditas strategis KWT, Perikanan, dan Ternak RT 13 (termasuk Sayur Kangkung, Bayam, Cabai Rawit, Lele Bioflok, Nila, Telur Ayam, Daging Ayam, Telur Bebek, dan Beras Ciherang).
+     * Memproyeksikan estimasi harga 3 hari ke depan (H+1, H+2, H+3) berdasarkan rekaman 8 hari historis (H-7 s.d. Hari Ini).
+     * Menyajikan "AI Actionable Advisory" berdasarkan skenario riil:
+       a. Skenario Surplus: Memprediksi surplus panen (misal: panen Kangkung/Beras) dan merekomendasikan pengalihan ke Koperasi Kelurahan Yosomulyo untuk menekan food loss < 5%.
+       b. Skenario Defisit: Memprediksi defisit kebutuhan konsumsi (misal: kebutuhan Telur Ayam) dan merekomendasikan prioritas pasokan bagi peternak pekarangan tetangga.
    - Desain Kurva: Garis emerald solid untuk data historis dan garis amber putus-putus untuk proyeksi masa depan.
 
 2. AI Surplus Prediction Engine (Tab 4 & Tab 5):
@@ -153,7 +154,7 @@ Selain K-NN untuk klasifikasi kerentanan, terdapat 3 modul Machine Learning & Ce
 3. Smart Food Market Matching Engine (Tab 4):
    - Untuk Apa: Menjodohkan pasokan hasil panen dengan keluarga penerima manfaat berdasarkan 4 parameter berkeadilan:
      1) Kesesuaian Gizi: Memprioritaskan komoditas tinggi mikronutrien untuk penanganan risiko stunting.
-     2) Keterjangkauan Harga: Menjamin harga beli di bawah pasar kota melalui subsidi kas komunitas.
+     2) Keterjangkauan Harga: Menjamin harga beli adil di bawah pasar kota melalui transaksi langsung P2P tanpa perantara dan bebas potongan komisi/fee (100% Zero-Profit).
      3) Jarak Terdekat: Memprioritaskan kebun terdekat di lingkungan RT 13 untuk menekan ongkos angkut.
      4) Kesegaran: Memprioritaskan panen terbaru dengan batas simpan optimal.
 
@@ -161,7 +162,7 @@ Selain K-NN untuk klasifikasi kerentanan, terdapat 3 modul Machine Learning & Ce
    - Untuk Apa: Menghindari manipulasi tengkulak dengan mengunci batas bawah harga beli pengepul dan batas atas harga pasar tradisional Kota Metro secara permanen (readonly dengan ikon gembok). Sistem memandu produsen menentukan harga di Zona Koridor Adil Komunitas melalui indikator dinamis (Gauge Bar).
 
 
-VIII. ALUR BISNIS TRANSAKSI 100% ZERO-PROFIT (PEMBERDAYAAN MURNI)
+VII. ALUR BISNIS TRANSAKSI 100% ZERO-PROFIT (PEMBERDAYAAN MURNI)
 --------------------------------------------------------------------------------
 1. Prinsip 100% Zero-Profit & Bebas Biaya Ekosistem (0% Fee):
    - Platform beroperasi secara nirlaba murni (Zero-Profit Community Platform) demi pemberdayaan ketahanan pangan komunitas.
@@ -179,7 +180,7 @@ VIII. ALUR BISNIS TRANSAKSI 100% ZERO-PROFIT (PEMBERDAYAAN MURNI)
    - Tab 1 dan Tab 6 menampilkan indikator makro "Total Nilai Transaksi Pangan Warga" (saat ini tercatat Rp 7.840.000) yang merefleksikan perputaran ekonomi pangan riil yang 100% diserap oleh produsen lokal warga RT 13.
 
 
-IX. KESIMPULAN KESIAPAN UNTUK PRESENTASI & PENGUJIAN
+VIII. KESIMPULAN KESIAPAN UNTUK PRESENTASI & PENGUJIAN
 --------------------------------------------------------------------------------
 Prototipe SI-PANGAN ID telah mengintegrasikan seluruh instrumen DeepTech for FoodTech secara utuh dan nyata. Tidak ada simulasi semu: OCR mengekstraksi teks nyata dari berkas foto struk, K-NN menghitung jarak Euclidean asli terhadap data latih warga, Chart.js menggambar kurva fluktuasi harga secara dinamis, dan Mesin Prediksi Surplus mengkalkulasi rasio distribusi panen secara real-time. Prototipe ini telah siap digunakan sebagai instrumen penelitian maupun presentasi kompetisi ilmiah.
 ================================================================================
