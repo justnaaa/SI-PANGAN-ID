@@ -155,7 +155,7 @@
 </head>
 
 <body
-    class="min-h-screen flex flex-col font-sans antialiased text-stone-900 selection:bg-forest-100 selection:text-forest-900 overflow-x-hidden">
+    class="min-h-screen flex flex-col font-sans antialiased text-stone-900 selection:bg-forest-100 selection:text-forest-900 overflow-x-clip">
 
     <!-- =========================================================================
          TOP BAR CONTEXT & PRIVACY CONTROL
@@ -247,7 +247,7 @@
              LEFT SIDEBAR NAVIGATION (DESKTOP + MOBILE DRAWER)
              ===================================================================== -->
         <aside id="mainSidebar"
-            class="no-print fixed inset-y-0 left-0 z-50 w-72 sm:w-80 bg-white border-r border-stone-200 transform -translate-x-full lg:translate-x-0 lg:static lg:z-10 lg:w-64 lg:border lg:rounded-2xl lg:shadow-xs p-5 flex flex-col justify-between transition-transform duration-300 ease-in-out overflow-y-auto lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)]">
+            class="no-print fixed inset-y-0 left-0 z-50 w-72 sm:w-80 bg-white border-r border-stone-200 transform -translate-x-full lg:translate-x-0 lg:sticky lg:top-20 xl:top-32 lg:self-start lg:shrink-0 lg:z-10 lg:w-64 lg:h-auto lg:border lg:rounded-2xl lg:shadow-xs p-5 flex flex-col justify-between gap-4 transition-transform duration-300 ease-in-out max-lg:overflow-y-auto">
             <div class="space-y-6">
                 <!-- Mobile Sidebar Close -->
                 <div class="flex items-center justify-between lg:hidden border-b border-stone-100 pb-3">
@@ -282,9 +282,9 @@
                             class="w-7 h-7 rounded-lg bg-forest-700 text-white flex items-center justify-center shrink-0 text-xs">
                             <i class="fa-solid fa-diagram-project"></i>
                         </div>
-                        <div>
-                            <span class="block">1. Alur & Arsitektur</span>
-                            <span class="text-[10px] opacity-80 block font-normal">5 Tahap & DeepTech Matrix</span>
+                        <div class="min-w-0">
+                            <span class="block leading-snug">1. Alur &amp; Arsitektur</span>
+                            <span class="text-[10px] opacity-80 block font-normal leading-tight">4 Pilar &amp; Demand-Driven</span>
                         </div>
                     </button>
 
@@ -294,9 +294,9 @@
                             class="w-7 h-7 rounded-lg bg-stone-100 text-stone-600 flex items-center justify-center shrink-0 text-xs">
                             <i class="fa-solid fa-id-card"></i>
                         </div>
-                        <div>
-                            <span class="block">2. Single Identity (SID)</span>
-                            <span class="text-[10px] text-stone-400 block font-normal">Buku Profil 40 KK PKM-PM</span>
+                        <div class="min-w-0">
+                            <span class="block leading-snug">2. Single Identity (SID)</span>
+                            <span class="text-[10px] text-stone-400 block font-normal leading-tight">Profil Kebutuhan 40 KK</span>
                         </div>
                     </button>
 
@@ -306,10 +306,9 @@
                             class="w-7 h-7 rounded-lg bg-stone-100 text-stone-600 flex items-center justify-center shrink-0 text-xs">
                             <i class="fa-solid fa-store"></i>
                         </div>
-                        <div>
-                            <span class="block">3. Pasar Warga & Surplus</span>
-                            <span class="text-[10px] text-stone-400 block font-normal">Kangkung, Sayur KWT &
-                                Telur</span>
+                        <div class="min-w-0">
+                            <span class="block leading-snug">3. Digital Inventory &amp; Pasar</span>
+                            <span class="text-[10px] text-stone-400 block font-normal leading-tight">Stok Panen &amp; Smart Market</span>
                         </div>
                     </button>
 
@@ -319,9 +318,9 @@
                             class="w-7 h-7 rounded-lg bg-stone-100 text-stone-600 flex items-center justify-center shrink-0 text-xs">
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
                         </div>
-                        <div>
-                            <span class="block">4. AI Matching & Prediksi</span>
-                            <span class="text-[10px] text-stone-400 block font-normal">Inklusi Pangan & Spillover</span>
+                        <div class="min-w-0">
+                            <span class="block leading-snug">4. Community AI</span>
+                            <span class="text-[10px] text-stone-400 block font-normal leading-tight">Prediksi &amp; Food Matching</span>
                         </div>
                     </button>
 
@@ -331,10 +330,9 @@
                             class="w-7 h-7 rounded-lg bg-stone-100 text-stone-600 flex items-center justify-center shrink-0 text-xs">
                             <i class="fa-solid fa-check-to-slot"></i>
                         </div>
-                        <div>
-                            <span class="block">5. Musyawarah Permintaan</span>
-                            <span class="text-[10px] text-stone-400 block font-normal">1 SID = 1 Suara & Katalog
-                                Warga</span>
+                        <div class="min-w-0">
+                            <span class="block leading-snug">5. Musyawarah Permintaan</span>
+                            <span class="text-[10px] text-stone-400 block font-normal leading-tight">E-Voting Sinyal Tanam</span>
                         </div>
                     </button>
 
@@ -344,10 +342,9 @@
                             class="w-7 h-7 rounded-lg bg-stone-100 text-stone-600 flex items-center justify-center shrink-0 text-xs">
                             <i class="fa-solid fa-chart-pie"></i>
                         </div>
-                        <div>
-                            <span class="block">6. Evaluasi Dampak</span>
-                            <span class="text-[10px] text-stone-400 block font-normal">5 KPIs, 2 Chart & Ledger
-                                Kas</span>
+                        <div class="min-w-0">
+                            <span class="block leading-snug">6. Evaluasi Dampak</span>
+                            <span class="text-[10px] text-stone-400 block font-normal leading-tight">KPI &amp; Buku Besar Transaksi</span>
                         </div>
                     </button>
                 </nav>
@@ -364,7 +361,7 @@
                         <span class="mono-num text-forest-700 font-bold" id="sidebarFeeBadge">0% Fee</span>
                     </div>
                     <p class="text-[10px] text-forest-700 leading-snug">
-                        100% hasil penjualan masuk langsung ke dompet produsen pangan warga tanpa potongan fee.
+                        Transaksi P2P warga RT 13 bebas potongan komisi (100% diterima produsen), sedangkan keberlanjutan operasional didukung layanan kurir komunitas dan bagi hasil pengelolaan surplus (spillover) oleh Koperasi.
                     </p>
                     <div class="pt-1 flex items-center justify-between text-[11px]">
                         <span class="text-stone-500 text-[10px]">Total Nilai Transaksi:</span>
@@ -405,11 +402,16 @@
                     </h2>
                     <p class="text-stone-600 text-sm sm:text-base leading-relaxed max-w-4xl">
                         SI-PANGAN ID mengintegrasikan <strong>Satu Identitas Tunggal Warga (Buku Profil Digital Satu
-                            Pintu 40 KK - Kelanjutan PKM-PM 2023)</strong> dengan <strong>Pasar Warga Komunitas &
-                            Lumbung RT 13</strong>. Sistem ini memotong rantai perantara tengkulak yang menekan harga
-                        petani pekarangan & KWT, memprediksi luapan surplus panen untuk dialihkan ke Koperasi Produsen
-                        Kelurahan Yosomulyo, serta menerapkan <strong>100% Transaksi Zero-Profit (Bebas Potongan Fee)</strong>
-                        guna menjamin seluruh hasil penjualan diterima utuh oleh produsen pangan lokal demi pemberdayaan murni.
+                            Pintu 40 KK - Kelanjutan PKM-PM 2023)</strong> dengan <strong>Pasar Warga Komunitas &amp;
+                            Lumbung RT 13</strong>. Mengubah pola produksi pangan komunitas dari sekadar memproduksi lalu
+                        mencari pembeli, menjadi mengetahui kebutuhan pasar terlebih dahulu melalui pemetaan Single
+                        Identity dan Musyawarah Permintaan. Sistem ini memperpendek rantai distribusi dan mengurangi
+                        ketergantungan pada perantara yang tidak memberi nilai tambah bagi petani pekarangan &amp; KWT,
+                        memprediksi luapan surplus panen untuk dialihkan ke Koperasi Produsen Kelurahan Yosomulyo, serta
+                        menerapkan <strong>0% Fee</strong> pada transaksi P2P internal RT — transaksi P2P warga RT 13
+                        bebas potongan komisi (100% diterima produsen), sedangkan keberlanjutan operasional ekosistem
+                        didukung melalui layanan kurir komunitas dan bagi hasil pengelolaan surplus panen (spillover)
+                        oleh Koperasi ke pasar eksternal.
                     </p>
                 </div>
 
@@ -426,7 +428,7 @@
                         </div>
                         <span
                             class="px-2.5 py-1 rounded bg-forest-50 text-forest-800 border border-forest-200 text-xs font-bold">
-                            TKT 5 Validasi Lapangan
+                            Purwarupa Fungsional — Siap Validasi Lapangan
                         </span>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
@@ -444,9 +446,11 @@
                             <p class="text-[11px] text-stone-600">Pekarangan, Kolam Bioflok & Ternak Unggas Aktif</p>
                         </div>
                         <div class="p-4 rounded-xl bg-forest-50/70 border border-forest-200/80 space-y-1">
-                            <span class="text-xs text-forest-700 font-semibold uppercase tracking-wider block">Total Nilai Transaksi Pangan Warga</span>
-                            <div id="tab1TotalTransaksi" class="serif-heading text-2xl font-bold text-forest-900 mono-num">Rp 7.840.000</div>
-                            <p class="text-[11px] text-stone-600">100% Diterima Produsen (Zero-Profit Platform)</p>
+                            <span class="text-xs text-forest-700 font-semibold uppercase tracking-wider block">Total
+                                Nilai Transaksi Pangan Warga</span>
+                            <div id="tab1TotalTransaksi"
+                                class="serif-heading text-2xl font-bold text-forest-900 mono-num">Rp 7.840.000</div>
+                            <p class="text-[11px] text-stone-600">0% Fee Transaksi P2P Warga (100% Diterima Produsen)</p>
                         </div>
                         <div class="p-4 rounded-xl bg-stone-50 border border-stone-200/80 space-y-1">
                             <span class="text-xs text-stone-600 font-semibold uppercase tracking-wider block">Target
@@ -464,9 +468,9 @@
                         class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-4">
                         <div>
                             <h3 class="serif-heading text-lg sm:text-xl font-bold text-stone-900">Alur Sirkularitas 5
-                                Tahap SI-PANGAN ID</h3>
-                            <p class="text-xs text-stone-500">Integrasi harmonis antara tata kelola data kependudukan
-                                dan pasar pangan adil</p>
+                                Tahap SI-PANGAN ID (4 Pilar Inovasi)</h3>
+                            <p class="text-xs text-stone-500">Integrasi harmonis kebutuhan rumah tangga dan pasar pangan
+                                berkeadilan berbasis permintaan</p>
                         </div>
                         <span class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-stone-100 text-stone-700">
                             Rantai Nilai Tertutup (Closed-Loop)
@@ -483,10 +487,11 @@
                                     class="mono-num text-xs font-bold px-2 py-0.5 rounded bg-forest-800 text-white">01</span>
                                 <i class="fa-solid fa-id-card-clip text-forest-600 text-sm"></i>
                             </div>
-                            <h4 class="font-bold text-stone-900 text-xs sm:text-sm">Pendataan Single Identity (SID)</h4>
+                            <h4 class="font-bold text-stone-900 text-xs sm:text-sm">Single Identity (SID) — Pemetaan
+                                Kebutuhan Rumah Tangga</h4>
                             <p class="text-[11px] text-stone-600 leading-snug">
-                                Registrasi 40 KK dengan hash NIK terenkripsi. Eliminasi 100% data ganda bansos dan
-                                pemetaan peran Produsen vs Konsumen.
+                                Registrasi 40 KK dengan hash NIK terenkripsi. Pencegahan data ganda bansos sekaligus
+                                pemetaan kebutuhan konsumsi serta peran Produsen dan Konsumen.
                             </p>
                             <span class="inline-block text-[10px] font-semibold text-forest-700">Kelanjutan PKM-PM
                                 2023</span>
@@ -500,10 +505,11 @@
                                     class="mono-num text-xs font-bold px-2 py-0.5 rounded bg-paddy-700 text-white">02</span>
                                 <i class="fa-solid fa-boxes-stacked text-paddy-600 text-sm"></i>
                             </div>
-                            <h4 class="font-bold text-stone-900 text-xs sm:text-sm">Pencatatan Stok & Panen</h4>
+                            <h4 class="font-bold text-stone-900 text-xs sm:text-sm">Digital Food Inventory — Pencatatan
+                                Stok &amp; Estimasi Panen</h4>
                             <p class="text-[11px] text-stone-600 leading-snug">
-                                Produsen KWT mencatatkan jadwal tanam, tebar benih, volume panen, harga adil, dan batas
-                                kesegaran.
+                                Produsen KWT mencatatkan jadwal tanam, tebar benih, volume stok, harga adil, dan batas
+                                kesegaran komoditas secara berkala.
                             </p>
                             <span class="inline-block text-[10px] font-semibold text-paddy-800">Sayur KWT, Ikan &
                                 Telur</span>
@@ -517,10 +523,11 @@
                                     class="mono-num text-xs font-bold px-2 py-0.5 rounded bg-forest-800 text-white">03</span>
                                 <i class="fa-solid fa-scale-balanced text-forest-600 text-sm"></i>
                             </div>
-                            <h4 class="font-bold text-stone-900 text-xs sm:text-sm">AI Food Matching & Prediksi</h4>
+                            <h4 class="font-bold text-stone-900 text-xs sm:text-sm">Community AI — Analisis Permintaan
+                                &amp; AI Food Matching</h4>
                             <p class="text-[11px] text-stone-600 leading-snug">
-                                Algoritma multi-faktor mencocokkan surplus sayur/beras dengan keluarga rentan terdekat
-                                sebelum kedaluwarsa.
+                                Algoritma multi-faktor menganalisis proyeksi kebutuhan, potensi surplus, dan mencocokkan
+                                pasokan dengan keluarga rentan terdekat sebelum penurunan mutu.
                             </p>
                             <span class="inline-block text-[10px] font-semibold text-forest-700">Skor Gizi, Harga &
                                 Jarak</span>
@@ -534,11 +541,15 @@
                                     class="mono-num text-xs font-bold px-2 py-0.5 rounded bg-forest-800 text-white">04</span>
                                 <i class="fa-solid fa-handshake text-forest-600 text-sm"></i>
                             </div>
-                            <h4 class="font-bold text-stone-900 text-xs sm:text-sm">Transaksi P2P Zero-Profit (0% Fee)</h4>
+                            <h4 class="font-bold text-stone-900 text-xs sm:text-sm">Smart Market — Transaksi Langsung &amp;
+                                Penyerapan Koperasi</h4>
                             <p class="text-[11px] text-stone-600 leading-snug">
-                                Konsumen membayar 100% langsung ke Produsen tanpa potongan fee/kas perantara. Pemberdayaan ekonomi warga murni.
+                                Transaksi P2P warga RT 13 bebas potongan komisi (100% diterima produsen), sedangkan
+                                keberlanjutan operasional ekosistem didukung melalui layanan kurir komunitas dan bagi
+                                hasil pengelolaan surplus panen (spillover) oleh Koperasi ke pasar eksternal.
                             </p>
-                            <span class="inline-block text-[10px] font-semibold text-forest-800">100% Hak Petani / Bebas Biaya</span>
+                            <span class="inline-block text-[10px] font-semibold text-forest-800">0% Fee Transaksi
+                                Warga</span>
                         </div>
 
                         <!-- Step 5 -->
@@ -568,8 +579,8 @@
                             <h3 class="serif-heading text-lg sm:text-xl font-bold text-stone-900">
                                 Matriks Pembuktian DeepTech SI-PANGAN ID vs Konvensional
                             </h3>
-                            <p class="text-xs text-stone-500">Bukti empiris keunggulan sistem cerdas yang telah teruji
-                                pada 40 KK RT 13 Yosomulyo</p>
+                            <p class="text-xs text-stone-500">Perbandingan rancangan keunggulan sistem cerdas purwarupa
+                                pada skenario 40 KK RT 13 Yosomulyo</p>
                         </div>
                         <span
                             class="px-2.5 py-1 rounded bg-forest-50 text-forest-800 border border-forest-200 text-xs font-bold">
@@ -585,7 +596,7 @@
                                     <th class="py-3 px-4 rounded-l-lg">Pilar DeepTech</th>
                                     <th class="py-3 px-4">Implementasi di SI-PANGAN ID</th>
                                     <th class="py-3 px-4">Pendekatan Konvensional (Sebelumnya)</th>
-                                    <th class="py-3 px-4 rounded-r-lg">Bukti Teruji di RT 13 Yosomulyo</th>
+                                    <th class="py-3 px-4 rounded-r-lg">Target Validasi di RT 13 Yosomulyo</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-stone-100">
@@ -670,10 +681,12 @@
                                         <span>4. Verified Ledger P2P 100% Zero-Profit</span>
                                     </td>
                                     <td class="py-3.5 px-4 text-stone-700">
-                                        Pencatatan transaksi P2P digital transparan tanpa potongan fee (0%). 100% nilai pembayaran konsumen langsung masuk ke dompet produsen lokal.
+                                        Pencatatan transaksi P2P digital transparan tanpa potongan fee (0%). 100% nilai
+                                        pembayaran konsumen langsung masuk ke dompet produsen lokal.
                                     </td>
                                     <td class="py-3.5 px-4 text-stone-500">
-                                        Platform komersial memotong komisi 10-20% atau tengkulak menekan harga panen di tingkat petani lokal.
+                                        Platform komersial memotong komisi 10-20% atau tengkulak menekan harga panen di
+                                        tingkat petani lokal.
                                     </td>
                                     <td class="py-3.5 px-4">
                                         <span
@@ -1773,12 +1786,13 @@
                     <!-- KPI 5 -->
                     <div class="bg-white p-4 rounded-xl border border-stone-200/80 shadow-xs space-y-1">
                         <div class="flex items-center justify-between text-stone-400">
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Total Nilai Transaksi Warga</span>
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Total Nilai
+                                Transaksi Warga</span>
                             <i class="fa-solid fa-coins text-paddy-600"></i>
                         </div>
                         <div id="kpiProdusenTurnover" class="serif-heading text-lg font-bold text-forest-900 mono-num">
                             Rp 7.840.000</div>
-                        <p class="text-[10px] text-stone-500">100% diterima produsen (bebas fee)</p>
+                        <p class="text-[10px] text-stone-500">0% Fee transaksi P2P warga (100% diterima produsen)</p>
                     </div>
                 </div>
 
@@ -1816,9 +1830,12 @@
                                 <h3 class="serif-heading text-base sm:text-lg font-bold text-stone-900">
                                     Alokasi Nilai Transaksi Pangan Komunitas
                                 </h3>
-                                <p class="text-xs text-stone-500">100% P2P ke produsen vs penyaluran bantuan pangan warga rentan</p>
+                                <p class="text-xs text-stone-500">Transaksi P2P warga RT 13 bebas potongan komisi (100%
+                                    diterima produsen), sedangkan keberlanjutan operasional ekosistem didukung melalui
+                                    layanan kurir komunitas dan bagi hasil pengelolaan surplus panen (spillover) oleh
+                                    Koperasi ke pasar eksternal.</p>
                             </div>
-                            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-forest-50 text-forest-800">Zero-Profit</span>
+                            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-forest-50 text-forest-800">0% Fee</span>
                         </div>
                         <div class="relative h-64 w-full flex items-center justify-center">
                             <canvas id="chartFundFlow"></canvas>
@@ -2074,7 +2091,8 @@
                 </div>
 
                 <div class="text-[10px] text-stone-500 leading-tight">
-                    * Transaksi langsung (P2P) 100% tanpa potongan fee ekosistem/kas perantara. 100% pembayaran dari konsumen masuk utuh ke dompet produsen lokal.
+                    * Transaksi langsung (P2P) 100% tanpa potongan fee ekosistem/kas perantara. 100% pembayaran dari
+                    konsumen masuk utuh ke dompet produsen lokal.
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-stone-100">
@@ -2150,7 +2168,8 @@
                 <div class="p-3 rounded-xl bg-forest-50 border border-forest-200 space-y-1">
                     <span class="font-bold text-forest-900 block text-[11px]">Dampak Ekonomi & Transaksi Adil:</span>
                     <ul class="list-disc list-inside text-[11px] text-forest-800 space-y-0.5">
-                        <li>Pak Hendra (Produsen) menerima <strong>Rp 5.000.000 (100%)</strong> langsung tanpa potongan fee.</li>
+                        <li>Pak Hendra (Produsen) menerima <strong>Rp 5.000.000 (100%)</strong> langsung tanpa potongan
+                            fee.</li>
                         <li>Platform 100% Zero-Profit: Seluruh nilai transaksi masuk ke dompet produsen lokal.</li>
                         <li>Zero gabah membusuk di gudang atau dijual rugi ke pengepul.</li>
                     </ul>
@@ -4151,7 +4170,7 @@
                         ` : `
                             <div class="font-semibold text-stone-800 text-xs">Konsumen RT 13</div>
                         `}
-                        <div class="text-[10px] text-stone-400 mt-0.5">${m.role === 'PRODUSEN' ? `Kapasitas: ${m.capacityKg} Kg/bln` : `Kebutuhan: ${m.monthlyFoodNeedKg} Kg/bln`}</div>
+                        <div class="text-[10px] text-stone-400 mt-0.5 flex flex-wrap items-center gap-1.5">${m.role === 'PRODUSEN' ? `<span>Kapasitas: ${m.capacityKg} Kg/bln</span><span class="px-1.5 py-0.5 rounded bg-forest-50 text-forest-700 border border-forest-200 font-semibold">Sinyal Pasar: Terukur</span>` : `Kebutuhan: ${m.monthlyFoodNeedKg} Kg/bln`}</div>
                     </td>
                     <td class="py-3 px-3.5 font-mono text-stone-600 text-[11px]">
                         ${getMemberDisplayNik(m)}
