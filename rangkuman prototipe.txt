@@ -9,105 +9,80 @@ I. STATUS PERKEMBANGAN PROTOTIPE & BENANG MERAH INOVASI
 --------------------------------------------------------------------------------
 1. Status Kesiapan Teknologi:
    Purwarupa Fungsional — Siap Validasi Lapangan.
-   Seluruh pilar fungsional telah terintegrasi dalam arsitektur aplikasi web satu berkas (Single-Page Application: index.html) yang berjalan reaktif di peramban (Client-Side Edge AI / Zero Server Dependency). Pengembangan berikutnya difokuskan pada pengujian serta validasi bersama petani, KWT, pelaku UMKM, dan rumah tangga di RT 13 Yosomulyo untuk mengukur efektivitas sistem secara empiris.
+   Seluruh pilar fungsional telah terintegrasi dalam arsitektur aplikasi web satu berkas (Single-Page Application: index.html) yang berjalan reaktif di peramban (Vanilla JS + Tailwind CSS CDN, tanpa proses build / kompatibel GitHub Pages). Pengembangan berikutnya difokuskan pada pengujian serta validasi bersama petani, KWT, pelaku UMKM, dan rumah tangga di RT 13 Yosomulyo untuk mengukur efektivitas sistem secara empiris.
 
 2. Nilai Inovasi Utama (Demand-Driven Production):
-   Kekuatan utama SI-PANGAN ID adalah mengubah pola produksi pangan komunitas dari sekadar memproduksi lalu mencari pembeli, menjadi mengetahui kebutuhan pasar terlebih dahulu melalui pemetaan Single Identity dan Musyawarah Permintaan, untuk kemudian menyesuaikan siklus produksi dan distribusi. Dengan demikian, platform ini bukan sekadar marketplace, melainkan instrumen pengambilan keputusan tata kelola pangan komunitas untuk memperpendek rantai distribusi dan mengurangi ketergantungan pada perantara yang tidak memberi nilai tambah.
+   Kekuatan utama SI-PANGAN ID adalah mengubah pola produksi pangan komunitas dari sekadar memproduksi lalu mencari pembeli, menjadi mengetahui kebutuhan pasar terlebih dahulu melalui pemetaan konsumsi bulanan per Single Identity (SID) dan Musyawarah E-Voting Warga, lalu AI menarik agregasi kebutuhan tersebut ke Panel Pemasok untuk disesuaikan produksi dan distribusinya via Smart Market. Dengan demikian, platform ini bukan sekadar marketplace, melainkan instrumen pengambilan keputusan tata kelola pangan komunitas untuk memperpendek rantai distribusi dan mengurangi ketergantungan pada perantara yang tidak memberi nilai tambah.
 
 3. Basis Data Skenario Uji Coba:
-   Purwarupa memuat skenario basis data 40 Kepala Keluarga (KK) RT 13 Yosomulyo (kelanjutan PKM-PM 2023) yang dipetakan ke kode Single Identity (SID), beserta simulasi geolokasi rukun tetangga, estimasi stok panen pekarangan, proyeksi tren harga, dan buku besar digital P2P yang transparan.
+   Purwarupa memuat skenario basis data 40 Kepala Keluarga (KK) RT 13 Yosomulyo (kelanjutan PKM-PM 2023) yang dipetakan ke kode Single Identity (SID), masing-masing dilengkapi rincian objek kebutuhan konsumsi bulanan per komoditas (needs: beras, sayur, telur, ikan — serta 10 KK acak membutuhkan Daging Ayam Kampung/Potong & Tempe Daun/Tahu Segar yang belum tersedia di Etalase Market), simulasi geolokasi RT, estimasi stok panen pekarangan, proyeksi tren harga, dan buku besar digital P2P.
 
 
 II. 4 PILAR MEKANISME UTAMA & FITUR AKTIF DI INDEX.HTML (6 MODUL TAB)
 --------------------------------------------------------------------------------
-Keempat mekanisme utama proposal (Single Identity -> Digital Food Inventory -> Community AI -> Smart Market) terimplementasi nyata di seluruh 6 tab fungsional pada index.html dengan menu navigasi sidebar yang ringkas dan responsif:
+Keempat mekanisme utama proposal (Single Identity -> Digital Food Inventory -> Community AI -> Smart Market) terimplementasi nyata di seluruh 6 tab fungsional pada index.html:
 
 1. Tab 1: 1. Alur & Arsitektur (#tab-konsep) [Sub-teks: 4 Pilar & Demand-Driven]
    - Status: Berfungsi penuh.
    - Fitur & Fungsi:
-     a. Narasi Pembuka & Benang Merah Proposal: Menegaskan perubahan pola dari memproduksi lalu mencari pembeli menjadi mengetahui kebutuhan pasar terlebih dahulu via Single Identity dan Musyawarah Permintaan, memperpendek rantai distribusi, serta skema 0% Fee transaksi P2P internal RT.
+     a. Narasi Pembuka & Benang Merah Proposal: Menegaskan perubahan pola dari memproduksi lalu mencari pembeli menjadi mengetahui kebutuhan pasar terlebih dahulu via Single Identity dan Musyawarah Permintaan, memperpendek rantai distribusi, serta skema 0% Fee transaksi P2P internal RT (Top Bar: "0% Fee P2P Warga").
      b. Kartu Target Kinerja Uji Coba (Purwarupa Fungsional — Siap Validasi Lapangan): Basis Data Warga (40 KK Terdata), Mitra Produsen (20 Produsen KWT), Total Nilai Transaksi Pangan Warga (Rp 7.840.000 dengan 0% Fee Transaksi P2P Warga), dan Target Transaksi (>= 50 Transaksi).
-     c. Alur Sirkularitas 5 Tahap (4 Pilar Inovasi):
-        * Tahap 01: Single Identity (SID) — Pemetaan Kebutuhan Rumah Tangga
-        * Tahap 02: Digital Food Inventory — Pencatatan Stok & Estimasi Panen
-        * Tahap 03: Community AI — Analisis Permintaan & AI Food Matching
-        * Tahap 04: Smart Market — Transaksi Langsung & Penyerapan Koperasi (0% Fee Transaksi Warga)
-        * Tahap 05: Evaluasi Dampak & Ledger
-     d. Matriks Pembuktian DeepTech vs Konvensional: Membandingkan rancangan keunggulan purwarupa terhadap pendekatan konvensional beserta target validasinya di RT 13 Yosomulyo.
+     c. Alur Sirkularitas 5 Tahap (4 Pilar Inovasi): Single Identity (SID), Digital Food Inventory, Community AI, Smart Market, serta Evaluasi Dampak & Ledger.
+     d. Matriks Pembuktian DeepTech vs Konvensional beserta Target Validasi di RT 13 Yosomulyo.
 
 2. Tab 2: 2. Single Identity (SID) (#tab-sid) [Sub-teks: Profil Kebutuhan 40 KK]
    - Status: Berfungsi penuh.
    - Fitur & Fungsi:
-     a. Direktori Profil 40 KK Warga: Buku Profil Digital Satu Pintu (Kelanjutan PKM-PM 2023) dengan data geolokasi, jumlah tanggungan, kebutuhan konsumsi, serta badge indikator "Sinyal Pasar: Terukur" di samping kapasitas produsen untuk menegaskan produksi berbasis data kebutuhan.
-     b. Pencarian Instan, Filter Peran/Kategori, serta Uji Anti-Duplikasi NIK (hash SHA-256).
-     c. Modal Pendaftaran Warga / Produsen Baru dengan kalkulator otomatis AI-DSS kerentanan keluarga berbasis algoritma k-NN.
-     d. Modal Pemindai Kuitansi / Catatan Panen (Tesseract.js v5 WebAssembly OCR) dan Modal Kartu Identitas Digital (Digital SID Card).
+     a. Direktori Profil 40 KK Warga dengan Desain Expandable Row:
+        - Kolom utama yang tampil bersih di awal: Kode SID, Identitas (Masked + NIK tersamar), Status Kerentanan (badge pill modern), dan tombol "Lihat Detail".
+        - Mengklik baris warga membuka panel detail (Expandable Row) berisi Peran & Alamat, Tanggungan Keluarga, Jarak ke Hub RT 13, serta Rincian Konsumsi Bulanan per Komoditas (Beras, Sayur, Telur, Ikan, serta Daging Ayam & Tempe/Tahu untuk 10 KK acak).
+        - Tabel dapat di-scroll horizontal (overflow-x-auto) pada layar mobile.
+     b. Registrasi Warga Baru (#formRegisterMember) dengan 6 input rincian kebutuhan komoditas (#regNeedBeras, #regNeedSayur, #regNeedTelur, #regNeedIkan, #regNeedAyam, #regNeedTempe) yang tersinkronisasi otomatis dengan #regFoodNeedKg, kalkulator AI-DSS k-NN, uji anti-duplikasi NIK (SHA-256), serta langsung memicu pembaruan generateAiDemands().
+     c. Modal Pemindai Kuitansi / Catatan Panen (Tesseract.js v5 OCR) dan Modal Kartu Detail SID.
 
 3. Tab 3: 3. Digital Inventory & Pasar (#tab-market) [Sub-teks: Stok Panen & Smart Market]
    - Status: Berfungsi penuh.
    - Fitur Unggulan:
-     a. Digital Food Inventory: Formulir pencatatan stok panen, jadwal tanam, tanggal panen, batas kesegaran (short shelf-life), serta pemindai foto buku panen/kuitansi via Tesseract.js v5 OCR.
-     b. AI Market Fluctuation & Price Trend Forecaster: Grafik interaktif Chart.js 11 titik waktu (H-7 s.d. H+3) beserta rekomendasi keputusan taktis untuk Produsen dan Konsumen.
-     c. Strict Dynamic Pricing & Koridor Harga Adil: Penguncian harga pembanding pengepul dan pasar eksternal beserta panduan Dynamic Pricing Gauge Bar agar harga berada pada koridor yang adil bagi produsen dan konsumen.
-     d. Smart Market (Transaksi P2P Langsung 0% Fee): Pembelian langsung antar-SID tanpa potongan komisi platform (100% masuk dompet produsen lokal) serta penyaluran luapan surplus panen (spillover) ke Koperasi Produsen Kelurahan Yosomulyo untuk menekan potensi food loss.
+     a. Digital Food Inventory: Formulir pencatatan stok panen, tanggal tanam, estimasi tanggal panen, batas kesegaran (short shelf-life), serta pemindai OCR.
+     b. AI Market Fluctuation & Price Trend Forecaster: Grafik interaktif Chart.js 11 titik waktu (H-7 s.d. H+3) beserta rekomendasi keputusan untuk Produsen dan Konsumen.
+     c. Strict Dynamic Pricing & Koridor Harga Adil: Penguncian Batas Harga Pengepul dan Batas Harga Pasar dengan penonjolan Harga Komunitas RT 13 agar bebas potongan perantara pihak ketiga.
+     d. Smart Market (Transaksi P2P Langsung 0% Fee):
+        - Menerima publikasi otomatis item baru dari aksi "Ambil Alih Kuota" pemasok di Tab 5 dengan label "Tersedia • Disuplai oleh [Nama Pemasok]".
+        - Pembelian langsung warga (handleExecuteBuy) mengurangi stok etalase, meneruskan 100% pembayaran ke dompet produsen, otomatis mencatat log ke Linimasa Distribusi Tab 5 serta Buku Besar Tab 6, dan bila stok mencapai 0 Kg akan mengembalikan komoditas tersebut ke antrean Panel Pemasok Tab 5.
+        - Penyaluran luapan surplus panen (spillover) ke Koperasi Produsen Kelurahan Yosomulyo untuk menekan potensi food loss.
 
 4. Tab 4: 4. Community AI (#tab-matching) [Sub-teks: Prediksi & Food Matching]
    - Status: Berfungsi penuh.
    - Fitur Unggulan:
-     a. Mesin Pencocokan Cerdas (AI Food Matching 4 Parameter): Menjodohkan stok pasokan lokal dengan keluarga rentan prioritas berdasarkan bobot multi-kriteria (Kesesuaian Gizi, Keterjangkauan Harga, Jarak Terdekat, dan Kesegaran) menggunakan rotasi berkeadilan (Round-Robin).
-     b. Simulator AI Surplus Prediction Engine: Memproyeksikan keseimbangan pasokan panen vs daya serap lokal (600 Kg/40 KK) dan mengidentifikasi potensi surplus/defisit lebih awal (3 skenario uji cepat: Surplus Kangkung +20 Kg, Surplus Beras +400 Kg, Defisit Telur Ayam -30 Butir).
+     a. Mesin Pencocokan Cerdas (AI Food Matching 4 Parameter): Menjodohkan stok pasokan lokal dengan keluarga rentan prioritas berdasarkan bobot multi-kriteria (Gizi, Harga, Jarak, Kesegaran) menggunakan rotasi Round-Robin.
+     b. Simulator AI Surplus Prediction Engine: Memproyeksikan keseimbangan pasokan panen vs daya serap lokal (Surplus Sayur +20 Kg, Defisit Telur -30 Butir, Surplus Beras +400 Kg).
 
-5. Tab 5: 5. Musyawarah Permintaan (#tab-musyawarah) [Sub-teks: E-Voting Sinyal Tanam]
+5. Tab 5: 5. Musyawarah & Transparansi (#tab-musyawarah) [Sub-teks: E-Voting Sinyal Tanam]
    - Status: Berfungsi penuh.
    - Fitur & Fungsi:
-     a. Participatory Demand Forecasting (1 SID = 1 Suara): Papan pemungutan suara dan pengajuan komoditas kebutuhan keluarga warga sebagai sinyal pasar terbuka untuk memandu produsen pekarangan menentukan jenis serta volume produksi yang tepat sasaran (atau mandat pasok koperasi untuk komoditas Defisit Lokal).
-     b. Form Admin Master Catalog untuk membuka inisiatif sinyal permintaan komoditas baru.
+     a. Dashboard Musyawarah & Transparansi Distribusi Pangan:
+        - 3 Card Ringkasan Overview: Progres Distribusi Bulan Ini (85% + Progress Bar dinamis), Dana Kas Swadaya Terpakai (Rp 1.450.000), dan Status Surplus/Defisit (badge dinamis kuning Warning / hijau Aman).
+        - Linimasa Distribusi Real-Time (#musyawarahTimelineList): Log vertikal penyaluran dan transaksi Market (0% Fee) terbaru lengkap dengan ikon checkmark hijau, waktu relatif, dan deskripsi per SID.
+        - Forum Intervensi "Kendala & Pengalihan Kuota": Alert Card kekurangan 5kg Sayur Kangkung dari KWT Sumber Rejeki dengan tombol "Ambil Alih Kuota" yang otomatis memperbarui progress bar, badge status menjadi Aman, dan mencatat ke Linimasa.
+     b. Panel Kelola Distribusi Pemasok (AI Demand-to-Supplier Engine):
+        - Fungsi generateAiDemands() mengagregasi kebutuhan bulanan seluruh 40+ SID di Tab 2 dan menyaring hanya komoditas yang total kebutuhannya > 0 serta stoknya di Market Tab 3 kosong/belum ada (pada kondisi awal otomatis menampilkan Daging Ayam Kampung/Potong 28 Kg dari 10 KK dan Tempe Daun & Tahu Segar 31 Kg dari 10 KK).
+        - Terintegrasi dengan Ambang Batas E-Voting (VOTE_THRESHOLD = 10): item E-Voting dengan suara >= 10 dan belum tersedia di Market otomatis berubah status menjadi "Menunggu Pemasok" serta diinjeksi ke window.appState.aiAggregatedDemands dengan properti source: 'voting' dan badge api "🔥 Hasil Voting Warga".
+        - Mengklik "Ambil Alih Kuota" pada panel ini otomatis menerbitkan komoditas tersebut ke Market Tab 3 berstatus Tersedia ("Disuplai oleh [Nama Pemasok]") untuk dibeli oleh warga.
+     c. Papan Musyawarah Permintaan Konsumen (E-Voting 1 SID = 1 Suara) & Form Admin Master Catalog (#formAddDemandCatalog): Warga tetap dapat mengajukan dan memvoting komoditas di luar tarikan SID rutin (misal Tepung Terigu & Gula Pasir dimulai pada 9/10 suara untuk demo langsung penembusan threshold 10 suara).
 
 6. Tab 6: 6. Evaluasi Dampak (#tab-dampak) [Sub-teks: KPI & Buku Besar Transaksi]
    - Status: Berfungsi penuh.
    - Fitur & Fungsi:
-     a. 5 KPI Dampak Agregat: Total Pangan Tersalurkan (624 Kg), Rasio Surplus Terserap (89,2%), Biaya & Jarak Rata-rata (0,38 km, ongkir rata-rata Rp 1.250), Penerima Bantuan (5 KK klaster rentan prioritas), dan Total Nilai Transaksi Warga (Rp 7.840.000 — 0% Fee transaksi P2P warga).
-     b. 2 Grafik Chart.js Interaktif: Grafik Penyerapan Panen Lokal vs Alokasi Surplus Pasar Luar (#chartSurplusAbsorption) dan Alokasi Nilai Transaksi Pangan Komunitas (#chartFundFlow).
-     c. Buku Besar Transaksi & Distribusi Pangan Terverifikasi (Ledger): Audit mutasi P2P antar-SID dan penyaluran koperasi secara transparan.
+     a. 5 KPI Dampak Agregat: Total Pangan Tersalurkan (624 Kg), Rasio Surplus Terserap (89,2%), Biaya & Jarak Rata-rata (0,38 km, ongkir rata-rata Rp 1.250), Penerima Bantuan (5 KK prioritas), dan Total Nilai Transaksi Warga (Rp 7.840.000 — 0% Fee transaksi P2P warga).
+     b. 2 Grafik Chart.js Interaktif (#chartSurplusAbsorption dan #chartFundFlow) serta Buku Besar Transaksi Terverifikasi (tabel overflow-x-auto).
 
 
-III. PEMETAAN TEKNOLOGI & TATA LETAK RESPONSIF
+III. SKEMA EKONOMI & KEUNGGULAN ARSITEKTUR
 --------------------------------------------------------------------------------
-1. HTML5 Semantik & Tailwind CSS (via CDN):
-   - Struktur antarmuka 6 tab dan 6 modal interaktif dengan palet organik bersih (forest, paddy, stone).
-   - Sidebar desktop menyesuaikan tinggi isi secara alami (tanpa pembatasan max-height/overflow internal) dan menempel rapi (sticky top-20) tanpa menumpuk konten utama, sedangkan pada layar kecil/mobile menggunakan drawer lipat (hamburger menu) yang responsif.
-2. Vanilla JavaScript (ES6+):
-   - Menggerakkan manajemen state reaktif (window.appState), validasi koridor harga, filter/pencarian tabel SID, simulasi alokasi & prediksi surplus, dan kalkulasi ledger tanpa backend eksternal.
-3. Chart.js v4 (via CDN):
-   - Grafik tren harga 11 titik waktu (#chartMarketFluctuation di Tab 3), serapan panen vs spillover (#chartSurplusAbsorption di Tab 6), dan alokasi nilai transaksi (#chartFundFlow di Tab 6).
-4. Tesseract.js v5 WebAssembly Engine (via CDN):
-   - Pemrosesan OCR in-browser (tanpa unggah ke server publik) pada modal #modalOcrScan (dapat dibuka dari Tab 2 dan Tab 3) beserta 2 tombol skenario sampel catatan panen untuk demo cepat.
-5. Font Awesome 6 (via CDN):
-   - Ikonografi antarmuka, status verifikasi, dan indikator visual.
-
-
-IV. PENJELASAN ALGORITMA CERDAS (AI-DSS, FORECASTING & SURPLUS)
---------------------------------------------------------------------------------
-1. Klasifikasi Kerentanan Keluarga (k-NN, k = 3):
-   - Menghitung skor kerentanan berbasis Euclidean Distance dengan Min-Max Scaling pada 4 fitur (pendapatan per kapita, jumlah tanggungan, kebutuhan pangan bulanan, rasio pengeluaran pangan) terhadap basis data warga untuk menghasilkan klasifikasi objektif: RENTAN_PRIORITAS, WASPADA, dan MANDIRI.
-   - Berada pada modal #modalAiScoring dan fungsi otomatis calculateAiVulnerability() di Tab 2.
-2. Time-Series Price & Advisory Forecaster:
-   - Memvisualisasikan data historis (H-7 s.d. Hari Ini) dan proyeksi 3 hari ke depan (H+1 s.d. H+3) disertai rekomendasi aksi untuk produsen dan konsumen (Tab 3).
-3. Community AI Surplus Prediction & Multi-Criteria Food Matching:
-   - Memprediksi kelebihan pasokan terhadap serapan lokal agar surplus dapat dialihkan ke Koperasi Produsen sebelum mutu turun, serta menjodohkan paket pangan bergizi ke rumah tangga rentan berdasarkan skor Gizi, Harga, Jarak, dan Kesegaran (Tab 4).
-
-
-V. SKEMA EKONOMI: 0% FEE P2P WARGA & MODEL BISNIS SOSIAL BERKELANJUTAN
---------------------------------------------------------------------------------
-1. 0% Fee (Transaksi P2P Internal RT 13):
-   - Transaksi P2P warga RT 13 bebas potongan komisi (100% diterima produsen langsung ke walletEarned produsen), guna memaksimalkan nilai ekonomi hasil produksi petani pekarangan dan KWT serta menjaga keterjangkauan harga bagi konsumen warga.
-2. Keberlanjutan Operasional & Potensi Hilirisasi Koperasi:
-   - Keberlanjutan operasional ekosistem didukung melalui layanan kurir komunitas dan bagi hasil pengelolaan surplus panen (spillover) oleh Koperasi ke pasar eksternal serta kemitraan antarkelompok produsen.
-3. Pencatatan Buku Besar (Verified Ledger P2P):
-   - Buku besar transaksi mencatat mutasi P2P murni antar-SID serta penyaluran surplus/bantuan secara terbuka dan teraudit.
-
-
-VI. KESIMPULAN KESIAPAN PENGUJIAN & PRESENTASI
---------------------------------------------------------------------------------
-Purwarupa fungsional SI-PANGAN ID pada index.html telah mengintegrasikan seluruh mekanisme inti (Single Identity, Digital Food Inventory, Community AI, Smart Market, dan Musyawarah Permintaan) dalam satu aplikasi interaktif yang siap didemonstrasikan serta dilanjutkan ke tahap pengujian dan validasi lapangan bersama petani, KWT, pelaku UMKM, koperasi, dan rumah tangga di RT 13 Kelurahan Yosomulyo.
+1. 0% Fee P2P Warga & Keberlanjutan Koperasi:
+   - Transaksi P2P internal RT 13 bebas potongan komisi (100% diterima produsen langsung ke walletEarned), sedangkan keberlanjutan operasional didukung layanan kurir komunitas dan bagi hasil pengelolaan surplus panen (spillover) oleh Koperasi Produsen Kelurahan Yosomulyo ke pasar eksternal.
+2. Antarmuka Modern & Responsif:
+   - Menggunakan Tailwind CSS CDN bergaya shadcn/ui (header tabel bg-slate-50, border tipis border-slate-200, shadow-sm, pill status modern, tombol aksi gradien emerald, expandable row Tab 2, serta inline SVG favicon logo SI-PANGAN ID).
+3. Verifikasi Kualitas Terbaru:
+   - Seluruh blok <script> inline lulus pengecekan sintaks (node --check), dan seluruh alur data SID -> AI Demand Engine -> E-Voting Threshold -> Ambil Alih Kuota ke Market -> Pembelian Warga -> Linimasa Tab 5 teruji end-to-end dengan Node VM.
 ================================================================================
