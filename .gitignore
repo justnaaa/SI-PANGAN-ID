@@ -1,3 +1,14 @@
+# Dependencies
+node_modules/
+
+# Production build outputs
+dist/
+.vercel/
+
+# User Private Documentation & Summaries Folder (Locked from Git)
+Ringkasan-dan-Penjelasan/
+[Rr]ingkasan-[Dd]an-[Pp]enjelasan/
+
 # Operating System Files
 Thumbs.db
 ehthumbs.db
