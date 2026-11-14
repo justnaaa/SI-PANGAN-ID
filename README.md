@@ -60,6 +60,7 @@ Proyek ini telah dikonfigurasi dengan `vercel.json` dan Vite, sehingga dapat lan
 - **Styling**: Tailwind CSS
 - **Visualisasi & Analisis**: Chart.js
 - **DeepTech On-Device AI**: Tesseract.js (WebAssembly Neural Engine untuk Optical Character Recognition nota belanja offline tanpa server eksternal)
+- **PWA (Progressive Web App)**: Web App Manifest, Service Worker dengan offline cache, dan dukungan instalasi 1-klik di Android, iOS, Windows, dan macOS.
 - **Logika & Fitur**:
   - Tab 1: Input Konsumsi (Manual & OCR Struk Wasm)
   - Tab 2: Dashboard SID Warga & Analisis Komoditas (Piramida Kebutuhan, Detail Konsumsi per KK)

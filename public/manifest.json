@@ -1,0 +1,68 @@
+{
+  "id": "/",
+  "name": "SI-PANGAN ID - Ketahanan Pangan Komprehensif",
+  "short_name": "SI-PANGAN ID",
+  "description": "Civic-Tech & Agri-Hub Ketahanan Pangan Komprehensif Berbasis Single Identity (SID) & Komunitas",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#064e3b",
+  "theme_color": "#15803d",
+  "lang": "id-ID",
+  "dir": "ltr",
+  "categories": [
+    "food",
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard Single Identity (SID)",
+      "short_name": "SID 40 KK",
+      "description": "Buka data profil dan kebutuhan pangan 40 KK",
+      "url": "/#tab-sid",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Pasar Komunitas & E-Voting",
+      "short_name": "Pasar Warga",
+      "description": "Lihat etalase stok pangan dan voting kebutuhan",
+      "url": "/#tab-market",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Musyawarah & AI Pemasok",
+      "short_name": "Musyawarah",
+      "description": "Kelola distribusi kuota dan buku besar transaksi",
+      "url": "/#tab-musyawarah",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

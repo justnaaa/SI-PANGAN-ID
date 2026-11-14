@@ -10,6 +10,17 @@
     <meta name="description"
         content="Platform cerdas berbasis Single Identity (SID-Pangan) untuk pasar pangan komunitas, penyerapan surplus panen petani, dan jaminan inklusi pangan warga rentan di RT 13 Yosomulyo, Kota Metro, Lampung.">
 
+    <!-- PWA & Mobile Web App Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#15803d">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SI-PANGAN ID">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
+
     <!-- Google Fonts: Plus Jakarta Sans (UI), Fraunces (Editorial Headers), JetBrains Mono (Metrics & ID) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -358,6 +369,33 @@
                 </nav>
             </div>
 
+            <!-- Sidebar PWA Download / Install Card (Side Bar 1) -->
+            <div id="sidebarPwaCard" class="p-3.5 rounded-xl bg-gradient-to-br from-forest-800 to-forest-900 text-white shadow-xs border border-forest-700/70 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-forest-700/80 text-[10px] font-bold text-forest-200">
+                        <i class="fa-solid fa-mobile-screen-button text-amber-300"></i> PWA App
+                    </span>
+                    <span id="sidebarPwaStatusBadge" class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30">Siap Pasang</span>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-cloud-arrow-down text-emerald-400"></i> Unduh / Pasang Aplikasi
+                    </h4>
+                    <p class="text-[10px] text-forest-200 leading-snug mt-1">
+                        Akses cepat 1-klik di layar utama HP/PC, hemat kuota &amp; berjalan offline.
+                    </p>
+                </div>
+                <div class="flex items-center gap-1.5 pt-0.5">
+                    <button id="sidebarPwaInstallBtn" onclick="triggerPwaInstall()" class="flex-1 flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-forest-950 font-bold text-xs shadow-xs transition-all">
+                        <i class="fa-solid fa-download text-[11px]"></i>
+                        <span id="sidebarPwaBtnText">Pasang Sekarang</span>
+                    </button>
+                    <button onclick="showPwaGuideModal()" title="Panduan Pasang PWA" class="p-2 rounded-lg bg-forest-700/90 hover:bg-forest-600 text-forest-100 text-xs transition-colors">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </button>
+                </div>
+            </div>
+
             <!-- Sidebar Bottom: Sustainability & Community Fund Box -->
             <div class="pt-4 border-t border-stone-200/80 space-y-3">
                 <div class="p-3 rounded-xl bg-forest-50 border border-forest-200/70 space-y-1.5">
@@ -424,6 +462,48 @@
                         didukung melalui layanan kurir komunitas dan bagi hasil pengelolaan surplus panen (spillover)
                         oleh Koperasi ke pasar eksternal.
                     </p>
+                </div>
+
+                <!-- Prominent PWA Hero Download Banner (Halaman Beranda 1) -->
+                <div id="homePwaBanner" class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-forest-900 via-forest-800 to-emerald-900 text-white p-5 sm:p-6 border border-emerald-500/30 shadow-md">
+                    <div class="absolute -right-12 -top-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
+                        <div class="flex items-start sm:items-center gap-4 min-w-0">
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-forest-600 text-forest-950 flex items-center justify-center shrink-0 shadow-lg text-2xl font-black ring-4 ring-emerald-400/20">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                            </div>
+                            <div class="space-y-1.5 min-w-0">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 text-[11px] font-bold border border-emerald-400/30 flex items-center gap-1">
+                                        <i class="fa-solid fa-bolt text-amber-300"></i> PWA App
+                                    </span>
+                                    <span id="homePwaStatusBadge" class="px-2 py-0.5 rounded-full bg-forest-700/80 text-forest-200 text-[11px] font-medium border border-forest-600">
+                                        Android • iOS • Windows • Mac
+                                    </span>
+                                    <span class="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
+                                        <i class="fa-solid fa-wifi text-[10px]"></i> Bekerja Offline
+                                    </span>
+                                </div>
+                                <h3 class="serif-heading text-lg sm:text-xl font-bold text-white leading-tight">
+                                    Unduh &amp; Pasang Aplikasi SI-PANGAN ID di Layar Utama HP Anda
+                                </h3>
+                                <p class="text-xs sm:text-sm text-forest-200 leading-relaxed max-w-2xl">
+                                    Akses cepat 1-klik tanpa repot membuka browser, hemat kuota internet hingga 80%, dan data pangan 40 KK tetap dapat diakses saat koneksi internet terputus.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0 w-full md:w-auto">
+                            <button onclick="showPwaGuideModal()" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-forest-800/90 hover:bg-forest-700 text-forest-100 text-xs sm:text-sm font-semibold border border-forest-600/70 transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-circle-question text-forest-300"></i>
+                                <span>Panduan Pasang</span>
+                            </button>
+                            <button id="homePwaInstallBtn" onclick="triggerPwaInstall()" class="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 active:scale-[0.98] text-forest-950 text-xs sm:text-sm font-bold shadow-lg shadow-emerald-950/40 transition-all flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-download text-sm"></i>
+                                <span id="homePwaBtnText">Unduh &amp; Pasang Sekarang</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Sasaran Pengguna & Target Kinerja Uji Coba Proposal -->
@@ -2959,6 +3039,120 @@
                         Gunakan Data untuk Posting Panen Baru
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         PWA INSTALLATION GUIDE MODAL (MULTI-PLATFORM)
+         ========================================================================= -->
+    <div id="modalPwaGuide"
+        class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full border border-stone-200 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <!-- Modal Header -->
+            <div class="px-5 py-4 bg-gradient-to-r from-forest-900 via-forest-800 to-emerald-900 text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-400 text-forest-950 flex items-center justify-center font-bold text-base shadow-xs">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm sm:text-base leading-tight">Panduan Pasang Aplikasi (PWA)</h3>
+                        <p class="text-[11px] text-emerald-200">Akses cepat &amp; hemat kuota di layar utama</p>
+                    </div>
+                </div>
+                <button onclick="closePwaGuideModal()" class="p-1.5 rounded-lg text-stone-300 hover:text-white hover:bg-white/10 transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-5 space-y-4 text-xs">
+                <!-- Platform Tabs -->
+                <div class="flex rounded-xl bg-stone-100 p-1 border border-stone-200 gap-1">
+                    <button id="pwaTabAndroidBtn" onclick="switchPwaGuideTab('pwaTabAndroid')" class="flex-1 py-1.5 px-2 rounded-lg font-bold text-center transition bg-forest-800 text-white border border-forest-700 flex items-center justify-center gap-1.5">
+                        <i class="fa-brands fa-android text-emerald-400"></i> Android
+                    </button>
+                    <button id="pwaTabIosBtn" onclick="switchPwaGuideTab('pwaTabIos')" class="flex-1 py-1.5 px-2 rounded-lg font-bold text-center transition bg-stone-100 text-stone-600 hover:bg-stone-200 flex items-center justify-center gap-1.5">
+                        <i class="fa-brands fa-apple"></i> iPhone / iPad
+                    </button>
+                    <button id="pwaTabDesktopBtn" onclick="switchPwaGuideTab('pwaTabDesktop')" class="flex-1 py-1.5 px-2 rounded-lg font-bold text-center transition bg-stone-100 text-stone-600 hover:bg-stone-200 flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-laptop"></i> PC / Laptop
+                    </button>
+                </div>
+
+                <!-- Android Content -->
+                <div id="pwaTabAndroidContent" class="space-y-3">
+                    <div class="p-3 rounded-xl bg-forest-50 border border-forest-200 space-y-2">
+                        <h4 class="font-bold text-forest-900 flex items-center gap-1.5 text-xs">
+                            <i class="fa-solid fa-circle-check text-forest-600"></i> Cara Pasang di HP Android (Google Chrome):
+                        </h4>
+                        <ol class="list-decimal list-inside space-y-1.5 text-stone-700 leading-relaxed text-[11px] pl-1">
+                            <li>Buka website ini menggunakan <strong>Google Chrome</strong> di HP Anda.</li>
+                            <li>Klik tombol <strong>"Pasang Sekarang"</strong> di bawah ini jika muncul.</li>
+                            <li>Jika tombol belum muncul, ketuk ikon <strong>titik tiga (⋮)</strong> di pojok kanan atas browser.</li>
+                            <li>Pilih menu <strong>"Tambahkan ke Layar Utama"</strong> (Add to Home screen) atau <strong>"Instal Aplikasi"</strong>.</li>
+                            <li>Ketuk <strong>"Instal"</strong> untuk konfirmasi. Ikon SI-PANGAN ID akan otomatis muncul di layar utama HP Anda.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- iOS Content -->
+                <div id="pwaTabIosContent" class="hidden space-y-3">
+                    <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 space-y-2">
+                        <h4 class="font-bold text-amber-900 flex items-center gap-1.5 text-xs">
+                            <i class="fa-brands fa-apple text-amber-700"></i> Cara Pasang di iPhone / iPad (Safari):
+                        </h4>
+                        <ol class="list-decimal list-inside space-y-1.5 text-stone-700 leading-relaxed text-[11px] pl-1">
+                            <li>Buka website ini menggunakan browser <strong>Safari</strong> (bukan Chrome di iOS).</li>
+                            <li>Ketuk tombol <strong>Bagikan / Share</strong> (ikon kotak dengan tanda panah ke atas <i class="fa-solid fa-arrow-up-from-bracket text-stone-600"></i> di bilah bawah).</li>
+                            <li>Gulir ke bawah dan pilih menu <strong>"Tambahkan ke Layar Utama"</strong> (Add to Home Screen).</li>
+                            <li>Ketuk <strong>"Tambah"</strong> di pojok kanan atas.</li>
+                            <li>Aplikasi siap dibuka langsung dari layar utama tanpa tampilan bar browser Safari!</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- Desktop Content -->
+                <div id="pwaTabDesktopContent" class="hidden space-y-3">
+                    <div class="p-3 rounded-xl bg-blue-50 border border-blue-200 space-y-2">
+                        <h4 class="font-bold text-blue-900 flex items-center gap-1.5 text-xs">
+                            <i class="fa-solid fa-desktop text-blue-700"></i> Cara Pasang di Laptop / Komputer (Chrome / Edge):
+                        </h4>
+                        <ol class="list-decimal list-inside space-y-1.5 text-stone-700 leading-relaxed text-[11px] pl-1">
+                            <li>Gunakan browser <strong>Google Chrome</strong> atau <strong>Microsoft Edge</strong>.</li>
+                            <li>Perhatikan sisi kanan bilah alamat (URL bar), klik ikon <strong>Instal</strong> (berbentuk komputer dengan panah ke bawah <i class="fa-solid fa-download text-stone-600"></i>).</li>
+                            <li>Atau klik menu titik tiga (⋮) &gt; <strong>"Simpan dan bagikan"</strong> &gt; <strong>"Instal SI-PANGAN ID"</strong>.</li>
+                            <li>Aplikasi akan berjalan di jendela terpisah yang bersih dan cepat layaknya software desktop.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- PWA Features Highlight -->
+                <div class="grid grid-cols-3 gap-2 text-center pt-1 border-t border-stone-100">
+                    <div class="p-2 rounded-lg bg-stone-50 border border-stone-100">
+                        <i class="fa-solid fa-bolt text-amber-500 text-sm"></i>
+                        <p class="font-bold text-[10px] text-stone-800 mt-0.5">1-Klik Buka</p>
+                    </div>
+                    <div class="p-2 rounded-lg bg-stone-50 border border-stone-100">
+                        <i class="fa-solid fa-wifi text-emerald-600 text-sm"></i>
+                        <p class="font-bold text-[10px] text-stone-800 mt-0.5">Offline Ready</p>
+                    </div>
+                    <div class="p-2 rounded-lg bg-stone-50 border border-stone-100">
+                        <i class="fa-solid fa-shield-halved text-blue-600 text-sm"></i>
+                        <p class="font-bold text-[10px] text-stone-800 mt-0.5">Aman &amp; Ringan</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-stone-50 border-t border-stone-200 flex items-center justify-between gap-3">
+                <button onclick="closePwaGuideModal()" class="px-4 py-2 rounded-xl bg-white border border-stone-300 text-stone-700 font-bold hover:bg-stone-100 text-xs transition">
+                    Tutup
+                </button>
+                <button onclick="triggerPwaInstall(); closePwaGuideModal();" class="flex-1 py-2 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 active:scale-[0.98] text-forest-950 font-bold text-xs shadow-md transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i>
+                    <span>Coba Pasang Otomatis</span>
+                </button>
             </div>
         </div>
     </div>
@@ -7809,6 +8003,147 @@
             window.print();
         }
 
+        // =========================================================================
+        // 8b. PROGRESSIVE WEB APP (PWA) MANAGEMENT & INSTALL LOGIC
+        // =========================================================================
+        let pwaDeferredPrompt = null;
+
+        function initPwaSupport() {
+            // 1. Register Service Worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then((reg) => {
+                            console.log('[PWA] Service Worker terdaftar dengan scope:', reg.scope);
+                        })
+                        .catch((err) => {
+                            console.warn('[PWA] Pendaftaran Service Worker gagal:', err);
+                        });
+                });
+            }
+
+            // 2. Check Standalone / Installed state
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                                 window.navigator.standalone === true ||
+                                 document.referrer.includes('android-app://');
+
+            if (isStandalone) {
+                updatePwaUiState('installed');
+            } else {
+                updatePwaUiState('ready');
+            }
+
+            // 3. Listen for beforeinstallprompt event
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                pwaDeferredPrompt = e;
+                console.log('[PWA] beforeinstallprompt event ditangkap.');
+                updatePwaUiState('prompt-ready');
+            });
+
+            // 4. Listen for appinstalled event
+            window.addEventListener('appinstalled', () => {
+                pwaDeferredPrompt = null;
+                console.log('[PWA] Aplikasi berhasil dipasang ke sistem.');
+                updatePwaUiState('installed');
+                if (typeof showToast === 'function') {
+                    showToast('PWA Terpasang', 'Aplikasi SI-PANGAN ID berhasil dipasang di perangkat Anda!', 'success');
+                }
+            });
+        }
+
+        function updatePwaUiState(state) {
+            const sidebarBtn = document.getElementById('sidebarPwaInstallBtn');
+            const sidebarBtnText = document.getElementById('sidebarPwaBtnText');
+            const sidebarBadge = document.getElementById('sidebarPwaStatusBadge');
+            
+            const homeBtn = document.getElementById('homePwaInstallBtn');
+            const homeBtnText = document.getElementById('homePwaBtnText');
+            const homeBadge = document.getElementById('homePwaStatusBadge');
+
+            if (state === 'installed') {
+                if (sidebarBtn) {
+                    sidebarBtn.classList.remove('bg-emerald-500', 'hover:bg-emerald-400');
+                    sidebarBtn.classList.add('bg-stone-700', 'text-stone-300', 'cursor-default');
+                    sidebarBtn.onclick = () => showToast('PWA Aktif', 'Aplikasi sudah terpasang di perangkat Anda.', 'info');
+                }
+                if (sidebarBtnText) sidebarBtnText.textContent = 'Aplikasi Terpasang ✓';
+                if (sidebarBadge) {
+                    sidebarBadge.textContent = 'Aktif (PWA)';
+                    sidebarBadge.className = 'text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/30';
+                }
+
+                if (homeBtn) {
+                    homeBtn.classList.remove('bg-emerald-400', 'hover:bg-emerald-300');
+                    homeBtn.classList.add('bg-emerald-800', 'text-emerald-200', 'cursor-default');
+                    homeBtn.onclick = () => showToast('PWA Aktif', 'Anda sedang menjalankan aplikasi terpasang.', 'info');
+                }
+                if (homeBtnText) homeBtnText.textContent = 'Aplikasi Terpasang di HP ✓';
+                if (homeBadge) {
+                    homeBadge.textContent = 'Mode Aplikasi Aktif (Offline Ready)';
+                }
+            } else if (state === 'prompt-ready') {
+                if (sidebarBadge) sidebarBadge.textContent = 'Siap Pasang';
+                if (sidebarBtnText) sidebarBtnText.textContent = 'Pasang di HP / PC';
+                if (homeBtnText) homeBtnText.textContent = 'Pasang Sekarang';
+            }
+        }
+
+        async function triggerPwaInstall() {
+            if (pwaDeferredPrompt) {
+                pwaDeferredPrompt.prompt();
+                const choiceResult = await pwaDeferredPrompt.userChoice;
+                if (choiceResult && choiceResult.outcome === 'accepted') {
+                    console.log('[PWA] Pengguna menyetujui pemasangan PWA');
+                    updatePwaUiState('installed');
+                    if (typeof showToast === 'function') {
+                        showToast('Memasang Aplikasi', 'Sedang memasang SI-PANGAN ID ke layar utama...', 'success');
+                    }
+                } else {
+                    console.log('[PWA] Pengguna menunda pemasangan PWA');
+                }
+                pwaDeferredPrompt = null;
+            } else {
+                // If deferredPrompt is not available (e.g. iOS Safari or browser doesn't trigger prompt)
+                showPwaGuideModal();
+            }
+        }
+
+        function showPwaGuideModal() {
+            const modal = document.getElementById('modalPwaGuide');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closePwaGuideModal() {
+            const modal = document.getElementById('modalPwaGuide');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function switchPwaGuideTab(tabId) {
+            const tabs = ['pwaTabAndroid', 'pwaTabIos', 'pwaTabDesktop'];
+            tabs.forEach(t => {
+                const content = document.getElementById(t + 'Content');
+                const btn = document.getElementById(t + 'Btn');
+                if (t === tabId) {
+                    if (content) content.classList.remove('hidden');
+                    if (btn) {
+                        btn.className = 'flex-1 py-1.5 px-2 rounded-lg font-bold text-center transition bg-forest-800 text-white border border-forest-700 flex items-center justify-center gap-1.5';
+                    }
+                } else {
+                    if (content) content.classList.add('hidden');
+                    if (btn) {
+                        btn.className = 'flex-1 py-1.5 px-2 rounded-lg font-bold text-center transition bg-stone-100 text-stone-600 hover:bg-stone-200 flex items-center justify-center gap-1.5';
+                    }
+                }
+            });
+        }
+
         // --- 9. MASTER RENDER ALL ---
         function renderAll() {
             renderHeaderStats();
@@ -7829,6 +8164,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderAll();
             updatePrivacyButtonState();
+            initPwaSupport();
         });
     </script>
 </body>
