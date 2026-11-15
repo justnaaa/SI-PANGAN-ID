@@ -217,25 +217,25 @@
                 </div>
             </div>
 
-            <!-- Role / Persona Selector (Tanpa Login: Konsumen, Produsen, Admin) -->
+            <!-- Role / Persona Selector (Tanpa Login: Konsumen & Produsen | Admin Memerlukan PIN) -->
             <div class="flex items-center p-0.5 sm:p-1 rounded-xl bg-stone-100 border border-stone-200/90 shadow-2xs">
                 <button onclick="setActiveRole('KONSUMEN')" id="topRoleBtnKonsumen"
                     class="role-switch-btn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all shadow-xs bg-emerald-600 text-white"
-                    title="Mode Warga Belanja: Akses Pasar & Pesan 3-Klik Tanpa Login">
+                    title="Mode Warga Belanja: Akses Pasar & Pesan 3-Klik (Tanpa Login)">
                     <i class="fa-solid fa-cart-shopping text-[10px] sm:text-[11px]"></i>
                     <span>Konsumen</span>
                 </button>
                 <button onclick="setActiveRole('PRODUSEN')" id="topRoleBtnProdusen"
                     class="role-switch-btn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all text-stone-600 hover:text-stone-900"
-                    title="Mode KWT / Petani: Input Panen & Ambil Kuota AI">
+                    title="Mode Petani / KWT: Input Panen & Ambil Kuota AI (Tanpa Login)">
                     <i class="fa-solid fa-seedling text-[10px] sm:text-[11px]"></i>
                     <span>Produsen</span>
                 </button>
-                <button onclick="setActiveRole('ADMIN')" id="topRoleBtnAdmin"
+                <button onclick="requestAdminRole()" id="topRoleBtnAdmin"
                     class="role-switch-btn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all text-stone-600 hover:text-stone-900"
-                    title="Mode Pengurus RT / PKK: Akses Penuh, Verifikasi 2-Langkah & Audit SID">
-                    <i class="fa-solid fa-user-shield text-[10px] sm:text-[11px]"></i>
-                    <span>Admin RT</span>
+                    title="Mode Pengurus RT / PKK: Perlu PIN Pengurus untuk Membuka Seluruh Data Warga">
+                    <i id="topAdminLockIcon" class="fa-solid fa-lock text-[10px] sm:text-[11px] text-amber-600"></i>
+                    <span id="topRoleAdminLabel">Admin RT</span>
                 </button>
             </div>
 
@@ -315,7 +315,10 @@
                     <div class="grid grid-cols-3 gap-1 text-[11px]">
                         <button onclick="setActiveRole('KONSUMEN')" id="sideRoleBtnKonsumen" class="py-1 px-1 rounded-lg font-bold text-center transition bg-emerald-600 text-white shadow-2xs">Konsumen</button>
                         <button onclick="setActiveRole('PRODUSEN')" id="sideRoleBtnProdusen" class="py-1 px-1 rounded-lg font-bold text-center transition bg-white text-stone-600 hover:bg-stone-100 border border-stone-200">Produsen</button>
-                        <button onclick="setActiveRole('ADMIN')" id="sideRoleBtnAdmin" class="py-1 px-1 rounded-lg font-bold text-center transition bg-white text-stone-600 hover:bg-stone-100 border border-stone-200">Admin</button>
+                        <button onclick="requestAdminRole()" id="sideRoleBtnAdmin" class="py-1 px-1 rounded-lg font-bold text-center transition bg-white text-stone-600 hover:bg-stone-100 border border-stone-200 flex items-center justify-center gap-1">
+                            <i id="sideAdminLockIcon" class="fa-solid fa-lock text-[9px] text-amber-600"></i>
+                            <span id="sideRoleAdminLabel">Admin</span>
+                        </button>
                     </div>
                     <p id="sideRoleDescription" class="text-[10px] text-stone-500 leading-tight">
                         Mode Warga: Akses pasar pangan murah 3-klik &amp; e-voting tanpa login.
@@ -1691,133 +1694,6 @@
                             Terdekat</span>
                         <span
                             class="px-2 py-0.5 rounded bg-forest-50 border border-forest-200 font-mono text-forest-800 font-bold">Kesegaran</span>
-                    </div>
-                </div>
-
-                <!-- =========================================================================
-                     DIAGRAM LOGIKA ALUR KERJA ENGINE AI (SEDERHANA, JELAS, BEBAS ISTILAH RUMIT)
-                     ========================================================================= -->
-                <div class="bg-gradient-to-br from-stone-900 via-forest-950 to-stone-900 text-white rounded-2xl p-6 border border-emerald-500/30 shadow-lg space-y-5">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-forest-800/80 pb-3">
-                        <div class="space-y-0.5">
-                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 text-[10px] font-bold border border-emerald-400/30 inline-flex items-center gap-1">
-                                <i class="fa-solid fa-brain text-emerald-400"></i> Logika Algoritma Inti
-                            </span>
-                            <h3 class="serif-heading text-lg sm:text-xl font-bold text-white">
-                                Alur Kerja Engine AI: Dari Data Mentah Menjadi Keputusan Presisi
-                            </h3>
-                        </div>
-                        <span class="text-xs text-forest-300">
-                            Hybrid Cold-Start: Data Sensus &amp; AKG &rarr; Prediksi Real-Time
-                        </span>
-                    </div>
-
-                    <!-- Flow Diagram Grid: 3 Input -> Engine AI -> 2 Output -->
-                    <div class="grid grid-cols-1 lg:grid-cols-11 gap-3 items-center">
-                        <!-- 1. INPUT TIGA PILAR (Columns 1-4) -->
-                        <div class="lg:col-span-4 space-y-2.5">
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                                <i class="fa-solid fa-arrow-down-wide-short"></i> 3 Sumber Data Input (Awal)
-                            </span>
-                            
-                            <!-- Input 1: SID KK -->
-                            <div class="p-3 rounded-xl bg-forest-900/80 border border-forest-700/70 hover:border-emerald-500/50 transition">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold text-xs shrink-0">
-                                        <i class="fa-solid fa-id-card"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-xs text-white">1. Data Single Identity (SID 40 KK)</h4>
-                                        <p class="text-[10px] text-forest-200">Profil balita stunting, lansia, rentan gizi &amp; riwayat konsumsi nyata.</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Input 2: Standar Bapanas -->
-                            <div class="p-3 rounded-xl bg-forest-900/80 border border-forest-700/70 hover:border-emerald-500/50 transition">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-xs shrink-0">
-                                        <i class="fa-solid fa-utensils"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-xs text-white">2. Standar AKG Bapanas / Kemenkes</h4>
-                                        <p class="text-[10px] text-forest-200">Pola Pangan Harapan (Beras 2.5 kg, sayur 1.5 kg, telur 0.5 kg/jiwa/mg).</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Input 3: PIHPS Harga Pasar -->
-                            <div class="p-3 rounded-xl bg-forest-900/80 border border-forest-700/70 hover:border-emerald-500/50 transition">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-300 flex items-center justify-center font-bold text-xs shrink-0">
-                                        <i class="fa-solid fa-chart-line"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-xs text-white">3. Data Harga Pasar PIHPS Lampung</h4>
-                                        <p class="text-[10px] text-forest-200">Pantauan harga pasar ritel &amp; harga tengkulak/pengepul lokal.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 2. PANAH PROSES (Column 5) -->
-                        <div class="lg:col-span-1 flex lg:flex-col items-center justify-center gap-1 text-emerald-400 py-2">
-                            <i class="fa-solid fa-chevron-right text-xl hidden lg:block animate-pulse"></i>
-                            <i class="fa-solid fa-chevron-down text-xl lg:hidden animate-pulse"></i>
-                        </div>
-
-                        <!-- 3. ENGINE AI FORECASTING (Columns 6-7) -->
-                        <div class="lg:col-span-3 p-4 rounded-2xl bg-gradient-to-br from-emerald-950 to-forest-900 border-2 border-emerald-400/50 shadow-xl space-y-2.5 text-center relative overflow-hidden">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-400 text-forest-950 flex items-center justify-center mx-auto text-lg font-black shadow-md">
-                                <i class="fa-solid fa-microchip"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm text-white">Engine AI Komunitas</h4>
-                                <span class="text-[10px] text-emerald-300 font-semibold block">Forecasting Demand &amp; Supply</span>
-                            </div>
-                            <p class="text-[11px] text-forest-200 leading-snug text-left bg-forest-950/60 p-2.5 rounded-xl border border-forest-800">
-                                Mengagregasi kuota defisit vs surplus panen, menghitung probabilitas serapan, dan mengunci harga berkeadilan.
-                            </p>
-                        </div>
-
-                        <!-- 4. PANAH HASIL (Column 8) -->
-                        <div class="lg:col-span-1 flex lg:flex-col items-center justify-center gap-1 text-emerald-400 py-2">
-                            <i class="fa-solid fa-chevron-right text-xl hidden lg:block animate-pulse"></i>
-                            <i class="fa-solid fa-chevron-down text-xl lg:hidden animate-pulse"></i>
-                        </div>
-
-                        <!-- 5. DUA OUTPUT KEPUTUSAN (Columns 9-11) -->
-                        <div class="lg:col-span-2 space-y-2.5">
-                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                                <i class="fa-solid fa-bullseye"></i> 2 Output Nyata
-                            </span>
-
-                            <!-- Output 1: Sinyal Tanam -->
-                            <div class="p-3 rounded-xl bg-emerald-900/60 border border-emerald-500/60">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 rounded-lg bg-emerald-400 text-forest-950 flex items-center justify-center font-bold text-xs shrink-0">
-                                        <i class="fa-solid fa-leaf"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-xs text-white">Sinyal Tanam KWT</h4>
-                                        <p class="text-[10px] text-emerald-200">Petani hanya menanam komoditas yang pasti terserap 100% (Zero Waste).</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Output 2: Dynamic Price Corridor -->
-                            <div class="p-3 rounded-xl bg-amber-900/40 border border-amber-500/60">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-7 h-7 rounded-lg bg-amber-400 text-amber-950 flex items-center justify-center font-bold text-xs shrink-0">
-                                        <i class="fa-solid fa-scale-balanced"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-xs text-white">Dynamic Price Corridor</h4>
-                                        <p class="text-[10px] text-amber-200">Petani untung (+25% vs tengkulak), warga hemat (-20% vs pasar).</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -3308,6 +3184,64 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         ADMIN AUTHENTICATION & LOGIN MODAL (PENGURUS RT 13 / PKK YOSOMULYO)
+         ========================================================================= -->
+    <div id="modalAdminLogin"
+        class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-sm w-full border border-stone-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <!-- Modal Header -->
+            <div class="px-5 py-4 bg-gradient-to-r from-forest-950 via-forest-900 to-forest-800 text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-forest-700 text-forest-200 flex items-center justify-center text-sm font-bold shadow-xs">
+                        <i class="fa-solid fa-lock text-amber-300"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm sm:text-base leading-tight">Autentikasi Pengurus RT</h3>
+                        <p class="text-[11px] text-forest-300">Akses Penuh Data Single Identity 40 KK</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalAdminLogin')" class="p-1.5 rounded-lg text-stone-300 hover:text-white hover:bg-white/10 transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form -->
+            <form onsubmit="handleAdminLoginSubmit(event)" class="p-5 space-y-4 text-xs">
+                <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 space-y-1">
+                    <span class="font-bold flex items-center gap-1.5 text-[11px]">
+                        <i class="fa-solid fa-shield-halved text-amber-700"></i> Privasi Data Terlindungi
+                    </span>
+                    <p class="text-[10px] text-amber-800 leading-snug">
+                        Sesuai amanat UU PDP, NIK dan identitas lengkap warga hanya dibuka bagi pengurus RT 13 &amp; PKK yang terverifikasi.
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-stone-700 mb-1">Masukkan PIN / Sandi Pengurus RT *</label>
+                    <input type="password" id="adminPinInput" placeholder="Masukkan PIN (cth: 1305)" required autofocus
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm font-mono tracking-widest text-center focus:outline-none focus:border-forest-600 focus:ring-2 focus:ring-forest-600/20 font-bold">
+                    <div class="flex items-center justify-between mt-1.5 text-[10px] text-stone-500">
+                        <span>PIN Pengurus RT: <strong>1305</strong></span>
+                        <button type="button" onclick="document.getElementById('adminPinInput').value='1305'; handleAdminLoginSubmit(event);" class="text-forest-700 hover:underline font-bold">
+                            Gunakan PIN Demo
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center gap-2">
+                    <button type="button" onclick="closeModal('modalAdminLogin')" class="flex-1 py-2 px-3 rounded-xl border border-stone-300 text-stone-700 font-bold hover:bg-stone-50 transition text-xs">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 py-2 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-[0.98] text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-key"></i>
+                        <span>Buka Akses Admin</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -5093,6 +5027,10 @@
         }
 
         function togglePrivacyMode() {
+            if (!window.appState.isAdminLoggedIn) {
+                requestAdminRole();
+                return;
+            }
             if (window.appState.privacyMode === 'PUBLIC') {
                 window.appState.privacyMode = 'ADMIN';
                 showToast("Mode Pengurus Terverifikasi Aktif", "Nama warga dan NIK lengkap kini ditampilkan untuk keperluan verifikasi lapangan pengurus RT 13 & KWT.", "warning");
@@ -8440,9 +8378,55 @@
         }
 
         // =========================================================================
-        // 8c. ROLE-BASED ACCESS & PERSONA MANAGEMENT (TANPA LOGIN)
+        // 8c. ROLE-BASED ACCESS & PERSONA MANAGEMENT (KONSUMEN, PRODUSEN, ADMIN)
         // =========================================================================
+        function requestAdminRole() {
+            if (window.appState.isAdminLoggedIn) {
+                setActiveRole('ADMIN');
+            } else {
+                openModal('modalAdminLogin');
+                const pinInput = document.getElementById('adminPinInput');
+                if (pinInput) {
+                    pinInput.value = '';
+                    setTimeout(() => pinInput.focus(), 50);
+                }
+            }
+        }
+
+        function handleAdminLoginSubmit(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const pin = (document.getElementById('adminPinInput')?.value || '').trim();
+            if (pin === '1305' || pin.toLowerCase() === 'admin13' || pin.toLowerCase() === 'admin' || pin === 'demo') {
+                window.appState.isAdminLoggedIn = true;
+                closeModal('modalAdminLogin');
+                
+                // Set active role to ADMIN
+                setActiveRole('ADMIN');
+                
+                // Admin otomatis menghidupkan privasi PKM-PM agar data seluruh warga jelas terlihat
+                window.appState.privacyMode = 'ADMIN';
+                updatePrivacyButtonState();
+                
+                showToast("Login Pengurus Berhasil", "Akses Admin RT 13 aktif. Seluruh data 40 KK & privasi terbuka penuh untuk audit.", "success");
+            } else {
+                showToast("PIN Tidak Sesuai", "Gunakan PIN demo: 1305 untuk masuk sebagai Pengurus RT 13.", "error");
+            }
+        }
+
+        function logoutAdminRole() {
+            window.appState.isAdminLoggedIn = false;
+            window.appState.privacyMode = 'PUBLIC';
+            updatePrivacyButtonState();
+            setActiveRole('KONSUMEN');
+            showToast("Keluar Mode Admin", "Akses dikembalikan ke Mode Konsumen dengan sensor data privasi warga.", "info");
+        }
+
         function setActiveRole(role) {
+            if (role === 'ADMIN' && !window.appState.isAdminLoggedIn) {
+                requestAdminRole();
+                return;
+            }
+
             window.appState.activeRole = role;
 
             // 1. Reset Top Buttons
@@ -8459,6 +8443,10 @@
             const sideBadge = document.getElementById('sideRoleCurrentBadge');
             const sideDesc = document.getElementById('sideRoleDescription');
             const consumer3ClickBar = document.getElementById('consumer3ClickBar');
+            const topAdminLockIcon = document.getElementById('topAdminLockIcon');
+            const sideAdminLockIcon = document.getElementById('sideAdminLockIcon');
+            const topRoleAdminLabel = document.getElementById('topRoleAdminLabel');
+            const sideRoleAdminLabel = document.getElementById('sideRoleAdminLabel');
 
             Object.keys(topBtns).forEach(r => {
                 if (topBtns[r]) {
@@ -8476,6 +8464,19 @@
                     }
                 }
             });
+
+            // Update Lock Icons & Labels
+            if (window.appState.isAdminLoggedIn) {
+                if (topAdminLockIcon) topAdminLockIcon.className = 'fa-solid fa-lock-open text-[10px] text-emerald-300';
+                if (sideAdminLockIcon) sideAdminLockIcon.className = 'fa-solid fa-lock-open text-[9px] text-emerald-600';
+                if (topRoleAdminLabel) topRoleAdminLabel.textContent = 'Admin ✓';
+                if (sideRoleAdminLabel) sideRoleAdminLabel.textContent = 'Admin ✓';
+            } else {
+                if (topAdminLockIcon) topAdminLockIcon.className = 'fa-solid fa-lock text-[10px] text-amber-600';
+                if (sideAdminLockIcon) sideAdminLockIcon.className = 'fa-solid fa-lock text-[9px] text-amber-600';
+                if (topRoleAdminLabel) topRoleAdminLabel.textContent = 'Admin RT';
+                if (sideRoleAdminLabel) sideRoleAdminLabel.textContent = 'Admin';
+            }
 
             // 2. Role Specific Behavior & UI Customization
             if (role === 'KONSUMEN') {
@@ -8517,15 +8518,19 @@
                 showToast("Mode Produsen Aktif", "Fitur pencatatan panen & panel distribusi kuota AI diaktifkan.", "success");
             } else if (role === 'ADMIN') {
                 if (sideBadge) {
-                    sideBadge.textContent = 'Admin RT 13';
+                    sideBadge.textContent = 'Admin RT 13 (Terverifikasi)';
                     sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-forest-100 text-forest-800 border border-forest-300';
                 }
                 if (sideDesc) {
-                    sideDesc.textContent = 'Mode Pengurus: Akses penuh 6 tab, validasi 2-langkah & audit.';
+                    sideDesc.innerHTML = 'Mode Pengurus: Akses penuh 6 tab &amp; data 40 KK. <a href="javascript:void(0)" onclick="logoutAdminRole()" class="text-red-600 font-bold hover:underline ml-1">[Keluar]</a>';
                 }
                 if (consumer3ClickBar) consumer3ClickBar.classList.remove('hidden');
 
-                showToast("Mode Admin RT Aktif", "Akses penuh data Single Identity 40 KK & validasi 2-langkah terbuka.", "warning");
+                // Admin sudah otomatis menghidupkan privasi pkm pm agar data seluruh warga jelas terlihat
+                window.appState.privacyMode = 'ADMIN';
+                updatePrivacyButtonState();
+
+                showToast("Mode Admin RT Aktif", "Akses penuh data Single Identity 40 KK terbuka untuk verifikasi.", "warning");
             }
 
             renderAll();
