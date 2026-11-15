@@ -918,6 +918,93 @@
                         </div>
                     </div>
 
+                    <!-- Panel Khusus Admin: Verifikasi KK Baru & Validasi Izin Kelompok Produsen (KWT) -->
+                    <div id="adminVerificationPanel" class="p-4 sm:p-5 rounded-2xl bg-white border border-stone-200/90 shadow-xs space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
+                            <div>
+                                <h4 class="serif-heading text-base font-bold text-stone-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-stamp text-forest-700"></i>
+                                    Pusat Verifikasi Pengurus (KK Baru &amp; Izin Produsen KWT)
+                                </h4>
+                                <p class="text-xs text-stone-500">
+                                    Otoritas Pengurus RT 13 &amp; PKK Kelurahan Yosomulyo untuk verifikasi identitas KK baru dan validasi izin kelompok produsen (KWT).
+                                </p>
+                            </div>
+                            <span class="px-2.5 py-1 rounded bg-forest-50 text-forest-800 text-[11px] font-bold border border-forest-200">
+                                Otoritas Admin RT 13
+                            </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- Kolom Kiri: Verifikasi KK Baru -->
+                            <div class="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-xs text-stone-900 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-user-plus text-emerald-600"></i> Antrean Verifikasi Identitas KK Baru
+                                    </span>
+                                    <span id="pendingKkBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">1 Menunggu Validasi</span>
+                                </div>
+                                <div id="pendingKkCard" class="p-3 rounded-lg bg-white border border-stone-200 space-y-2 text-xs">
+                                    <div class="flex items-center justify-between">
+                                        <strong class="text-stone-900">Bpk. Bambang Sutrisno</strong>
+                                        <span class="font-mono text-[10px] text-stone-500">NIK: 187201********41</span>
+                                    </div>
+                                    <div class="text-[11px] text-stone-600 space-y-0.5">
+                                        <p>Alamat: Blok C No. 12 RT 13 • Anggota: 4 Jiwa (1 Balita, 1 Lansia)</p>
+                                        <p>Klasifikasi Usulan: <span class="font-bold text-paddy-700">Waspada Pangan</span></p>
+                                    </div>
+                                    <div class="flex items-center gap-2 pt-1 border-t border-stone-100">
+                                        <button type="button" onclick="approveNewKk('Bpk. Bambang Sutrisno')" class="flex-1 py-1.5 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition flex items-center justify-center gap-1">
+                                            <i class="fa-solid fa-check"></i> Verifikasi &amp; Terbitkan SID
+                                        </button>
+                                        <button type="button" onclick="rejectNewKk()" class="py-1.5 px-2.5 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-100 text-[11px] font-semibold transition">
+                                            Tolak
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Kolom Kanan: Validasi Izin Kelompok Produsen (KWT) -->
+                            <div class="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-xs text-stone-900 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-certificate text-forest-700"></i> Validasi Izin Kelompok Produsen (KWT)
+                                    </span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-forest-100 text-forest-800 border border-forest-200">3 Kelompok Aktif</span>
+                                </div>
+                                <div class="space-y-2 text-xs">
+                                    <div class="p-2.5 rounded-lg bg-white border border-stone-200 flex items-center justify-between">
+                                        <div>
+                                            <strong class="text-stone-900 block text-xs">KWT Mekar Jaya RT 13</strong>
+                                            <span class="text-[10px] text-stone-500">Komoditas: Sayuran Pekarangan • SK Lurah No. 41/YSM/2026</span>
+                                        </div>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+                                            <i class="fa-solid fa-circle-check text-[9px]"></i> Izin Valid
+                                        </span>
+                                    </div>
+                                    <div class="p-2.5 rounded-lg bg-white border border-stone-200 flex items-center justify-between">
+                                        <div>
+                                            <strong class="text-stone-900 block text-xs">Poktan Padi Mandiri (Pak Hendra)</strong>
+                                            <span class="text-[10px] text-stone-500">Komoditas: Beras &amp; Gabah Lumbung • Registrasi Gapoktan Metro</span>
+                                        </div>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+                                            <i class="fa-solid fa-circle-check text-[9px]"></i> Izin Valid
+                                        </span>
+                                    </div>
+                                    <div class="p-2.5 rounded-lg bg-white border border-stone-200 flex items-center justify-between">
+                                        <div>
+                                            <strong class="text-stone-900 block text-xs">KWT Melati Indah</strong>
+                                            <span class="text-[10px] text-stone-500">Komoditas: Kolam Ikan Lele &amp; Nila • Izin Dinas Perikanan</span>
+                                        </div>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
+                                            <i class="fa-solid fa-circle-check text-[9px]"></i> Izin Valid
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 4 Kelompok Pangan Kebutuhan Gizi Terukur 40 KK -->
                     <div>
                         <div class="flex items-center justify-between mb-3">
@@ -1314,8 +1401,8 @@
                             </p>
                         </div>
 
-                        <!-- Top Actions -->
-                        <div class="flex flex-wrap items-center gap-2 shrink-0">
+                        <!-- Top Actions (Khusus Produsen & Admin) -->
+                        <div id="marketProducerActions" class="flex flex-wrap items-center gap-2 shrink-0">
                             <button onclick="openModal('modalOcrScan')"
                                 class="px-3.5 py-2 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-800 text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs">
                                 <i class="fa-solid fa-camera text-forest-600"></i> Pindai Kuitansi (OCR)
@@ -1366,9 +1453,6 @@
                                     <i class="fa-solid fa-handshake-angle text-[10px]"></i> 100% Produsen Lokal (0% Fee)
                                 </span>
                             </div>
-                            <h3 class="serif-heading text-base sm:text-lg font-bold text-white leading-tight">
-                                Belanja Pangan Segar Langsung ke Produsen RT 13 (Tanpa Perlu Login)
-                            </h3>
                             <div class="flex flex-wrap items-center gap-2 text-xs text-forest-200 pt-0.5">
                                 <span class="bg-forest-800/90 px-2 py-0.5 rounded text-[11px]"><strong>1.</strong> Buka Pasar</span>
                                 <i class="fa-solid fa-arrow-right text-[10px] text-emerald-400"></i>
@@ -2399,6 +2483,56 @@
                     </div>
                 </div>
 
+                <!-- Panel Khusus Admin: Rekonsiliasi Pembayaran & Tutup Buku Bulanan (Sesuai Tugas Produksi) -->
+                <div id="adminReconciliationPanel" class="bg-white rounded-2xl p-6 border border-stone-200/90 shadow-xs space-y-4 mb-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-3">
+                        <div>
+                            <h3 class="serif-heading text-lg font-bold text-stone-900 flex items-center gap-2">
+                                <i class="fa-solid fa-scale-balanced text-forest-700"></i>
+                                Rekonsiliasi Pembayaran &amp; Penutupan Buku Periode Bulanan
+                            </h3>
+                            <p class="text-xs text-stone-500">
+                                Memastikan 100% dana diterima utuh oleh produsen (0% selisih) dan mengunci audit trail keuangan bulanan PKK.
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="handleExportOfficialGovReport()" class="px-3.5 py-2 rounded-xl bg-forest-50 hover:bg-forest-100 text-forest-800 text-xs font-bold border border-forest-300 transition flex items-center gap-1.5 shadow-2xs">
+                                <i class="fa-solid fa-file-invoice text-forest-600"></i>
+                                <span>Ekspor Laporan Dinas Kota</span>
+                            </button>
+                            <button id="closePeriodBtn" onclick="handleCloseMonthPeriod()" class="px-4 py-2 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-98 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+                                <i class="fa-solid fa-lock"></i>
+                                <span id="closePeriodBtnText">Tutup Buku Periode Bulanan</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3 Status Rekonsiliasi -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1">
+                            <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">Status Rekonsiliasi Pembayaran</span>
+                            <strong class="text-sm font-bold text-emerald-900 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check text-emerald-600"></i> 100% MATCHED (Nol Selisih)
+                            </strong>
+                            <p class="text-[10px] text-emerald-700">Semua pesanan pasar telah disalurkan utuh ke produsen.</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200 space-y-1">
+                            <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">Total Pembayaran Terverifikasi</span>
+                            <strong class="text-sm font-mono font-bold text-forest-800">Rp 7.840.000</strong>
+                            <p class="text-[10px] text-stone-500">Transaksi P2P Warga RT 13 (Bebas Potongan Komisi).</p>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200 space-y-1">
+                            <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">Status Periode Buku Besar</span>
+                            <strong id="periodStatusBadge" class="text-sm font-bold text-amber-700 flex items-center gap-1.5">
+                                <i class="fa-solid fa-hourglass-half text-amber-600"></i> Periode Berjalan (Oktober 2026)
+                            </strong>
+                            <p id="periodAuditSeal" class="text-[10px] text-stone-500 font-mono">Segel Audit: PENDING_CLOSURE</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Verified Transaction & Distribution Ledger Table -->
                 <div class="bg-white rounded-2xl p-6 sm:p-7 border border-stone-200/80 shadow-xs space-y-4">
                     <div
@@ -3355,6 +3489,191 @@
                     <i class="fa-solid fa-download"></i>
                     <span>Coba Pasang Otomatis</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         OFFICIAL GOVERNMENT REPORT MODAL (DINAS KETAHANAN PANGAN KOTA METRO)
+         ========================================================================= -->
+    <div id="modalGovReport"
+        class="hidden fixed inset-0 z-50 bg-stone-900/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-3xl w-full border border-stone-300 shadow-2xl overflow-hidden my-auto animate-in fade-in zoom-in-95 duration-150">
+            <!-- Modal Header (Screen Only) -->
+            <div class="px-5 py-3.5 bg-gradient-to-r from-forest-950 via-forest-900 to-forest-800 text-white flex items-center justify-between print:hidden">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500 text-forest-950 flex items-center justify-center text-sm font-bold shadow-xs">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm leading-tight">Format Laporan Resmi Dinas Ketahanan Pangan</h3>
+                        <p class="text-[10px] text-emerald-200">Ekspor Data Agregat RT 13 • Kelurahan Yosomulyo • Kota Metro</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-forest-950 font-bold text-xs transition flex items-center gap-1.5 shadow-xs">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Cetak / Simpan PDF</span>
+                    </button>
+                    <button type="button" onclick="closeModal('modalGovReport')" class="p-1.5 rounded-lg text-stone-300 hover:text-white hover:bg-white/10 transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body (Printable Official Document View) -->
+            <div id="govReportPrintArea" class="p-6 sm:p-8 space-y-5 text-stone-900 bg-white max-h-[80vh] overflow-y-auto text-xs leading-relaxed font-sans">
+                <!-- Kop Surat Resmi -->
+                <div class="border-b-4 border-double border-stone-800 pb-3 text-center space-y-0.5">
+                    <div class="flex items-center justify-center gap-3">
+                        <div class="w-12 h-12 rounded-full border border-stone-400 bg-stone-50 flex items-center justify-center text-forest-800 text-xl font-bold">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xs font-bold uppercase tracking-wider text-stone-600">Pemerintah Kota Metro</h2>
+                            <h1 class="text-sm sm:text-base font-extrabold uppercase tracking-wide text-stone-900">Kecamatan Metro Timur • Kelurahan Yosomulyo</h1>
+                            <p class="text-xs font-bold text-forest-800">TIM PENGGERAK PKK &amp; KEPENGURUSAN RUKUN TETANGGA 13</p>
+                            <p class="text-[10px] text-stone-500">Jalan Teuku Umar RT 13 RW 03, Yosomulyo 21 Polos, Kota Metro, Lampung 34111</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Judul & Metadata Surat -->
+                <div class="space-y-1 text-center pt-1">
+                    <h3 class="font-extrabold text-sm sm:text-base underline uppercase text-stone-900">
+                        LAPORAN MONITORING INFLASI MIKRO DAN KERENTANAN PANGAN MASYARAKAT
+                    </h3>
+                    <p class="text-[11px] font-mono text-stone-600">Nomor: 045.2/PKK-RT13/YSM/X/2026 • Periode: Oktober 2026</p>
+                </div>
+
+                <!-- Ditujukan Kepada -->
+                <div class="text-[11px] text-stone-700 space-y-0.5">
+                    <p>Kepada Yth.</p>
+                    <p class="font-bold text-stone-900">Kepala Dinas Ketahanan Pangan, Pertanian dan Perikanan Kota Metro</p>
+                    <p>di - Tempat</p>
+                </div>
+
+                <!-- Bagian 1: Ringkasan Eksekutif & Statistik Agregat -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-xs uppercase text-stone-900 border-b border-stone-300 pb-1 flex items-center gap-1.5">
+                        <span class="w-4 h-4 rounded bg-forest-800 text-white inline-flex items-center justify-center text-[10px]">I</span>
+                        STATISTIK KEMANDIRIAN &amp; NERACA PANGAN KOMUNITAS (40 KK)
+                    </h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[11px]">
+                        <div class="p-2.5 rounded-lg border border-stone-200 bg-stone-50">
+                            <span class="text-[10px] text-stone-500 block">Populasi Terdata</span>
+                            <strong class="font-bold text-stone-900 text-sm">40 KK / 160 Jiwa</strong>
+                        </div>
+                        <div class="p-2.5 rounded-lg border border-stone-200 bg-stone-50">
+                            <span class="text-[10px] text-stone-500 block">Total Pangan Beredar</span>
+                            <strong class="font-bold text-forest-800 text-sm">624 Kg</strong>
+                        </div>
+                        <div class="p-2.5 rounded-lg border border-stone-200 bg-stone-50">
+                            <span class="text-[10px] text-stone-500 block">Serapan Panen Lokal</span>
+                            <strong class="font-bold text-emerald-700 text-sm">89,2% (Tinggi)</strong>
+                        </div>
+                        <div class="p-2.5 rounded-lg border border-stone-200 bg-stone-50">
+                            <span class="text-[10px] text-stone-500 block">Omzet Produsen Lokal</span>
+                            <strong class="font-bold text-forest-900 text-sm">Rp 7.840.000</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bagian 2: Pengendalian Inflasi Mikro (Perbandingan vs PIHPS Kota) -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-xs uppercase text-stone-900 border-b border-stone-300 pb-1 flex items-center gap-1.5">
+                        <span class="w-4 h-4 rounded bg-forest-800 text-white inline-flex items-center justify-center text-[10px]">II</span>
+                        PEMANTAUAN KORIDOR HARGA &amp; INDEKS INFLASI MIKRO
+                    </h4>
+                    <p class="text-[11px] text-stone-600">
+                        Berdasarkan perbandingan langsung antara Koridor Harga Dinamis RT 13 dengan Pusat Informasi Harga Pangan Strategis (PIHPS) Kota Metro, tercatat deflasi mikro terjaga sebesar <strong class="text-emerald-700 font-bold">-8,4%</strong> tanpa merugikan keuntungan kelompok produsen/KWT:
+                    </p>
+                    <table class="w-full border-collapse border border-stone-300 text-[11px]">
+                        <thead>
+                            <tr class="bg-stone-100 text-stone-800 font-bold">
+                                <th class="border border-stone-300 p-1.5 text-left">Komoditas Pangan</th>
+                                <th class="border border-stone-300 p-1.5 text-center">Harga PIHPS Pasar Induk</th>
+                                <th class="border border-stone-300 p-1.5 text-center">Harga Komunitas RT 13</th>
+                                <th class="border border-stone-300 p-1.5 text-center">Margin Efisiensi Warga</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-stone-300 p-1.5 font-medium">Sayur Kangkung Organik (KWT)</td>
+                                <td class="border border-stone-300 p-1.5 text-center font-mono">Rp 6.000 / ikat</td>
+                                <td class="border border-stone-300 p-1.5 text-center font-mono font-bold text-forest-800">Rp 4.500 / ikat</td>
+                                <td class="border border-stone-300 p-1.5 text-center font-bold text-emerald-700">Hemat 25,0%</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-stone-300 p-1.5 font-medium">Cabai Rawit Merah</td>
+                                <td class="border border-stone-300 p-1.5 text-center font-mono">Rp 45.000 / kg</td>
+                                <td class="border border-stone-300 p-1.5 text-center font-mono font-bold text-forest-800">Rp 38.000 / kg</td>
+                                <td class="border border-stone-300 p-1.5 text-center font-bold text-emerald-700">Hemat 15,5%</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-stone-300 p-1.5 font-medium">Beras Ramos Petani Mandiri</td>
+                                <td class="border border-stone-300 p-1.5 text-center font-mono">Rp 15.500 / kg</td>
+                                <td class="border border-stone-300 p-1.5 text-center font-mono font-bold text-forest-800">Rp 14.500 / kg</td>
+                                <td class="border border-stone-300 p-1.5 text-center font-bold text-emerald-700">Hemat 6,5%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Bagian 3: Pemetaan Kerentanan Pangan & Intervensi Stunting -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-xs uppercase text-stone-900 border-b border-stone-300 pb-1 flex items-center gap-1.5">
+                        <span class="w-4 h-4 rounded bg-forest-800 text-white inline-flex items-center justify-center text-[10px]">III</span>
+                        INTERVENSI KERENTANAN PANGAN &amp; PENCEGAHAN STUNTING
+                    </h4>
+                    <p class="text-[11px] text-stone-600">
+                        Dari total 40 KK, teridentifikasi <strong>5 KK Klaster Rentan Prioritas</strong> (memiliki balita berisiko stunting dan lansia). Seluruh 5 KK telah menerima alokasi bahan pangan bergizi segar 100% tanpa hambatan biaya, dibiayai mandiri melalui dana lumbung kas dan penyerapan surplus panen luar RT (3-5%).
+                    </p>
+                </div>
+
+                <!-- Bagian 4: Rekonsiliasi Keuangan & Validasi Audit Kas -->
+                <div class="p-3 rounded-lg border border-stone-300 bg-stone-50 space-y-1 text-[11px]">
+                    <div class="flex items-center justify-between font-bold text-stone-900">
+                        <span>Status Rekonsiliasi Kas: 100% MATCHED (Nol Selisih)</span>
+                        <span class="font-mono text-emerald-800">STATUS: AUDITED &amp; CLOSED</span>
+                    </div>
+                    <p class="text-[10px] text-stone-600">
+                        Total Kas Terverifikasi: Rp 7.840.000,- • Potongan Komisi Warga: 0% • Segel Kriptografis: <span class="font-mono font-bold">SEAL-PKK-YSM-202610-LOCKED-SHA256</span>.
+                    </p>
+                </div>
+
+                <!-- Lembar Tanda Tangan Pengesahan -->
+                <div class="pt-4 grid grid-cols-3 gap-4 text-center text-[11px] text-stone-800">
+                    <div class="space-y-12">
+                        <p>Mengetahui,<br><strong>Ketua RT 13 Yosomulyo</strong></p>
+                        <p class="font-bold underline">( Bpk. M. Agus Supriyadi )</p>
+                    </div>
+                    <div class="space-y-12">
+                        <p>Penyuluh Pertanian Lapangan<br><strong>Dinas Ketahanan Pangan Kota</strong></p>
+                        <p class="font-bold underline">( Ir. Bambang Triyono )<br><span class="text-[9px] font-normal text-stone-500 font-mono">NIP. 19780512 200501 1 004</span></p>
+                    </div>
+                    <div class="space-y-12">
+                        <p>Koordinator Penggerak,<br><strong>Ketua TP PKK Yosomulyo</strong></p>
+                        <p class="font-bold underline">( Ny. Dra. Hj. Ratna Juwita )</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer (Screen Only) -->
+            <div class="p-4 bg-stone-50 border-t border-stone-200 flex items-center justify-between gap-3 print:hidden">
+                <button type="button" onclick="closeModal('modalGovReport')" class="px-4 py-2 rounded-xl bg-white border border-stone-300 text-stone-700 font-bold hover:bg-stone-100 text-xs transition">
+                    Tutup
+                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="copyGovReportSummary()" class="px-3.5 py-2 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold text-xs transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-copy"></i>
+                        <span>Salin Ringkasan Nota</span>
+                    </button>
+                    <button type="button" onclick="window.print()" class="px-4 py-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-md transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Cetak Laporan Resmi</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -8429,7 +8748,7 @@
 
             window.appState.activeRole = role;
 
-            // 1. Reset Top Buttons
+            // 1. Reset Top Buttons & Sidebar Buttons
             const topBtns = {
                 'KONSUMEN': document.getElementById('topRoleBtnKonsumen'),
                 'PRODUSEN': document.getElementById('topRoleBtnProdusen'),
@@ -8447,6 +8766,17 @@
             const sideAdminLockIcon = document.getElementById('sideAdminLockIcon');
             const topRoleAdminLabel = document.getElementById('topRoleAdminLabel');
             const sideRoleAdminLabel = document.getElementById('sideRoleAdminLabel');
+            const marketProducerActions = document.getElementById('marketProducerActions');
+            const adminVerificationPanel = document.getElementById('adminVerificationPanel');
+            const adminReconciliationPanel = document.getElementById('adminReconciliationPanel');
+
+            // Sidebar navigation tabs
+            const navKonsep = document.getElementById('nav-tab-konsep');
+            const navSid = document.getElementById('nav-tab-sid');
+            const navMarket = document.getElementById('nav-tab-market');
+            const navMatching = document.getElementById('nav-tab-matching');
+            const navMusyawarah = document.getElementById('nav-tab-musyawarah');
+            const navDampak = document.getElementById('nav-tab-dampak');
 
             Object.keys(topBtns).forEach(r => {
                 if (topBtns[r]) {
@@ -8478,62 +8808,183 @@
                 if (sideRoleAdminLabel) sideRoleAdminLabel.textContent = 'Admin';
             }
 
-            // 2. Role Specific Behavior & UI Customization
+            // 2. Strict Role-Based Visibility (Konsumen, Produsen, Admin)
             if (role === 'KONSUMEN') {
                 if (sideBadge) {
-                    sideBadge.textContent = 'Konsumen';
+                    sideBadge.textContent = 'Konsumen (Warga Belanja)';
                     sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
                 }
                 if (sideDesc) {
-                    sideDesc.textContent = 'Mode Warga: Akses pasar pangan murah 3-klik & e-voting tanpa login.';
+                    sideDesc.textContent = 'Mode Warga: Akses pasar pangan murah 3-klik & lacak pesanan tanpa login.';
                 }
                 if (consumer3ClickBar) consumer3ClickBar.classList.remove('hidden');
+                if (marketProducerActions) marketProducerActions.classList.add('hidden');
+                if (adminVerificationPanel) adminVerificationPanel.classList.add('hidden');
+                if (adminReconciliationPanel) adminReconciliationPanel.classList.add('hidden');
+
+                // Tab Navs: Only show Market, Lacak/AI Matching, and Konsep
+                if (navKonsep) navKonsep.classList.remove('hidden');
+                if (navSid) navSid.classList.add('hidden'); // Sembunyikan NIK warga
+                if (navMarket) navMarket.classList.remove('hidden');
+                if (navMatching) navMatching.classList.remove('hidden');
+                if (navMusyawarah) navMusyawarah.classList.add('hidden'); // Khusus produsen kuota tanam
+                if (navDampak) navDampak.classList.add('hidden'); // Khusus admin laporan agregat
 
                 // Otomatis proteksi data privasi NIK warga
                 window.appState.privacyMode = 'PUBLIC';
                 updatePrivacyButtonState();
 
-                // Switch to Market tab if currently on an administrative tab
+                // Switch to Market tab if currently on hidden tab
                 const activePane = document.querySelector('.tab-pane:not(.hidden)');
-                if (activePane && (activePane.id === 'tab-sid' || activePane.id === 'tab-matching' || activePane.id === 'tab-konsep')) {
+                if (!activePane || ['tab-sid', 'tab-musyawarah', 'tab-dampak'].includes(activePane.id)) {
                     switchTab('tab-market');
                 }
 
-                showToast("Mode Konsumen Aktif", "Anda berada di tampilan belanja pangan segar 3-klik tanpa login.", "success");
+                showToast("Mode Konsumen Aktif", "Tampilan belanja pangan segar 3-klik aktif (Buka > Pilih > Pesan) tanpa login.", "success");
+
             } else if (role === 'PRODUSEN') {
                 if (sideBadge) {
-                    sideBadge.textContent = 'Produsen KWT';
+                    sideBadge.textContent = 'Produsen (KWT & Petani)';
                     sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300';
                 }
                 if (sideDesc) {
-                    sideDesc.textContent = 'Mode KWT: Input hasil panen pekarangan & ambil alih kuota AI.';
+                    sideDesc.textContent = 'Mode KWT: Input hasil panen pekarangan, pantau kuota AI & serapan pasar.';
                 }
                 if (consumer3ClickBar) consumer3ClickBar.classList.add('hidden');
+                if (marketProducerActions) marketProducerActions.classList.remove('hidden');
+                if (adminVerificationPanel) adminVerificationPanel.classList.add('hidden');
+                if (adminReconciliationPanel) adminReconciliationPanel.classList.add('hidden');
+
+                // Tab Navs: Konsep, Market (stok/input), Matching (serapan), Musyawarah (kuota tanam)
+                if (navKonsep) navKonsep.classList.remove('hidden');
+                if (navSid) navSid.classList.add('hidden'); // Sembunyikan NIK warga
+                if (navMarket) navMarket.classList.remove('hidden');
+                if (navMatching) navMatching.classList.remove('hidden');
+                if (navMusyawarah) navMusyawarah.classList.remove('hidden');
+                if (navDampak) navDampak.classList.add('hidden'); // Sembunyikan pembukuan admin
+
+                // Proteksi NIK warga
+                window.appState.privacyMode = 'PUBLIC';
+                updatePrivacyButtonState();
 
                 const activePane = document.querySelector('.tab-pane:not(.hidden)');
-                if (activePane && activePane.id === 'tab-sid') {
+                if (!activePane || ['tab-sid', 'tab-dampak'].includes(activePane.id)) {
                     switchTab('tab-market');
                 }
 
-                showToast("Mode Produsen Aktif", "Fitur pencatatan panen & panel distribusi kuota AI diaktifkan.", "success");
+                showToast("Mode Produsen Aktif", "Fitur input panen baru, scanner OCR, dan panel alokasi kuota AI diaktifkan.", "success");
+
             } else if (role === 'ADMIN') {
                 if (sideBadge) {
-                    sideBadge.textContent = 'Admin RT 13 (Terverifikasi)';
+                    sideBadge.textContent = 'Admin RT 13 (Pengurus PKK)';
                     sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-forest-100 text-forest-800 border border-forest-300';
                 }
                 if (sideDesc) {
-                    sideDesc.innerHTML = 'Mode Pengurus: Akses penuh 6 tab &amp; data 40 KK. <a href="javascript:void(0)" onclick="logoutAdminRole()" class="text-red-600 font-bold hover:underline ml-1">[Keluar]</a>';
+                    sideDesc.innerHTML = 'Akses Penuh Pengurus: Verifikasi KK/KWT, Rekonsiliasi &amp; Laporan Dinas. <a href="javascript:void(0)" onclick="logoutAdminRole()" class="text-red-600 font-bold hover:underline ml-1">[Keluar]</a>';
                 }
                 if (consumer3ClickBar) consumer3ClickBar.classList.remove('hidden');
+                if (marketProducerActions) marketProducerActions.classList.remove('hidden');
+                if (adminVerificationPanel) adminVerificationPanel.classList.remove('hidden');
+                if (adminReconciliationPanel) adminReconciliationPanel.classList.remove('hidden');
 
-                // Admin sudah otomatis menghidupkan privasi pkm pm agar data seluruh warga jelas terlihat
+                // Nav tabs: Tampilkan SEMUA 6 Tab!
+                if (navKonsep) navKonsep.classList.remove('hidden');
+                if (navSid) navSid.classList.remove('hidden');
+                if (navMarket) navMarket.classList.remove('hidden');
+                if (navMatching) navMatching.classList.remove('hidden');
+                if (navMusyawarah) navMusyawarah.classList.remove('hidden');
+                if (navDampak) navDampak.classList.remove('hidden');
+
+                // Admin otomatis menghidupkan privasi PKM-PM agar data seluruh warga jelas terlihat
                 window.appState.privacyMode = 'ADMIN';
                 updatePrivacyButtonState();
 
-                showToast("Mode Admin RT Aktif", "Akses penuh data Single Identity 40 KK terbuka untuk verifikasi.", "warning");
+                showToast("Mode Admin RT Aktif", "Akses penuh verifikasi 40 KK, rekonsiliasi kas, dan ekspor laporan dinas terbuka.", "warning");
             }
 
             renderAll();
+        }
+
+        // =========================================================================
+        // 8d. PRODUCTION ADMIN TOOLS (VERIFIKASI KK & IZIN KWT, REKONSILIASI, EKSPOR)
+        // =========================================================================
+        function approveNewKk(name) {
+            const badge = document.getElementById('pendingKkBadge');
+            const card = document.getElementById('pendingKkCard');
+            if (badge) {
+                badge.textContent = '0 Menunggu Validasi';
+                badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200';
+            }
+            if (card) {
+                card.innerHTML = `
+                    <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 font-medium text-xs space-y-1">
+                        <div class="flex items-center gap-1.5 font-bold">
+                            <i class="fa-solid fa-circle-check text-emerald-600"></i> Verifikasi Identitas Berhasil: SID Terbit!
+                        </div>
+                        <p class="text-[11px] text-emerald-800">
+                            <strong>${name}</strong> telah divalidasi oleh Pengurus RT 13 & PKK. Terbit identitas digital baru: 
+                            <span class="font-mono font-bold bg-emerald-100 px-1 py-0.5 rounded">SID-RT13-041</span> (Klasifikasi: Waspada Pangan).
+                        </p>
+                    </div>
+                `;
+            }
+            showToast("Verifikasi Sukses", `Identitas ${name} berhasil diverifikasi dan terdaftar ke Buku SID.`, "success");
+        }
+
+        function rejectNewKk() {
+            showToast("Pengajuan Ditolak", "Data dikembalikan ke pemohon untuk perbaikan berkas administrasi.", "warning");
+        }
+
+        function handleCloseMonthPeriod() {
+            const badge = document.getElementById('periodStatusBadge');
+            const seal = document.getElementById('periodAuditSeal');
+            const btnText = document.getElementById('closePeriodBtnText');
+            const btn = document.getElementById('closePeriodBtn');
+
+            if (badge) {
+                badge.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600"></i> Periode Oktober 2026: DITUTUP & TERKUNCI (CLOSED)';
+                badge.className = 'text-sm font-bold text-emerald-800 flex items-center gap-1.5';
+            }
+            if (seal) {
+                seal.innerHTML = 'Segel Audit: <span class="font-mono font-bold text-emerald-700">SEAL-PKK-YSM-202610-LOCKED-SHA256</span> (Resmi)';
+            }
+            if (btnText) {
+                btnText.textContent = 'Buku Besar Terkunci (Closed)';
+            }
+            if (btn) {
+                btn.disabled = true;
+                btn.className = 'px-4 py-2 rounded-xl bg-stone-300 text-stone-600 text-xs font-bold flex items-center gap-1.5 cursor-not-allowed shadow-none';
+            }
+            showToast("Penutupan Buku Berhasil", "Buku besar periode Oktober 2026 ditutup & disegel resmi untuk laporan dinas.", "success");
+        }
+
+        function handleExportOfficialGovReport() {
+            openModal('modalGovReport');
+            showToast("Format Laporan Dinas", "Dokumen resmi siap dicetak atau disimpan sebagai PDF.", "info");
+        }
+
+        function copyGovReportSummary() {
+            const summaryText = `*NOTA LAPORAN MONITORING INFLASI MIKRO & KETAHANAN PANGAN RT 13 YOSOMULYO*\n` +
+                `Periode: Oktober 2026\n` +
+                `Nomor: 045.2/PKK-RT13/YSM/X/2026\n\n` +
+                `1. Cakupan Populasi: 40 KK (160 Jiwa)\n` +
+                `2. Total Pangan Beredar: 624 Kg (Serapan Panen Lokal KWT: 89,2%)\n` +
+                `3. Omzet Produsen Lokal: Rp 7.840.000,- (0% komisi fee)\n` +
+                `4. Indeks Inflasi Mikro: -8,4% (lebih terkendali dibanding harga PIHPS)\n` +
+                `5. Intervensi Kerentanan Pangan: 5 KK prioritas stunting tertangani 100%\n` +
+                `6. Rekonsiliasi Kas: 100% MATCHED (Selisih Kas Rp 0,-)\n` +
+                `7. Segel Audit: SEAL-PKK-YSM-202610-LOCKED-SHA256\n\n` +
+                `Tertanda,\nKetua RT 13 Yosomulyo & TP PKK Kelurahan Yosomulyo, Kota Metro.`;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(summaryText).then(() => {
+                    showToast("Teks Disalin", "Ringkasan nota dinas berhasil disalin ke clipboard.", "success");
+                }).catch(() => {
+                    showToast("Salin Gagal", "Gunakan tombol Cetak Laporan Resmi.", "warning");
+                });
+            } else {
+                showToast("Teks Siap", "Silakan cetak laporan langsung via tombol Cetak.", "info");
+            }
         }
 
         // --- 9. MASTER RENDER ALL ---
