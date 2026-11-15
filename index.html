@@ -935,7 +935,7 @@
                             </span>
                         </div>
 
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                             <!-- Kolom Kiri: Verifikasi KK Baru -->
                             <div class="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-3">
                                 <div class="flex items-center justify-between">
@@ -964,6 +964,34 @@
                                 </div>
                             </div>
 
+                            <!-- Kolom Tengah: Verifikasi Pembaruan Data Warga (Update KK) -->
+                            <div class="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-xs text-stone-900 flex items-center gap-1.5">
+                                        <i class="fa-solid fa-arrows-rotate text-blue-600"></i> Antrean Pembaruan Data Warga
+                                    </span>
+                                    <span id="pendingUpdateBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">1 Pengajuan Update</span>
+                                </div>
+                                <div id="pendingUpdateCard" class="p-3 rounded-lg bg-white border border-stone-200 space-y-2 text-xs">
+                                    <div class="flex items-center justify-between">
+                                        <strong class="text-stone-900">Ibu Sri Wahyuni (SID-RT13-002)</strong>
+                                        <span class="font-mono text-[10px] text-stone-500">Kelahiran Balita Baru</span>
+                                    </div>
+                                    <div class="text-[11px] text-stone-600 space-y-0.5">
+                                        <p>Perubahan: Anggota keluarga naik 3 &rarr; 4 Jiwa (1 Balita Baru)</p>
+                                        <p>Usulan: <span class="font-bold text-amber-700">Penyesuaian Kebutuhan Gizi &amp; Status Waspada Stunting</span></p>
+                                    </div>
+                                    <div class="flex items-center gap-2 pt-1 border-t border-stone-100">
+                                        <button type="button" onclick="approveMemberUpdate('SID-RT13-002')" class="flex-1 py-1.5 px-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] transition flex items-center justify-center gap-1">
+                                            <i class="fa-solid fa-check"></i> Setujui &amp; Update SID
+                                        </button>
+                                        <button type="button" onclick="rejectMemberUpdate()" class="py-1.5 px-2.5 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-100 text-[11px] font-semibold transition">
+                                            Tolak
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Kolom Kanan: Validasi Izin Kelompok Produsen (KWT) -->
                             <div class="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-3">
                                 <div class="flex items-center justify-between">
@@ -972,7 +1000,7 @@
                                     </span>
                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-forest-100 text-forest-800 border border-forest-200">3 Kelompok Aktif</span>
                                 </div>
-                                <div class="space-y-2 text-xs">
+                                <div id="producerPermitList" class="space-y-2 text-xs">
                                     <div class="p-2.5 rounded-lg bg-white border border-stone-200 flex items-center justify-between">
                                         <div>
                                             <strong class="text-stone-900 block text-xs">KWT Mekar Jaya RT 13</strong>
@@ -1435,6 +1463,23 @@
                     </div>
                 </div>
 
+                <!-- Banner Khusus Konsumen: Ajakan Menjadi Produsen Pekarangan -->
+                <div id="consumerBecomeProducerBanner" class="p-4 rounded-2xl bg-gradient-to-r from-amber-50 via-stone-50 to-emerald-50 border border-amber-200 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg font-bold shadow-xs shrink-0">
+                            <i class="fa-solid fa-seedling"></i>
+                        </div>
+                        <div>
+                            <strong class="text-sm font-bold text-stone-900 block">Punya Pekarangan Rumah atau Kolam Bioflok?</strong>
+                            <p class="text-[11px] text-stone-600">Daftarkan panen pekarangan Anda menjadi Produsen KWT RT 13. Hasil kebun langsung diserap tetangga tanpa tengkulak!</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="openModal('modalRegisterProducer')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5 shrink-0 cursor-pointer">
+                        <i class="fa-solid fa-hand-holding-hand"></i>
+                        <span>Daftar Jadi Produsen KWT</span>
+                    </button>
+                </div>
+
                 <!-- Sorotan Kasus Unggulan -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Sayur Kangkung KWT Notice -->
@@ -1776,6 +1821,32 @@
                                 &lt; 5% serta stabilitas harga.
                             </p>
                         </div>
+                    </div>
+
+                    <!-- Live Data Aggregation Engine Banner -->
+                    <div class="p-4 rounded-2xl bg-gradient-to-r from-forest-900 via-forest-800 to-emerald-900 text-white border border-emerald-500/30 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3.5 mb-6">
+                        <div class="flex items-start sm:items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-400 text-forest-950 flex items-center justify-center text-base font-bold shrink-0 shadow-xs">
+                                <i class="fa-solid fa-arrows-spin animate-spin" style="animation-duration: 5s;"></i>
+                            </div>
+                            <div class="space-y-0.5 min-w-0">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 text-[10px] font-bold border border-emerald-400/30">
+                                        Live Engine: Non-Template
+                                    </span>
+                                    <span class="text-[11px] text-emerald-200 font-medium">
+                                        Dihitung Otomatis dari 40 KK SID + Etalase Panen + Transaksi Riil
+                                    </span>
+                                </div>
+                                <p class="text-[11px] text-forest-200 leading-snug">
+                                    Sistem memproses stok panen aktif, daya serap konsumsi harian keluarga, dan sinyal voting untuk menghasilkan rekomendasi surplus nyata.
+                                </p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="syncLiveSurplusData()" class="px-4 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-forest-950 font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5 shrink-0 w-full md:w-auto cursor-pointer">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>Tarik Data Nyata Otomatis</span>
+                        </button>
                     </div>
 
                     <!-- Input Controls -->
@@ -2313,12 +2384,31 @@
 
                 <!-- Demand Voting Cards Board -->
                 <div class="space-y-4">
-                    <div class="flex items-center justify-between">
+                    <!-- Admin Only Control: Atur Komoditas Voting -->
+                    <div id="adminVotingControls" class="p-4 rounded-xl bg-forest-900 text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500 text-forest-950 flex items-center justify-center font-bold text-xs">
+                                <i class="fa-solid fa-sliders"></i>
+                            </div>
+                            <div>
+                                <strong class="text-xs font-bold text-white block">Otoritas Admin: Kelola Komoditas Voting Musyawarah</strong>
+                                <p class="text-[10px] text-forest-200">Tambahkan atau atur komoditas pangan yang dapat divoting warga sebagai sinyal tanam KWT.</p>
+                            </div>
+                        </div>
+                        <button type="button" onclick="openModal('modalAdminAddVotingDemand')" class="px-3.5 py-1.5 rounded-lg bg-emerald-400 hover:bg-emerald-300 text-forest-950 font-bold text-xs transition flex items-center gap-1.5 shadow-xs shrink-0 cursor-pointer">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Tambah Komoditas Voting</span>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <h3 class="serif-heading text-lg font-bold text-stone-900 flex items-center gap-2">
                             <i class="fa-solid fa-square-poll-vertical text-forest-700"></i> Papan Musyawarah Kebutuhan
                             Pangan Warga
                         </h3>
-                        <span class="text-xs text-stone-500">Klik "Beri Suara" untuk mewakili SID keluarga Anda</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-stone-500">Klik "Beri Suara" untuk mewakili SID keluarga Anda</span>
+                        </div>
                     </div>
 
                     <div id="demandVotingCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -3640,6 +3730,388 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 1: EDIT DATA WARGA (KHUSUS ADMIN)
+         ========================================================================= -->
+    <div id="modalEditMember" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full border border-stone-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div class="px-5 py-4 bg-gradient-to-r from-forest-900 via-forest-800 to-forest-900 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-400 text-forest-950 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-user-pen"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm sm:text-base leading-tight">Edit Data Kependudukan SID</h3>
+                        <p class="text-[10px] text-emerald-200">Otoritas Pengurus RT 13 • Kelurahan Yosomulyo</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalEditMember')" class="p-1 rounded-lg text-stone-300 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handlePromptConfirmMemberEdit(event)" class="p-5 space-y-3.5 text-xs">
+                <input type="hidden" id="editMemberSid">
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">SID Warga</label>
+                        <input type="text" id="editMemberSidDisplay" disabled class="w-full px-3 py-2 rounded-xl bg-stone-100 border border-stone-200 font-mono font-bold text-stone-600">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Nomor Induk Kependudukan (NIK)</label>
+                        <input type="text" id="editMemberNik" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-stone-700 mb-1">Nama Kepala Keluarga (KK) *</label>
+                    <input type="text" id="editMemberName" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Alamat Rumah (RT 13)</label>
+                        <input type="text" id="editMemberAddress" required class="w-full px-3 py-2 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Jumlah Anggota Keluarga (Jiwa)</label>
+                        <input type="number" id="editMemberFamilySize" min="1" max="15" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Penghasilan Bulanan (Rp)</label>
+                        <input type="number" id="editMemberIncome" min="0" step="100000" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Klasifikasi Kerentanan Pangan</label>
+                        <select id="editMemberTier" class="w-full px-3 py-2 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                            <option value="MANDIRI">MANDIRI (Sejahtera)</option>
+                            <option value="WASPADA">WASPADA (Cukup)</option>
+                            <option value="RENTAN_PRIORITAS">RENTAN_PRIORITAS (Bansos)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Peran dalam Ekosistem</label>
+                        <select id="editMemberRole" class="w-full px-3 py-2 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                            <option value="KONSUMEN">Konsumen Rumah Tangga</option>
+                            <option value="PRODUSEN">Produsen KWT / Petani</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Komoditas Panen (Jika Produsen)</label>
+                        <input type="text" id="editMemberCommodity" placeholder="Cth: Kangkung, Telur" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] space-y-1">
+                    <span class="font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-700"></i> Kontrol Presisi Data Kependudukan
+                    </span>
+                    <p class="text-amber-800">
+                        Sebelum data disimpan ke sistem, dialog konfirmasi ganda akan muncul untuk meminimalisir kesalahan input data bantuan pangan.
+                    </p>
+                </div>
+
+                <div class="pt-2 flex items-center gap-2">
+                    <button type="button" onclick="closeModal('modalEditMember')" class="flex-1 py-2 px-3 rounded-xl border border-stone-300 text-stone-700 font-bold hover:bg-stone-50 transition">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 py-2 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Lanjutkan &amp; Konfirmasi</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 2: KONFIRMASI GANDA SEBELUM SIMPAN EDIT DATA (MINIMALISIR ERROR)
+         ========================================================================= -->
+    <div id="modalConfirmMemberEdit" class="hidden fixed inset-0 z-50 bg-stone-900/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-md w-full border border-stone-200 shadow-2xl p-6 text-center space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 mx-auto flex items-center justify-center text-2xl shadow-xs">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            
+            <div class="space-y-1.5">
+                <h3 class="serif-heading text-lg font-bold text-stone-900">Konfirmasi Pembaruan Data SID</h3>
+                <p class="text-xs text-stone-600">
+                    Apakah Anda yakin ingin memutakhirkan data identitas <strong id="confirmEditMemberName" class="text-stone-900 font-bold"></strong>?
+                </p>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200 text-left text-xs space-y-1 text-stone-700">
+                <p><strong>SID:</strong> <span id="confirmEditMemberSid" class="font-mono"></span></p>
+                <p><strong>Alamat:</strong> <span id="confirmEditMemberAddress"></span></p>
+                <p><strong>Tanggungan:</strong> <span id="confirmEditMemberFamily"></span> Jiwa</p>
+                <p><strong>Klasifikasi:</strong> <span id="confirmEditMemberTier" class="font-bold text-forest-800"></span></p>
+            </div>
+
+            <p class="text-[11px] text-stone-500 italic">
+                Perubahan ini akan langsung mempengaruhi alokasi bantuan sosial inklusi dan neraca serapan pangan 40 KK RT 13.
+            </p>
+
+            <div class="flex items-center gap-2 pt-1">
+                <button type="button" onclick="closeModal('modalConfirmMemberEdit')" class="flex-1 py-2.5 px-3 rounded-xl border border-stone-300 text-stone-700 font-bold hover:bg-stone-50 text-xs transition">
+                    Periksa Kembali
+                </button>
+                <button type="button" onclick="executeSaveMemberEdit()" class="flex-1 py-2.5 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Ya, Simpan Pembaruan</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 3: ADMIN ATUR KOMODITAS VOTING MUSYAWARAH
+         ========================================================================= -->
+    <div id="modalAdminAddVotingDemand" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-md w-full border border-stone-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div class="px-5 py-4 bg-gradient-to-r from-forest-950 via-forest-900 to-forest-800 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-400 text-forest-950 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm leading-tight">Tambah Komoditas Musyawarah Baru</h3>
+                        <p class="text-[10px] text-emerald-200">Buka voting kebutuhan warga sebagai sinyal tanam KWT</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalAdminAddVotingDemand')" class="p-1 rounded-lg text-stone-300 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleAdminSubmitNewVotingDemand(event)" class="p-5 space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-semibold text-stone-700 mb-1">Nama Komoditas Pangan *</label>
+                    <input type="text" id="adminNewDemandName" placeholder="Cth: Jagung Manis Organik / Ikan Gurame" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Kategori Pangan</label>
+                        <select id="adminNewDemandCategory" class="w-full px-3 py-2 rounded-xl border border-stone-300 font-semibold text-stone-900 focus:outline-none focus:border-forest-600">
+                            <option value="Sayuran">Sayuran Hijau</option>
+                            <option value="Protein Hewani">Protein Hewani / Telur</option>
+                            <option value="Perikanan">Perikanan Air Tawar</option>
+                            <option value="Lumbung & Karbohidrat">Lumbung &amp; Padi</option>
+                            <option value="Olahan Pangan">Olahan Pangan UMKM</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Satuan</label>
+                        <select id="adminNewDemandUnit" class="w-full px-3 py-2 rounded-xl border border-stone-300 font-semibold text-stone-900 focus:outline-none focus:border-forest-600">
+                            <option value="Kg">Kilogram (Kg)</option>
+                            <option value="Ikat">Ikat</option>
+                            <option value="Butir">Butir</option>
+                            <option value="Pack">Pack</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Target Pasokan (Volume)</label>
+                        <input type="number" id="adminNewDemandTargetKg" min="5" step="5" value="30" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Threshold Suara (Ambang Batas)</label>
+                        <input type="number" id="adminNewDemandThreshold" min="1" max="40" value="10" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-stone-700 mb-1">Keterangan / Urgensi Kebutuhan Gizi</label>
+                    <textarea id="adminNewDemandDesc" rows="2" placeholder="Cth: Kebutuhan serat & mineral untuk balita dan lansia RT 13..." class="w-full px-3 py-2 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:border-forest-600"></textarea>
+                </div>
+
+                <div class="pt-2 flex items-center gap-2">
+                    <button type="button" onclick="closeModal('modalAdminAddVotingDemand')" class="flex-1 py-2 px-3 rounded-xl border border-stone-300 text-stone-700 font-bold hover:bg-stone-50 transition">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 py-2 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-bullhorn"></i>
+                        <span>Terbitkan ke Papan Voting</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 4: PENDAFTARAN PRODUSEN KWT / PEKARANGAN OLEH WARGA
+         ========================================================================= -->
+    <div id="modalRegisterProducer" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full border border-stone-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div class="px-5 py-4 bg-gradient-to-r from-amber-600 via-emerald-700 to-forest-800 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-white text-emerald-800 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-seedling"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm sm:text-base leading-tight">Pendaftaran Produsen KWT / Pekarangan</h3>
+                        <p class="text-[10px] text-emerald-100">Gabung menjadi penyedia pangan mandiri RT 13 Yosomulyo</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalRegisterProducer')" class="p-1 rounded-lg text-stone-300 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSubmitRegisterProducer(event)" class="p-5 space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-semibold text-stone-700 mb-1">Nama Kelompok Tani / Petani Pekarangan *</label>
+                    <input type="text" id="regProducerName" placeholder="Cth: KWT Anggrek Asri (Ibu Nurul)" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-emerald-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Pilih Identitas SID Anda</label>
+                        <select id="regProducerSidSelect" class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono text-stone-900 focus:outline-none focus:border-emerald-600">
+                            <!-- Populated dynamically -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Lokasi Pekarangan / Kolam</label>
+                        <input type="text" id="regProducerLocation" placeholder="Cth: Blok B No. 08 RT 13" required class="w-full px-3 py-2 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:border-emerald-600">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Komoditas yang Dibudidayakan</label>
+                        <input type="text" id="regProducerCommodity" placeholder="Cth: Sayur Kangkung, Bayam, Nila" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-semibold text-stone-900 focus:outline-none focus:border-emerald-600">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Estimasi Kapasitas Panen (Kg/bln)</label>
+                        <input type="number" id="regProducerCapacity" min="5" step="5" value="25" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono font-bold text-stone-900 focus:outline-none focus:border-emerald-600">
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-[11px] space-y-1">
+                    <span class="font-bold flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i> Keuntungan Menjadi Produsen Terdaftar
+                    </span>
+                    <p class="text-emerald-800 leading-snug">
+                        100% hasil penjualan diterima utuh tanpa potongan komisi (0% fee). Stok panen Anda otomatis diprioritaskan oleh sistem AI Food Matching untuk konsumsi tetangga RT 13.
+                    </p>
+                </div>
+
+                <div class="pt-2 flex items-center gap-2">
+                    <button type="button" onclick="closeModal('modalRegisterProducer')" class="flex-1 py-2 px-3 rounded-xl border border-stone-300 text-stone-700 font-bold hover:bg-stone-50 transition">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Kirim Permohonan Izin Produsen</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 5: PENDAFTARAN WARGA MANDIRI (USER MENDAFTARKAN DATA DIRI)
+         ========================================================================= -->
+    <div id="modalSelfRegister" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full border border-stone-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div class="px-5 py-4 bg-gradient-to-r from-forest-900 via-forest-800 to-forest-900 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-400 text-forest-950 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm sm:text-base leading-tight">Pendaftaran Mandiri Data Warga RT 13</h3>
+                        <p class="text-[10px] text-emerald-200">Satu Keluarga Satu Single Identity (SID)</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalSelfRegister')" class="p-1 rounded-lg text-stone-300 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSubmitSelfRegister(event)" class="p-5 space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-semibold text-stone-700 mb-1">Nama Kepala Keluarga (Sesuai KTP/KK) *</label>
+                    <input type="text" id="selfRegName" placeholder="Cth: Bpk. Haryono" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Nomor Induk Kependudukan (NIK)</label>
+                        <input type="text" id="selfRegNik" placeholder="16 digit NIK" maxlength="16" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Alamat Rumah (RT 13)</label>
+                        <input type="text" id="selfRegAddress" placeholder="Cth: Blok D No. 05" required class="w-full px-3 py-2 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Jumlah Anggota Keluarga (Jiwa)</label>
+                        <input type="number" id="selfRegFamilySize" min="1" max="15" value="4" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Keberadaan Balita / Lansia</label>
+                        <select id="selfRegVulnerableStatus" class="w-full px-3 py-2 rounded-xl border border-stone-300 font-semibold text-stone-900 focus:outline-none focus:border-forest-600">
+                            <option value="TIDAK_ADA">Tidak Ada Balita/Lansia</option>
+                            <option value="ADA_BALITA">Ada Balita (Prioritas Gizi)</option>
+                            <option value="ADA_LANSIA">Ada Lansia</option>
+                            <option value="BALITA_DAN_LANSIA">Ada Balita dan Lansia</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Penghasilan Rata-rata / Bulan</label>
+                        <select id="selfRegIncome" class="w-full px-3 py-2 rounded-xl border border-stone-300 font-semibold text-stone-900 focus:outline-none focus:border-forest-600">
+                            <option value="1200000">&lt; Rp 1.500.000 (Rentan)</option>
+                            <option value="2500000">Rp 1.500.000 - Rp 3.500.000 (Waspada)</option>
+                            <option value="4500000">&gt; Rp 3.500.000 (Mandiri)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-stone-700 mb-1">Pilihan Peran</label>
+                        <select id="selfRegRole" class="w-full px-3 py-2 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                            <option value="KONSUMEN">Konsumen (Warga Belanja)</option>
+                            <option value="PRODUSEN">Produsen (Petani Pekarangan)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-xl bg-stone-50 border border-stone-200 text-stone-600 text-[11px] space-y-1">
+                    <span class="font-bold text-stone-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-lock text-stone-500"></i> Keamanan Data Warga Terjamin
+                    </span>
+                    <p class="leading-snug">
+                        Data kependudukan Anda otomatis dienkripsi dan disamarkan (masking NIK). Pengajuan ini akan diverifikasi oleh Pengurus RT 13 sebelum identitas digital SID resmi diterbitkan.
+                    </p>
+                </div>
+
+                <div class="pt-2 flex items-center gap-2">
+                    <button type="button" onclick="closeModal('modalSelfRegister')" class="flex-1 py-2 px-3 rounded-xl border border-stone-300 text-stone-700 font-bold hover:bg-stone-50 transition">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 py-2 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-check"></i>
+                        <span>Kirim Pendaftaran ke RT</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -5490,10 +5962,18 @@
                         ${getMemberTierBadge(m.socialTier, m.aidReceivedThisMonth)}
                     </td>
                     <td class="py-3.5 px-4 text-right whitespace-nowrap">
-                        <button type="button" onclick="event.stopPropagation(); viewMemberDetail('${m.sid}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-semibold text-[11px] border border-slate-200 hover:border-emerald-200 shadow-2xs transition cursor-pointer">
-                            <i class="fa-solid fa-address-card text-emerald-600"></i>
-                            <span>Lihat Detail</span>
-                        </button>
+                        <div class="inline-flex items-center gap-1.5">
+                            <button type="button" onclick="event.stopPropagation(); viewMemberDetail('${m.sid}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 font-semibold text-[11px] border border-slate-200 hover:border-emerald-200 shadow-2xs transition cursor-pointer">
+                                <i class="fa-solid fa-address-card text-emerald-600"></i>
+                                <span>Detail</span>
+                            </button>
+                            ${window.appState.isAdminLoggedIn ? `
+                                <button type="button" onclick="event.stopPropagation(); openEditMemberModal('${m.sid}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-[11px] border border-amber-300 shadow-2xs transition cursor-pointer">
+                                    <i class="fa-solid fa-pen-to-square text-amber-700"></i>
+                                    <span>Edit</span>
+                                </button>
+                            ` : ''}
+                        </div>
                     </td>
                 </tr>
                 <tr id="member-expand-${m.sid}" class="${isExpanded ? '' : 'hidden'} bg-slate-50/70">
@@ -7223,10 +7703,37 @@
             showToast("Bantuan Disalurkan!", `Penyaluran bantuan senilai ${formatRupiah(costAmount)} berhasil. Rotasi round-robin diaktifkan: antrean digeser ke warga berikutnya.`, "success");
         }
 
-        // --- 5.5 ASISTEN PERAMAL KEBUTUHAN & PANEN LINGKUNGAN (PROYEKSI 3 HARI) ---
+        // --- 5.5 ASISTEN PERAMAL KEBUTUHAN & PANEN LINGKUNGAN (PROYEKSI 3 HARI - ENGINE NYATA) ---
         let currentSurplusScenario = 'SURPLUS_SAYUR';
 
-        function calculateSurplusPrediction() {
+        // Fungsi Tarik Otomatis Data Nyata dari Ekosistem Aktif (Non-Template)
+        function syncLiveSurplusData() {
+            const listings = window.appState.listings || [];
+            const members = window.appState.members || [];
+            const demands = window.appState.demands || [];
+            const transactions = window.appState.transactions || [];
+
+            // 1. Total Pasokan Tersedia Riil di Etalase
+            const totalStockLive = listings.reduce((sum, l) => sum + (Number(l.availableStockKg) || 0), 0);
+
+            // 2. Kebutuhan Konsumsi Riil 40 KK (Proyeksi 3 Hari = 10% dari Kebutuhan Bulanan SID)
+            const baseNeed3Days = Math.round(members.reduce((sum, m) => sum + (Number(m.monthlyFoodNeedKg) || 30), 0) * 0.10);
+            const votingDemandSum = demands.reduce((sum, d) => sum + Math.round((Number(d.targetKg) || 20) * ((d.votes || 0) / 10)), 0);
+            const totalDemandLive = Math.max(30, baseNeed3Days + votingDemandSum);
+
+            // Update Input
+            const harvestInput = document.getElementById('surplusHarvestKg');
+            const demandInput = document.getElementById('surplusDemandKg');
+            if (harvestInput) harvestInput.value = totalStockLive;
+            if (demandInput) demandInput.value = totalDemandLive;
+
+            // Jalankan kalkulasi engine
+            calculateSurplusPrediction(true);
+
+            showToast("Sinkronisasi Selesai", `Data Riil Ditarik: Pasokan ${totalStockLive} Kg • Kebutuhan Konsumsi ${totalDemandLive} Kg.`, "success");
+        }
+
+        function calculateSurplusPrediction(isLiveSync = false) {
             const harvestInput = document.getElementById('surplusHarvestKg');
             const demandInput = document.getElementById('surplusDemandKg');
 
@@ -7236,7 +7743,7 @@
             // Hitung selisih: Total Panen dikurangi Konsumsi Lokal
             const surplus = harvest - demand;
 
-            // Tentukan satuan: Telur menggunakan Butir, komoditas lain Kg
+            // Tentukan satuan
             const unitLabel = currentSurplusScenario === 'DEFISIT_TELUR' ? 'Butir' : 'Kg';
 
             // Hitung persentase rasio serapan lokal vs spillover pasar luar
@@ -7311,96 +7818,68 @@
                 labelSpilloverDetail.innerHTML = `Dialihkan ke Koperasi: ${Math.max(0, surplus).toLocaleString('id-ID')} ${unitLabel} (${spilloverPct}%) <i class="fa-solid fa-arrow-up-right-from-square text-amber-600"></i>`;
             }
 
-            // Area hasil (Result Display): Poin 3 Proposal Resmi (Anti-AI Slop, Bahasa Membumi & Solusi Nyata)
+            // Area hasil (Result Display): KALKULASI DINAMIS BERBASIS DATA RIIL (BUKAN TEMPLATE MATI)
             const resultBox = document.getElementById('surplusResultBox');
             if (resultBox) {
-                if (currentSurplusScenario === 'SURPLUS_SAYUR' || (harvest === 80 && demand === 60)) {
+                if (surplus > 0) {
                     resultBox.className = "p-4 sm:p-5 rounded-2xl bg-emerald-50/90 border-2 border-emerald-300 text-emerald-950 flex items-start gap-3 shadow-xs transition-all duration-300";
                     resultBox.innerHTML = `
                         <div class="w-9 h-9 rounded-xl bg-emerald-700 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
-                            <i class="fa-solid fa-leaf"></i>
+                            <i class="fa-solid fa-scale-balanced"></i>
                         </div>
-                        <div class="space-y-1.5">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded inline-block font-mono border border-emerald-200">
-                                Proyeksi 3 Hari ke Depan • Kasus Surplus Sayuran KWT
-                            </span>
+                        <div class="space-y-1.5 flex-1">
+                            <div class="flex items-center justify-between flex-wrap gap-1">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded inline-block font-mono border border-emerald-200">
+                                    Proyeksi 3 Hari • Diagnosis Surplus Terukur (+${surplus} ${unitLabel})
+                                </span>
+                                <span class="text-[10px] font-bold text-emerald-800 font-mono">${isLiveSync ? '● Live Aggregated Data' : 'Simulasi Presisi'}</span>
+                            </div>
                             <p class="text-xs sm:text-sm text-emerald-950 font-bold leading-relaxed">
-                                Proyeksi 3 Hari ke Depan: RT 13 diperkirakan mengalami kelebihan pasokan (Surplus) +20 Kg Sayur Kangkung dari panen serentak anggota KWT.
+                                Neraca Pangan Positif: Volume panen aktif produsen (${harvest} ${unitLabel}) melebihi estimasi kebutuhan konsumsi 40 KK (${demand} ${unitLabel}). Terdapat surplus bersih senilai +${surplus} ${unitLabel}.
                             </p>
-                            <p class="text-[11px] text-emerald-900 leading-normal bg-white/70 p-2.5 rounded-lg border border-emerald-200/60">
-                                <strong class="text-emerald-950 font-semibold"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>Tindakan Sistem:</strong> Otomatis mengalihkan 20 Kg ke Koperasi Produsen Kelurahan Yosomulyo agar sayuran tidak layu/busuk (susut pangan &lt; 5%) dan harga petani tetap stabil.
-                            </p>
+                            <div class="text-[11px] text-emerald-900 leading-normal bg-white/70 p-2.5 rounded-lg border border-emerald-200/60 space-y-1">
+                                <p><strong class="text-emerald-950 font-semibold"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>Tindakan Sistem Otomatis:</strong></p>
+                                <p>1. Memprioritaskan alokasi ${Math.min(harvest, demand)} ${unitLabel} (100% serapan lokal) untuk dapur warga RT 13 dengan 0% biaya perantara.</p>
+                                <p>2. Mengalihkan kelebihan ${surplus} ${unitLabel} (${spilloverPct}%) ke Koperasi Kelurahan Yosomulyo untuk menjaga kesegaran komoditas dan stabilitas harga petani.</p>
+                            </div>
                         </div>
                     `;
-                } else if (currentSurplusScenario === 'DEFISIT_TELUR' || (harvest === 50 && demand === 80)) {
-                    resultBox.className = "p-4 sm:p-5 rounded-2xl bg-amber-50/90 border-2 border-amber-300 text-amber-950 flex items-start gap-3 shadow-xs transition-all duration-300";
-                    resultBox.innerHTML = `
-                        <div class="w-9 h-9 rounded-xl bg-amber-700 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
-                            <i class="fa-solid fa-egg"></i>
-                        </div>
-                        <div class="space-y-1.5">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded inline-block font-mono border border-amber-200">
-                                Proyeksi 3 Hari ke Depan • Kasus Defisit Telur Ayam RT 13
-                            </span>
-                            <p class="text-xs sm:text-sm text-amber-950 font-bold leading-relaxed">
-                                Proyeksi 3 Hari ke Depan: Kebutuhan konsumsi warga RT 13 diperkirakan kekurangan (Defisit) -30 Butir Telur Ayam.
-                            </p>
-                            <p class="text-[11px] text-amber-900 leading-normal bg-white/70 p-2.5 rounded-lg border border-amber-200/60">
-                                <strong class="text-amber-950 font-semibold"><i class="fa-solid fa-shield-halved text-amber-600 mr-1"></i>Tindakan Sistem:</strong> Memprioritaskan hasil ternak unggas warga RT 13 untuk memenuhi kebutuhan dapur tetangga terdekat.
-                            </p>
-                        </div>
-                    `;
-                } else if (currentSurplusScenario === 'SURPLUS_BERAS' || (harvest === 1000 && demand === 600)) {
-                    resultBox.className = "p-4 sm:p-5 rounded-2xl bg-emerald-50/90 border-2 border-emerald-300 text-emerald-950 flex items-start gap-3 shadow-xs transition-all duration-300";
-                    resultBox.innerHTML = `
-                        <div class="w-9 h-9 rounded-xl bg-forest-800 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
-                            <i class="fa-solid fa-wheat-awn"></i>
-                        </div>
-                        <div class="space-y-1.5">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-forest-800 bg-forest-100/90 px-2 py-0.5 rounded inline-block font-mono border border-forest-200">
-                                Proyeksi 3 Hari ke Depan • Panen Raya Poktan RT 13 (Kasus Bapak A)
-                            </span>
-                            <p class="text-xs sm:text-sm text-forest-950 font-bold leading-relaxed">
-                                Proyeksi 3 Hari ke Depan: Panen sawah Bapak A menghasilkan 1.000 Kg Beras Ciherang. Kebutuhan 40 KK adalah 600 Kg, sehingga surplus +400 Kg dialihkan ke Koperasi Produsen Kelurahan Yosomulyo.
-                            </p>
-                            <p class="text-[11px] text-forest-900 leading-normal bg-white/70 p-2.5 rounded-lg border border-forest-200/60">
-                                <strong class="text-forest-950 font-semibold"><i class="fa-solid fa-truck-ramp-box text-forest-600 mr-1"></i>Tindakan Sistem:</strong> Alihkan kelebihan beras ke Koperasi Kelurahan untuk cadangan logistik tanpa menekan harga petani di tingkat sawah.
-                            </p>
-                        </div>
-                    `;
-                } else if (surplus > 0) {
-                    resultBox.className = "p-4 sm:p-5 rounded-2xl bg-emerald-50/90 border-2 border-emerald-300 text-emerald-950 flex items-start gap-3 shadow-xs transition-all duration-300";
-                    resultBox.innerHTML = `
-                        <div class="w-9 h-9 rounded-xl bg-emerald-700 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
-                            <i class="fa-solid fa-circle-check"></i>
-                        </div>
-                        <div class="space-y-1.5">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2 py-0.5 rounded inline-block font-mono border border-emerald-200">
-                                Proyeksi 3 Hari ke Depan • Surplus Panen Lingkungan
-                            </span>
-                            <p class="text-xs sm:text-sm text-emerald-900 font-bold leading-relaxed">
-                                Kebutuhan konsumsi 40 KK terpenuhi. Terdapat SURPLUS +${surplus.toLocaleString('id-ID')} ${unitLabel}.
-                            </p>
-                            <p class="text-[11px] text-emerald-800 leading-normal bg-white/70 p-2.5 rounded-lg border border-emerald-200/60">
-                                <strong class="text-emerald-950 font-semibold"><i class="fa-solid fa-share-nodes text-emerald-600 mr-1"></i>Tindakan Sistem:</strong> Otomatis mengalihkan ${surplus.toLocaleString('id-ID')} ${unitLabel} ke Koperasi Produsen Kelurahan Yosomulyo guna mencegah susut pangan (food loss &lt; 5%) dan menjaga kestabilan harga petani.
-                            </p>
-                        </div>
-                    `;
-                } else {
+                } else if (surplus < 0) {
+                    const absDefisit = Math.abs(surplus);
                     resultBox.className = "p-4 sm:p-5 rounded-2xl bg-amber-50/90 border-2 border-amber-300 text-amber-950 flex items-start gap-3 shadow-xs transition-all duration-300";
                     resultBox.innerHTML = `
                         <div class="w-9 h-9 rounded-xl bg-amber-700 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
                             <i class="fa-solid fa-triangle-exclamation"></i>
                         </div>
-                        <div class="space-y-1.5">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded inline-block font-mono border border-amber-200">
-                                Proyeksi 3 Hari ke Depan • Defisit Pasokan Lingkungan
-                            </span>
+                        <div class="space-y-1.5 flex-1">
+                            <div class="flex items-center justify-between flex-wrap gap-1">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100/90 px-2 py-0.5 rounded inline-block font-mono border border-amber-200">
+                                    Proyeksi 3 Hari • Peringatan Defisit Pangan (-${absDefisit} ${unitLabel})
+                                </span>
+                                <span class="text-[10px] font-bold text-amber-800 font-mono">${isLiveSync ? '● Live Aggregated Data' : 'Simulasi Presisi'}</span>
+                            </div>
                             <p class="text-xs sm:text-sm text-amber-950 font-bold leading-relaxed">
-                                Pasokan Defisit: Diperkirakan kekurangan ${(demand - harvest).toLocaleString('id-ID')} ${unitLabel} untuk mencukupi kebutuhan 40 KK.
+                                Peringatan Pasokan Rendah: Estimasi kebutuhan konsumsi 40 KK (${demand} ${unitLabel}) melampaui stok panen yang tersedia (${harvest} ${unitLabel}). Terdapat defisit pasokan sebesar -${absDefisit} ${unitLabel}.
                             </p>
-                            <p class="text-[11px] text-amber-900 leading-normal bg-white/70 p-2.5 rounded-lg border border-amber-200/60">
-                                <strong class="text-amber-950 font-semibold"><i class="fa-solid fa-hand-holding-heart text-amber-600 mr-1"></i>Tindakan Sistem:</strong> Memprioritaskan hasil pekarangan warga RT 13 untuk dapur warga rentan dan tetangga terdekat sebelum mencari pasokan luar.
+                            <div class="text-[11px] text-amber-900 leading-normal bg-white/70 p-2.5 rounded-lg border border-amber-200/60 space-y-1">
+                                <p><strong class="text-amber-950 font-semibold"><i class="fa-solid fa-seedling text-amber-600 mr-1"></i>Tindakan Sistem Otomatis:</strong></p>
+                                <p>1. Menerbitkan <strong>Sinyal Tanam Prioritas</strong> di Papan Musyawarah agar KWT & peternak pekarangan meningkatkan kapasitas produksi komoditas ini.</p>
+                                <p>2. Menyalurkan cadangan lumbung darurat RT 13 khusus untuk 5 KK klaster rentan stunting agar asupan nutrisi tidak terganggu.</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultBox.className = "p-4 sm:p-5 rounded-2xl bg-forest-50/90 border-2 border-forest-300 text-forest-950 flex items-start gap-3 shadow-xs transition-all duration-300";
+                    resultBox.innerHTML = `
+                        <div class="w-9 h-9 rounded-xl bg-forest-800 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
+                            <i class="fa-solid fa-check-double"></i>
+                        </div>
+                        <div class="space-y-1.5 flex-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-forest-800 bg-forest-100 px-2 py-0.5 rounded inline-block font-mono border border-forest-200">
+                                Proyeksi 3 Hari • Keseimbangan Pangan Sempurna (100% Ekosistem Serasi)
+                            </span>
+                            <p class="text-xs sm:text-sm text-forest-950 font-bold leading-relaxed">
+                                Pasokan panen (${harvest} ${unitLabel}) sama persis dengan daya serap kebutuhan konsumsi 40 KK (${demand} ${unitLabel}). Seluruh hasil kebun terserap habis tanpa sisa susut pascapanen.
                             </p>
                         </div>
                     `;
@@ -7408,7 +7887,6 @@
             }
         }
 
-        // Fungsi pembantu untuk memilih preset skenario (Poin 3 Proposal)
         function setSurplusScenario(harvestKg, demandKg, scenarioType) {
             currentSurplusScenario = scenarioType || (harvestKg === 80 ? 'SURPLUS_SAYUR' : (harvestKg === 50 ? 'DEFISIT_TELUR' : 'SURPLUS_BERAS'));
             const harvestInput = document.getElementById('surplusHarvestKg');
@@ -8950,6 +9428,239 @@
             } else {
                 showToast("Teks Siap", "Silakan cetak laporan langsung via tombol Cetak.", "info");
             }
+        }
+
+        
+        // =========================================================================
+        // 8e. FINAL DEPLOYMENT TOOLS: EDIT WARGA, KONFIRMASI, VOTING & REGISTRASI
+        // =========================================================================
+        let currentEditingMemberSid = null;
+        let pendingMemberEditData = null;
+
+        function openEditMemberModal(sid) {
+            const m = (window.appState.members || []).find(x => x.sid === sid);
+            if (!m) return;
+
+            currentEditingMemberSid = sid;
+            document.getElementById('editMemberSid').value = m.sid;
+            document.getElementById('editMemberSidDisplay').value = m.sid;
+            document.getElementById('editMemberNik').value = m.rawNik || (m.nik || '1872010000000000');
+            document.getElementById('editMemberName').value = m.name;
+            document.getElementById('editMemberAddress').value = m.address || 'RT 13 Yosomulyo';
+            document.getElementById('editMemberFamilySize').value = m.familySize || 4;
+            document.getElementById('editMemberIncome').value = m.monthlyIncome || 2000000;
+            document.getElementById('editMemberTier').value = m.socialTier || 'WASPADA';
+            document.getElementById('editMemberRole').value = m.role || 'KONSUMEN';
+            document.getElementById('editMemberCommodity').value = m.producerCommodity || '';
+
+            openModal('modalEditMember');
+        }
+
+        function handlePromptConfirmMemberEdit(e) {
+            if (e && e.preventDefault) e.preventDefault();
+
+            pendingMemberEditData = {
+                sid: document.getElementById('editMemberSid').value,
+                nik: document.getElementById('editMemberNik').value.trim(),
+                name: document.getElementById('editMemberName').value.trim(),
+                address: document.getElementById('editMemberAddress').value.trim(),
+                familySize: parseInt(document.getElementById('editMemberFamilySize').value) || 4,
+                monthlyIncome: parseInt(document.getElementById('editMemberIncome').value) || 2000000,
+                socialTier: document.getElementById('editMemberTier').value,
+                role: document.getElementById('editMemberRole').value,
+                producerCommodity: document.getElementById('editMemberCommodity').value.trim()
+            };
+
+            // Isi data di modal konfirmasi ganda
+            document.getElementById('confirmEditMemberName').textContent = pendingMemberEditData.name;
+            document.getElementById('confirmEditMemberSid').textContent = pendingMemberEditData.sid;
+            document.getElementById('confirmEditMemberAddress').textContent = pendingMemberEditData.address;
+            document.getElementById('confirmEditMemberFamily').textContent = pendingMemberEditData.familySize;
+            document.getElementById('confirmEditMemberTier').textContent = pendingMemberEditData.socialTier;
+
+            closeModal('modalEditMember');
+            openModal('modalConfirmMemberEdit');
+        }
+
+        function executeSaveMemberEdit() {
+            if (!pendingMemberEditData) return;
+
+            const m = (window.appState.members || []).find(x => x.sid === pendingMemberEditData.sid);
+            if (m) {
+                m.name = pendingMemberEditData.name;
+                m.rawNik = pendingMemberEditData.nik;
+                m.address = pendingMemberEditData.address;
+                m.familySize = pendingMemberEditData.familySize;
+                m.monthlyIncome = pendingMemberEditData.monthlyIncome;
+                m.socialTier = pendingMemberEditData.socialTier;
+                m.role = pendingMemberEditData.role;
+                m.producerCommodity = pendingMemberEditData.producerCommodity;
+
+                // Hitung ulang kebutuhan konsumsi pangan bulanan
+                m.monthlyFoodNeedKg = Math.round(m.familySize * 8.5);
+                if (m.needs) {
+                    m.needs.beras = Math.round(m.familySize * 4);
+                    m.needs.sayur = Math.round(m.familySize * 2.5);
+                    m.needs.telur = Math.round(m.familySize * 1.5);
+                    m.needs.ikan = Math.round(m.familySize * 1.5);
+                }
+
+                closeModal('modalConfirmMemberEdit');
+                renderMembersTable();
+                renderHeaderStats();
+                calculateSurplusPrediction();
+
+                showToast("Pembaruan Data Berhasil", `Data ${m.name} (${m.sid}) telah diverifikasi & disimpan oleh Admin.`, "success");
+            }
+            pendingMemberEditData = null;
+        }
+
+        function approveMemberUpdate(sid) {
+            const m = (window.appState.members || []).find(x => x.sid === sid);
+            if (m) {
+                m.familySize = 4;
+                m.monthlyFoodNeedKg = 36;
+                m.socialTier = 'WASPADA';
+                if (m.needs) {
+                    m.needs.sayur += 4;
+                    m.needs.telur += 2;
+                }
+            }
+
+            const badge = document.getElementById('pendingUpdateBadge');
+            const card = document.getElementById('pendingUpdateCard');
+            if (badge) {
+                badge.textContent = '0 Pengajuan Update';
+                badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200';
+            }
+            if (card) {
+                card.innerHTML = `
+                    <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 font-medium text-xs space-y-1">
+                        <div class="flex items-center gap-1.5 font-bold">
+                            <i class="fa-solid fa-circle-check text-emerald-600"></i> Pembaruan Data Disetujui
+                        </div>
+                        <p class="text-[11px] text-emerald-800">
+                            Profil <strong>Ibu Sri Wahyuni (SID-RT13-002)</strong> berhasil diperbarui menjadi 4 Jiwa. Jatah nutrisi balita telah teralokasikan otomatis ke sistem.
+                        </p>
+                    </div>
+                `;
+            }
+            renderMembersTable();
+            showToast("Verifikasi Sukses", "Pembaruan data KK telah disetujui & profil SID dimutakhirkan.", "success");
+        }
+
+        function rejectMemberUpdate() {
+            showToast("Update Ditolak", "Berkas dikembalikan ke pemohon untuk konfirmasi Kartu Keluarga.", "warning");
+        }
+
+        function handleAdminSubmitNewVotingDemand(e) {
+            if (e && e.preventDefault) e.preventDefault();
+
+            const name = (document.getElementById('adminNewDemandName')?.value || '').trim();
+            const category = document.getElementById('adminNewDemandCategory')?.value || 'Sayuran';
+            const unit = document.getElementById('adminNewDemandUnit')?.value || 'Kg';
+            const targetKg = parseInt(document.getElementById('adminNewDemandTargetKg')?.value) || 30;
+            const threshold = parseInt(document.getElementById('adminNewDemandThreshold')?.value) || 10;
+            const desc = (document.getElementById('adminNewDemandDesc')?.value || '').trim();
+
+            if (!name) return;
+
+            const newDemand = {
+                id: `dmd-${String((window.appState.demands || []).length + 1).padStart(3, '0')}`,
+                commodity: name,
+                category: category,
+                targetKg: targetKg,
+                unit: unit,
+                votes: 0,
+                targetVotes: threshold,
+                status: 'VOTING',
+                source: 'voting',
+                description: desc || `Kebutuhan pangan hasil musyawarah warga RT 13 (${category}).`
+            };
+
+            window.appState.demands = window.appState.demands || [];
+            window.appState.demands.unshift(newDemand);
+
+            closeModal('modalAdminAddVotingDemand');
+            renderDemandsBoard();
+            showToast("Komoditas Diterbitkan", `${name} berhasil ditambahkan ke Papan Musyawarah Warga.`, "success");
+        }
+
+        function handleSubmitRegisterProducer(e) {
+            if (e && e.preventDefault) e.preventDefault();
+
+            const producerName = (document.getElementById('regProducerName')?.value || '').trim();
+            const sid = document.getElementById('regProducerSidSelect')?.value || 'SID-RT13-001';
+            const location = (document.getElementById('regProducerLocation')?.value || '').trim();
+            const commodity = (document.getElementById('regProducerCommodity')?.value || '').trim();
+            const capacity = parseInt(document.getElementById('regProducerCapacity')?.value) || 25;
+
+            // Masukkan ke daftar validasi izin kelompok produsen di admin
+            const container = document.getElementById('producerPermitList');
+            if (container) {
+                const newCard = document.createElement('div');
+                newCard.className = 'p-2.5 rounded-lg bg-amber-50/90 border border-amber-300 flex items-center justify-between animate-in fade-in';
+                newCard.innerHTML = `
+                    <div>
+                        <strong class="text-stone-900 block text-xs">${producerName} (${sid})</strong>
+                        <span class="text-[10px] text-stone-600">Komoditas: ${commodity} • Estimasi: ${capacity} Kg/bln • Lokasi: ${location}</span>
+                    </div>
+                    <button type="button" onclick="approveProducerPermit('${producerName}', '${commodity}')" class="px-2.5 py-1 rounded text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-check"></i> Validasi Izin
+                    </button>
+                `;
+                container.prepend(newCard);
+            }
+
+            closeModal('modalRegisterProducer');
+            showToast("Pengajuan Terkirim", "Permohonan izin produsen telah dikirim ke Pengurus RT 13 untuk verifikasi.", "success");
+        }
+
+        function approveProducerPermit(name, commodity) {
+            showToast("Izin Diterbitkan", `Izin operasional produsen ${name} (${commodity}) resmi divalidasi oleh RT 13.`, "success");
+        }
+
+        function handleSubmitSelfRegister(e) {
+            if (e && e.preventDefault) e.preventDefault();
+
+            const name = (document.getElementById('selfRegName')?.value || '').trim();
+            const nik = (document.getElementById('selfRegNik')?.value || '').trim();
+            const address = (document.getElementById('selfRegAddress')?.value || '').trim();
+            const familySize = parseInt(document.getElementById('selfRegFamilySize')?.value) || 4;
+            const income = parseInt(document.getElementById('selfRegIncome')?.value) || 2000000;
+            const role = document.getElementById('selfRegRole')?.value || 'KONSUMEN';
+
+            const card = document.getElementById('pendingKkCard');
+            const badge = document.getElementById('pendingKkBadge');
+
+            if (badge) {
+                badge.textContent = '1 Menunggu Validasi';
+                badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200';
+            }
+
+            if (card) {
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <strong class="text-stone-900">${name}</strong>
+                        <span class="font-mono text-[10px] text-stone-500">NIK: ${nik.substring(0, 6)}******${nik.substring(12)}</span>
+                    </div>
+                    <div class="text-[11px] text-stone-600 space-y-0.5">
+                        <p>Alamat: ${address} • Anggota: ${familySize} Jiwa</p>
+                        <p>Peran: <span class="font-bold text-forest-700">${role}</span></p>
+                    </div>
+                    <div class="flex items-center gap-2 pt-1 border-t border-stone-100">
+                        <button type="button" onclick="approveNewKk('${name}')" class="flex-1 py-1.5 px-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition flex items-center justify-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-check"></i> Verifikasi &amp; Terbitkan SID
+                        </button>
+                        <button type="button" onclick="rejectNewKk()" class="py-1.5 px-2.5 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-100 text-[11px] font-semibold transition cursor-pointer">
+                            Tolak
+                        </button>
+                    </div>
+                `;
+            }
+
+            closeModal('modalSelfRegister');
+            showToast("Pendaftaran Diterima", `Data ${name} telah masuk ke antrean verifikasi Pengurus RT 13.`, "success");
         }
 
         // --- 9. MASTER RENDER ALL ---
