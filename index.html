@@ -242,6 +242,14 @@
             <!-- Right: Privacy Mode Switch, Demo Timer, Print -->
             <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <!-- Privacy Mode Switcher (Kelanjutan Basis Data PKM-PM 2023) -->
+                <button onclick="openModal('modalSelfRegister')"
+                    class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all shadow-xs bg-emerald-50 border-emerald-300 text-emerald-900 hover:bg-emerald-100 cursor-pointer"
+                    title="Daftar Data Diri Warga Mandiri / Registrasi KK Baru">
+                    <i class="fa-solid fa-user-plus text-emerald-700"></i>
+                    <span class="hidden sm:inline">Daftar Warga Baru</span>
+                </button>
+
+                <!-- Privacy Mode Switcher (Kelanjutan Basis Data PKM-PM 2023) -->
                 <button onclick="togglePrivacyMode()" id="privacyToggleBtn"
                     class="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all shadow-xs bg-forest-50 border-forest-300 text-forest-800 hover:bg-forest-100"
                     title="Klik untuk berganti antara Mode Publik Terlindungi dan Mode Pengurus Terverifikasi (Kelanjutan Basis Data PKM-PM 2023)">
@@ -860,62 +868,6 @@
                             <i class="fa-solid fa-shield-halved text-forest-600"></i>
                             <span>Ubah Mode Privasi Warga</span>
                         </button>
-                    </div>
-
-                    <!-- 2-Step Verification & Data Integrity Panel -->
-                    <div class="p-4 sm:p-5 rounded-xl bg-gradient-to-r from-stone-50 via-forest-50/40 to-stone-50 border border-forest-200/90 space-y-3">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-forest-100 pb-2.5">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-forest-600 animate-pulse"></span>
-                                <h4 class="font-bold text-xs sm:text-sm text-forest-900 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-shield-halved text-forest-700"></i>
-                                    Pusat Keamanan Data &amp; Validasi 2-Langkah (2-Step Verification)
-                                </h4>
-                            </div>
-                            <span class="text-[11px] font-semibold text-forest-800 bg-white px-2.5 py-1 rounded-lg border border-forest-200">
-                                Perlindungan Data UU PDP No. 27/2022
-                            </span>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                            <!-- Step 1 Verification -->
-                            <div class="p-3 rounded-lg bg-white border border-forest-100 space-y-1 shadow-2xs">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-bold text-stone-900 flex items-center gap-1.5 text-[11px]">
-                                        <i class="fa-solid fa-square-check text-emerald-600"></i> Langkah 1: Validasi RT
-                                    </span>
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800">40 KK Terverifikasi</span>
-                                </div>
-                                <p class="text-[10px] text-stone-600 leading-snug">
-                                    Ketua RT 13 memvalidasi data 40 KK (jumlah jiwa, balita stunting, lansia) untuk mencegah data fiktif &amp; salah sasaran.
-                                </p>
-                            </div>
-
-                            <!-- Step 2 Verification -->
-                            <div class="p-3 rounded-lg bg-white border border-forest-100 space-y-1 shadow-2xs">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-bold text-stone-900 flex items-center gap-1.5 text-[11px]">
-                                        <i class="fa-solid fa-clipboard-check text-forest-700"></i> Langkah 2: Validasi KWT
-                                    </span>
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-forest-100 text-forest-800">Stok Fisik Terpantau</span>
-                                </div>
-                                <p class="text-[10px] text-stone-600 leading-snug">
-                                    Pengurus KWT memvalidasi stok riil panen pekarangan &amp; kolam sebelum dicantumkan di Pasar Warga.
-                                </p>
-                            </div>
-
-                            <!-- RBAC & NIK Masking -->
-                            <div class="p-3 rounded-lg bg-white border border-forest-100 space-y-1 shadow-2xs">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-bold text-stone-900 flex items-center gap-1.5 text-[11px]">
-                                        <i class="fa-solid fa-user-lock text-blue-600"></i> RBAC &amp; Masking NIK
-                                    </span>
-                                    <span id="tab2MaskingBadge" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-800">Sensor NIK Aktif</span>
-                                </div>
-                                <p class="text-[10px] text-stone-600 leading-snug">
-                                    Warga / Konsumen hanya melihat NIK tersensor (<span class="font-mono font-bold text-stone-700">187201********02</span>). Akses NIK utuh terkunci khusus peran Admin RT.
-                                </p>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Panel Khusus Admin: Verifikasi KK Baru & Validasi Izin Kelompok Produsen (KWT) -->
@@ -9204,7 +9156,6 @@
             };
             const sideBadge = document.getElementById('sideRoleCurrentBadge');
             const sideDesc = document.getElementById('sideRoleDescription');
-            const consumer3ClickBar = document.getElementById('consumer3ClickBar');
             const topAdminLockIcon = document.getElementById('topAdminLockIcon');
             const sideAdminLockIcon = document.getElementById('sideAdminLockIcon');
             const topRoleAdminLabel = document.getElementById('topRoleAdminLabel');
@@ -9212,8 +9163,10 @@
             const marketProducerActions = document.getElementById('marketProducerActions');
             const adminVerificationPanel = document.getElementById('adminVerificationPanel');
             const adminReconciliationPanel = document.getElementById('adminReconciliationPanel');
+            const consumerBecomeProducerBanner = document.getElementById('consumerBecomeProducerBanner');
+            const adminVotingControls = document.getElementById('adminVotingControls');
 
-            // Sidebar navigation tabs
+            // Sidebar navigation tabs (6 Tabs Total)
             const navKonsep = document.getElementById('nav-tab-konsep');
             const navSid = document.getElementById('nav-tab-sid');
             const navMarket = document.getElementById('nav-tab-market');
@@ -9258,32 +9211,35 @@
                     sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
                 }
                 if (sideDesc) {
-                    sideDesc.textContent = 'Mode Warga: Akses pasar pangan murah 3-klik & lacak pesanan tanpa login.';
+                    sideDesc.textContent = 'Akses Warga: Belanja pangan segar, isi voting kebutuhan, & daftar produsen pekarangan.';
                 }
-                if (consumer3ClickBar) consumer3ClickBar.classList.remove('hidden');
                 if (marketProducerActions) marketProducerActions.classList.add('hidden');
                 if (adminVerificationPanel) adminVerificationPanel.classList.add('hidden');
                 if (adminReconciliationPanel) adminReconciliationPanel.classList.add('hidden');
+                if (consumerBecomeProducerBanner) consumerBecomeProducerBanner.classList.remove('hidden');
+                if (adminVotingControls) adminVotingControls.classList.add('hidden');
 
-                // Tab Navs: Only show Market, Lacak/AI Matching, and Konsep
+                // Tab Navs untuk KONSUMEN:
+                // TAMPILKAN: Alur (1), Pasar (3 - Membeli), Lacak (4), Musyawarah (5 - Voting Permintaan)
+                // SEMBUNYIKAN: SID 40 KK (2 - Privasi NIK), Evaluasi Dampak (6 - Buku Besar Admin)
                 if (navKonsep) navKonsep.classList.remove('hidden');
-                if (navSid) navSid.classList.add('hidden'); // Sembunyikan NIK warga
+                if (navSid) navSid.classList.add('hidden');
                 if (navMarket) navMarket.classList.remove('hidden');
                 if (navMatching) navMatching.classList.remove('hidden');
-                if (navMusyawarah) navMusyawarah.classList.add('hidden'); // Khusus produsen kuota tanam
-                if (navDampak) navDampak.classList.add('hidden'); // Khusus admin laporan agregat
+                if (navMusyawarah) navMusyawarah.classList.remove('hidden'); // KONSUMEN BISA MENGISI VOTING
+                if (navDampak) navDampak.classList.add('hidden');
 
                 // Otomatis proteksi data privasi NIK warga
                 window.appState.privacyMode = 'PUBLIC';
                 updatePrivacyButtonState();
 
-                // Switch to Market tab if currently on hidden tab
+                // Pindah tab jika sedang di tab admin yang tersembunyi
                 const activePane = document.querySelector('.tab-pane:not(.hidden)');
-                if (!activePane || ['tab-sid', 'tab-musyawarah', 'tab-dampak'].includes(activePane.id)) {
+                if (!activePane || ['tab-sid', 'tab-dampak'].includes(activePane.id)) {
                     switchTab('tab-market');
                 }
 
-                showToast("Mode Konsumen Aktif", "Tampilan belanja pangan segar 3-klik aktif (Buka > Pilih > Pesan) tanpa login.", "success");
+                showToast("Mode Konsumen Aktif", "Anda dapat berbelanja pangan segar & mengisi voting kebutuhan pangan.", "success");
 
             } else if (role === 'PRODUSEN') {
                 if (sideBadge) {
@@ -9291,20 +9247,23 @@
                     sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300';
                 }
                 if (sideDesc) {
-                    sideDesc.textContent = 'Mode KWT: Input hasil panen pekarangan, pantau kuota AI & serapan pasar.';
+                    sideDesc.textContent = 'Akses Produsen: Catat panen baru, scan OCR, pantau permintaan warga, & ambil alih kuota AI.';
                 }
-                if (consumer3ClickBar) consumer3ClickBar.classList.add('hidden');
                 if (marketProducerActions) marketProducerActions.classList.remove('hidden');
                 if (adminVerificationPanel) adminVerificationPanel.classList.add('hidden');
                 if (adminReconciliationPanel) adminReconciliationPanel.classList.add('hidden');
+                if (consumerBecomeProducerBanner) consumerBecomeProducerBanner.classList.add('hidden');
+                if (adminVotingControls) adminVotingControls.classList.add('hidden');
 
-                // Tab Navs: Konsep, Market (stok/input), Matching (serapan), Musyawarah (kuota tanam)
+                // Tab Navs untuk PRODUSEN:
+                // TAMPILKAN: Alur (1), Pasar (3 - Jual Produk/OCR), Lacak (4), Musyawarah (5 - Ambil Kuota Pemasok)
+                // SEMBUNYIKAN: SID 40 KK (2 - Privasi NIK), Evaluasi Dampak (6 - Buku Besar Admin)
                 if (navKonsep) navKonsep.classList.remove('hidden');
-                if (navSid) navSid.classList.add('hidden'); // Sembunyikan NIK warga
+                if (navSid) navSid.classList.add('hidden');
                 if (navMarket) navMarket.classList.remove('hidden');
                 if (navMatching) navMatching.classList.remove('hidden');
                 if (navMusyawarah) navMusyawarah.classList.remove('hidden');
-                if (navDampak) navDampak.classList.add('hidden'); // Sembunyikan pembukuan admin
+                if (navDampak) navDampak.classList.add('hidden');
 
                 // Proteksi NIK warga
                 window.appState.privacyMode = 'PUBLIC';
@@ -9315,7 +9274,7 @@
                     switchTab('tab-market');
                 }
 
-                showToast("Mode Produsen Aktif", "Fitur input panen baru, scanner OCR, dan panel alokasi kuota AI diaktifkan.", "success");
+                showToast("Mode Produsen Aktif", "Fitur catat panen, scanner OCR, dan panel kuota permintaan warga aktif.", "success");
 
             } else if (role === 'ADMIN') {
                 if (sideBadge) {
@@ -9323,14 +9282,15 @@
                     sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-forest-100 text-forest-800 border border-forest-300';
                 }
                 if (sideDesc) {
-                    sideDesc.innerHTML = 'Akses Penuh Pengurus: Verifikasi KK/KWT, Rekonsiliasi &amp; Laporan Dinas. <a href="javascript:void(0)" onclick="logoutAdminRole()" class="text-red-600 font-bold hover:underline ml-1">[Keluar]</a>';
+                    sideDesc.innerHTML = 'Akses Penuh Pengurus: Verifikasi KK/KWT, Atur Voting, Rekonsiliasi Kas, &amp; Laporan Dinas. <a href="javascript:void(0)" onclick="logoutAdminRole()" class="text-red-600 font-bold hover:underline ml-1">[Keluar]</a>';
                 }
-                if (consumer3ClickBar) consumer3ClickBar.classList.remove('hidden');
                 if (marketProducerActions) marketProducerActions.classList.remove('hidden');
                 if (adminVerificationPanel) adminVerificationPanel.classList.remove('hidden');
                 if (adminReconciliationPanel) adminReconciliationPanel.classList.remove('hidden');
+                if (consumerBecomeProducerBanner) consumerBecomeProducerBanner.classList.add('hidden');
+                if (adminVotingControls) adminVotingControls.classList.remove('hidden');
 
-                // Nav tabs: Tampilkan SEMUA 6 Tab!
+                // Nav tabs: Tampilkan SEMUA 6 Tab Lengkap!
                 if (navKonsep) navKonsep.classList.remove('hidden');
                 if (navSid) navSid.classList.remove('hidden');
                 if (navMarket) navMarket.classList.remove('hidden');
@@ -9342,7 +9302,7 @@
                 window.appState.privacyMode = 'ADMIN';
                 updatePrivacyButtonState();
 
-                showToast("Mode Admin RT Aktif", "Akses penuh verifikasi 40 KK, rekonsiliasi kas, dan ekspor laporan dinas terbuka.", "warning");
+                showToast("Mode Admin RT Aktif", "Akses verifikasi 40 KK, pengaturan voting, rekonsiliasi kas, dan ekspor dinas terbuka.", "warning");
             }
 
             renderAll();
