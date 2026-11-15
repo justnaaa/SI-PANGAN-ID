@@ -208,18 +208,35 @@
             <div class="hidden xl:flex items-center gap-3 text-xs">
                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-100/80 border border-stone-200/70">
                     <span class="w-2 h-2 rounded-full bg-forest-600 animate-pulse"></span>
-                    <span class="text-stone-500">Total Transaksi Warga:</span>
+                    <span class="text-stone-500">Total Transaksi:</span>
                     <strong id="topBarDanaKas" class="mono-num font-bold text-forest-800">Rp 7.840.000</strong>
                 </div>
                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-100/80 border border-stone-200/70">
-                    <span class="text-stone-500">Skema Platform:</span>
-                    <strong id="topBarFeePct" class="mono-num font-bold text-forest-700">0% Fee P2P Warga</strong>
-                    <span class="text-[10px] text-stone-400"></span>
+                    <span class="text-stone-500">Skema:</span>
+                    <strong id="topBarFeePct" class="mono-num font-bold text-forest-700">0% Fee Warga</strong>
                 </div>
-                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-100/80 border border-stone-200/70">
-                    <span class="text-stone-500">Pangan Tersalurkan:</span>
-                    <strong id="topBarPanganTersalurkan" class="mono-num font-bold text-stone-800">624 Kg</strong>
-                </div>
+            </div>
+
+            <!-- Role / Persona Selector (Tanpa Login: Konsumen, Produsen, Admin) -->
+            <div class="flex items-center p-0.5 sm:p-1 rounded-xl bg-stone-100 border border-stone-200/90 shadow-2xs">
+                <button onclick="setActiveRole('KONSUMEN')" id="topRoleBtnKonsumen"
+                    class="role-switch-btn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all shadow-xs bg-emerald-600 text-white"
+                    title="Mode Warga Belanja: Akses Pasar & Pesan 3-Klik Tanpa Login">
+                    <i class="fa-solid fa-cart-shopping text-[10px] sm:text-[11px]"></i>
+                    <span>Konsumen</span>
+                </button>
+                <button onclick="setActiveRole('PRODUSEN')" id="topRoleBtnProdusen"
+                    class="role-switch-btn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all text-stone-600 hover:text-stone-900"
+                    title="Mode KWT / Petani: Input Panen & Ambil Kuota AI">
+                    <i class="fa-solid fa-seedling text-[10px] sm:text-[11px]"></i>
+                    <span>Produsen</span>
+                </button>
+                <button onclick="setActiveRole('ADMIN')" id="topRoleBtnAdmin"
+                    class="role-switch-btn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all text-stone-600 hover:text-stone-900"
+                    title="Mode Pengurus RT / PKK: Akses Penuh, Verifikasi 2-Langkah & Audit SID">
+                    <i class="fa-solid fa-user-shield text-[10px] sm:text-[11px]"></i>
+                    <span>Admin RT</span>
+                </button>
             </div>
 
             <!-- Right: Privacy Mode Switch, Demo Timer, Print -->
@@ -285,6 +302,24 @@
                         <span>RT 13 & KWT Yosomulyo</span>
                         <span class="font-bold text-white">Metro, Lampung</span>
                     </div>
+                </div>
+
+                <!-- Persona Switcher Box in Sidebar (Tanpa Login) -->
+                <div class="p-3 rounded-xl bg-stone-50 border border-stone-200/90 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider flex items-center gap-1">
+                            <i class="fa-solid fa-users-gear text-forest-700"></i> Mode Pengguna
+                        </span>
+                        <span id="sideRoleCurrentBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">Konsumen</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-1 text-[11px]">
+                        <button onclick="setActiveRole('KONSUMEN')" id="sideRoleBtnKonsumen" class="py-1 px-1 rounded-lg font-bold text-center transition bg-emerald-600 text-white shadow-2xs">Konsumen</button>
+                        <button onclick="setActiveRole('PRODUSEN')" id="sideRoleBtnProdusen" class="py-1 px-1 rounded-lg font-bold text-center transition bg-white text-stone-600 hover:bg-stone-100 border border-stone-200">Produsen</button>
+                        <button onclick="setActiveRole('ADMIN')" id="sideRoleBtnAdmin" class="py-1 px-1 rounded-lg font-bold text-center transition bg-white text-stone-600 hover:bg-stone-100 border border-stone-200">Admin</button>
+                    </div>
+                    <p id="sideRoleDescription" class="text-[10px] text-stone-500 leading-tight">
+                        Mode Warga: Akses pasar pangan murah 3-klik &amp; e-voting tanpa login.
+                    </p>
                 </div>
 
                 <!-- Navigation Tabs -->
@@ -824,6 +859,62 @@
                         </button>
                     </div>
 
+                    <!-- 2-Step Verification & Data Integrity Panel -->
+                    <div class="p-4 sm:p-5 rounded-xl bg-gradient-to-r from-stone-50 via-forest-50/40 to-stone-50 border border-forest-200/90 space-y-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-forest-100 pb-2.5">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-forest-600 animate-pulse"></span>
+                                <h4 class="font-bold text-xs sm:text-sm text-forest-900 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-shield-halved text-forest-700"></i>
+                                    Pusat Keamanan Data &amp; Validasi 2-Langkah (2-Step Verification)
+                                </h4>
+                            </div>
+                            <span class="text-[11px] font-semibold text-forest-800 bg-white px-2.5 py-1 rounded-lg border border-forest-200">
+                                Perlindungan Data UU PDP No. 27/2022
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                            <!-- Step 1 Verification -->
+                            <div class="p-3 rounded-lg bg-white border border-forest-100 space-y-1 shadow-2xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-stone-900 flex items-center gap-1.5 text-[11px]">
+                                        <i class="fa-solid fa-square-check text-emerald-600"></i> Langkah 1: Validasi RT
+                                    </span>
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800">40 KK Terverifikasi</span>
+                                </div>
+                                <p class="text-[10px] text-stone-600 leading-snug">
+                                    Ketua RT 13 memvalidasi data 40 KK (jumlah jiwa, balita stunting, lansia) untuk mencegah data fiktif &amp; salah sasaran.
+                                </p>
+                            </div>
+
+                            <!-- Step 2 Verification -->
+                            <div class="p-3 rounded-lg bg-white border border-forest-100 space-y-1 shadow-2xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-stone-900 flex items-center gap-1.5 text-[11px]">
+                                        <i class="fa-solid fa-clipboard-check text-forest-700"></i> Langkah 2: Validasi KWT
+                                    </span>
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-forest-100 text-forest-800">Stok Fisik Terpantau</span>
+                                </div>
+                                <p class="text-[10px] text-stone-600 leading-snug">
+                                    Pengurus KWT memvalidasi stok riil panen pekarangan &amp; kolam sebelum dicantumkan di Pasar Warga.
+                                </p>
+                            </div>
+
+                            <!-- RBAC & NIK Masking -->
+                            <div class="p-3 rounded-lg bg-white border border-forest-100 space-y-1 shadow-2xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-stone-900 flex items-center gap-1.5 text-[11px]">
+                                        <i class="fa-solid fa-user-lock text-blue-600"></i> RBAC &amp; Masking NIK
+                                    </span>
+                                    <span id="tab2MaskingBadge" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-800">Sensor NIK Aktif</span>
+                                </div>
+                                <p class="text-[10px] text-stone-600 leading-snug">
+                                    Warga / Konsumen hanya melihat NIK tersensor (<span class="font-mono font-bold text-stone-700">187201********02</span>). Akses NIK utuh terkunci khusus peran Admin RT.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 4 Kelompok Pangan Kebutuhan Gizi Terukur 40 KK -->
                     <div>
                         <div class="flex items-center justify-between mb-3">
@@ -1254,6 +1345,44 @@
                     </div>
                 </div>
 
+                <!-- 3-Klik Quick Order Callout Banner (Khusus Konsumen & Warga) -->
+                <div id="consumer3ClickBar" class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-950 via-forest-900 to-emerald-900 text-white border border-emerald-500/40 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-start sm:items-center gap-3.5 min-w-0">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-400 to-forest-600 text-forest-950 flex items-center justify-center text-xl font-black shrink-0 shadow-md">
+                            <i class="fa-solid fa-bolt text-forest-950"></i>
+                        </div>
+                        <div class="space-y-1 min-w-0">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 text-[10px] font-bold border border-emerald-400/30">
+                                    Alur Belanja 3-Klik Konsumen
+                                </span>
+                                <span class="text-[11px] text-emerald-300 font-semibold flex items-center gap-1">
+                                    <i class="fa-solid fa-shield-halved text-[10px]"></i> NIK Disamarkan Otomatis
+                                </span>
+                                <span class="text-[11px] text-amber-300 font-semibold flex items-center gap-1">
+                                    <i class="fa-solid fa-handshake-angle text-[10px]"></i> 100% Produsen Lokal (0% Fee)
+                                </span>
+                            </div>
+                            <h3 class="serif-heading text-base sm:text-lg font-bold text-white leading-tight">
+                                Belanja Pangan Segar Langsung ke Produsen RT 13 (Tanpa Perlu Login)
+                            </h3>
+                            <div class="flex flex-wrap items-center gap-2 text-xs text-forest-200 pt-0.5">
+                                <span class="bg-forest-800/90 px-2 py-0.5 rounded text-[11px]"><strong>1.</strong> Buka Pasar</span>
+                                <i class="fa-solid fa-arrow-right text-[10px] text-emerald-400"></i>
+                                <span class="bg-forest-800/90 px-2 py-0.5 rounded text-[11px]"><strong>2.</strong> Klik Beli Langsung</span>
+                                <i class="fa-solid fa-arrow-right text-[10px] text-emerald-400"></i>
+                                <span class="bg-emerald-500/30 text-emerald-200 border border-emerald-400/40 px-2 py-0.5 rounded text-[11px] font-bold"><strong>3.</strong> Konfirmasi (Stok Berkurang Real-Time)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0 w-full md:w-auto justify-end">
+                        <button onclick="document.getElementById('marketListingsGrid').scrollIntoView({behavior: 'smooth'})" class="px-4 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 text-forest-950 text-xs sm:text-sm font-bold shadow-md transition flex items-center justify-center gap-1.5 w-full md:w-auto">
+                            <i class="fa-solid fa-basket-shopping"></i>
+                            <span>Pilih Komoditas Segar</span>
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Sorotan Kasus Unggulan -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Sayur Kangkung KWT Notice -->
@@ -1562,6 +1691,133 @@
                             Terdekat</span>
                         <span
                             class="px-2 py-0.5 rounded bg-forest-50 border border-forest-200 font-mono text-forest-800 font-bold">Kesegaran</span>
+                    </div>
+                </div>
+
+                <!-- =========================================================================
+                     DIAGRAM LOGIKA ALUR KERJA ENGINE AI (SEDERHANA, JELAS, BEBAS ISTILAH RUMIT)
+                     ========================================================================= -->
+                <div class="bg-gradient-to-br from-stone-900 via-forest-950 to-stone-900 text-white rounded-2xl p-6 border border-emerald-500/30 shadow-lg space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-forest-800/80 pb-3">
+                        <div class="space-y-0.5">
+                            <span class="px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 text-[10px] font-bold border border-emerald-400/30 inline-flex items-center gap-1">
+                                <i class="fa-solid fa-brain text-emerald-400"></i> Logika Algoritma Inti
+                            </span>
+                            <h3 class="serif-heading text-lg sm:text-xl font-bold text-white">
+                                Alur Kerja Engine AI: Dari Data Mentah Menjadi Keputusan Presisi
+                            </h3>
+                        </div>
+                        <span class="text-xs text-forest-300">
+                            Hybrid Cold-Start: Data Sensus &amp; AKG &rarr; Prediksi Real-Time
+                        </span>
+                    </div>
+
+                    <!-- Flow Diagram Grid: 3 Input -> Engine AI -> 2 Output -->
+                    <div class="grid grid-cols-1 lg:grid-cols-11 gap-3 items-center">
+                        <!-- 1. INPUT TIGA PILAR (Columns 1-4) -->
+                        <div class="lg:col-span-4 space-y-2.5">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-arrow-down-wide-short"></i> 3 Sumber Data Input (Awal)
+                            </span>
+                            
+                            <!-- Input 1: SID KK -->
+                            <div class="p-3 rounded-xl bg-forest-900/80 border border-forest-700/70 hover:border-emerald-500/50 transition">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold text-xs shrink-0">
+                                        <i class="fa-solid fa-id-card"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-white">1. Data Single Identity (SID 40 KK)</h4>
+                                        <p class="text-[10px] text-forest-200">Profil balita stunting, lansia, rentan gizi &amp; riwayat konsumsi nyata.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Input 2: Standar Bapanas -->
+                            <div class="p-3 rounded-xl bg-forest-900/80 border border-forest-700/70 hover:border-emerald-500/50 transition">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-xs shrink-0">
+                                        <i class="fa-solid fa-utensils"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-white">2. Standar AKG Bapanas / Kemenkes</h4>
+                                        <p class="text-[10px] text-forest-200">Pola Pangan Harapan (Beras 2.5 kg, sayur 1.5 kg, telur 0.5 kg/jiwa/mg).</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Input 3: PIHPS Harga Pasar -->
+                            <div class="p-3 rounded-xl bg-forest-900/80 border border-forest-700/70 hover:border-emerald-500/50 transition">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-300 flex items-center justify-center font-bold text-xs shrink-0">
+                                        <i class="fa-solid fa-chart-line"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-white">3. Data Harga Pasar PIHPS Lampung</h4>
+                                        <p class="text-[10px] text-forest-200">Pantauan harga pasar ritel &amp; harga tengkulak/pengepul lokal.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. PANAH PROSES (Column 5) -->
+                        <div class="lg:col-span-1 flex lg:flex-col items-center justify-center gap-1 text-emerald-400 py-2">
+                            <i class="fa-solid fa-chevron-right text-xl hidden lg:block animate-pulse"></i>
+                            <i class="fa-solid fa-chevron-down text-xl lg:hidden animate-pulse"></i>
+                        </div>
+
+                        <!-- 3. ENGINE AI FORECASTING (Columns 6-7) -->
+                        <div class="lg:col-span-3 p-4 rounded-2xl bg-gradient-to-br from-emerald-950 to-forest-900 border-2 border-emerald-400/50 shadow-xl space-y-2.5 text-center relative overflow-hidden">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-400 text-forest-950 flex items-center justify-center mx-auto text-lg font-black shadow-md">
+                                <i class="fa-solid fa-microchip"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm text-white">Engine AI Komunitas</h4>
+                                <span class="text-[10px] text-emerald-300 font-semibold block">Forecasting Demand &amp; Supply</span>
+                            </div>
+                            <p class="text-[11px] text-forest-200 leading-snug text-left bg-forest-950/60 p-2.5 rounded-xl border border-forest-800">
+                                Mengagregasi kuota defisit vs surplus panen, menghitung probabilitas serapan, dan mengunci harga berkeadilan.
+                            </p>
+                        </div>
+
+                        <!-- 4. PANAH HASIL (Column 8) -->
+                        <div class="lg:col-span-1 flex lg:flex-col items-center justify-center gap-1 text-emerald-400 py-2">
+                            <i class="fa-solid fa-chevron-right text-xl hidden lg:block animate-pulse"></i>
+                            <i class="fa-solid fa-chevron-down text-xl lg:hidden animate-pulse"></i>
+                        </div>
+
+                        <!-- 5. DUA OUTPUT KEPUTUSAN (Columns 9-11) -->
+                        <div class="lg:col-span-2 space-y-2.5">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-bullseye"></i> 2 Output Nyata
+                            </span>
+
+                            <!-- Output 1: Sinyal Tanam -->
+                            <div class="p-3 rounded-xl bg-emerald-900/60 border border-emerald-500/60">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 rounded-lg bg-emerald-400 text-forest-950 flex items-center justify-center font-bold text-xs shrink-0">
+                                        <i class="fa-solid fa-leaf"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-white">Sinyal Tanam KWT</h4>
+                                        <p class="text-[10px] text-emerald-200">Petani hanya menanam komoditas yang pasti terserap 100% (Zero Waste).</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Output 2: Dynamic Price Corridor -->
+                            <div class="p-3 rounded-xl bg-amber-900/40 border border-amber-500/60">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-7 h-7 rounded-lg bg-amber-400 text-amber-950 flex items-center justify-center font-bold text-xs shrink-0">
+                                        <i class="fa-solid fa-scale-balanced"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-white">Dynamic Price Corridor</h4>
+                                        <p class="text-[10px] text-amber-200">Petani untung (+25% vs tengkulak), warga hemat (-20% vs pasar).</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -2443,12 +2699,24 @@
                     </select>
                 </div>
 
-                <!-- Quantity -->
+                <!-- Quantity & Preset Cepat 3-Klik -->
                 <div>
-                    <label class="block font-semibold text-stone-700 mb-1">Jumlah Pembelian (Kg) *</label>
-                    <input type="number" id="buyQtyKg" min="1" max="50" value="3" oninput="calculateBuyBreakdown()"
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="font-semibold text-stone-700">Jumlah Pembelian (Kg) *</label>
+                        <span class="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                            ⚡ Alur Cepat 3-Klik
+                        </span>
+                    </div>
+                    <input type="number" id="buyQtyKg" min="1" max="50" value="1" oninput="calculateBuyBreakdown()"
                         required
-                        class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600 font-bold text-stone-900">
+                        class="w-full px-3 py-2 rounded-lg border border-stone-200 mono-num focus:outline-none focus:border-forest-600 font-bold text-stone-900 text-sm">
+                    <div class="flex items-center gap-1.5 mt-2">
+                        <span class="text-[10px] text-stone-400 font-medium">Pilihan Cepat:</span>
+                        <button type="button" onclick="setQuickBuyQty(1)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-forest-800 hover:text-white text-[11px] font-bold border border-stone-200 transition">1 Kg</button>
+                        <button type="button" onclick="setQuickBuyQty(2)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-forest-800 hover:text-white text-[11px] font-bold border border-stone-200 transition">2 Kg</button>
+                        <button type="button" onclick="setQuickBuyQty(3)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-forest-800 hover:text-white text-[11px] font-bold border border-stone-200 transition">3 Kg</button>
+                        <button type="button" onclick="setQuickBuyQty(5)" class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-forest-800 hover:text-white text-[11px] font-bold border border-stone-200 transition">5 Kg</button>
+                    </div>
                 </div>
 
                 <!-- Delivery Method Selection -->
@@ -4842,14 +5110,33 @@
             const label = document.getElementById('privacyToggleLabel');
             if (!btn || !icon || !label) return;
 
+            const tab2Badge = document.getElementById('tab2MaskingBadge');
+            const rbacBadge = document.getElementById('rbacMaskingStatusBadge');
+
             if (window.appState.privacyMode === 'ADMIN') {
                 btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all shadow-xs bg-paddy-50 border-paddy-300 text-paddy-900 hover:bg-paddy-100";
                 icon.className = "fa-solid fa-lock-open text-paddy-600";
                 label.textContent = "Mode Pengurus RT 13 Terverifikasi";
+                if (tab2Badge) {
+                    tab2Badge.textContent = 'Sensor NIK Terbuka (Admin)';
+                    tab2Badge.className = 'px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800';
+                }
+                if (rbacBadge) {
+                    rbacBadge.textContent = 'Sensor NIK Terbuka (Admin)';
+                    rbacBadge.className = 'px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-800';
+                }
             } else {
                 btn.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all shadow-xs bg-forest-50 border-forest-300 text-forest-800 hover:bg-forest-100";
                 icon.className = "fa-solid fa-shield-halved text-forest-600";
                 label.textContent = "Privasi PKM-PM 2023 Aktif";
+                if (tab2Badge) {
+                    tab2Badge.textContent = 'Sensor NIK Aktif';
+                    tab2Badge.className = 'px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-800';
+                }
+                if (rbacBadge) {
+                    rbacBadge.textContent = 'Sensor NIK Aktif';
+                    rbacBadge.className = 'px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-100 text-blue-800';
+                }
             }
         }
 
@@ -5589,10 +5876,18 @@
 
             const qtyInput = document.getElementById('buyQtyKg');
             qtyInput.max = listing.availableStockKg;
-            qtyInput.value = Math.min(3, listing.availableStockKg);
+            qtyInput.value = Math.min(1, listing.availableStockKg);
 
             calculateBuyBreakdown();
             openModal('modalBuyDirect');
+        }
+
+        function setQuickBuyQty(val) {
+            const qtyInput = document.getElementById('buyQtyKg');
+            if (!qtyInput) return;
+            const maxVal = Number(qtyInput.max) || 999;
+            qtyInput.value = Math.min(val, maxVal);
+            calculateBuyBreakdown();
         }
 
         function calculateBuyBreakdown() {
@@ -8144,6 +8439,98 @@
             });
         }
 
+        // =========================================================================
+        // 8c. ROLE-BASED ACCESS & PERSONA MANAGEMENT (TANPA LOGIN)
+        // =========================================================================
+        function setActiveRole(role) {
+            window.appState.activeRole = role;
+
+            // 1. Reset Top Buttons
+            const topBtns = {
+                'KONSUMEN': document.getElementById('topRoleBtnKonsumen'),
+                'PRODUSEN': document.getElementById('topRoleBtnProdusen'),
+                'ADMIN': document.getElementById('topRoleBtnAdmin')
+            };
+            const sideBtns = {
+                'KONSUMEN': document.getElementById('sideRoleBtnKonsumen'),
+                'PRODUSEN': document.getElementById('sideRoleBtnProdusen'),
+                'ADMIN': document.getElementById('sideRoleBtnAdmin')
+            };
+            const sideBadge = document.getElementById('sideRoleCurrentBadge');
+            const sideDesc = document.getElementById('sideRoleDescription');
+            const consumer3ClickBar = document.getElementById('consumer3ClickBar');
+
+            Object.keys(topBtns).forEach(r => {
+                if (topBtns[r]) {
+                    if (r === role) {
+                        topBtns[r].className = 'role-switch-btn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all shadow-xs bg-emerald-600 text-white';
+                    } else {
+                        topBtns[r].className = 'role-switch-btn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all text-stone-600 hover:text-stone-900';
+                    }
+                }
+                if (sideBtns[r]) {
+                    if (r === role) {
+                        sideBtns[r].className = 'py-1 px-1 rounded-lg font-bold text-center transition bg-emerald-600 text-white shadow-2xs';
+                    } else {
+                        sideBtns[r].className = 'py-1 px-1 rounded-lg font-bold text-center transition bg-white text-stone-600 hover:bg-stone-100 border border-stone-200';
+                    }
+                }
+            });
+
+            // 2. Role Specific Behavior & UI Customization
+            if (role === 'KONSUMEN') {
+                if (sideBadge) {
+                    sideBadge.textContent = 'Konsumen';
+                    sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
+                }
+                if (sideDesc) {
+                    sideDesc.textContent = 'Mode Warga: Akses pasar pangan murah 3-klik & e-voting tanpa login.';
+                }
+                if (consumer3ClickBar) consumer3ClickBar.classList.remove('hidden');
+
+                // Otomatis proteksi data privasi NIK warga
+                window.appState.privacyMode = 'PUBLIC';
+                updatePrivacyButtonState();
+
+                // Switch to Market tab if currently on an administrative tab
+                const activePane = document.querySelector('.tab-pane:not(.hidden)');
+                if (activePane && (activePane.id === 'tab-sid' || activePane.id === 'tab-matching' || activePane.id === 'tab-konsep')) {
+                    switchTab('tab-market');
+                }
+
+                showToast("Mode Konsumen Aktif", "Anda berada di tampilan belanja pangan segar 3-klik tanpa login.", "success");
+            } else if (role === 'PRODUSEN') {
+                if (sideBadge) {
+                    sideBadge.textContent = 'Produsen KWT';
+                    sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300';
+                }
+                if (sideDesc) {
+                    sideDesc.textContent = 'Mode KWT: Input hasil panen pekarangan & ambil alih kuota AI.';
+                }
+                if (consumer3ClickBar) consumer3ClickBar.classList.add('hidden');
+
+                const activePane = document.querySelector('.tab-pane:not(.hidden)');
+                if (activePane && activePane.id === 'tab-sid') {
+                    switchTab('tab-market');
+                }
+
+                showToast("Mode Produsen Aktif", "Fitur pencatatan panen & panel distribusi kuota AI diaktifkan.", "success");
+            } else if (role === 'ADMIN') {
+                if (sideBadge) {
+                    sideBadge.textContent = 'Admin RT 13';
+                    sideBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-forest-100 text-forest-800 border border-forest-300';
+                }
+                if (sideDesc) {
+                    sideDesc.textContent = 'Mode Pengurus: Akses penuh 6 tab, validasi 2-langkah & audit.';
+                }
+                if (consumer3ClickBar) consumer3ClickBar.classList.remove('hidden');
+
+                showToast("Mode Admin RT Aktif", "Akses penuh data Single Identity 40 KK & validasi 2-langkah terbuka.", "warning");
+            }
+
+            renderAll();
+        }
+
         // --- 9. MASTER RENDER ALL ---
         function renderAll() {
             renderHeaderStats();
@@ -8165,6 +8552,7 @@
             renderAll();
             updatePrivacyButtonState();
             initPwaSupport();
+            setActiveRole(window.appState.activeRole || 'KONSUMEN');
         });
     </script>
 </body>
