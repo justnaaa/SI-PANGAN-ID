@@ -1215,9 +1215,9 @@
                                     </div>
                                     <select id="regSocialTier"
                                         class="w-full h-10 px-3 py-2 rounded-lg border border-stone-200 text-xs bg-white focus:outline-none focus:border-forest-600">
-                                        <option value="MANDIRI">Mandiri Pangan (Aman)</option>
+                                        <option value="MANDIRI">Mandiri Pangan</option>
                                         <option value="WASPADA">Waspada Pangan</option>
-                                        <option value="RENTAN_PRIORITAS">Prioritas Bantuan (Hak Subsidi Pangan)</option>
+                                        <option value="RENTAN_PRIORITAS">Prioritas Bantuan</option>
                                     </select>
                                 </div>
                             </div>
@@ -1331,7 +1331,7 @@
                                     class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
                                     <th class="py-3.5 px-4">Kode SID</th>
                                     <th class="py-3.5 px-4">Identitas (Masked)</th>
-                                    <th class="py-3.5 px-4">Status Kerentanan</th>
+                                    <th class="py-3.5 px-4" id="thMemberStatus">Status Kerentanan</th>
                                     <th class="py-3.5 px-4 text-right">Aksi</th>
                                 </tr>
                             </thead>
@@ -4031,9 +4031,9 @@
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1">Penghasilan Rata-rata / Bulan</label>
                         <select id="selfRegIncome" class="w-full px-3 py-2 rounded-xl border border-stone-300 font-semibold text-stone-900 focus:outline-none focus:border-forest-600">
-                            <option value="1200000">&lt; Rp 1.500.000 (Rentan)</option>
-                            <option value="2500000">Rp 1.500.000 - Rp 3.500.000 (Waspada)</option>
-                            <option value="4500000">&gt; Rp 3.500.000 (Mandiri)</option>
+                            <option value="1200000">&lt; Rp 1.500.000 / bulan</option>
+                            <option value="2500000">Rp 1.500.000 &ndash; Rp 3.500.000 / bulan</option>
+                            <option value="4500000">&gt; Rp 3.500.000 / bulan</option>
                         </select>
                     </div>
                     <div>
@@ -5628,6 +5628,10 @@
         }
 
         function getMemberTierBadge(tier, aidReceived = false) {
+            // Jika bukan Admin, sembunyikan status kerentanan sosial warga
+            if (!window.appState.isAdminLoggedIn && window.appState.activeRole !== 'ADMIN') {
+                return '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Terverifikasi RT 13</span>';
+            }
             if (tier === 'RENTAN_PRIORITAS') {
                 if (aidReceived) {
                     return `
@@ -5858,8 +5862,27 @@
             const tbody = document.getElementById('membersTableBody');
             if (!tbody) return;
 
+            const isTableAdmin = Boolean(window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN');
+
+            // Perbarui header kolom status sesuai role
+            const thStatus = document.getElementById('thMemberStatus');
+            if (thStatus) thStatus.textContent = isTableAdmin ? 'Status Kerentanan' : 'Status SID';
+
+            // Sembunyikan filter status kerentanan dari non-admin
+            const filterSelect = document.getElementById('memberFilterRole');
+            if (filterSelect) {
+                ['RENTAN_PRIORITAS','WASPADA','MANDIRI'].forEach(val => {
+                    const opt = filterSelect.querySelector(`option[value="${val}"]`);
+                    if (opt) opt.style.display = isTableAdmin ? '' : 'none';
+                });
+                // Reset filter jika nilai tidak valid untuk role saat ini
+                if (!isTableAdmin && ['RENTAN_PRIORITAS','WASPADA','MANDIRI'].includes(filterSelect.value)) {
+                    filterSelect.value = 'ALL';
+                }
+            }
+
             const search = (document.getElementById('memberSearchInput')?.value || '').toLowerCase();
-            const roleFilter = document.getElementById('memberFilterRole')?.value || 'ALL';
+            const roleFilter = filterSelect?.value || 'ALL';
 
             const filtered = window.appState.members.filter(m => {
                 const matchSearch = m.name.toLowerCase().includes(search) ||
@@ -5984,7 +6007,17 @@
             document.getElementById('modalDetailNik').textContent = getMemberDisplayNik(m);
             document.getElementById('modalDetailHash').textContent = m.nikHash || 'a8f5c9e2';
             document.getElementById('modalDetailRole').textContent = m.role === 'PRODUSEN' ? `Produsen (${m.producerCommodity})` : 'Konsumen Rumah Tangga';
-            document.getElementById('modalDetailTier').textContent = m.socialTier;
+            const detailTierEl = document.getElementById('modalDetailTier');
+            const isDetailAdmin = Boolean(window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN');
+            if (detailTierEl) {
+                if (isDetailAdmin) {
+                    detailTierEl.textContent = m.socialTier === 'RENTAN_PRIORITAS' ? 'Prioritas Bantuan (Hak Subsidi)' : m.socialTier === 'WASPADA' ? 'Waspada Pangan' : 'Mandiri Pangan';
+                    detailTierEl.className = m.socialTier === 'RENTAN_PRIORITAS' ? 'font-bold text-rose-700' : m.socialTier === 'WASPADA' ? 'font-bold text-amber-700' : 'font-bold text-emerald-700';
+                } else {
+                    detailTierEl.textContent = 'Terverifikasi (Warga Aktif RT 13)';
+                    detailTierEl.className = 'font-semibold text-emerald-800';
+                }
+            }
             document.getElementById('modalDetailAddress').textContent = m.address;
             document.getElementById('modalDetailDist').textContent = m.distanceKm + ' km dari Hub RT 13';
 
@@ -6120,13 +6153,23 @@
             if (selectEl) {
                 selectEl.value = res.tier;
             }
+            const isTierAdmin = Boolean(window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN');
+            // Sembunyikan dropdown regSocialTier dari non-admin
+            const regSocialTierEl = document.getElementById('regSocialTier');
+            const regSocialTierLabel = document.getElementById('regSocialTierWrapper');
+            if (regSocialTierEl) regSocialTierEl.closest('div.flex.flex-col.justify-between') && (regSocialTierEl.closest('div.flex.flex-col.justify-between').style.display = isTierAdmin ? '' : 'none');
             if (scoreBadge) {
-                scoreBadge.textContent = `Skor AI: ${res.score}/100 • ${res.tier === 'RENTAN_PRIORITAS' ? 'Prioritas Bantuan' : res.tier === 'WASPADA' ? 'Waspada' : 'Mandiri'}`;
-                scoreBadge.className = res.tier === 'RENTAN_PRIORITAS'
-                    ? 'text-[10px] font-mono font-bold text-terracotta-700 bg-terracotta-50 px-1.5 py-0.5 rounded border border-terracotta-200'
-                    : res.tier === 'WASPADA'
-                        ? 'text-[10px] font-mono font-bold text-paddy-700 bg-paddy-50 px-1.5 py-0.5 rounded border border-paddy-200'
-                        : 'text-[10px] font-mono font-bold text-forest-700 bg-forest-50 px-1.5 py-0.5 rounded border border-forest-200';
+                if (isTierAdmin) {
+                    scoreBadge.textContent = `Skor AI: ${res.score}/100 • ${res.tier === 'RENTAN_PRIORITAS' ? 'Prioritas Bantuan' : res.tier === 'WASPADA' ? 'Waspada' : 'Mandiri'}`;
+                    scoreBadge.className = res.tier === 'RENTAN_PRIORITAS'
+                        ? 'text-[10px] font-mono font-bold text-terracotta-700 bg-terracotta-50 px-1.5 py-0.5 rounded border border-terracotta-200'
+                        : res.tier === 'WASPADA'
+                            ? 'text-[10px] font-mono font-bold text-paddy-700 bg-paddy-50 px-1.5 py-0.5 rounded border border-paddy-200'
+                            : 'text-[10px] font-mono font-bold text-forest-700 bg-forest-50 px-1.5 py-0.5 rounded border border-forest-200';
+                } else {
+                    scoreBadge.textContent = 'Data Terenkripsi';
+                    scoreBadge.className = 'text-[10px] font-mono font-medium text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200';
+                }
             }
         }
 
@@ -9223,19 +9266,19 @@
                 // TAMPILKAN: Alur (1), Pasar (3 - Membeli), Lacak (4), Musyawarah (5 - Voting Permintaan)
                 // SEMBUNYIKAN: SID 40 KK (2 - Privasi NIK), Evaluasi Dampak (6 - Buku Besar Admin)
                 if (navKonsep) navKonsep.classList.remove('hidden');
-                if (navSid) navSid.classList.add('hidden');
+                if (navSid) navSid.classList.remove('hidden'); // Konsumen boleh buka SID (status disembunyikan)
                 if (navMarket) navMarket.classList.remove('hidden');
                 if (navMatching) navMatching.classList.remove('hidden');
-                if (navMusyawarah) navMusyawarah.classList.remove('hidden'); // KONSUMEN BISA MENGISI VOTING
+                if (navMusyawarah) navMusyawarah.classList.remove('hidden');
                 if (navDampak) navDampak.classList.add('hidden');
 
                 // Otomatis proteksi data privasi NIK warga
                 window.appState.privacyMode = 'PUBLIC';
                 updatePrivacyButtonState();
 
-                // Pindah tab jika sedang di tab admin yang tersembunyi
+                // Pindah tab hanya jika sedang di buku besar admin
                 const activePane = document.querySelector('.tab-pane:not(.hidden)');
-                if (!activePane || ['tab-sid', 'tab-dampak'].includes(activePane.id)) {
+                if (!activePane || activePane.id === 'tab-dampak') {
                     switchTab('tab-market');
                 }
 
@@ -9256,10 +9299,10 @@
                 if (adminVotingControls) adminVotingControls.classList.add('hidden');
 
                 // Tab Navs untuk PRODUSEN:
-                // TAMPILKAN: Alur (1), Pasar (3 - Jual Produk/OCR), Lacak (4), Musyawarah (5 - Ambil Kuota Pemasok)
-                // SEMBUNYIKAN: SID 40 KK (2 - Privasi NIK), Evaluasi Dampak (6 - Buku Besar Admin)
+                // TAMPILKAN: Alur (1), SID (2 - status disembunyikan), Pasar (3), Lacak (4), Musyawarah (5)
+                // SEMBUNYIKAN: Evaluasi Dampak (6 - Buku Besar Admin)
                 if (navKonsep) navKonsep.classList.remove('hidden');
-                if (navSid) navSid.classList.add('hidden');
+                if (navSid) navSid.classList.remove('hidden'); // Produsen boleh buka SID (status disembunyikan)
                 if (navMarket) navMarket.classList.remove('hidden');
                 if (navMatching) navMatching.classList.remove('hidden');
                 if (navMusyawarah) navMusyawarah.classList.remove('hidden');
@@ -9270,7 +9313,7 @@
                 updatePrivacyButtonState();
 
                 const activePane = document.querySelector('.tab-pane:not(.hidden)');
-                if (!activePane || ['tab-sid', 'tab-dampak'].includes(activePane.id)) {
+                if (!activePane || activePane.id === 'tab-dampak') {
                     switchTab('tab-market');
                 }
 
