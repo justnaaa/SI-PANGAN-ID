@@ -211,11 +211,11 @@
                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-100/80 border border-stone-200/70">
                     <span class="w-2 h-2 rounded-full bg-forest-600 animate-pulse"></span>
                     <span class="text-stone-500">Total Transaksi:</span>
-                    <strong id="topBarDanaKas" class="mono-num font-bold text-forest-800">Rp 7.840.000</strong>
+                    <strong id="topBarDanaKas" class="mono-num font-bold text-forest-800">Rp 8.064.000</strong>
                 </div>
                 <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-stone-100/80 border border-stone-200/70">
                     <span class="text-stone-500">Skema:</span>
-                    <strong id="topBarFeePct" class="mono-num font-bold text-forest-700">0% Fee Warga</strong>
+                    <strong id="topBarFeePct" class="mono-num font-bold text-forest-700">0% Fee P2P Warga</strong>
                 </div>
             </div>
 
@@ -632,9 +632,15 @@
                                 </div>
                             </div>
 
-                            <!-- 3 Tombol Pintas Besar Ramah Orang Tua / Ibu PKK -->
+                            <!-- Tombol Pintas Cepat & Perbarui Data KK Saya -->
                             <div class="pt-2 border-t border-forest-100 space-y-2">
-                                <span class="text-[11px] font-bold text-stone-600 block">Menu Pintas Cepat (Klik Langsung):</span>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[11px] font-bold text-stone-600">Menu Pintas Akun Saya:</span>
+                                    <button type="button" onclick="openCitizenSelfUpdateModal()"
+                                        class="text-[11px] font-bold text-emerald-800 hover:text-emerald-950 underline flex items-center gap-1 cursor-pointer">
+                                        <i class="fa-solid fa-pen-to-square text-emerald-700"></i> Perbarui Data KK Saya
+                                    </button>
+                                </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                     <button type="button" onclick="switchTab('tab-market')" class="py-2.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition cursor-pointer">
                                         <i class="fa-solid fa-basket-shopping"></i>
@@ -644,9 +650,9 @@
                                         <i class="fa-solid fa-check-to-slot"></i>
                                         <span>Isi Voting Pangan</span>
                                     </button>
-                                    <button type="button" onclick="switchTab('tab-sid')" class="py-2.5 px-3 rounded-xl bg-stone-800 hover:bg-stone-900 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition cursor-pointer">
-                                        <i class="fa-solid fa-user-plus"></i>
-                                        <span>Data Warga / Daftar</span>
+                                    <button type="button" onclick="openCitizenSelfUpdateModal()" class="py-2.5 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition cursor-pointer">
+                                        <i class="fa-solid fa-user-pen"></i>
+                                        <span>Perbarui KK Saya</span>
                                     </button>
                                 </div>
                             </div>
@@ -722,7 +728,7 @@
                         </div>
                         <div class="p-4 rounded-xl bg-forest-50/70 border border-forest-200/80 space-y-1">
                             <span class="text-xs text-forest-700 font-semibold uppercase tracking-wider block">Total Nilai Transaksi Warga</span>
-                            <div id="tab1TotalTransaksi" class="serif-heading text-2xl font-bold text-forest-900 mono-num">Rp 7.840.000</div>
+                            <div id="tab1TotalTransaksi" class="serif-heading text-2xl font-bold text-forest-900 mono-num">Rp 8.064.000</div>
                             <p class="text-[11px] text-stone-600">0% Potongan Komisi (100% ke Produsen)</p>
                         </div>
                         <div class="p-4 rounded-xl bg-stone-50 border border-stone-200/80 space-y-1">
@@ -958,6 +964,52 @@
                                     Ikan lele & ikan nila segar budidaya kolam pekarangan.
                                 </p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KARTU PRIBADI WARGA LOGIN: DATA KK KELUARGA SAYA & TOMBOL PERBARUI DATA KK (VERIFIKASI ADMIN) -->
+                <div id="myOwnKkSummaryCard" class="bg-gradient-to-br from-emerald-50/90 via-white to-forest-50/50 rounded-2xl p-5 sm:p-6 border-2 border-emerald-300 shadow-xs space-y-4">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                        <div class="space-y-1.5">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-forest-800 text-white flex items-center gap-1">
+                                    <i class="fa-solid fa-user-lock"></i> Data KK Keluarga Saya (Akun Login Aktif)
+                                </span>
+                                <span id="myOwnKkPendingStatusBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                    <i class="fa-solid fa-circle-check mr-1"></i> Terverifikasi Pengurus RT 13
+                                </span>
+                            </div>
+                            <h3 class="serif-heading text-lg sm:text-xl font-bold text-stone-900">
+                                <span id="myOwnKkNameText">Ibu Sri Wahyuni</span>
+                                <span id="myOwnKkSidText" class="font-mono text-sm text-forest-800 ml-1">(SID-RT13-002)</span>
+                            </h3>
+                            <p class="text-xs text-stone-600 leading-relaxed max-w-2xl">
+                                Hanya Anda (sebagai pemilik akun yang sedang login) yang dapat mengajukan pembaruan data keluarga ini. Setiap perubahan akan diperiksa dan diverifikasi terlebih dahulu oleh <strong>Admin RT 13</strong> sebelum diperbarui di sistem.
+                            </p>
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+                            <div class="grid grid-cols-3 gap-2 text-center bg-white p-2.5 rounded-xl border border-emerald-200">
+                                <div class="px-2">
+                                    <span class="text-[10px] text-stone-500 block">Anggota KK</span>
+                                    <strong id="myOwnKkFamilyText" class="font-mono text-xs sm:text-sm font-bold text-stone-900">4 Jiwa</strong>
+                                </div>
+                                <div class="px-2 border-x border-stone-100">
+                                    <span class="text-[10px] text-stone-500 block">Kebutuhan</span>
+                                    <strong id="myOwnKkNeedText" class="font-mono text-xs sm:text-sm font-bold text-forest-800">64 Kg/bln</strong>
+                                </div>
+                                <div class="px-2">
+                                    <span class="text-[10px] text-stone-500 block">Peran</span>
+                                    <strong id="myOwnKkRoleText" class="text-[11px] font-bold text-emerald-800">Produsen &amp; Konsumen</strong>
+                                </div>
+                            </div>
+
+                            <button type="button" onclick="openCitizenSelfUpdateModal()"
+                                class="px-4 py-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-2 cursor-pointer shrink-0">
+                                <i class="fa-solid fa-pen-to-square text-amber-300 text-sm"></i>
+                                <span>Perbarui Data KK Saya</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -2615,7 +2667,7 @@
                             <i class="fa-solid fa-coins text-paddy-600"></i>
                         </div>
                         <div id="kpiProdusenTurnover" class="serif-heading text-lg font-bold text-forest-900 mono-num">
-                            Rp 7.840.000</div>
+                            Rp 8.064.000</div>
                         <p class="text-[10px] text-stone-500">0% Fee transaksi P2P warga (100% diterima produsen)</p>
                     </div>
                 </div>
@@ -2668,7 +2720,7 @@
                         <div
                             class="pt-2 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
                             <span>Total Perputaran: <strong id="chartCashDisplay"
-                                    class="font-bold text-forest-800 mono-num">Rp 7.840.000</strong></span>
+                                    class="font-bold text-forest-800 mono-num">Rp 8.064.000</strong></span>
                             <span class="font-bold text-forest-700">Audit Terbuka</span>
                         </div>
                     </div>
@@ -2710,7 +2762,7 @@
 
                         <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200 space-y-1">
                             <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">Total Pembayaran Terverifikasi</span>
-                            <strong class="text-sm font-mono font-bold text-forest-800">Rp 7.840.000</strong>
+                            <strong class="text-sm font-mono font-bold text-forest-800">Rp 8.064.000</strong>
                             <p class="text-[10px] text-stone-500">Transaksi P2P Warga RT 13 (Bebas Potongan Komisi).</p>
                         </div>
 
@@ -3765,7 +3817,7 @@
                         </div>
                         <div class="p-2.5 rounded-lg border border-stone-200 bg-stone-50">
                             <span class="text-[10px] text-stone-500 block">Omzet Produsen Lokal</span>
-                            <strong class="font-bold text-forest-900 text-sm">Rp 7.840.000</strong>
+                            <strong class="font-bold text-forest-900 text-sm">Rp 8.064.000</strong>
                         </div>
                     </div>
                 </div>
@@ -3829,7 +3881,7 @@
                         <span class="font-mono text-emerald-800">STATUS: AUDITED &amp; CLOSED</span>
                     </div>
                     <p class="text-[10px] text-stone-600">
-                        Total Kas Terverifikasi: Rp 7.840.000,- • Potongan Komisi Warga: 0% • Segel Kriptografis: <span class="font-mono font-bold">SEAL-PKK-YSM-202610-LOCKED-SHA256</span>.
+                        Total Kas Terverifikasi: Rp 8.064.000,- • Potongan Komisi Warga: 0% • Segel Kriptografis: <span class="font-mono font-bold">SEAL-PKK-YSM-202610-LOCKED-SHA256</span>.
                     </p>
                 </div>
 
@@ -3866,6 +3918,147 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL KHUSUS WARGA LOGIN: PERBARUI DATA KK KELUARGA SAYA (MENUNGGU VERIFIKASI ADMIN)
+         ========================================================================= -->
+    <div id="modalCitizenSelfUpdateKk" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-xl w-full border border-stone-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 my-8">
+            <div class="px-5 py-4 bg-gradient-to-r from-forest-900 via-forest-800 to-emerald-900 text-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-amber-400 text-forest-950 flex items-center justify-center font-bold text-base shadow-xs">
+                        <i class="fa-solid fa-user-pen"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm sm:text-base leading-tight">Perbarui Data KK Keluarga Saya</h3>
+                        <p class="text-[11px] text-emerald-200">Terkunci ke Akun Login Anda • Wajib Diverifikasi Admin RT 13</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalCitizenSelfUpdateKk')" class="p-1.5 rounded-lg text-stone-300 hover:text-white cursor-pointer">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSubmitCitizenSelfUpdate(event)" class="p-5 sm:p-6 space-y-4 text-xs">
+                <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 flex items-start gap-2.5">
+                    <i class="fa-solid fa-shield-halved text-emerald-700 text-sm mt-0.5"></i>
+                    <div class="space-y-0.5 text-[11px]">
+                        <strong class="block">Keamanan Satu Akun Satu KK:</strong>
+                        <span>Anda hanya dapat memperbarui data keluarga milik akun Anda sendiri (<strong id="selfUpdateLockedHeaderSid">SID-RT13-002</strong>). Perubahan akan aktif setelah disetujui oleh Pengurus Admin RT 13.</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">Kode Single Identity (Terkunci)</label>
+                        <input type="text" id="selfUpdateSid" readonly class="w-full h-10 px-3 rounded-xl bg-stone-100 border border-stone-200 font-mono font-bold text-stone-600">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">NIK Kepala Keluarga (Tersensor)</label>
+                        <input type="text" id="selfUpdateMaskedNik" readonly class="w-full h-10 px-3 rounded-xl bg-stone-100 border border-stone-200 font-mono font-bold text-stone-600">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">Nama Kepala Keluarga *</label>
+                        <input type="text" id="selfUpdateName" required class="w-full h-10 px-3.5 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">Alamat Domisili RT 13 *</label>
+                        <input type="text" id="selfUpdateAddress" required class="w-full h-10 px-3.5 rounded-xl border border-stone-300 font-semibold text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                </div>
+
+                <!-- Jumlah Anggota Keluarga & Kalkulasi Otomatis Kebutuhan Pangan Bapanas -->
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label class="block font-bold text-stone-800 mb-1">Jumlah Anggota Keluarga (Jiwa) *</label>
+                            <input type="number" id="selfUpdateFamilySize" min="1" max="15" required
+                                oninput="autoFillSelfUpdateNeeds(this.value)"
+                                class="w-full h-10 px-3.5 rounded-xl border-2 border-emerald-600/70 bg-white font-mono font-extrabold text-sm text-stone-900 focus:outline-none">
+                            <span class="text-[10px] text-stone-500 mt-0.5 block">Ubah jumlah jiwa untuk menyesuaikan perkiraan pangan</span>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-stone-800 mb-1">Total Perkiraan Kebutuhan (Kg/Bulan) *</label>
+                            <input type="number" id="selfUpdateTotalNeedKg" min="5" max="300" required
+                                class="w-full h-10 px-3.5 rounded-xl border border-stone-300 bg-white font-mono font-extrabold text-sm text-forest-900 focus:outline-none">
+                            <span class="text-[10px] text-emerald-700 font-semibold mt-0.5 block">Dapat Anda koreksi sesuai konsumsi riil rumah tangga</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 pt-1">
+                        <div>
+                            <label class="block text-[10px] font-bold text-stone-600 mb-0.5">Beras (Kg)</label>
+                            <input type="number" id="selfUpdateNeedBeras" min="0" oninput="syncSelfUpdateNeedsTotal()" class="w-full h-8 px-2 rounded-lg border border-stone-300 bg-white font-mono font-bold text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-stone-600 mb-0.5">Sayur (Kg)</label>
+                            <input type="number" id="selfUpdateNeedSayur" min="0" oninput="syncSelfUpdateNeedsTotal()" class="w-full h-8 px-2 rounded-lg border border-stone-300 bg-white font-mono font-bold text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-stone-600 mb-0.5">Telur (Kg)</label>
+                            <input type="number" id="selfUpdateNeedTelur" min="0" oninput="syncSelfUpdateNeedsTotal()" class="w-full h-8 px-2 rounded-lg border border-stone-300 bg-white font-mono font-bold text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-stone-600 mb-0.5">Ikan (Kg)</label>
+                            <input type="number" id="selfUpdateNeedIkan" min="0" oninput="syncSelfUpdateNeedsTotal()" class="w-full h-8 px-2 rounded-lg border border-stone-300 bg-white font-mono font-bold text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-stone-600 mb-0.5">Ayam (Kg)</label>
+                            <input type="number" id="selfUpdateNeedAyam" min="0" oninput="syncSelfUpdateNeedsTotal()" class="w-full h-8 px-2 rounded-lg border border-stone-300 bg-white font-mono font-bold text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-stone-600 mb-0.5">Tempe (Kg)</label>
+                            <input type="number" id="selfUpdateNeedTempe" min="0" oninput="syncSelfUpdateNeedsTotal()" class="w-full h-8 px-2 rounded-lg border border-stone-300 bg-white font-mono font-bold text-xs">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">Peran Keluarga dalam Ekosistem *</label>
+                        <select id="selfUpdateRole" onchange="document.getElementById('selfUpdateProdBox').classList.toggle('hidden', this.value !== 'PRODUSEN')"
+                            class="w-full h-10 px-3 rounded-xl border border-stone-300 bg-white font-bold text-stone-900 focus:outline-none focus:border-forest-600">
+                            <option value="KONSUMEN">Konsumen Rumah Tangga</option>
+                            <option value="PRODUSEN">Produsen Pekarangan / KWT (1 SID 2 Peran)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">Alasan Pembaruan Data KK *</label>
+                        <input type="text" id="selfUpdateReason" required placeholder="Contoh: Penambahan anggota keluarga / Kelahiran"
+                            class="w-full h-10 px-3.5 rounded-xl border border-stone-300 font-semibold text-stone-900 focus:outline-none focus:border-forest-600">
+                    </div>
+                </div>
+
+                <div id="selfUpdateProdBox" class="hidden p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">Komoditas Pekarangan yang Dihasilkan</label>
+                        <input type="text" id="selfUpdateCommodity" placeholder="Contoh: Sayur Bayam, Ikan Lele, Telur"
+                            class="w-full h-9 px-3 rounded-lg border border-stone-300 bg-white font-semibold text-stone-900">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-stone-700 mb-1">Estimasi Kapasitas Panen (Kg/Bulan)</label>
+                        <input type="number" id="selfUpdateCapacityKg" min="0" value="30"
+                            class="w-full h-9 px-3 rounded-lg border border-stone-300 bg-white font-mono font-bold text-stone-900">
+                    </div>
+                </div>
+
+                <div class="pt-2 flex items-center justify-end gap-2.5 border-t border-stone-100">
+                    <button type="button" onclick="closeModal('modalCitizenSelfUpdateKk')"
+                        class="px-4 py-2.5 rounded-xl border border-stone-300 text-stone-700 font-bold hover:bg-stone-50 transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit"
+                        class="px-5 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold shadow-sm transition flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Kirim Pengajuan ke Admin RT 13</span>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -6258,7 +6451,10 @@
                         </div>
                     </td>
                     <td class="py-3.5 px-4">
-                        <div class="font-semibold text-slate-900">${getMemberDisplayName(m)}</div>
+                        <div class="font-semibold text-slate-900 flex items-center gap-1.5 flex-wrap">
+                            <span>${getMemberDisplayName(m)}</span>
+                            ${m.sid === window.appState.activeUserSid ? '<span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[9px] font-bold">Akun Saya</span>' : ''}
+                        </div>
                         <div class="text-[11px] font-mono text-slate-500 mt-0.5">NIK: ${getMemberDisplayNik(m)}</div>
                     </td>
                     <td class="py-3.5 px-4">
@@ -6273,7 +6469,12 @@
                             ${window.appState.isAdminLoggedIn ? `
                                 <button type="button" onclick="event.stopPropagation(); openEditMemberModal('${m.sid}')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-[11px] border border-amber-300 shadow-2xs transition cursor-pointer">
                                     <i class="fa-solid fa-pen-to-square text-amber-700"></i>
-                                    <span>Edit</span>
+                                    <span>Edit (Admin)</span>
+                                </button>
+                            ` : (m.sid === window.appState.activeUserSid) ? `
+                                <button type="button" onclick="event.stopPropagation(); openCitizenSelfUpdateModal()" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-forest-800 hover:bg-forest-900 text-white font-bold text-[11px] shadow-2xs transition cursor-pointer">
+                                    <i class="fa-solid fa-user-pen text-amber-300"></i>
+                                    <span>Perbarui KK Saya</span>
                                 </button>
                             ` : ''}
                         </div>
@@ -9732,7 +9933,7 @@
                 `Nomor: 045.2/PKK-RT13/YSM/X/2026\n\n` +
                 `1. Cakupan Populasi: 40 KK (160 Jiwa)\n` +
                 `2. Total Pangan Beredar: 624 Kg (Serapan Panen Lokal KWT: 89,2%)\n` +
-                `3. Omzet Produsen Lokal: Rp 7.840.000,- (0% komisi fee)\n` +
+                `3. Omzet Produsen Lokal: Rp 8.064.000,- (0% komisi fee)\n` +
                 `4. Indeks Inflasi Mikro: -8,4% (lebih terkendali dibanding harga PIHPS)\n` +
                 `5. Intervensi Kerentanan Pangan: 5 KK prioritas stunting tertangani 100%\n` +
                 `6. Rekonsiliasi Kas: 100% MATCHED (Selisih Kas Rp 0,-)\n` +
@@ -10465,6 +10666,26 @@
                     }
                 ];
             }
+            if (!window.appState.pendingKkUpdates) {
+                window.appState.pendingKkUpdates = [
+                    {
+                        id: 'upd-kk-01',
+                        sid: 'SID-RT13-002',
+                        name: 'Ibu Sri Wahyuni',
+                        oldFamilySize: 3,
+                        newFamilySize: 4,
+                        oldFoodNeedKg: 48,
+                        newFoodNeedKg: 64,
+                        newAddress: 'Blok B No. 04 RT 13',
+                        newRole: 'PRODUSEN',
+                        newCommodity: 'Sayur Bayam Hijau (KWT Pekarangan)',
+                        newCapacityKg: 45,
+                        newNeeds: { beras: 30, sayur: 12, telur: 6, ikan: 6, ayam: 4, tempe: 6 },
+                        reason: 'Penambahan anggota keluarga & penyesuaian kebutuhan pangan bulanan',
+                        requestedAt: 'Hari ini'
+                    }
+                ];
+            }
             if (!window.appState.activeUserSid) {
                 window.appState.activeUserSid = 'SID-RT13-002';
             }
@@ -10492,6 +10713,9 @@
                 if (parsed && Array.isArray(parsed.pendingNewKks)) {
                     window.appState.pendingNewKks = parsed.pendingNewKks;
                 }
+                if (parsed && Array.isArray(parsed.pendingKkUpdates)) {
+                    window.appState.pendingKkUpdates = parsed.pendingKkUpdates;
+                }
                 if (parsed && parsed.activeUserSid) {
                     window.appState.activeUserSid = parsed.activeUserSid;
                 }
@@ -10508,6 +10732,7 @@
                     transactions: window.appState.transactions,
                     demands: window.appState.demands,
                     pendingNewKks: window.appState.pendingNewKks,
+                    pendingKkUpdates: window.appState.pendingKkUpdates,
                     activeUserSid: window.appState.activeUserSid,
                     danaSosialInklusi: window.appState.danaSosialInklusi,
                     updatedAt: new Date().toISOString()
@@ -11107,6 +11332,244 @@
             renderPendingVerificationCards();
             syncAllDataToSupabaseNow(false);
             showToast('Pengajuan Ditolak', 'Data dikembalikan ke pemohon untuk perbaikan berkas.', 'warning');
+        };
+
+        // --- 9.4b FITUR WARGA PERBARUI DATA KK SENDIRI (TERKUNCI KE AKUN LOGIN + VERIFIKASI ADMIN) ---
+        function renderMyOwnKkSummaryCard() {
+            const activeSid = window.appState?.activeUserSid || 'SID-RT13-002';
+            const member = (window.appState?.members || []).find(m => m.sid === activeSid);
+            if (!member) return;
+
+            const setTxt = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+            setTxt('myOwnKkNameText', member.name);
+            setTxt('myOwnKkSidText', `(${member.sid} • ${member.address || 'RT 13'})`);
+            setTxt('myOwnKkFamilyText', `${member.familySize || 4} Jiwa`);
+            setTxt('myOwnKkNeedText', `${member.monthlyFoodNeedKg || 64} Kg/bln`);
+            setTxt('myOwnKkRoleText', (member.role === 'PRODUSEN' || member.isDualRole) ? 'Produsen & Konsumen' : 'Konsumen Warga');
+
+            const pendingUpd = (window.appState?.pendingKkUpdates || []).find(u => u.sid === activeSid);
+            const badgeEl = document.getElementById('myOwnKkPendingStatusBadge');
+            if (badgeEl) {
+                if (pendingUpd) {
+                    badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300';
+                    badgeEl.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> Menunggu Verifikasi Admin (${pendingUpd.newFamilySize} Jiwa • ${pendingUpd.newFoodNeedKg} Kg/bln)`;
+                } else {
+                    badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
+                    badgeEl.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Data KK Terverifikasi Admin RT 13';
+                }
+            }
+        }
+
+        window.openCitizenSelfUpdateModal = function() {
+            const activeSid = window.appState?.activeUserSid || 'SID-RT13-002';
+            const member = (window.appState?.members || []).find(m => m.sid === activeSid);
+            if (!member) {
+                showToast('Silakan Login Terlebih Dahulu', 'Pilih identitas keluarga Anda di Tab 1 untuk memperbarui data KK.', 'warning');
+                switchTab('tab-konsep');
+                return;
+            }
+
+            const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+            const hdrSid = document.getElementById('selfUpdateLockedHeaderSid');
+            if (hdrSid) hdrSid.textContent = `${member.name} (${member.sid})`;
+
+            setVal('selfUpdateSid', member.sid);
+            setVal('selfUpdateMaskedNik', member.maskedNik || '187201********02');
+            setVal('selfUpdateName', member.name);
+            setVal('selfUpdateAddress', member.address || 'RT 13 Yosomulyo');
+            setVal('selfUpdateFamilySize', member.familySize || 4);
+            setVal('selfUpdateTotalNeedKg', member.monthlyFoodNeedKg || 64);
+
+            const n = member.needs || { beras: 30, sayur: 12, telur: 6, ikan: 6, ayam: 4, tempe: 6 };
+            setVal('selfUpdateNeedBeras', n.beras ?? 30);
+            setVal('selfUpdateNeedSayur', n.sayur ?? 12);
+            setVal('selfUpdateNeedTelur', n.telur ?? 6);
+            setVal('selfUpdateNeedIkan', n.ikan ?? 6);
+            setVal('selfUpdateNeedAyam', n.ayam ?? 4);
+            setVal('selfUpdateNeedTempe', n.tempe ?? 6);
+
+            const roleVal = (member.role === 'PRODUSEN' || member.isDualRole) ? 'PRODUSEN' : 'KONSUMEN';
+            setVal('selfUpdateRole', roleVal);
+            setVal('selfUpdateCommodity', member.producerCommodity && member.producerCommodity !== '-' ? member.producerCommodity : 'Sayur Pekarangan KWT');
+            setVal('selfUpdateCapacityKg', member.capacityKg || 30);
+            setVal('selfUpdateReason', 'Pembaruan jumlah anggota keluarga & kebutuhan konsumsi pangan bulanan');
+
+            const prodBox = document.getElementById('selfUpdateProdBox');
+            if (prodBox) prodBox.classList.toggle('hidden', roleVal !== 'PRODUSEN');
+
+            openModal('modalCitizenSelfUpdateKk');
+        };
+
+        window.autoFillSelfUpdateNeeds = function(jiwaVal) {
+            const jiwa = Math.max(1, Number(jiwaVal) || 4);
+            const beras = Math.round(jiwa * BAPANAS_STANDARDS_PER_CAPITA_MONTH.beras);
+            const sayur = Math.round(jiwa * BAPANAS_STANDARDS_PER_CAPITA_MONTH.sayur);
+            const telur = Math.round(jiwa * BAPANAS_STANDARDS_PER_CAPITA_MONTH.telur);
+            const ikan = Math.round(jiwa * BAPANAS_STANDARDS_PER_CAPITA_MONTH.ikan);
+            const ayam = Math.round(jiwa * BAPANAS_STANDARDS_PER_CAPITA_MONTH.ayam);
+            const tempe = Math.round(jiwa * BAPANAS_STANDARDS_PER_CAPITA_MONTH.tempe);
+            const total = beras + sayur + telur + ikan + ayam + tempe;
+
+            const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+            setVal('selfUpdateNeedBeras', beras);
+            setVal('selfUpdateNeedSayur', sayur);
+            setVal('selfUpdateNeedTelur', telur);
+            setVal('selfUpdateNeedIkan', ikan);
+            setVal('selfUpdateNeedAyam', ayam);
+            setVal('selfUpdateNeedTempe', tempe);
+            setVal('selfUpdateTotalNeedKg', total);
+        };
+
+        window.syncSelfUpdateNeedsTotal = function() {
+            const g = id => Math.max(0, Number(document.getElementById(id)?.value || 0));
+            const total = g('selfUpdateNeedBeras') + g('selfUpdateNeedSayur') + g('selfUpdateNeedTelur') + g('selfUpdateNeedIkan') + g('selfUpdateNeedAyam') + g('selfUpdateNeedTempe');
+            const totalEl = document.getElementById('selfUpdateTotalNeedKg');
+            if (totalEl) totalEl.value = total;
+        };
+
+        window.handleSubmitCitizenSelfUpdate = function(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const activeSid = window.appState?.activeUserSid || 'SID-RT13-002';
+            const submittedSid = document.getElementById('selfUpdateSid')?.value;
+
+            // Proteksi Ketat: Warga HANYA boleh mengubah data milik akun loginnya sendiri!
+            if (submittedSid !== activeSid) {
+                showToast('Akses Ditolak!', 'Anda hanya diizinkan memperbarui data KK milik akun Anda sendiri.', 'error');
+                return;
+            }
+
+            const member = (window.appState?.members || []).find(m => m.sid === activeSid);
+            if (!member) return;
+
+            const g = id => Math.max(0, Number(document.getElementById(id)?.value || 0));
+            const newNeeds = {
+                beras: g('selfUpdateNeedBeras'),
+                sayur: g('selfUpdateNeedSayur'),
+                telur: g('selfUpdateNeedTelur'),
+                ikan: g('selfUpdateNeedIkan'),
+                ayam: g('selfUpdateNeedAyam'),
+                tempe: g('selfUpdateNeedTempe')
+            };
+            const sumNeeds = newNeeds.beras + newNeeds.sayur + newNeeds.telur + newNeeds.ikan + newNeeds.ayam + newNeeds.tempe;
+            const newTotalKg = Math.max(5, Number(document.getElementById('selfUpdateTotalNeedKg')?.value || sumNeeds));
+
+            const updateRequest = {
+                id: `upd-kk-${Date.now()}`,
+                sid: member.sid,
+                name: (document.getElementById('selfUpdateName')?.value || member.name).trim(),
+                oldFamilySize: member.familySize || 4,
+                newFamilySize: Math.max(1, Number(document.getElementById('selfUpdateFamilySize')?.value || 4)),
+                oldFoodNeedKg: member.monthlyFoodNeedKg || 64,
+                newFoodNeedKg: newTotalKg,
+                newAddress: (document.getElementById('selfUpdateAddress')?.value || member.address).trim(),
+                newRole: document.getElementById('selfUpdateRole')?.value || member.role,
+                newCommodity: (document.getElementById('selfUpdateCommodity')?.value || member.producerCommodity || 'Sayur Pekarangan').trim(),
+                newCapacityKg: Math.max(0, Number(document.getElementById('selfUpdateCapacityKg')?.value || member.capacityKg || 30)),
+                newNeeds: newNeeds,
+                reason: (document.getElementById('selfUpdateReason')?.value || 'Pembaruan data keluarga').trim(),
+                requestedAt: 'Baru saja'
+            };
+
+            window.appState.pendingKkUpdates = (window.appState.pendingKkUpdates || []).filter(u => u.sid !== member.sid);
+            window.appState.pendingKkUpdates.unshift(updateRequest);
+
+            closeModal('modalCitizenSelfUpdateKk');
+            renderMyOwnKkSummaryCard();
+            renderPendingUpdateVerificationCards();
+            syncAllDataToSupabaseNow(false);
+
+            showToast(
+                'Pengajuan Pembaruan Dikirim ke Admin!',
+                `Perubahan data KK ${updateRequest.name} (${updateRequest.newFamilySize} Jiwa • ${updateRequest.newFoodNeedKg} Kg/bln) menunggu verifikasi Admin RT 13.`,
+                'success'
+            );
+        };
+
+        function renderPendingUpdateVerificationCards() {
+            const queue = window.appState.pendingKkUpdates || [];
+            const badge = document.getElementById('pendingUpdateBadge');
+            const card = document.getElementById('pendingUpdateCard');
+            if (!badge || !card) return;
+
+            if (queue.length === 0) {
+                badge.textContent = '0 Pengajuan Update';
+                badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200';
+                card.innerHTML = `
+                    <div class="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs">
+                        <i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Seluruh pengajuan pembaruan data KK warga telah diverifikasi dan dimutakhirkan di sistem.
+                    </div>
+                `;
+                return;
+            }
+
+            const item = queue[0];
+            badge.textContent = `${queue.length} Pengajuan Update`;
+            badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200';
+
+            card.innerHTML = `
+                <div class="flex items-center justify-between gap-2">
+                    <strong class="text-stone-900">${item.name} (${item.sid})</strong>
+                    <span class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200">${item.requestedAt || 'Menunggu'}</span>
+                </div>
+                <div class="text-[11px] text-stone-600 space-y-1 pt-0.5">
+                    <p><strong>Alasan Warga:</strong> ${item.reason}</p>
+                    <p><strong>Perubahan Data:</strong> Anggota KK <span class="font-mono font-bold text-stone-900">${item.oldFamilySize} &rarr; ${item.newFamilySize} Jiwa</span> • Kebutuhan Pangan <span class="font-mono font-bold text-emerald-800">${item.oldFoodNeedKg} &rarr; ${item.newFoodNeedKg} Kg/bln</span></p>
+                    ${item.newRole === 'PRODUSEN' ? `<p class="text-amber-800 font-semibold"><i class="fa-solid fa-seedling mr-1"></i>Peran Produsen: ${item.newCommodity} (${item.newCapacityKg} Kg/bln)</p>` : ''}
+                </div>
+                <div class="flex items-center gap-2 pt-1.5 border-t border-stone-100">
+                    <button type="button" onclick="approveMemberUpdate('${item.sid}')" class="flex-1 py-1.5 px-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] transition flex items-center justify-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-check"></i> Setujui &amp; Perbarui SID
+                    </button>
+                    <button type="button" onclick="rejectMemberUpdate('${item.sid}')" class="py-1.5 px-2.5 rounded-lg border border-stone-300 text-stone-600 hover:bg-stone-100 text-[11px] font-semibold transition cursor-pointer">
+                        Tolak
+                    </button>
+                </div>
+            `;
+        }
+
+        approveMemberUpdate = function(sidOrId) {
+            const queue = window.appState.pendingKkUpdates || [];
+            let idx = queue.findIndex(u => u.sid === sidOrId || u.id === sidOrId);
+            const item = idx !== -1 ? queue.splice(idx, 1)[0] : queue.shift();
+
+            if (!item) {
+                renderPendingUpdateVerificationCards();
+                return;
+            }
+
+            const m = (window.appState.members || []).find(x => x.sid === item.sid);
+            if (m) {
+                m.name = item.name || m.name;
+                m.address = item.newAddress || m.address;
+                m.familySize = Number(item.newFamilySize || m.familySize);
+                m.monthlyFoodNeedKg = Number(item.newFoodNeedKg || m.monthlyFoodNeedKg);
+                if (item.newNeeds) {
+                    m.needs = item.newNeeds;
+                }
+                if (item.newRole === 'PRODUSEN') {
+                    m.role = 'PRODUSEN';
+                    m.isDualRole = true;
+                    m.producerCommodity = item.newCommodity || m.producerCommodity || 'Sayur Pekarangan KWT';
+                    m.capacityKg = Number(item.newCapacityKg || m.capacityKg || 30);
+                }
+            }
+
+            renderAll();
+            syncAllDataToSupabaseNow(false);
+            showToast('Pembaruan KK Disetujui Admin!', `Data KK ${item.name} (${item.sid}) resmi diperbarui menjadi ${item.newFamilySize} Jiwa (${item.newFoodNeedKg} Kg/bln).`, 'success');
+        };
+        window.approveMemberUpdate = approveMemberUpdate;
+
+        window.rejectMemberUpdate = function(sidOrId) {
+            const queue = window.appState.pendingKkUpdates || [];
+            const idx = queue.findIndex(u => u.sid === sidOrId || u.id === sidOrId);
+            if (idx !== -1) queue.splice(idx, 1);
+            else if (queue.length > 0) queue.shift();
+
+            renderMyOwnKkSummaryCard();
+            renderPendingUpdateVerificationCards();
+            syncAllDataToSupabaseNow(false);
+            showToast('Pengajuan Pembaruan Ditolak', 'Pengajuan perubahan data KK telah ditolak oleh Admin RT 13.', 'warning');
         };
 
         // 9.5 Privasi Detail SID (Tidak menampilkan gaji per bulan & tidak menampilkan status kerentanan untuk umum)
@@ -11849,11 +12312,18 @@
             const listEl = document.getElementById('musyawarahTimelineList');
             if (!listEl) return;
 
+            const role = window.appState?.activeRole || 'KONSUMEN';
+            const activeSid = window.appState?.activeUserSid || 'SID-RT13-002';
             const recentActivities = (musyawarahTransparencyState.activities || []).slice(0, 3);
-            const recentTxItems = (window.appState.transactions || []).slice(0, 5).map(t => ({
+            const filteredTxs = (window.appState.transactions || []).filter(t => {
+                if (role === 'ADMIN') return true;
+                if (role === 'PRODUSEN') return t.producerSid === activeSid;
+                return t.consumerSid === activeSid;
+            });
+            const recentTxItems = filteredTxs.slice(0, 5).map(t => ({
                 id: t.id,
                 time: t.timestamp || 'Real-Time',
-                category: t.type === 'EKSPANSI_PASAR_LUAR' ? 'Penyaluran Surplus MBG/Koperasi' : (t.type === 'BANTUAN_INKLUSI_PANGAN' ? 'Distribusi Inklusi' : 'Transaksi Pasar P2P (0% Fee)'),
+                category: t.type === 'EKSPANSI_PASAR_LUAR' ? 'Penyaluran Surplus MBG/Koperasi' : (t.type === 'BANTUAN_INKLUSI_PANGAN' ? 'Distribusi Inklusi' : 'Transaksi Saya (0% Fee)'),
                 description: `${t.consumerName} (${t.consumerSid}) menyerap ${t.quantityKg} Kg ${t.commodity} dari ${t.producerName} (${t.producerSid}) senilai ${formatRupiah(t.subtotal)}`,
                 isNew: false
             }));
@@ -12086,7 +12556,9 @@
             renderHeaderStats();
             populateLoginMemberDropdown(document.getElementById('loginNikLast4')?.value || '');
             renderActiveUserProfileCard();
+            renderMyOwnKkSummaryCard();
             renderPendingVerificationCards();
+            renderPendingUpdateVerificationCards();
             renderMembersTable();
             renderMarketListings();
             if (typeof populateOrdersProducerFilter === 'function') populateOrdersProducerFilter();
