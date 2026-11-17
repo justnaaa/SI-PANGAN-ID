@@ -6197,6 +6197,10 @@
                 if (typeof renderMyOwnKkSummaryCard === 'function') renderMyOwnKkSummaryCard();
                 if (typeof renderMembersTable === 'function') renderMembersTable();
             }
+            if (tabId === 'tab-matching') {
+                if (typeof syncLiveSurplusData === 'function') syncLiveSurplusData();
+                if (typeof renderPerProducerAiForecast === 'function') renderPerProducerAiForecast();
+            }
             if (tabId === 'tab-dampak') {
                 setTimeout(updateCharts, 50);
             }
@@ -8343,8 +8347,13 @@
             const displayLocalSub = document.getElementById('surplusDisplayLocalSub');
             const displayDiffSub = document.getElementById('surplusDisplayDiffSub');
 
+            const currentMembers = window.appState?.members || [];
+            const kkCount = currentMembers.length || 40;
+            const totalJiwa = currentMembers.reduce((s, m) => s + (Number(m.familySize) || 4), 0);
+
             if (displayTotal) displayTotal.textContent = `${harvest.toLocaleString('id-ID')} ${unitLabel}`;
             if (displayLocal) displayLocal.textContent = `${Math.min(harvest, demand).toLocaleString('id-ID')} ${unitLabel}`;
+            if (displayLocalSub) displayLocalSub.textContent = `Terserap oleh ${kkCount} KK (${totalJiwa} Jiwa)`;
 
             if (displayDiff) {
                 if (surplus > 0) {
@@ -8388,7 +8397,7 @@
             }
 
             if (labelLocalDetail) {
-                labelLocalDetail.innerHTML = `<i class="fa-solid fa-arrow-down-short-wide text-emerald-600"></i> Serapan Lokal 40 KK: ${Math.min(harvest, demand).toLocaleString('id-ID')} ${unitLabel} (${localPct}%)`;
+                labelLocalDetail.innerHTML = `<i class="fa-solid fa-arrow-down-short-wide text-emerald-600"></i> Serapan Lokal ${kkCount} KK: ${Math.min(harvest, demand).toLocaleString('id-ID')} ${unitLabel} (${localPct}%)`;
             }
             if (labelSpilloverDetail) {
                 labelSpilloverDetail.innerHTML = `Dialihkan ke Koperasi: ${Math.max(0, surplus).toLocaleString('id-ID')} ${unitLabel} (${spilloverPct}%) <i class="fa-solid fa-arrow-up-right-from-square text-amber-600"></i>`;
@@ -8411,7 +8420,7 @@
                                 <span class="text-[10px] font-bold text-emerald-800 font-mono">${isLiveSync ? '● Live Aggregated Data' : 'Simulasi Presisi'}</span>
                             </div>
                             <p class="text-xs sm:text-sm text-emerald-950 font-bold leading-relaxed">
-                                Neraca Pangan Positif: Volume panen aktif produsen (${harvest} ${unitLabel}) melebihi estimasi kebutuhan konsumsi 40 KK (${demand} ${unitLabel}). Terdapat surplus bersih senilai +${surplus} ${unitLabel}.
+                                Neraca Pangan Positif: Volume panen aktif produsen (${harvest} ${unitLabel}) melebihi estimasi kebutuhan konsumsi ${kkCount} KK (${demand} ${unitLabel}). Terdapat surplus bersih senilai +${surplus} ${unitLabel}.
                             </p>
                             <div class="text-[11px] text-emerald-900 leading-normal bg-white/70 p-2.5 rounded-lg border border-emerald-200/60 space-y-1">
                                 <p><strong class="text-emerald-950 font-semibold"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>Tindakan Sistem Otomatis:</strong></p>
@@ -11110,10 +11119,20 @@
             if (pinInput) pinInput.value = '';
             if (identInput) identInput.value = member.name;
 
+            window.aiForecastScope = 'MINE';
+            const btnMine = document.getElementById('btnAiFilterMyProd');
+            const btnAll = document.getElementById('btnAiFilterAllProd');
+            if (btnMine && btnAll) {
+                btnMine.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-forest-800 text-white';
+                btnAll.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer text-stone-600 hover:bg-stone-100';
+            }
+
             saveStateToLocal();
             renderAll();
             renderMyOwnKkSummaryCard();
             renderActiveUserProfileCard();
+            if (typeof renderPerProducerAiForecast === 'function') renderPerProducerAiForecast();
+            if (typeof syncLiveSurplusData === 'function') syncLiveSurplusData();
 
             showToast('Login Berhasil!', `Selamat datang, ${member.name} (${member.sid}). Akun keluarga Anda telah aktif secara aman.`, 'success');
         };
@@ -12106,7 +12125,29 @@
             // 1. Render Kartu Sorotan Personal untuk Produsen yang Sedang Login
             const activeSid = window.appState?.activeUserSid;
             const isAdmin = Boolean(window.appState?.isAdminLoggedIn || window.appState?.activeRole === 'ADMIN');
-            const myForecast = activeSid ? forecastList.find(f => f.sid === activeSid) : null;
+            const activeMember = activeSid ? members.find(m => m.sid === activeSid) : null;
+            let myForecast = activeSid ? forecastList.find(f => f.sid === activeSid) : null;
+
+            // Jika produsen login tapi belum ada di list (misal komoditas custom), buat objek ramalan langsung agar selalu tampil!
+            if (activeMember && (activeMember.role === 'PRODUSEN' || activeMember.isDualRole) && !myForecast) {
+                const comm = activeMember.producerCommodity || 'Sayur Pekarangan KWT';
+                const cap = Number(activeMember.capacityKg) || 30;
+                myForecast = {
+                    producer: activeMember,
+                    sid: activeMember.sid,
+                    name: activeMember.name,
+                    address: activeMember.address || 'RT 13 Yosomulyo',
+                    commodity: comm,
+                    cycle: activeMember.harvestCycleWeekly || 'Panen Rutin Setiap Minggu',
+                    weeklyCap: cap,
+                    predictedDemandWeekly: Math.round(cap * 0.75),
+                    diff: Math.round(cap * 0.25),
+                    statusType: 'SURPLUS',
+                    statusBadge: '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🔴 SURPLUS +' + Math.round(cap * 0.25) + ' Kg</span>',
+                    cardBorder: 'border-amber-300 bg-amber-50/40',
+                    recommendation: 'Hasil panen ' + comm + ' siap diserap warga RT 13 dan sebagian disalurkan kolektif ke mitra kelurahan.'
+                };
+            }
 
             if (highlightBox) {
                 if (!myForecast && !isAdmin) {
