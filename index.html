@@ -1842,27 +1842,7 @@
                         </div>
                     </div>
 
-                    <!-- Live Data Aggregation Engine Banner -->
-                    <div class="p-4 rounded-2xl bg-gradient-to-r from-forest-900 via-forest-800 to-emerald-900 text-white border border-emerald-500/30 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3.5 mb-6">
-                        <div class="flex items-start sm:items-center gap-3 min-w-0">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-400 text-forest-950 flex items-center justify-center text-base font-bold shrink-0 shadow-xs">
-                                <i class="fa-solid fa-chart-pie"></i>
-                            </div>
-                            <div class="space-y-0.5 min-w-0">
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <span class="px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 text-[10px] font-bold border border-emerald-400/30">
-                                        Deteksi Cerdas Real-Time
-                                    </span>
-                                    <span class="text-xs text-white font-bold">
-                                        Perhitungan Keseimbangan Panen &amp; Kebutuhan 40 KK Warga
-                                    </span>
-                                </div>
-                                <p class="text-[11px] text-forest-200 leading-snug">
-                                    Sistem secara otomatis mengolah data konsumsi keluarga, stok panen pekarangan, dan riwayat transaksi untuk memproyeksikan surplus atau kekurangan pangan.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <!-- Hidden legacy inputs for compatibility (Produsen tidak perlu input manual) -->
                     <input type="hidden" id="surplusHarvestKg" value="80">
@@ -6995,11 +6975,18 @@
         function populateBuyerDropdown() {
             const select = document.getElementById('buyConsumerSidSelect');
             if (!select) return;
-            const activeSid = window.appState?.activeUserSid || 'SID-RT13-002';
+            const activeSid = window.appState?.activeUserSid;
             const isAdmin = Boolean(window.appState?.isAdminLoggedIn || window.appState?.activeRole === 'ADMIN');
             const members = window.appState?.members || [];
+
+            if (!activeSid && !isAdmin) {
+                select.innerHTML = '<option value="" disabled selected>-- Anda Belum Masuk Akun --</option>';
+                select.value = '';
+                return;
+            }
+
             if (!isAdmin) {
-                const me = members.find(m => m.sid === activeSid) || members[0];
+                const me = members.find(m => m.sid === activeSid);
                 if (me) {
                     select.innerHTML = `<option value="${me.sid}" selected>${me.name} (${me.sid} • ${me.address || 'RT 13'})</option>`;
                     select.value = me.sid;
@@ -7143,6 +7130,17 @@
         };
 
         function openBuyModal(listingId) {
+            if (!window.appState.activeUserSid && !window.appState.isAdminLoggedIn) {
+                showToast('Belum Masuk Akun', 'Silakan masuk ke akun keluarga Anda terlebih dahulu di Tab Masuk Akun untuk berbelanja.', 'warning');
+                switchTab('tab-konsep');
+                const identInput = document.getElementById('loginCitizenIdentifier');
+                if (identInput) {
+                    identInput.focus();
+                    identInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                return;
+            }
+
             const listing = window.appState.listings.find(l => l.id === listingId);
             if (!listing) return;
 
@@ -10266,7 +10264,7 @@
             if (!select) return;
 
             const producers = (window.appState.members || []).filter(m => m.role === 'PRODUSEN' || m.isDualRole);
-            const activeSid = window.appState?.activeUserSid || 'SID-RT13-002';
+            const activeSid = window.appState?.activeUserSid;
             const isAdmin = Boolean(window.appState?.isAdminLoggedIn || window.appState?.activeRole === 'ADMIN');
 
             const personalBadge = document.getElementById('ordersPersonalProducerBadge');
@@ -10274,12 +10272,31 @@
             const adminFilterBox = document.getElementById('ordersAdminFilterBox');
 
             if (!isAdmin) {
-                // Mode Produsen: Kunci hanya ke akun Produsen yang sedang login (Personal & Tidak Publik)
-                const myProd = producers.find(p => p.sid === activeSid) || producers[0];
+                if (!activeSid) {
+                    select.innerHTML = '<option value="">-- Belum Masuk Akun --</option>';
+                    select.value = '';
+                    if (personalText) personalText.textContent = 'Belum Masuk Akun Produsen';
+                    if (personalBadge) {
+                        personalBadge.classList.remove('hidden');
+                        personalBadge.classList.add('flex');
+                    }
+                    if (adminFilterBox) {
+                        adminFilterBox.classList.add('hidden');
+                        adminFilterBox.classList.remove('flex');
+                    }
+                    return;
+                }
+
+                // Mode Produsen: Kunci HANYA ke akun Produsen yang sedang login
+                const myProd = producers.find(p => p.sid === activeSid);
                 if (myProd) {
                     select.innerHTML = `<option value="${myProd.sid}" selected>${myProd.name} (${myProd.sid})</option>`;
                     select.value = myProd.sid;
                     if (personalText) personalText.textContent = `Pesanan Kebun Saya: ${myProd.name} (${myProd.producerCommodity || 'Pekarangan'})`;
+                } else {
+                    select.innerHTML = '<option value="">Bukan Akun Produsen</option>';
+                    select.value = '';
+                    if (personalText) personalText.textContent = 'Akun Anda Terdaftar sebagai Konsumen';
                 }
                 if (personalBadge) {
                     personalBadge.classList.remove('hidden');
@@ -10315,7 +10332,34 @@
             const container = document.getElementById('producerOrdersCardContainer');
             if (!container) return;
 
-            const producerFilter = document.getElementById('ordersProducerFilter')?.value || 'ALL';
+            const activeSid = window.appState?.activeUserSid;
+            const isAdmin = Boolean(window.appState?.isAdminLoggedIn || window.appState?.activeRole === 'ADMIN');
+
+            if (!activeSid && !isAdmin) {
+                container.innerHTML = `
+                    <div class="p-8 text-center bg-stone-50 rounded-2xl border border-dashed border-stone-300 space-y-3">
+                        <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center mx-auto text-xl">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <h4 class="font-bold text-stone-800 text-base">Anda Belum Masuk Akun Produsen</h4>
+                        <p class="text-xs text-stone-500 max-w-md mx-auto">
+                            Halaman ini khusus untuk Produsen KWT / Petani RT 13 mengelola pesanan masuk dari pembeli tetangga. Silakan masuk ke akun Anda terlebih dahulu di Tab Masuk Akun.
+                        </p>
+                        <button type="button" onclick="switchTab('tab-konsep')" class="px-5 py-2.5 rounded-xl bg-forest-800 text-white font-bold text-xs hover:bg-forest-900 transition cursor-pointer">
+                            Masuk ke Akun Saya
+                        </button>
+                    </div>
+                `;
+                const elCount = document.getElementById('ordersFilteredCountText');
+                const elKg = document.getElementById('ordersTotalVolumeKg');
+                const elEarned = document.getElementById('ordersTotalIncomeRp');
+                if (elCount) elCount.textContent = '0 Pesanan';
+                if (elKg) elKg.textContent = '0';
+                if (elEarned) elEarned.textContent = 'Rp 0';
+                return;
+            }
+
+            const producerFilter = document.getElementById('ordersProducerFilter')?.value || (isAdmin ? 'ALL' : activeSid);
             const searchQuery = (document.getElementById('ordersSearchInput')?.value || '').toLowerCase().trim();
             const deliveryFilter = document.getElementById('ordersDeliveryFilter')?.value || 'ALL';
 
@@ -11483,28 +11527,93 @@
 
         // --- 9.4b FITUR WARGA PERBARUI DATA KK SENDIRI (TERKUNCI KE AKUN LOGIN + VERIFIKASI ADMIN) ---
         function renderMyOwnKkSummaryCard() {
-            const activeSid = window.appState?.activeUserSid || 'SID-RT13-002';
-            const member = (window.appState?.members || []).find(m => m.sid === activeSid);
-            if (!member) return;
+            const card = document.getElementById('myOwnKkSummaryCard');
+            if (!card) return;
 
-            const setTxt = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
-            setTxt('myOwnKkNameText', member.name);
-            setTxt('myOwnKkSidText', `(${member.sid} • ${member.address || 'RT 13'})`);
-            setTxt('myOwnKkFamilyText', `${member.familySize || 4} Jiwa`);
-            setTxt('myOwnKkNeedText', `${member.monthlyFoodNeedKg || 64} Kg/bln`);
-            setTxt('myOwnKkRoleText', (member.role === 'PRODUSEN' || member.isDualRole) ? 'Produsen & Konsumen' : 'Konsumen Warga');
+            const activeSid = window.appState?.activeUserSid;
+            const member = activeSid ? (window.appState?.members || []).find(m => m.sid === activeSid) : null;
 
-            const pendingUpd = (window.appState?.pendingKkUpdates || []).find(u => u.sid === activeSid);
-            const badgeEl = document.getElementById('myOwnKkPendingStatusBadge');
-            if (badgeEl) {
-                if (pendingUpd) {
-                    badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300';
-                    badgeEl.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> Menunggu Verifikasi Admin (${pendingUpd.newFamilySize} Jiwa • ${pendingUpd.newFoodNeedKg} Kg/bln)`;
-                } else {
-                    badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
-                    badgeEl.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Data KK Terverifikasi Admin RT 13';
-                }
+            // KONDISI 1: BELUM LOGIN
+            if (!member) {
+                card.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-stone-200 text-stone-700 flex items-center gap-1">
+                                    <i class="fa-solid fa-lock"></i> Data KK Keluarga Saya
+                                </span>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                    Belum Masuk Akun
+                                </span>
+                            </div>
+                            <h3 class="serif-heading text-lg font-bold text-stone-800">
+                                Anda Belum Masuk ke Akun Keluarga
+                            </h3>
+                            <p class="text-xs text-stone-500 max-w-xl leading-relaxed">
+                                Silakan masuk dengan Nama &amp; PIN keluarga Anda di Tab 1 (Masuk Akun) untuk melihat identitas Kartu Keluarga, kuota pangan bulanan, serta mengajukan pembaruan data secara mandiri.
+                            </p>
+                        </div>
+                        <button type="button" onclick="switchTab('tab-konsep')" class="px-4 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 shrink-0 cursor-pointer">
+                            <i class="fa-solid fa-right-to-bracket text-emerald-300"></i>
+                            <span>Masuk ke Akun Saya</span>
+                        </button>
+                    </div>
+                `;
+                return;
             }
+
+            // KONDISI 2: SUDAH LOGIN
+            const pendingUpd = (window.appState?.pendingKkUpdates || []).find(u => u.sid === activeSid);
+            card.innerHTML = `
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="space-y-1.5">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-forest-800 text-white flex items-center gap-1">
+                                <i class="fa-solid fa-user-lock"></i> Data KK Keluarga Saya (Akun Login Aktif)
+                            </span>
+                            ${pendingUpd ? `
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                    <i class="fa-solid fa-clock mr-1"></i> Menunggu Verifikasi Admin (${pendingUpd.newFamilySize} Jiwa • ${pendingUpd.newFoodNeedKg} Kg/bln)
+                                </span>
+                            ` : `
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                    <i class="fa-solid fa-circle-check mr-1"></i> Data KK Terverifikasi Admin RT 13
+                                </span>
+                            `}
+                        </div>
+                        <h3 class="serif-heading text-lg sm:text-xl font-bold text-stone-900">
+                            <span>${member.name}</span>
+                            <span class="font-mono text-sm text-forest-800 ml-1">(${member.sid} • ${member.address || 'RT 13'})</span>
+                        </h3>
+                        <p class="text-xs text-stone-600 leading-relaxed max-w-2xl">
+                            Hanya Anda (sebagai pemilik akun yang sedang login) yang dapat mengajukan pembaruan data keluarga ini. Setiap perubahan akan diperiksa oleh <strong>Admin RT 13</strong> sebelum diperbarui.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+                        <div class="grid grid-cols-3 gap-2 text-center bg-white p-2.5 rounded-xl border border-emerald-200 shadow-2xs">
+                            <div class="px-2">
+                                <span class="text-[10px] text-stone-500 block">Anggota KK</span>
+                                <strong class="font-mono text-xs sm:text-sm font-bold text-stone-900">${member.familySize || 4} Jiwa</strong>
+                            </div>
+                            <div class="px-2 border-x border-stone-100">
+                                <span class="text-[10px] text-stone-500 block">Kebutuhan</span>
+                                <strong class="font-mono text-xs sm:text-sm font-bold text-forest-800">${member.monthlyFoodNeedKg || 64} Kg/bln</strong>
+                            </div>
+                            <div class="px-2">
+                                <span class="text-[10px] text-stone-500 block">Peran</span>
+                                <strong class="text-[11px] font-bold text-emerald-800">${(member.role === 'PRODUSEN' || member.isDualRole) ? 'Produsen & Konsumen' : 'Konsumen Warga'}</strong>
+                            </div>
+                        </div>
+
+                        <button type="button" onclick="openCitizenSelfUpdateModal()"
+                            class="px-4 py-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-2 cursor-pointer shrink-0">
+                            <i class="fa-solid fa-pen-to-square text-amber-300 text-sm"></i>
+                            <span>Perbarui Data KK Saya</span>
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
         window.openCitizenSelfUpdateModal = function() {
@@ -11769,27 +11878,26 @@
         // 9.6 Tabel Pesanan & Pembeli Masuk (Khusus Produsen & Admin)
         function renderProducerBuyerOrdersPanel() {
             const panel = document.getElementById('producerBuyerOrdersPanel');
-            const tbody = document.getElementById('producerBuyerOrdersTableBody');
             const badge = document.getElementById('producerOrdersCountBadge');
             if (!panel) return;
 
+            const activeSid = window.appState.activeUserSid;
             const role = window.appState.activeRole || 'KONSUMEN';
-            if (role === 'KONSUMEN') {
+            const isAdmin = Boolean(window.appState.isAdminLoggedIn || role === 'ADMIN');
+            const activeMember = activeSid ? (window.appState.members || []).find(m => m.sid === activeSid) : null;
+            const isProducer = Boolean(activeMember && (activeMember.role === 'PRODUSEN' || activeMember.isDualRole));
+
+            // Jika belum login atau bukan produsen/admin, sembunyikan banner sepenuhnya!
+            if (!activeSid || (!isProducer && !isAdmin) || role === 'KONSUMEN') {
                 panel.classList.add('hidden');
                 return;
             }
             panel.classList.remove('hidden');
 
             const allTxs = (window.appState.transactions || []).filter(t => t.type === 'JUAL_BELI_PASAR');
-            const activeSid = window.appState.activeUserSid;
-            const activeMember = (window.appState.members || []).find(m => m.sid === activeSid);
+            const myOrders = isAdmin ? allTxs : allTxs.filter(t => t.producerSid === activeSid);
 
-            const filteredOrders = (role === 'PRODUSEN' && activeMember && activeMember.role === 'PRODUSEN')
-                ? allTxs.filter(t => t.producerSid === activeSid)
-                : allTxs;
-
-            const displayOrders = (filteredOrders.length > 0 ? filteredOrders : allTxs).slice(0, 8);
-            if (badge) badge.textContent = `${filteredOrders.length || allTxs.length} Pesanan Masuk`;
+            if (badge) badge.textContent = `${myOrders.length} Pesanan Masuk`;
 
             if (tbody) tbody.innerHTML = displayOrders.map(t => `
                 <tr class="hover:bg-stone-50 transition">
@@ -11996,49 +12104,72 @@
             });
 
             // 1. Render Kartu Sorotan Personal untuk Produsen yang Sedang Login
-            const activeSid = window.appState?.activeUserSid || 'SID-RT13-002';
-            const myForecast = forecastList.find(f => f.sid === activeSid) || forecastList[0];
-            if (highlightBox && myForecast) {
-                const isSurplus = myForecast.statusType === 'SURPLUS';
-                const isDefisit = myForecast.statusType === 'DEFISIT';
-                highlightBox.innerHTML = `
-                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                        <div class="space-y-1.5">
-                            <div class="flex flex-wrap items-center gap-2">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-forest-800 text-white">
-                                    <i class="fa-solid fa-user-check mr-1"></i> Hasil Ramalan AI Khusus Kebun Anda
-                                </span>
-                                <span class="font-mono text-xs font-bold text-forest-800">${myForecast.name} (${myForecast.sid})</span>
-                            </div>
-                            <h4 class="serif-heading text-lg sm:text-xl font-bold text-stone-900">
-                                Produk: <span class="text-forest-800 underline decoration-emerald-400">${myForecast.commodity}</span>
-                            </h4>
-                            <p class="text-xs text-stone-700 leading-relaxed max-w-2xl">
-                                <strong>Kesimpulan AI untuk Anda:</strong> ${myForecast.recommendation}
-                            </p>
-                        </div>
+            const activeSid = window.appState?.activeUserSid;
+            const isAdmin = Boolean(window.appState?.isAdminLoggedIn || window.appState?.activeRole === 'ADMIN');
+            const myForecast = activeSid ? forecastList.find(f => f.sid === activeSid) : null;
 
-                        <div class="grid grid-cols-3 gap-2.5 shrink-0 text-center">
-                            <div class="p-3 rounded-xl bg-white border border-stone-200">
-                                <span class="text-[10px] text-stone-500 font-semibold block">Panen Anda</span>
-                                <strong class="font-mono text-base font-extrabold text-stone-900">${myForecast.weeklyCap} Kg</strong>
+            if (highlightBox) {
+                if (!myForecast && !isAdmin) {
+                    highlightBox.innerHTML = `
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="space-y-1">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-stone-200 text-stone-700 inline-flex items-center gap-1">
+                                    <i class="fa-solid fa-lock"></i> Ramalan AI Khusus Produsen
+                                </span>
+                                <h4 class="serif-heading text-base sm:text-lg font-bold text-stone-900">
+                                    Masuk sebagai Produsen untuk Melihat Ramalan Kebun Anda
+                                </h4>
+                                <p class="text-xs text-stone-500 max-w-xl leading-relaxed">
+                                    Sistem AI memprediksi kapasitas panen mingguan vs serapan konsumsi tetangga RT 13 khusus untuk produsen yang sedang login.
+                                </p>
                             </div>
-                            <div class="p-3 rounded-xl bg-white border border-stone-200">
-                                <span class="text-[10px] text-stone-500 font-semibold block">Dibeli Warga</span>
-                                <strong class="font-mono text-base font-extrabold text-emerald-800">${myForecast.predictedDemandWeekly} Kg</strong>
+                            <button type="button" onclick="switchTab('tab-konsep')" class="px-4 py-2.5 rounded-xl bg-forest-800 text-white font-bold text-xs hover:bg-forest-900 transition shrink-0 cursor-pointer shadow-2xs">
+                                Masuk Akun Produsen
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    const targetForecast = myForecast || forecastList[0];
+                    const isSurplus = targetForecast.statusType === 'SURPLUS';
+                    const isDefisit = targetForecast.statusType === 'DEFISIT';
+                    highlightBox.innerHTML = `
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                            <div class="space-y-1.5">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-forest-800 text-white">
+                                        <i class="fa-solid fa-user-check mr-1"></i> Hasil Ramalan AI Khusus Kebun Anda
+                                    </span>
+                                    <span class="font-mono text-xs font-bold text-forest-800">${targetForecast.name} (${targetForecast.sid})</span>
+                                </div>
+                                <h4 class="serif-heading text-lg sm:text-xl font-bold text-stone-900">
+                                    Produk: <span class="text-forest-800 underline decoration-emerald-400">${targetForecast.commodity}</span>
+                                </h4>
+                                <p class="text-xs text-stone-700 leading-relaxed max-w-2xl">
+                                    <strong>Kesimpulan AI untuk Anda:</strong> ${targetForecast.recommendation}
+                                </p>
                             </div>
-                            <div class="p-3 rounded-xl ${isSurplus ? 'bg-amber-100 border-amber-300 text-amber-950' : isDefisit ? 'bg-rose-100 border-rose-300 text-rose-950' : 'bg-emerald-100 border-emerald-300 text-emerald-950'} border">
-                                <span class="text-[10px] font-bold block">${isSurplus ? 'Surplus Produk' : isDefisit ? 'Kurang Stok' : 'Status Pas'}</span>
-                                <strong class="font-mono text-base font-extrabold">${myForecast.diff >= 0 ? '+' + myForecast.diff : myForecast.diff} Kg</strong>
+
+                            <div class="grid grid-cols-3 gap-2.5 shrink-0 text-center">
+                                <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
+                                    <span class="text-[10px] text-stone-500 font-semibold block">Panen Anda</span>
+                                    <strong class="font-mono text-base font-extrabold text-stone-900">${targetForecast.weeklyCap} Kg</strong>
+                                </div>
+                                <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
+                                    <span class="text-[10px] text-stone-500 font-semibold block">Dibeli Warga</span>
+                                    <strong class="font-mono text-base font-extrabold text-emerald-800">${targetForecast.predictedDemandWeekly} Kg</strong>
+                                </div>
+                                <div class="p-3 rounded-xl ${isSurplus ? 'bg-amber-100 border-amber-300 text-amber-950' : isDefisit ? 'bg-rose-100 border-rose-300 text-rose-950' : 'bg-emerald-100 border-emerald-300 text-emerald-950'} border shadow-2xs">
+                                    <span class="text-[10px] font-bold block">${isSurplus ? 'Surplus Produk' : isDefisit ? 'Kurang Stok' : 'Status Pas'}</span>
+                                    <strong class="font-mono text-base font-extrabold">${targetForecast.diff >= 0 ? '+' + targetForecast.diff : targetForecast.diff} Kg</strong>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                }
             }
 
-            // 2. Render Grid Kartu Spesifik (Bisa difilter "Fokus Produk Saya" atau "Semua Produsen RT 13")
+            // 2. Render Grid Kartu Spesifik (Terkunci ke Akun Sendiri untuk Produsen, Hanya Admin yang Bisa Lihat Semua)
             if (cardsGrid) {
-                const isAdmin = Boolean(window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN');
                 const btnAll = document.getElementById('btnAiFilterAllProd');
                 if (btnAll) {
                     if (isAdmin) btnAll.classList.remove('hidden');
@@ -12048,89 +12179,132 @@
                 let scopedList = [];
                 if (isAdmin && window.aiForecastScope === 'ALL') {
                     scopedList = forecastList;
-                } else {
-                    // Produsen biasa HANYA melihat produk miliknya sendiri
+                } else if (activeSid) {
                     scopedList = forecastList.filter(f => f.sid === activeSid);
-                    if (scopedList.length === 0 && myForecast) scopedList = [myForecast];
+                } else {
+                    scopedList = [];
                 }
 
-                cardsGrid.innerHTML = scopedList.map(item => `
-                    <div class="p-4 rounded-xl border ${item.cardBorder} space-y-2.5 shadow-2xs flex flex-col justify-between">
-                        <div class="space-y-1.5">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-stone-100 text-stone-700 border border-stone-200">
-                                    ${item.sid === activeSid ? '⭐ KEBUN SAYA' : item.sid}
-                                </span>
-                                ${item.statusBadge}
-                            </div>
-                            <div>
-                                <h5 class="font-bold text-sm text-stone-900">${item.commodity}</h5>
-                                <p class="text-xs font-semibold text-forest-800">
-                                    <i class="fa-solid fa-user-tag mr-1 text-emerald-600"></i>Produsen: ${item.name}
-                                </p>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2 pt-1 text-[11px] font-mono">
-                                <div class="p-2 rounded-lg bg-white/90 border border-stone-200/80">
-                                    <span class="text-[10px] text-stone-500 block">Stok/Panen:</span>
-                                    <strong class="text-stone-900">${item.weeklyCap} Kg</strong>
-                                </div>
-                                <div class="p-2 rounded-lg bg-white/90 border border-stone-200/80">
-                                    <span class="text-[10px] text-stone-500 block">Serapan Warga:</span>
-                                    <strong class="text-emerald-800">${item.predictedDemandWeekly} Kg</strong>
-                                </div>
-                            </div>
+                if (scopedList.length === 0) {
+                    cardsGrid.innerHTML = `
+                        <div class="col-span-full p-6 text-center bg-white rounded-2xl border border-stone-200 text-xs text-stone-500 space-y-1">
+                            <i class="fa-solid fa-seedling text-emerald-700 text-base"></i>
+                            <p class="font-semibold text-stone-700">${activeSid ? 'Akun Anda belum terdaftar sebagai produsen panen.' : 'Silakan masuk ke akun Produsen Anda di Tab 1 untuk melihat rekomendasi stok kebun Anda.'}</p>
                         </div>
-                        <p class="text-[11px] text-stone-700 leading-snug pt-2 border-t border-stone-200/60">
-                            <strong>Saran AI:</strong> ${item.recommendation}
-                        </p>
-                    </div>
-                `).join('');
+                    `;
+                } else {
+                    cardsGrid.innerHTML = scopedList.map(item => `
+                        <div class="p-4 rounded-xl border ${item.cardBorder} space-y-2.5 shadow-2xs flex flex-col justify-between">
+                            <div class="space-y-1.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="font-mono text-[10px] font-bold px-2 py-0.5 rounded bg-stone-100 text-stone-700 border border-stone-200">
+                                        ${(activeSid && item.sid === activeSid) ? '⭐ KEBUN ANDA' : item.sid}
+                                    </span>
+                                    ${item.statusBadge}
+                                </div>
+                                <div>
+                                    <h5 class="font-bold text-sm text-stone-900">${item.commodity}</h5>
+                                    <p class="text-xs font-semibold text-forest-800">
+                                        <i class="fa-solid fa-user-tag mr-1 text-emerald-600"></i>Produsen: ${(activeSid && item.sid === activeSid) || isAdmin ? item.name : (item.producer.publicName || item.name.split(' ')[0] + ' (KWT RT 13)')}
+                                    </p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 pt-1 text-[11px] font-mono">
+                                    <div class="p-2 rounded-lg bg-white/90 border border-stone-200/80">
+                                        <span class="text-[10px] text-stone-500 block">Stok/Panen:</span>
+                                        <strong class="text-stone-900">${item.weeklyCap} Kg</strong>
+                                    </div>
+                                    <div class="p-2 rounded-lg bg-white/90 border border-stone-200/80">
+                                        <span class="text-[10px] text-stone-500 block">Serapan Warga:</span>
+                                        <strong class="text-emerald-800">${item.predictedDemandWeekly} Kg</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-stone-700 leading-snug pt-2 border-t border-stone-200/60">
+                                <strong>Saran AI:</strong> ${item.recommendation}
+                            </p>
+                        </div>
+                    `).join('');
+                }
             }
 
-            // 3. Update kotak kesimpulan utama (#surplusResultBox) agar langsung menyebutkan nama produk & produsen yang surplus!
+            // 3. KOTAK KESIMPULAN SURPLUS: HANYA TAMPIL UNTUK ADMIN RT (Privasi Rekap Panen & Dapur MBG)
             const surplusProducers = forecastList.filter(f => f.statusType === 'SURPLUS');
             const deficitProducers = forecastList.filter(f => f.statusType === 'DEFISIT');
             const resultBox = document.getElementById('surplusResultBox');
-            if (resultBox && surplusProducers.length > 0) {
-                const detailNames = surplusProducers.map(s => `<strong>${s.commodity} (+${s.diff} Kg milik ${s.name})</strong>`).join(', ');
-                const deficitNames = deficitProducers.length > 0
-                    ? ` Sedangkan komoditas yang masih kurang stok adalah: ${deficitProducers.map(d => `<strong>${d.commodity} (${d.diff} Kg - ${d.name})</strong>`).join(', ')}.`
-                    : '';
-                resultBox.innerHTML = `
-                    <div class="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
-                        <i class="fa-solid fa-bell"></i>
-                    </div>
-                    <div class="space-y-1">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded inline-block font-mono">
-                            Rincian Spesifik Produk &amp; Produsen yang Mengalami Surplus
-                        </span>
-                        <p class="text-xs sm:text-sm text-stone-900 leading-relaxed">
-                            Terdeteksi <strong>${surplusProducers.length} Produk Produsen Mengalami Surplus</strong> minggu ini yaitu: ${detailNames}.${deficitNames}
-                        </p>
-                        <p class="text-[11px] text-stone-600">
-                            Seluruh kelebihan panen di atas otomatis dikumpulkan Admin RT 13 menjadi 1 Paket Resume untuk disalurkan ke Koperasi Kelurahan Yosomulyo &amp; Dapur MBG.
-                        </p>
-                    </div>
-                `;
+            if (resultBox) {
+                if (isAdmin && surplusProducers.length > 0) {
+                    const detailNames = surplusProducers.map(s => `<strong>${s.commodity} (+${s.diff} Kg milik ${s.name})</strong>`).join(', ');
+                    const deficitNames = deficitProducers.length > 0
+                        ? ` Sedangkan komoditas yang masih kurang stok adalah: ${deficitProducers.map(d => `<strong>${d.commodity} (${d.diff} Kg - ${d.name})</strong>`).join(', ')}.`
+                        : '';
+                    resultBox.innerHTML = `
+                        <div class="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded inline-block font-mono">
+                                    Konsol Pengurus RT: Resume Panen &amp; Penyaluran MBG
+                                </span>
+                                <span class="text-[10px] font-bold text-amber-800 bg-white px-2 py-0.5 rounded border border-amber-300">Khusus Admin</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-stone-900 leading-relaxed">
+                                Terdeteksi <strong>${surplusProducers.length} Produk Produsen Mengalami Surplus</strong> minggu ini yaitu: ${detailNames}.${deficitNames}
+                            </p>
+                            <p class="text-[11px] text-stone-600">
+                                Kelebihan panen di atas siap dikirimkan via WhatsApp resmi Admin RT 13 ke Dapur Makan Bergizi Gratis (MBG) &amp; Koperasi Kelurahan Yosomulyo.
+                            </p>
+                        </div>
+                    `;
+                    resultBox.classList.remove('hidden');
+                } else if (activeSid && myForecast && myForecast.statusType === 'SURPLUS') {
+                    // Tampilan khusus untuk produsen yang sedang surplus (Hanya produk miliknya!)
+                    resultBox.innerHTML = `
+                        <div class="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 text-base shadow-xs">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded inline-block font-mono">
+                                Status Kebun Anda
+                            </span>
+                            <p class="text-xs sm:text-sm text-stone-900 leading-relaxed">
+                                Panen Anda (<strong>${myForecast.commodity}</strong>) berpotensi mengalami <strong>Surplus +${myForecast.diff} Kg</strong> minggu ini. Kelebihan panen akan dibantu penyalurannya secara kolektif oleh Admin RT ke mitra kelurahan.
+                            </p>
+                        </div>
+                    `;
+                    resultBox.classList.remove('hidden');
+                } else {
+                    resultBox.classList.add('hidden');
+                }
             }
 
+            // 4. TABEL PREDIKSI AI PER PRODUSEN: SENSOR / MASKING NAMA UNTUK NON-ADMIN & TANPA LABEL "ANDA" PALSU
             if (!tbody) return;
-            tbody.innerHTML = forecastList.map(item => `
-                <tr class="hover:bg-stone-50 transition ${item.sid === activeSid ? 'bg-emerald-50/40' : ''}">
-                    <td class="py-3 px-3.5 font-semibold text-stone-900">
-                        ${item.name} ${item.sid === activeSid ? '<span class="ml-1 px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 text-[9px] font-bold">Anda</span>' : ''}
-                        <span class="block text-[10px] font-mono text-stone-500">${item.sid}</span>
-                    </td>
-                    <td class="py-3 px-3.5">
-                        <strong class="text-forest-900 block">${item.commodity}</strong>
-                        <span class="text-[10px] text-stone-500"><i class="fa-regular fa-calendar-check mr-1"></i>${item.cycle}</span>
-                    </td>
-                    <td class="py-3 px-3.5 text-right font-mono font-bold text-stone-800">${item.weeklyCap} Kg/mgg</td>
-                    <td class="py-3 px-3.5 text-right font-mono font-bold text-emerald-800">${item.predictedDemandWeekly} Kg/mgg</td>
-                    <td class="py-3 px-3.5 text-right">${item.statusBadge}</td>
-                    <td class="py-3 px-3.5 text-[11px] text-stone-700">${item.recommendation}</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = forecastList.map(item => {
+                const isMe = Boolean(activeSid && item.sid === activeSid);
+                // Sensor nama produsen lain jika bukan Admin
+                const displayName = (isMe || isAdmin)
+                    ? item.name
+                    : (item.producer.publicName || (item.name.split(' ')[0] + ' ' + (item.name.split(' ')[1] ? item.name.split(' ')[1][0] + '.' : '') + ' (KWT)'));
+
+                return `
+                    <tr class="hover:bg-stone-50 transition ${isMe ? 'bg-emerald-50/50 font-medium' : ''}">
+                        <td class="py-3 px-3.5 text-stone-900">
+                            <strong>${displayName}</strong>
+                            ${isMe ? '<span class="ml-1.5 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-bold border border-emerald-300">Kebun Anda</span>' : ''}
+                            <span class="block text-[10px] font-mono text-stone-500">${item.sid}</span>
+                        </td>
+                        <td class="py-3 px-3.5">
+                            <strong class="text-forest-900 block">${item.commodity}</strong>
+                            <span class="text-[10px] text-stone-500"><i class="fa-regular fa-calendar-check mr-1"></i>${item.cycle}</span>
+                        </td>
+                        <td class="py-3 px-3.5 text-right font-mono font-bold text-stone-800">${item.weeklyCap} Kg/mgg</td>
+                        <td class="py-3 px-3.5 text-right font-mono font-bold text-emerald-800">${item.predictedDemandWeekly} Kg/mgg</td>
+                        <td class="py-3 px-3.5 text-right">${item.statusBadge}</td>
+                        <td class="py-3 px-3.5 text-[11px] text-stone-700">${item.recommendation}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         // 9.8 Pusat Surplus Admin, Siklus Panen Mingguan, Notifikasi Petani & Kirim 1 Paket ke Koperasi / MBG via WA + Food Loss 5%
