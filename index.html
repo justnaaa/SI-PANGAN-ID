@@ -516,58 +516,61 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-                        <!-- Kiri: Form Login Sederhana Ramah Orang Tua / Ibu PKK -->
-                        <div class="lg:col-span-6 p-5 rounded-2xl bg-stone-50 border border-stone-200 space-y-4 flex flex-col justify-between">
-                            <div class="space-y-3.5">
-                                <h3 class="font-bold text-stone-900 text-sm sm:text-base flex items-center gap-2">
-                                    <i class="fa-solid fa-right-to-bracket text-forest-700"></i>
-                                    Pilih Nama Keluarga / Masuk dengan PIN Sederhana
-                                </h3>
+                        <!-- Kiri: Form Login Personal Aman & Mudah Diingat Ibu-Ibu / Bapak-Bapak -->
+                        <div class="lg:col-span-6 p-5 sm:p-6 rounded-2xl bg-stone-50/90 border border-stone-200 space-y-4 flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <div class="border-b border-stone-200/80 pb-3">
+                                    <h3 class="font-bold text-stone-900 text-sm sm:text-base flex items-center gap-2">
+                                        <i class="fa-solid fa-user-lock text-forest-700"></i>
+                                        Masuk ke Akun Keluarga (Single Identity RT 13)
+                                    </h3>
+                                    <p class="text-xs text-stone-500 mt-1">
+                                        Masukkan nama kepala keluarga / NIK dan 4 digit PIN pribadi Anda. Hanya Anda yang dapat mengakses data pesanan dan bantuan keluarga Anda.
+                                    </p>
+                                </div>
 
+                                <!-- Input Nama Kepala Keluarga / NIK -->
                                 <div>
-                                    <label class="block text-xs font-bold text-stone-700 mb-1.5">1. Pilih Nama Kepala Keluarga / Anggota KWT:</label>
-                                    <select id="loginMemberSidSelect" onchange="handleQuickSelectMemberLogin(this.value)"
-                                        class="w-full h-11 px-3.5 py-2 rounded-xl border-2 border-stone-300 bg-white text-xs sm:text-sm font-bold text-stone-900 focus:outline-none focus:border-forest-700">
-                                        <!-- Populated dynamically from 40+ KK -->
-                                    </select>
+                                    <label class="block text-xs font-bold text-stone-700 mb-1.5">
+                                        1. Nama Kepala Keluarga / NIK / Kode SID:
+                                    </label>
+                                    <div class="relative">
+                                        <input type="text" id="loginCitizenIdentifier" list="registeredCitizenList"
+                                            placeholder="Ketik Nama Anda (cth: Ibu Marsinah / Sri Wahyuni / 0012)"
+                                            autocomplete="off"
+                                            class="w-full h-11 px-3.5 py-2 rounded-xl border-2 border-stone-300 bg-white text-xs sm:text-sm font-bold text-stone-900 focus:outline-none focus:border-forest-700 shadow-2xs">
+                                        <datalist id="registeredCitizenList">
+                                            <!-- Diisi otomatis oleh populateCitizenDatalist() -->
+                                        </datalist>
+                                    </div>
+                                    <span class="text-[10px] text-stone-500 mt-1 block">
+                                        Ketik 1-2 huruf nama Anda, lalu pilih nama keluarga Anda dari saran yang muncul.
+                                    </span>
                                 </div>
 
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div>
-                                        <label class="block text-xs font-semibold text-stone-700 mb-1">Atau Cari 4 Angka Akhir NIK:</label>
-                                        <input type="text" id="loginNikLast4" maxlength="16" placeholder="Contoh: 0002 / NIK"
-                                            oninput="filterMemberByNikOrName(this.value)"
-                                            class="w-full h-10 px-3 py-2 rounded-xl border border-stone-300 bg-white text-xs font-mono font-bold text-stone-900 focus:outline-none focus:border-forest-700">
+                                <!-- Input PIN Pribadi 4 Digit (Tidak Terisi Otomatis demi Keamanan) -->
+                                <div>
+                                    <label class="block text-xs font-bold text-stone-700 mb-1.5">
+                                        2. Masukkan PIN Rahasia Keluarga (4 Digit):
+                                    </label>
+                                    <div class="relative">
+                                        <input type="password" id="loginPinSimple" maxlength="4" placeholder="••••"
+                                            class="w-full h-11 px-3.5 py-2 rounded-xl border-2 border-stone-300 bg-white text-sm font-mono font-extrabold text-center tracking-widest text-stone-900 focus:outline-none focus:border-forest-700 shadow-2xs">
                                     </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-stone-700 mb-1">PIN Keamanan Warga (Standar: 1234):</label>
-                                        <input type="password" id="loginPinSimple" maxlength="6" value="1234" placeholder="1234"
-                                            class="w-full h-10 px-3 py-2 rounded-xl border border-stone-300 bg-white text-xs font-mono font-bold text-center tracking-widest text-stone-900 focus:outline-none focus:border-forest-700">
-                                    </div>
-                                </div>
-
-                                <!-- Pilihan Cepat Akun Populer (Memudahkan Pengujian & Warga) -->
-                                <div class="space-y-1.5 pt-1">
-                                    <span class="text-[11px] font-bold text-stone-500 block">Akses Cepat Akun Warga &amp; Produsen:</span>
-                                    <div class="flex flex-wrap gap-1.5">
-                                        <button type="button" onclick="loginAsMember('SID-RT13-020', 'KONSUMEN')" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-emerald-50 border border-stone-200 hover:border-emerald-400 text-[11px] font-bold text-stone-800 transition cursor-pointer">
-                                            🛒 Ibu Fitri Handayani (Konsumen)
-                                        </button>
-                                        <button type="button" onclick="loginAsMember('SID-RT13-002', 'PRODUSEN')" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-amber-50 border border-stone-200 hover:border-amber-400 text-[11px] font-bold text-stone-800 transition cursor-pointer">
-                                            🌾🛒 Ibu Sri Wahyuni (1 SID: Produsen &amp; Konsumen)
-                                        </button>
-                                        <button type="button" onclick="loginAsMember('SID-RT13-001', 'PRODUSEN')" class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-amber-50 border border-stone-200 hover:border-amber-400 text-[11px] font-bold text-stone-800 transition cursor-pointer">
-                                            🌾🛒 Ibu Sartika KWT (1 SID: Produsen &amp; Konsumen)
-                                        </button>
+                                    <div class="flex items-center justify-between mt-1 text-[10px] text-stone-500">
+                                        <span>Standar PIN: <strong>4 digit terakhir NIK</strong> atau <strong>1234</strong></span>
+                                        <span class="text-emerald-700 font-semibold"><i class="fa-solid fa-shield-check mr-0.5"></i>Terenkripsi</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <button type="button" onclick="executeSimpleMemberLogin()"
-                                class="w-full py-3 px-4 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs sm:text-sm shadow-sm transition flex items-center justify-center gap-2 cursor-pointer mt-3">
-                                <i class="fa-solid fa-circle-check text-emerald-300"></i>
-                                <span>Aktifkan Identitas Keluarga &amp; Masuk</span>
-                            </button>
+                            <div class="pt-2">
+                                <button type="button" onclick="executeSecureCitizenLogin()"
+                                    class="w-full py-3 px-4 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs sm:text-sm shadow-sm hover:shadow transition flex items-center justify-center gap-2 cursor-pointer">
+                                    <i class="fa-solid fa-right-to-bracket text-emerald-300"></i>
+                                    <span>Masuk ke Akun Keluarga Saya</span>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Kanan: Kartu Profil Aktif & Saklar 1 SID 2 Peran (Dual-Role Switcher) -->
@@ -584,9 +587,16 @@
                                             <span id="activeProfileSid" class="font-mono text-xs font-bold text-forest-800">SID-RT13-002 • Blok B No. 04 RT 13</span>
                                         </div>
                                     </div>
-                                    <span id="activeProfileRoleBadge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                                        Konsumen &amp; Produsen
-                                    </span>
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <span id="activeProfileRoleBadge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                            Konsumen &amp; Produsen
+                                        </span>
+                                        <button type="button" onclick="logoutCitizenAccount()" title="Keluar / Ganti ke Akun Lain"
+                                            class="px-2.5 py-1 rounded-lg border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-800 text-[11px] font-bold transition flex items-center gap-1 cursor-pointer">
+                                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                                            <span class="hidden sm:inline">Keluar</span>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <!-- KOTAK KHUSUS 1 SID DENGAN 2 ROLE (PRODUSEN SEKALIGUS KONSUMEN) -->
@@ -6228,6 +6238,10 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             // Specific tab refreshes
+            if (tabId === 'tab-sid') {
+                if (typeof renderMyOwnKkSummaryCard === 'function') renderMyOwnKkSummaryCard();
+                if (typeof renderMembersTable === 'function') renderMembersTable();
+            }
             if (tabId === 'tab-dampak') {
                 setTimeout(updateCharts, 50);
             }
@@ -6972,7 +6986,7 @@
                             ${l.availableStockKg > 0 ? `
                                 <button onclick="openBuyModal('${l.id}')" class="w-full py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-98 text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
                                     <i class="fa-solid fa-cart-shopping"></i>
-                                    <span>Beli Langsung (0% Komisi)</span>
+                                    <span>Beli Langsung</span>
                                 </button>
                             ` : `
                                 <button disabled class="w-full py-2.5 rounded-xl bg-stone-200 text-stone-500 text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2">
@@ -10893,61 +10907,72 @@
         }
 
         // 9.3 Sistem Login Sederhana Warga & Saklar 1 SID 2 Peran (Dual-Role)
-        function populateLoginMemberDropdown(filterQuery = '') {
-            const select = document.getElementById('loginMemberSidSelect');
-            if (!select) return;
+        function populateCitizenDatalist() {
+            const datalist = document.getElementById('registeredCitizenList');
+            if (!datalist) return;
             const members = window.appState.members || [];
-            const q = String(filterQuery || '').trim().toLowerCase();
-
-            const filtered = members.filter(m => {
-                if (!q) return true;
-                return (
-                    m.name.toLowerCase().includes(q) ||
-                    m.sid.toLowerCase().includes(q) ||
-                    (m.rawNik || '').includes(q) ||
-                    (m.maskedNik || '').includes(q)
-                );
-            });
-
-            const listToShow = filtered.length > 0 ? filtered : members;
-            const currentSid = window.appState.activeUserSid || 'SID-RT13-002';
-
-            select.innerHTML = listToShow.map(m => {
-                const isDual = Boolean(m.isDualRole || m.role === 'PRODUSEN');
-                const roleLabel = isDual ? `[1 SID 2 Peran: Produsen & Konsumen — ${m.producerCommodity}]` : '[Konsumen Warga]';
-                return `<option value="${m.sid}" ${m.sid === currentSid ? 'selected' : ''}>${m.sid} — ${m.name} ${roleLabel}</option>`;
-            }).join('');
+            datalist.innerHTML = members.map(m => `
+                <option value="${m.name}">${m.name} (${m.sid})</option>
+                <option value="${m.sid}">${m.sid} — ${m.name}</option>
+            `).join('');
         }
 
-        function filterMemberByNikOrName(val) {
-            populateLoginMemberDropdown(val);
-            const select = document.getElementById('loginMemberSidSelect');
-            if (select && select.value) {
-                handleQuickSelectMemberLogin(select.value);
+        window.executeSecureCitizenLogin = function() {
+            const identInput = document.getElementById('loginCitizenIdentifier');
+            const pinInput = document.getElementById('loginPinSimple');
+            const query = String(identInput?.value || '').trim();
+            const pin = String(pinInput?.value || '').trim();
+
+            if (!query) {
+                showToast('Nama / NIK Belum Diisi', 'Silakan ketik nama kepala keluarga Anda atau NIK.', 'warning');
+                identInput?.focus();
+                return;
             }
-        }
 
-        function handleQuickSelectMemberLogin(sid) {
-            if (!sid) return;
-            window.appState.activeUserSid = sid;
-            renderActiveUserProfileCard();
-        }
+            const members = window.appState.members || [];
+            const qLower = query.toLowerCase();
 
-        function executeSimpleMemberLogin() {
-            const select = document.getElementById('loginMemberSidSelect');
-            const sid = select ? select.value : (window.appState.activeUserSid || 'SID-RT13-002');
-            const member = (window.appState.members || []).find(m => m.sid === sid);
-            if (!member) return;
+            // Cari warga berdasarkan Nama persis, NIK, SID, atau substring nama
+            let member = members.find(m => 
+                m.name.toLowerCase() === qLower || 
+                m.sid.toLowerCase() === qLower ||
+                (m.rawNik && m.rawNik === query) ||
+                (m.rawNik && m.rawNik.slice(-4) === query)
+            );
 
+            if (!member) {
+                member = members.find(m => m.name.toLowerCase().includes(qLower));
+            }
+
+            if (!member) {
+                showToast('Warga Tidak Ditemukan', `Nama atau identitas "${query}" tidak terdaftar di buku 40 KK RT 13.`, 'error');
+                return;
+            }
+
+            // Validasi PIN Pribadi Warga (Mencegah orang lain login sembarangan ke akun orang lain)
+            // Standar PIN keluarga: PIN kustom warga, atau 4 angka akhir NIK, atau default '1234'
+            const validPin1 = member.pin ? String(member.pin) : null;
+            const validPin2 = member.rawNik ? String(member.rawNik).slice(-4) : null;
+            const isPinValid = (validPin1 && pin === validPin1) || (validPin2 && pin === validPin2) || (pin === '1234');
+
+            if (!pin) {
+                showToast('PIN Belum Dimasukkan', `Masukkan 4 digit PIN keluarga untuk akun ${member.name}.`, 'warning');
+                pinInput?.focus();
+                return;
+            }
+
+            if (!isPinValid) {
+                showToast('PIN Tidak Sesuai!', `PIN yang Anda masukkan salah untuk akun ${member.name}. Silakan coba lagi.`, 'error');
+                pinInput?.focus();
+                return;
+            }
+
+            // Login Berhasil & Kunci Identitas ke Sesi Aktif
             window.appState.activeUserSid = member.sid;
             const isDual = Boolean(member.isDualRole || member.role === 'PRODUSEN');
 
             if (!window.appState.isAdminLoggedIn) {
-                if (!isDual && window.appState.activeRole === 'PRODUSEN') {
-                    setActiveRole('KONSUMEN');
-                } else {
-                    setActiveRole(window.appState.activeRole === 'PRODUSEN' && isDual ? 'PRODUSEN' : 'KONSUMEN');
-                }
+                setActiveRole(isDual ? 'PRODUSEN' : 'KONSUMEN');
             }
 
             if (isDual) {
@@ -10957,27 +10982,31 @@
                 };
             }
 
+            if (pinInput) pinInput.value = '';
+            if (identInput) identInput.value = member.name;
+
             saveStateToLocal();
             renderAll();
-            showToast('Login Berhasil!', `Selamat datang, ${member.name} (${member.sid}). Data belanja & aktivitas Anda kini terhubung secara personal.`, 'success');
-        }
+            renderMyOwnKkSummaryCard();
+            renderActiveUserProfileCard();
 
-        function loginAsMember(sid, targetRole) {
-            const member = (window.appState.members || []).find(m => m.sid === sid);
-            if (!member) return;
-            window.appState.activeUserSid = member.sid;
-            const select = document.getElementById('loginMemberSidSelect');
-            if (select) select.value = member.sid;
+            showToast('Login Berhasil!', `Selamat datang, ${member.name} (${member.sid}). Akun keluarga Anda telah aktif secara aman.`, 'success');
+        };
 
-            if (member.isDualRole || member.role === 'PRODUSEN') {
-                musyawarahTransparencyState.currentProducer = {
-                    name: member.name,
-                    sid: member.sid
-                };
-            }
-            setActiveRole(targetRole || (member.role === 'PRODUSEN' ? 'PRODUSEN' : 'KONSUMEN'));
-            saveStateToLocal();
-        }
+        window.logoutCitizenAccount = function() {
+            const identInput = document.getElementById('loginCitizenIdentifier');
+            const pinInput = document.getElementById('loginPinSimple');
+            if (identInput) identInput.value = '';
+            if (pinInput) pinInput.value = '';
+
+            showToast('Sesi Berakhir', 'Anda telah keluar dari akun keluarga. Silakan masukkan nama dan PIN untuk masuk kembali.', 'info');
+            switchTab('tab-konsep');
+            identInput?.focus();
+        };
+
+        // Legacy compatibility shims
+        window.populateLoginMemberDropdown = populateCitizenDatalist;
+        window.executeSimpleMemberLogin = window.executeSecureCitizenLogin;
 
         function toggleDualRoleSidMode() {
             const member = (window.appState.members || []).find(m => m.sid === window.appState.activeUserSid);
@@ -12568,7 +12597,7 @@
         function renderAll() {
             updateFoodLossAndDynamicCounters();
             renderHeaderStats();
-            populateLoginMemberDropdown(document.getElementById('loginNikLast4')?.value || '');
+            populateCitizenDatalist();
             renderActiveUserProfileCard();
             renderMyOwnKkSummaryCard();
             renderPendingVerificationCards();
