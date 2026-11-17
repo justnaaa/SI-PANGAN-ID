@@ -574,44 +574,47 @@
                         </div>
 
                         <!-- Kanan: Kartu Profil Aktif & Saklar 1 SID 2 Peran (Dual-Role Switcher) -->
-                        <div class="lg:col-span-6 p-5 rounded-2xl bg-gradient-to-br from-forest-50 via-white to-emerald-50/60 border-2 border-forest-200 flex flex-col justify-between space-y-4">
-                            <div class="space-y-3">
-                                <div class="flex items-center justify-between gap-2 border-b border-forest-100 pb-3">
-                                    <div class="flex items-center gap-3">
-                                        <div id="activeProfileAvatar" class="w-12 h-12 rounded-2xl bg-forest-800 text-white flex items-center justify-center font-bold text-base shadow-sm mono-num">
+                        <div class="lg:col-span-6 p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-forest-50/70 via-white to-emerald-50/50 border-2 border-forest-200 flex flex-col justify-between space-y-4 shadow-2xs">
+                            <div class="space-y-3.5">
+                                <!-- Baris Profil Warga: Avatar, Nama, SID & Tombol Keluar -->
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-forest-100 pb-3.5">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div id="activeProfileAvatar" class="w-12 h-12 rounded-xl bg-forest-800 text-white flex items-center justify-center font-bold text-base shadow-sm ring-2 ring-forest-200 shrink-0">
                                             SW
                                         </div>
-                                        <div>
-                                            <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block">Identitas Keluarga Aktif Saat Ini</span>
-                                            <h4 id="activeProfileName" class="serif-heading text-lg font-bold text-stone-900">Ibu Sri Wahyuni</h4>
-                                            <span id="activeProfileSid" class="font-mono text-xs font-bold text-forest-800">SID-RT13-002 • Blok B No. 04 RT 13</span>
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-1.5 mb-0.5">
+                                                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                                <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800">Identitas Keluarga Aktif</span>
+                                            </div>
+                                            <h4 id="activeProfileName" class="serif-heading text-lg sm:text-xl font-bold text-stone-900 leading-tight truncate">Ibu Sri Wahyuni</h4>
+                                            <span id="activeProfileSid" class="font-mono text-xs font-semibold text-forest-800 block truncate">SID-RT13-002 • Blok B No. 04 RT 13</span>
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-2 shrink-0">
-                                        <span id="activeProfileRoleBadge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                                            Konsumen &amp; Produsen
+                                    <div class="flex items-center gap-2 shrink-0 self-start sm:self-center">
+                                        <span id="activeProfileRoleBadge" class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                            Konsumen RT 13
                                         </span>
                                         <button type="button" onclick="logoutCitizenAccount()" title="Keluar / Ganti ke Akun Lain"
-                                            class="px-2.5 py-1 rounded-lg border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-800 text-[11px] font-bold transition flex items-center gap-1 cursor-pointer">
-                                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                                            <span class="hidden sm:inline">Keluar</span>
+                                            class="px-3 py-1 rounded-lg border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-800 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs">
+                                            <i class="fa-solid fa-arrow-right-from-bracket text-rose-600"></i>
+                                            <span>Keluar</span>
                                         </button>
                                     </div>
                                 </div>
 
-                                <!-- KOTAK KHUSUS 1 SID DENGAN 2 ROLE (PRODUSEN SEKALIGUS KONSUMEN) -->
-                                <div id="dualRoleSwitchCard" class="p-4 rounded-xl bg-amber-50/90 border border-amber-300 space-y-2.5">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-bold text-amber-950 flex items-center gap-1.5">
+                                <!-- KOTAK KHUSUS 1 SID DENGAN 2 ROLE (HANYA AKTIF UNTUK PRODUSEN) -->
+                                <div id="dualRoleSwitchCard" class="p-3.5 rounded-xl bg-amber-50/90 border border-amber-300/80 space-y-2">
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="font-bold text-amber-950 flex items-center gap-1.5">
                                             <i class="fa-solid fa-layer-group text-amber-600"></i>
-                                            Akun 1 SID dengan 2 Peran (Produsen KWT &amp; Konsumen)
+                                            Akun 1 SID dengan 2 Peran
                                         </span>
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-200 text-amber-900">Dual-Role Aktif</span>
+                                        <span class="text-[10px] font-bold text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded-md border border-amber-300">
+                                            Komoditas: <span id="dualRoleCommodityText">Sayur Bayam</span>
+                                        </span>
                                     </div>
-                                    <p class="text-[11px] text-amber-900 leading-snug">
-                                        SID Anda terdaftar sebagai <strong>Produsen Pekarangan (<span id="dualRoleCommodityText">Sayur Bayam</span>)</strong> sekaligus <strong>Konsumen Warga RT 13</strong>. Pilih tampilan sesuai kebutuhan Anda saat ini:
-                                    </p>
-                                    <div class="grid grid-cols-2 gap-2 pt-1">
+                                    <div class="grid grid-cols-2 gap-2 pt-0.5">
                                         <button type="button" onclick="setActiveRole('KONSUMEN')" id="dualBtnKonsumen"
                                             class="py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer bg-emerald-600 text-white shadow-xs">
                                             <i class="fa-solid fa-cart-shopping"></i>
@@ -625,32 +628,26 @@
                                     </div>
                                 </div>
 
-                                <!-- Info Singkat Akun -->
-                                <div class="grid grid-cols-3 gap-2.5 text-center pt-1">
-                                    <div class="p-2.5 rounded-xl bg-white border border-stone-200">
-                                        <span class="text-[10px] text-stone-500 block">Anggota KK</span>
+                                <!-- Info Singkat Akun (3 Kolom Ringkas) -->
+                                <div class="grid grid-cols-3 gap-2.5 text-center">
+                                    <div class="p-2.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
+                                        <span class="text-[10px] font-medium text-stone-500 block">Anggota KK</span>
                                         <strong id="activeProfileFamily" class="font-mono text-sm font-bold text-stone-900">4 Jiwa</strong>
                                     </div>
-                                    <div class="p-2.5 rounded-xl bg-white border border-stone-200">
-                                        <span class="text-[10px] text-stone-500 block">Kebutuhan Pangan</span>
+                                    <div class="p-2.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
+                                        <span class="text-[10px] font-medium text-stone-500 block">Estimasi Pangan</span>
                                         <strong id="activeProfileNeed" class="font-mono text-sm font-bold text-forest-800">32 Kg/bln</strong>
                                     </div>
-                                    <div class="p-2.5 rounded-xl bg-white border border-stone-200">
-                                        <span class="text-[10px] text-stone-500 block">Transaksi Saya</span>
+                                    <div class="p-2.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
+                                        <span class="text-[10px] font-medium text-stone-500 block">Riwayat Belanja</span>
                                         <strong id="activeProfileTxCount" class="font-mono text-sm font-bold text-emerald-700">6 Pesanan</strong>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Tombol Pintas Cepat & Perbarui Data KK Saya -->
-                            <div class="pt-2 border-t border-forest-100 space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[11px] font-bold text-stone-600">Menu Pintas Akun Saya:</span>
-                                    <button type="button" onclick="openCitizenSelfUpdateModal()"
-                                        class="text-[11px] font-bold text-emerald-800 hover:text-emerald-950 underline flex items-center gap-1 cursor-pointer">
-                                        <i class="fa-solid fa-pen-to-square text-emerald-700"></i> Perbarui Data KK Saya
-                                    </button>
-                                </div>
+                            <!-- Menu Pintas Cepat (3 Tombol Rapi Tanpa Teks Dobel) -->
+                            <div class="pt-3 border-t border-forest-100 space-y-2">
+                                <span class="text-[11px] font-bold text-stone-600 block">Menu Pintas Akun Saya:</span>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                                     <button type="button" onclick="switchTab('tab-market')" class="py-2.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition cursor-pointer">
                                         <i class="fa-solid fa-basket-shopping"></i>
@@ -658,10 +655,10 @@
                                     </button>
                                     <button type="button" onclick="switchTab('tab-musyawarah')" class="py-2.5 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition cursor-pointer">
                                         <i class="fa-solid fa-check-to-slot"></i>
-                                        <span>Isi Voting Pangan</span>
+                                        <span>Voting Pangan</span>
                                     </button>
                                     <button type="button" onclick="openCitizenSelfUpdateModal()" class="py-2.5 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition cursor-pointer">
-                                        <i class="fa-solid fa-user-pen"></i>
+                                        <i class="fa-solid fa-pen-to-square"></i>
                                         <span>Perbarui KK Saya</span>
                                     </button>
                                 </div>
@@ -10911,10 +10908,8 @@
             const datalist = document.getElementById('registeredCitizenList');
             if (!datalist) return;
             const members = window.appState.members || [];
-            datalist.innerHTML = members.map(m => `
-                <option value="${m.name}">${m.name} (${m.sid})</option>
-                <option value="${m.sid}">${m.sid} — ${m.name}</option>
-            `).join('');
+            // Hanya tampilkan 1 opsi Nama per kepala keluarga agar saran input rapi dan tidak ada opsi teknis SID ganda
+            datalist.innerHTML = members.map(m => `<option value="${m.name}"></option>`).join('');
         }
 
         window.executeSecureCitizenLogin = function() {
@@ -11059,8 +11054,8 @@
 
             if (isDual) {
                 if (elBadge) {
-                    elBadge.textContent = '1 SID 2 Peran (Produsen & Konsumen)';
-                    elBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300';
+                    elBadge.textContent = 'Produsen & Konsumen';
+                    elBadge.className = 'px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300';
                 }
                 if (elDualCard) elDualCard.classList.remove('hidden');
                 if (elDualComm) elDualComm.textContent = member.producerCommodity || 'Pangan Pekarangan KWT';
@@ -11087,8 +11082,8 @@
                 }
             } else {
                 if (elBadge) {
-                    elBadge.textContent = 'Konsumen Rumah Tangga';
-                    elBadge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
+                    elBadge.textContent = 'Konsumen RT 13';
+                    elBadge.className = 'px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
                 }
                 if (elDualCard) elDualCard.classList.add('hidden');
                 if (elHeaderDualBtn) {
