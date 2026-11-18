@@ -960,14 +960,35 @@ export function initCoreAppController() {
                                 </div>
                             </div>
 
-                            <!-- Jadwal Panen & Batas Kesegaran -->
-                            <div class="flex items-center justify-between text-xs text-stone-500 pt-0.5">
-                                <span class="inline-flex items-center gap-1 text-[11px]">
-                                    <i class="fa-regular fa-calendar-check text-stone-400"></i> Panen: <strong class="text-stone-700">${l.harvestDate || '27 Okt 2026'}</strong>
-                                </span>
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold ${l.freshnessDaysRemaining <= 2 ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-stone-50 text-stone-700 border border-stone-200'}">
-                                    <i class="fa-solid fa-hourglass-half text-[9px]"></i> ${l.freshnessWindow || 'Segar'}
-                                </span>
+                            <!-- Jadwal Panen & Batas Kesegaran (Penegasan Masa Segar & Kadaluarsa) -->
+                            <div class="flex flex-col gap-1.5 pt-0.5">
+                                <div class="flex items-center justify-between text-xs text-stone-500">
+                                    <span class="inline-flex items-center gap-1 text-[11px]">
+                                        <i class="fa-regular fa-calendar-check text-stone-400"></i> Panen: <strong class="text-stone-700">${l.harvestDate || '27 Okt 2026'}</strong>
+                                    </span>
+                                    <span class="text-[10px] text-stone-400 font-mono">Batas Panen Lokal</span>
+                                </div>
+                                <div>
+                                    ${Number(l.freshnessDaysRemaining != null ? l.freshnessDaysRemaining : 3) <= 0 ? `
+                                        <div class="p-2 rounded-xl bg-rose-50 border-2 border-rose-400 text-rose-950 flex items-center gap-2 text-[11px] font-extrabold animate-pulse">
+                                            <i class="fa-solid fa-triangle-exclamation text-rose-700 text-sm shrink-0"></i>
+                                            <div class="leading-tight">
+                                                <span>LEWAT MASA SEGAR (0 Hari)</span>
+                                                <span class="block text-[10px] font-semibold text-rose-800">Otomatis dialihkan jadi surplus siap salur ke MBG/Koperasi.</span>
+                                            </div>
+                                        </div>
+                                    ` : Number(l.freshnessDaysRemaining) <= 2 ? `
+                                        <div class="px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-950 flex items-center gap-1.5 text-[11px] font-bold">
+                                            <i class="fa-solid fa-hourglass-half text-amber-700"></i>
+                                            <span>Mendekati Batas Segar (${l.freshnessDaysRemaining} Hari Lagi • Segera Dimasak)</span>
+                                        </div>
+                                    ` : `
+                                        <div class="px-2.5 py-1.5 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-900 flex items-center gap-1.5 text-[11px] font-bold">
+                                            <i class="fa-solid fa-leaf text-emerald-600"></i>
+                                            <span>Masih Sangat Segar (${l.freshnessDaysRemaining || 4} Hari Tersisa)</span>
+                                        </div>
+                                    `}
+                                </div>
                             </div>
 
                             <p class="text-xs text-stone-600 leading-snug line-clamp-2">
@@ -1020,7 +1041,27 @@ export function initCoreAppController() {
 
                         <!-- Action Buttons -->
                         <div class="pt-3 border-t border-stone-100 flex flex-col gap-2">
-                            ${(window.appState.isAdminLoggedIn || (window.appState.activeUserSid && window.appState.activeUserSid === l.producerSid)) ? `
+                            ${Number(l.freshnessDaysRemaining != null ? l.freshnessDaysRemaining : 3) <= 0 ? `
+                                <!-- Produk Lewat Masa Segar: Dialihkan Otomatis ke Surplus MBG/Koperasi -->
+                                <div class="space-y-2">
+                                    <button disabled class="w-full py-2.5 rounded-xl bg-rose-100 border border-rose-300 text-rose-950 text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2">
+                                        <i class="fa-solid fa-truck-ramp-box text-rose-700"></i>
+                                        <span>Dialihkan ke Surplus MBG / Koperasi</span>
+                                    </button>
+                                    ${(window.appState.isAdminLoggedIn || (window.appState.activeUserSid && window.appState.activeUserSid === l.producerSid)) ? `
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <button onclick="switchTab('tab-dampak')" class="py-2 px-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
+                                                <i class="fa-solid fa-boxes-packing"></i>
+                                                <span>Pusat Surplus &rarr;</span>
+                                            </button>
+                                            <button onclick="openEditListingModal('${l.id}')" class="py-2 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                                <i class="fa-solid fa-pen-to-square text-amber-600"></i>
+                                                <span>Edit Produk</span>
+                                            </button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            ` : (window.appState.isAdminLoggedIn || (window.appState.activeUserSid && window.appState.activeUserSid === l.producerSid)) ? `
                                 <div class="grid grid-cols-2 gap-2">
                                     ${l.availableStockKg > 0 ? `
                                         <button onclick="openBuyModal('${l.id}')" class="py-2.5 px-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
@@ -1170,23 +1211,34 @@ export function initCoreAppController() {
             const l = listings.find(item => item.id === listingId);
             if (!l) return;
 
-            document.getElementById('editListingId').value = l.id;
-            document.getElementById('editListingCommodityName').textContent = `${l.commodity} — Produsen: ${l.producerName} (${l.producerSid})`;
-            document.getElementById('editListingStock').value = l.availableStockKg;
-            document.getElementById('editListingPrice').value = l.fairPrice;
-            document.getElementById('editListingOldStockLabel').textContent = `Stok sebelumnya: ${l.availableStockKg} ${l.unit || 'Kg'}`;
-            document.getElementById('editListingOldPriceLabel').textContent = `Harga sebelumnya: ${formatRupiah(l.fairPrice)}/${l.unit || 'Kg'}`;
-            document.getElementById('editListingReason').value = '';
+            const idEl = document.getElementById('editListingId');
+            const nameEl = document.getElementById('editListingCommodityName');
+            const stockEl = document.getElementById('editListingStock');
+            const priceEl = document.getElementById('editListingPrice');
+            const oldStockEl = document.getElementById('editListingOldStockLabel');
+            const oldPriceEl = document.getElementById('editListingOldPriceLabel');
+            const freshEl = document.getElementById('editListingFreshness');
+            const reasonEl = document.getElementById('editListingReason');
+
+            if (idEl) idEl.value = l.id;
+            if (nameEl) nameEl.textContent = `${l.commodity} — Produsen: ${l.producerName} (${l.producerSid})`;
+            if (stockEl) stockEl.value = l.availableStockKg;
+            if (priceEl) priceEl.value = l.fairPrice;
+            if (oldStockEl) oldStockEl.textContent = `Stok sebelumnya: ${l.availableStockKg} ${l.unit || 'Kg'}`;
+            if (oldPriceEl) oldPriceEl.textContent = `Harga sebelumnya: ${formatRupiah(l.fairPrice)}/${l.unit || 'Kg'}`;
+            if (freshEl) freshEl.value = l.freshnessDaysRemaining != null ? l.freshnessDaysRemaining : 3;
+            if (reasonEl) reasonEl.value = '';
 
             openModal('modalEditListing');
         };
 
         window.handleSaveEditListing = function(e) {
             e.preventDefault();
-            const listingId = document.getElementById('editListingId').value;
-            const newStock = Number(document.getElementById('editListingStock').value) || 0;
-            const newPrice = Number(document.getElementById('editListingPrice').value) || 0;
-            const reason = document.getElementById('editListingReason').value.trim() || 'Penyesuaian rutin stok & harga kebun';
+            const listingId = document.getElementById('editListingId')?.value;
+            const newStock = Number(document.getElementById('editListingStock')?.value) || 0;
+            const newPrice = Number(document.getElementById('editListingPrice')?.value) || 0;
+            const freshVal = document.getElementById('editListingFreshness')?.value;
+            const reason = document.getElementById('editListingReason')?.value.trim() || 'Penyesuaian rutin stok & harga kebun';
 
             const listings = window.appState.listings || [];
             const l = listings.find(item => item.id === listingId);
@@ -1198,6 +1250,23 @@ export function initCoreAppController() {
             // Update data
             l.availableStockKg = newStock;
             l.fairPrice = newPrice;
+
+            if (freshVal !== undefined && freshVal !== '') {
+                const days = Math.max(0, parseInt(freshVal, 10));
+                l.freshnessDaysRemaining = days;
+                if (days <= 0) {
+                    l.freshnessWindow = 'Lewat Masa Segar (Surplus MBG)';
+                    l.unabsorbedSurplusKg = l.availableStockKg;
+                    l.isExpiredSurplus = true;
+                    l.surplusConfirmedByProducer = true;
+                } else if (days <= 2) {
+                    l.freshnessWindow = `Segar (${days} Hari Tersisa)`;
+                    l.isExpiredSurplus = false;
+                } else {
+                    l.freshnessWindow = `Sangat Segar (${days} Hari Tersisa)`;
+                    l.isExpiredSurplus = false;
+                }
+            }
 
             // Catat di Buku Besar Audit Log
             if (!window.appState.inventoryAuditLogs) window.appState.inventoryAuditLogs = [];
@@ -1217,13 +1286,16 @@ export function initCoreAppController() {
             };
             window.appState.inventoryAuditLogs.unshift(logEntry);
 
-            // Simpan ke storage dan render ulang
+            // Simpan ke storage dan render ulang seluruh komponen terkait
             saveStateToLocal();
             closeModal('modalEditListing');
             renderMarketListings();
             renderPerProducerAiForecast();
+            if (typeof window.renderActiveUserProfileCard === 'function') window.renderActiveUserProfileCard();
+            if (typeof window.renderAdminSurplusCenter === 'function') window.renderAdminSurplusCenter();
+            if (typeof window.renderProducerWorkspaceAndAutoAi === 'function') window.renderProducerWorkspaceAndAutoAi();
 
-            showToast('Stok & Harga Diperbarui', `${l.commodity} berhasil diperbarui: Stok ${newStock} Kg (${newStock >= oldStock ? '+' : ''}${newStock - oldStock} Kg), Harga ${formatRupiah(newPrice)}. Tercatat di Buku Besar Audit.`, 'success');
+            showToast('Stok & Harga Diperbarui', `${l.commodity} berhasil diperbarui: Stok ${newStock} Kg, Harga ${formatRupiah(newPrice)}. Tercatat di Buku Besar Audit.`, 'success');
         };
 
         window.openBuyModal = function openBuyModal(listingId) {

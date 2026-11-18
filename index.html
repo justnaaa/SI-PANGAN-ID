@@ -125,7 +125,7 @@
                     <i class="fa-solid fa-seedling"></i>
                 </div>
                 <h1 class="font-sans text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 pt-0.5">SI-PANGAN ID</h1>
-                <p class="text-[11px] font-medium text-slate-500">RT 13 Yosomulyo • Kota Metro</p>
+                <p class="text-[11px] font-medium text-slate-500">Kota Metro</p>
             </div>
 
             <!-- BOX 1: FORM LOGIN -->
@@ -174,39 +174,12 @@
                     </button>
                 </form>
 
-                <!-- Teks Daftar Akun Warga Baru (Hanya tulisan Daftar Akun Warga Baru yang bisa diklik) -->
-                <div class="text-center pt-0.5 text-xs text-slate-500">
-                    <span>Belum terdaftar di RT 13?</span>
+                <!-- Teks Daftar Akun Warga Baru -->
+                <div class="text-center pt-1 text-xs text-slate-500">
                     <button type="button" onclick="switchAuthGateMode('REGISTER')"
-                        class="font-bold text-[#059669] hover:underline cursor-pointer ml-1">
-                        Daftar Akun Warga Baru
+                        class="font-bold text-[#059669] hover:underline cursor-pointer">
+                        Belum terdaftar? Klik untuk mendaftar
                     </button>
-                </div>
-
-
-
-                <!-- Akun Demo Penjurian (Terpisah dari Data Warga Asli) -->
-                <div class="pt-3 border-t border-slate-100 space-y-2">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">
-                        Akun Simulasi / Demo (Terpisah dari Data Warga)
-                    </span>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button type="button" onclick="quickDemoLogin('KONSUMEN')"
-                            class="py-1.5 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-900 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer">
-                            <i class="fa-solid fa-basket-shopping text-emerald-600"></i>
-                            <span>Konsumen</span>
-                        </button>
-                        <button type="button" onclick="quickDemoLogin('PRODUSEN')"
-                            class="py-1.5 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer">
-                            <i class="fa-solid fa-seedling text-amber-600"></i>
-                            <span>Produsen</span>
-                        </button>
-                        <button type="button" onclick="quickDemoLogin('ADMIN')"
-                            class="py-1.5 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer">
-                            <i class="fa-solid fa-user-shield text-slate-700"></i>
-                            <span>Admin</span>
-                        </button>
-                    </div>
                 </div>
             </div>
 
@@ -352,8 +325,15 @@
                 </div>
             </div>
 
-            <!-- Right: Logged-in User Identity & Always-Visible Logout Button -->
+            <!-- Right: Logged-in User Identity, Pasar Induk Bapanas, & Always-Visible Logout Button -->
             <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <button type="button" onclick="openModal('modalPasarIndukBapanas')"
+                    class="hidden xs:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                    title="Daftar Patokan Harga Pangan Pasar Induk & Bapanas">
+                    <i class="fa-solid fa-scale-balanced text-amber-700 text-xs"></i>
+                    <span class="hidden md:inline">Harga Pasar Induk</span>
+                </button>
+
                 <button onclick="switchTab('tab-sid')" id="headerActiveUserBtn"
                     class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all bg-stone-50 border-stone-200 text-stone-800 hover:bg-stone-100 cursor-pointer"
                     title="Lihat Profile Saya">
@@ -1130,57 +1110,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- KARTU UNDUH & PASANG APLIKASI PWA DI TAB PROFIL (Point 6) -->
-                <div id="homePwaBanner"
-                    class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-forest-900 via-forest-800 to-emerald-900 text-white p-5 sm:p-6 border border-emerald-500/30 shadow-md">
-                    <div
-                        class="absolute -right-12 -top-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none">
-                    </div>
-                    <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-                        <div class="flex items-start sm:items-center gap-4 min-w-0">
-                            <div
-                                class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-forest-600 text-forest-950 flex items-center justify-center shrink-0 shadow-lg text-2xl font-black ring-4 ring-emerald-400/20">
-                                <i class="fa-solid fa-mobile-screen-button"></i>
-                            </div>
-                            <div class="space-y-1.5 min-w-0">
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <span
-                                        class="px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 text-[11px] font-bold border border-emerald-400/30 flex items-center gap-1">
-                                        <i class="fa-solid fa-bolt text-amber-300"></i> Aplikasi Resmi Warga RT 13
-                                    </span>
-                                    <span id="homePwaStatusBadge"
-                                        class="px-2 py-0.5 rounded-full bg-forest-700/80 text-forest-200 text-[11px] font-medium border border-forest-600">
-                                        Android • iOS • Windows • Mac
-                                    </span>
-                                    <span class="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
-                                        <i class="fa-solid fa-wifi text-[10px]"></i> Hemat Kuota &amp; Bisa Offline
-                                    </span>
-                                </div>
-                                <h3 class="serif-heading text-lg sm:text-xl font-bold text-white leading-tight">
-                                    Unduh &amp; Pasang Aplikasi SI-PANGAN ID di Layar Utama HP Anda
-                                </h3>
-                                <p class="text-xs sm:text-sm text-forest-200 leading-relaxed max-w-2xl">
-                                    Memudahkan Bapak/Ibu warga dan pengurus KWT membuka pasar pangan RT 13 cukup 1-klik
-                                    dari layar HP tanpa perlu mengetik alamat website lagi.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap sm:flex-nowrap items-center gap-2.5 shrink-0 w-full md:w-auto">
-                            <button onclick="showPwaGuideModal()"
-                                class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-forest-800/90 hover:bg-forest-700 text-forest-100 text-xs sm:text-sm font-semibold border border-forest-600/70 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                                <i class="fa-solid fa-circle-question text-forest-300"></i>
-                                <span>Cara Pasang</span>
-                            </button>
-                            <button id="homePwaInstallBtn" onclick="triggerPwaInstall()"
-                                class="flex-1 sm:flex-initial px-6 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-300 active:scale-[0.98] text-forest-950 text-xs sm:text-sm font-bold shadow-lg shadow-emerald-950/40 transition-all flex items-center justify-center gap-2 cursor-pointer">
-                                <i class="fa-solid fa-download text-sm"></i>
-                                <span id="homePwaBtnText">Unduh &amp; Pasang Sekarang</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </section>
 
             <!-- =================================================================
@@ -1228,11 +1157,15 @@
 
                 <!-- Pilihan Kategori Komoditas (Tampil rapi tanpa perlu scroll kanan-kiri di HP) -->
                 <div id="marketCategoryFilterBar" class="bg-white rounded-2xl p-3 sm:p-4 border border-stone-200/80 shadow-2xs space-y-2">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
                         <span class="text-stone-700 text-xs font-bold flex items-center gap-1.5">
                             <i class="fa-solid fa-basket-shopping text-forest-700"></i> Pilih Komoditas:
                         </span>
-                        <span class="text-[10px] text-stone-400 font-medium hidden sm:inline">Pilah komoditas segar RT 13</span>
+                        <button type="button" onclick="openModal('modalPasarIndukBapanas')"
+                            class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 text-[11px] font-bold flex items-center gap-1.5 transition cursor-pointer">
+                            <i class="fa-solid fa-scale-balanced text-amber-700"></i>
+                            <span>Cek Patokan Harga Pasar Induk (Bapanas)</span>
+                        </button>
                     </div>
                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2">
                         <button onclick="filterMarketCategory('ALL')" id="catBtn-ALL"
@@ -1527,11 +1460,9 @@
                             </div>
                             <div>
                                 <h3 class="serif-heading text-base sm:text-lg font-bold text-stone-900">
-                                    Pesanan Pangan Keluarga Saya (<span id="personalConsumerNameLabel">Ibu Sri Wahyuni</span>)
+                                    Pesanan Saya
                                 </h3>
-                                <p class="text-xs text-stone-500">
-                                    Bersifat pribadi: Hanya menampilkan riwayat pembelian dari akun keluarga Anda sendiri.
-                                </p>
+                                <span id="personalConsumerNameLabel" class="hidden"></span>
                             </div>
                         </div>
                         <span id="personalConsumerOrderCountBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 self-start sm:self-center">
@@ -1943,7 +1874,7 @@
                                 SI-PANGAN ID • Dashboard Musyawarah RT 13
                             </span>
                             <h2 class="serif-heading text-2xl sm:text-3xl font-bold text-stone-900 leading-tight">
-                                Musyawarah &amp; Transparansi Distribusi Pangan
+                                Papan Musyawarah Pangan
                             </h2>
                             <p class="max-w-3xl text-xs sm:text-sm leading-relaxed text-stone-600">
                                 Pantau progres distribusi pangan komunitas, transparansi penggunaan dana kas swadaya,
@@ -2086,7 +2017,7 @@
                 <!-- 2 & 3. Activity Timeline (Kiri) + Forum Intervensi & Penyeimbangan Kapasitas (Kanan) -->
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <!-- 2. Real-time Activity Feed (Timeline Distribusi) -->
-                    <div class="lg:col-span-7 rounded-2xl border border-stone-200/80 bg-white p-5 sm:p-6 shadow-sm">
+                    <div id="musyawarahDistributionTimelineCard" class="lg:col-span-7 rounded-2xl border border-stone-200/80 bg-white p-5 sm:p-6 shadow-sm">
                         <div class="mb-5 flex items-center justify-between border-b border-stone-100 pb-4">
                             <div>
                                 <h3 class="serif-heading text-lg font-bold text-stone-900">Linimasa Distribusi Real-Time
@@ -4345,6 +4276,201 @@
                         <span>Tarik Data Terbaru dari Supabase</span>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT STOK & HARGA PRODUK (PRODUSEN / ADMIN) -->
+    <div id="modalEditListing" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-stone-200 space-y-4 animate-in fade-in duration-150 my-auto">
+            <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center text-base font-bold">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </div>
+                    <div>
+                        <h3 class="serif-heading text-base font-bold text-stone-900">Edit Stok &amp; Harga Produk</h3>
+                        <p class="text-[11px] text-stone-500">Pembaruan tercatat di Buku Besar Audit Inventaris</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalEditListing')" class="p-1 rounded-lg text-stone-400 hover:text-stone-700">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSaveEditListing(event)" class="space-y-3.5">
+                <input type="hidden" id="editListingId">
+
+                <div class="p-3 rounded-xl bg-stone-50 border border-stone-200">
+                    <span class="text-[10px] uppercase tracking-wider text-stone-500 font-bold block mb-0.5">Komoditas &amp; Produsen</span>
+                    <strong id="editListingCommodityName" class="text-xs font-bold text-stone-900 block leading-snug"></strong>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">
+                        Stok Tersedia (Kg / Satuan)
+                    </label>
+                    <input type="number" id="editListingStock" min="0" step="0.5" required
+                        class="w-full h-10 px-3 rounded-xl border border-stone-300 text-stone-900 font-mono font-bold text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
+                    <span id="editListingOldStockLabel" class="text-[10px] text-stone-500 font-mono mt-0.5 block"></span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">
+                        Harga Warga per Kg / Satuan (Rp)
+                    </label>
+                    <input type="number" id="editListingPrice" min="500" step="500" required
+                        class="w-full h-10 px-3 rounded-xl border border-stone-300 text-stone-900 font-mono font-bold text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
+                    <span id="editListingOldPriceLabel" class="text-[10px] text-stone-500 font-mono mt-0.5 block"></span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">
+                        Sisa Masa Segar (Hari)
+                    </label>
+                    <input type="number" id="editListingFreshness" min="0" max="30" step="1"
+                        placeholder="Contoh: 3 hari"
+                        class="w-full h-10 px-3 rounded-xl border border-stone-300 text-stone-900 font-mono font-bold text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
+                    <span class="text-[10px] text-stone-500 mt-0.5 block">Jika 0 hari, produk otomatis dialihkan menjadi surplus untuk program MBG/Koperasi.</span>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 mb-1">
+                        Alasan Perubahan
+                    </label>
+                    <input type="text" id="editListingReason" placeholder="Misal: Panen baru pekarangan / Penyesuaian stok"
+                        class="w-full h-10 px-3 rounded-xl border border-stone-300 text-stone-900 text-xs focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600">
+                </div>
+
+                <div class="flex items-center gap-2 pt-2 border-t border-stone-100">
+                    <button type="button" onclick="closeModal('modalEditListing')"
+                        class="flex-1 py-2.5 rounded-xl border border-stone-300 text-stone-700 font-bold text-xs hover:bg-stone-50 transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit"
+                        class="flex-1 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Simpan Perubahan</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PATOKAN HARGA PASAR INDUK & BAPANAS NASIONAL (UNTUK SEMUA ROLE) -->
+    <div id="modalPasarIndukBapanas" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-stone-200 space-y-4 animate-in fade-in duration-150 my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg font-bold shadow-xs">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <div>
+                        <h3 class="serif-heading text-base sm:text-lg font-bold text-stone-900">Daftar Patokan Harga Pangan Pasar Induk &amp; Bapanas</h3>
+                        <p class="text-xs text-stone-500">Sumber: PIHPS Nasional &amp; Badan Pangan Nasional (Bapanas) Wilayah Lampung / Kota Metro</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalPasarIndukBapanas')" class="p-1 rounded-lg text-stone-400 hover:text-stone-700">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 flex items-start gap-2.5">
+                <i class="fa-solid fa-circle-info text-emerald-700 text-sm mt-0.5 shrink-0"></i>
+                <div class="space-y-0.5">
+                    <strong class="font-bold">Keunggulan Berbelanja Langsung di Petani &amp; Pekarangan RT 13:</strong>
+                    <p class="text-emerald-900 text-[11px] leading-relaxed">
+                        Seluruh harga pangan di SI-PANGAN ID dipatok di bawah harga pasar induk tanpa perantara tengkulak. Rata-rata warga menghemat <strong>15% hingga 45%</strong> per komoditas pangan segar harian.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tabel Komparasi Harga -->
+            <div class="overflow-x-auto rounded-xl border border-stone-200">
+                <table class="w-full text-xs text-left">
+                    <thead class="bg-stone-100 text-stone-700 font-bold border-b border-stone-200 text-[11px] uppercase tracking-wider">
+                        <tr>
+                            <th class="px-3.5 py-2.5">Komoditas</th>
+                            <th class="px-3 py-2.5 text-right">Pasar Induk Metro</th>
+                            <th class="px-3 py-2.5 text-right text-emerald-900">Petani RT 13</th>
+                            <th class="px-3 py-2.5 text-center">Hemat</th>
+                            <th class="px-3 py-2.5 text-center">Status Pasokan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-100 font-medium">
+                        <tr class="hover:bg-stone-50">
+                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🍚 Beras IR 64 / Medium</td>
+                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 14.500 / Kg</td>
+                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 12.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 17%</span></td>
+                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Tersedia Melimpah</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🥬 Sayur Bayam Cabut</td>
+                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 8.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 4.500 / Kg</td>
+                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 44%</span></td>
+                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Panen Hari Ini</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🥬 Kangkung Air Segar</td>
+                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 7.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 4.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 43%</span></td>
+                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Panen Hari Ini</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🌶️ Cabai Rawit Merah</td>
+                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 48.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 36.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 25%</span></td>
+                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Tersedia</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🌶️ Cabai Merah Keriting</td>
+                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 42.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 32.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 24%</span></td>
+                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Tersedia</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🧅 Bawang Merah</td>
+                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 34.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 26.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 24%</span></td>
+                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Tersedia</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🥚 Telur Ayam Ras</td>
+                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 28.500 / Kg</td>
+                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 25.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 12%</span></td>
+                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Stok Terjaga</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🐟 Ikan Lele Bioflok</td>
+                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 26.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 21.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 19%</span></td>
+                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Segar Kolam</td>
+                        </tr>
+                        <tr class="hover:bg-stone-50">
+                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🐟 Ikan Nila Segar</td>
+                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 35.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 28.000 / Kg</td>
+                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 20%</span></td>
+                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Segar Kolam</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-stone-100 text-stone-500 text-[11px]">
+                <span>Data diperbarui harian dari Bapanas &amp; PIHPS Kota Metro.</span>
+                <button type="button" onclick="closeModal('modalPasarIndukBapanas')"
+                    class="px-4 py-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs transition cursor-pointer">
+                    Tutup
+                </button>
             </div>
         </div>
     </div>

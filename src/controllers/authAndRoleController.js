@@ -308,8 +308,10 @@ export function initAuthAndRoleController() {
 
                 const sidTopAdminCard = document.getElementById('sidTopAdminCard');
                 const musyawarahHeaderProducerBox = document.getElementById('musyawarahHeaderProducerBox');
+                const musyawarahTimelineCard = document.getElementById('musyawarahDistributionTimelineCard');
                 if (sidTopAdminCard) sidTopAdminCard.classList.add('hidden');
                 if (musyawarahHeaderProducerBox) musyawarahHeaderProducerBox.classList.add('hidden');
+                if (musyawarahTimelineCard) musyawarahTimelineCard.classList.add('hidden');
                 if (producerBuyerOrdersPanel) producerBuyerOrdersPanel.classList.add('hidden');
 
                 enforceSidebarTabVisibility('KONSUMEN');
@@ -343,8 +345,10 @@ export function initAuthAndRoleController() {
 
                 const sidTopAdminCard = document.getElementById('sidTopAdminCard');
                 const musyawarahHeaderProducerBox = document.getElementById('musyawarahHeaderProducerBox');
+                const musyawarahTimelineCard = document.getElementById('musyawarahDistributionTimelineCard');
                 if (sidTopAdminCard) sidTopAdminCard.classList.add('hidden'); // Produsen fokus ke form & tabel direktori tanpa panel verifikasi admin
                 if (musyawarahHeaderProducerBox) musyawarahHeaderProducerBox.classList.remove('hidden');
+                if (musyawarahTimelineCard) musyawarahTimelineCard.classList.add('hidden'); // Timeline distribusi hanya untuk audit Admin
 
                 enforceSidebarTabVisibility('PRODUSEN');
                 window.appState.privacyMode = 'PUBLIC';
@@ -377,8 +381,10 @@ export function initAuthAndRoleController() {
 
                 const sidTopAdminCard = document.getElementById('sidTopAdminCard');
                 const musyawarahHeaderProducerBox = document.getElementById('musyawarahHeaderProducerBox');
+                const musyawarahTimelineCard = document.getElementById('musyawarahDistributionTimelineCard');
                 if (sidTopAdminCard) sidTopAdminCard.classList.remove('hidden');
                 if (musyawarahHeaderProducerBox) musyawarahHeaderProducerBox.classList.remove('hidden');
+                if (musyawarahTimelineCard) musyawarahTimelineCard.classList.remove('hidden'); // Tampil untuk role Admin
                 if (producerBuyerOrdersPanel) producerBuyerOrdersPanel.classList.add('hidden'); // Sudah ada tab khusus #tab-orders
 
                 enforceSidebarTabVisibility('ADMIN');
@@ -484,6 +490,9 @@ export function initAuthAndRoleController() {
 
                 saveStateToLocal();
                 renderAll();
+                if (typeof window.renderHeaderProducerOrderAlert === 'function') window.renderHeaderProducerOrderAlert();
+                if (typeof window.renderProducerWorkspaceAndAutoAi === 'function') window.renderProducerWorkspaceAndAutoAi();
+                if (typeof window.renderProducerOrders === 'function') window.renderProducerOrders();
                 // Tampilkan Detail Pesanan secara otomatis sesuai permintaan A.1
                 viewTransactionReceipt(tx.id);
                 return;
@@ -493,6 +502,9 @@ export function initAuthAndRoleController() {
                 tx.orderStatus = 'SELESAI_LUNAS';
                 saveStateToLocal();
                 renderAll();
+                if (typeof window.renderHeaderProducerOrderAlert === 'function') window.renderHeaderProducerOrderAlert();
+                if (typeof window.renderProducerWorkspaceAndAutoAi === 'function') window.renderProducerWorkspaceAndAutoAi();
+                if (typeof window.renderProducerOrders === 'function') window.renderProducerOrders();
                 showToast('Pesanan Selesai', `Pesanan ${tx.id} telah selesai dan diterima oleh pembeli.`, 'success');
                 viewTransactionReceipt(tx.id);
                 return;
@@ -861,167 +873,25 @@ export function initAuthAndRoleController() {
             }
         };
 
-        window.ensureIsolatedDemoAccounts = function() {
-            const members = window.appState.members || [];
-            const listings = window.appState.listings || [];
-            const txs = window.appState.transactions || [];
-
-            // 1. Akun Demo Konsumen Terpisah
-            if (!members.some(m => m.sid === 'DEMO-KONSUMEN')) {
-                members.push({
-                    sid: 'DEMO-KONSUMEN',
-                    sidShort: 'DEMO-K01',
-                    name: 'Akun Demo Konsumen',
-                    publicName: 'Akun Demo Konsumen',
-                    nikHash: 'demo0001',
-                    maskedNik: '999913********01',
-                    rawNik: '9999130000000001',
-                    pinCode: '1234',
-                    role: 'KONSUMEN',
-                    isDualRole: false,
-                    isDemoAccount: true,
-                    producerCommodity: '-',
-                    capacityKg: 0,
-                    familySize: 4,
-                    monthlyIncome: 2500000,
-                    monthlyFoodNeedKg: 60,
-                    needs: { beras: 30, sayur: 12, telur: 6, ikan: 12, ayam: 4, tempe: 4 },
-                    socialTier: 'MANDIRI',
-                    distanceKm: 0.1,
-                    walletEarned: 0,
-                    subsidyReceivedKg: 0,
-                    address: 'Simulasi Penjurian RT 13'
-                });
-            }
-
-            // 2. Akun Demo Produsen Terpisah
-            if (!members.some(m => m.sid === 'DEMO-PRODUSEN')) {
-                members.push({
-                    sid: 'DEMO-PRODUSEN',
-                    sidShort: 'DEMO-P01',
-                    name: 'Akun Demo Produsen',
-                    publicName: 'Akun Demo Produsen',
-                    nikHash: 'demo0002',
-                    maskedNik: '999913********02',
-                    rawNik: '9999130000000002',
-                    pinCode: '1234',
-                    role: 'PRODUSEN',
-                    isDualRole: true,
-                    isDemoAccount: true,
-                    producerCommodity: 'Sayur Bayam Hijau (KWT Pekarangan), Sayur Kangkung (KWT Pekarangan)',
-                    registeredCommodities: [
-                        { name: 'Sayur Bayam Hijau (KWT Pekarangan)', unit: 'Kg', cycleDays: 25 },
-                        { name: 'Sayur Kangkung (KWT Pekarangan)', unit: 'Kg', cycleDays: 20 },
-                        { name: 'Cabai Rawit Merah (Pekarangan KWT)', unit: 'Kg', cycleDays: 90 }
-                    ],
-                    capacityKg: 45,
-                    familySize: 4,
-                    monthlyIncome: 2800000,
-                    monthlyFoodNeedKg: 60,
-                    needs: { beras: 30, sayur: 12, telur: 6, ikan: 12, ayam: 4, tempe: 4 },
-                    socialTier: 'MANDIRI',
-                    distanceKm: 0.1,
-                    walletEarned: 150000,
-                    subsidyReceivedKg: 0,
-                    address: 'Kebun Simulasi KWT RT 13'
-                });
-            }
-
-            // Produk khusus Akun Demo Produsen (Agar tidak mengubah stok petani asli saat diuji)
-            if (!listings.some(l => l.id === 'list-demo-produsen')) {
-                listings.unshift({
-                    id: 'list-demo-produsen',
-                    producerSid: 'DEMO-PRODUSEN',
-                    producerName: 'Akun Demo Produsen',
-                    commodity: 'Sayur Bayam Hijau (Kebun Demo)',
-                    category: 'Sayur Pekarangan',
-                    unit: 'Kg',
-                    initialHarvestKg: 35,
-                    availableStockKg: 25,
-                    localAbsorbedKg: 10,
-                    unabsorbedSurplusKg: 0,
-                    fairPrice: 5000,
-                    marketPrice: 7500,
-                    tengkulakPrice: 3500,
-                    harvestDate: 'Hari Ini',
-                    freshnessWindow: 'Segar Panen Pagi',
-                    freshnessDaysRemaining: 4,
-                    location: 'Kebun Simulasi KWT RT 13',
-                    distanceKm: 0.1,
-                    icon: 'fa-seedling',
-                    description: 'Produk khusus simulasi Akun Demo Produsen (Terpisah dari stok petani warga asli).',
-                    isDemoListing: true
-                });
-            }
-
-            // Pesanan masuk khusus Akun Demo Produsen (Siap diuji klik "Siapkan Pesanan")
-            if (!txs.some(t => t.id === 'TX-DEMO-001')) {
-                txs.unshift({
-                    id: 'TX-DEMO-001',
-                    listingId: 'list-demo-produsen',
-                    timestamp: 'Hari Ini, 09:15',
-                    type: 'JUAL_BELI_PASAR',
-                    producerSid: 'DEMO-PRODUSEN',
-                    producerName: 'Akun Demo Produsen',
-                    consumerSid: 'DEMO-KONSUMEN',
-                    consumerName: 'Akun Demo Konsumen',
-                    commodity: 'Sayur Bayam Hijau (Kebun Demo)',
-                    quantityKg: 3,
-                    unitPrice: 5000,
-                    subtotal: 15000,
-                    producerNet: 15000,
-                    deliveryMethod: 'COD / Diantar (+Rp 2.000)',
-                    deliveryFee: 2000,
-                    totalPaid: 17000,
-                    orderStatus: 'MENUNGGU_KONFIRMASI',
-                    stockDeducted: false,
-                    isDemoTx: true,
-                    status: 'TERVERIFIKASI_SINGLE_ID'
-                });
+        // Pembersihan Total Akun Simulasi / Demo (Data Murni Riil 40 KK Warga)
+        window.cleanupAnyDemoData = function() {
+            if (window.appState) {
+                if (window.appState.members) {
+                    window.appState.members = window.appState.members.filter(m => !m.isDemoAccount && m.sid !== 'DEMO-KONSUMEN' && m.sid !== 'DEMO-PRODUSEN');
+                }
+                if (window.appState.listings) {
+                    window.appState.listings = window.appState.listings.filter(l => !l.isDemoListing && l.id !== 'list-demo-produsen');
+                }
+                if (window.appState.transactions) {
+                    window.appState.transactions = window.appState.transactions.filter(t => !t.isDemoTx && t.id !== 'TX-DEMO-001');
+                }
             }
         };
+        window.ensureIsolatedDemoAccounts = window.cleanupAnyDemoData;
 
         window.quickDemoLogin = function(demoRole) {
-            ensureIsolatedDemoAccounts();
-            const rememberMe = Boolean(document.getElementById('gateRememberMe')?.checked);
-
-            if (demoRole === 'ADMIN') {
-                window.appState.isAdminLoggedIn = true;
-                window.appState.activeUserSid = 'ADMIN-RT13';
-                window.appState.activeRole = 'ADMIN';
-                window.aiForecastScope = 'ALL';
-                savePwaAuthSession(rememberMe);
-                saveStateToLocal();
-                syncAuthGateVisibility();
-                setActiveRole('ADMIN');
-                switchTab('tab-sid');
-                showToast('Mode Demo Admin Aktif', 'Masuk sebagai Admin (Pengurus RT 13).', 'success');
-                return;
-            }
-
-            if (demoRole === 'PRODUSEN') {
-                window.appState.isAdminLoggedIn = false;
-                window.appState.activeUserSid = 'DEMO-PRODUSEN';
-                window.appState.activeRole = 'PRODUSEN';
-                window.aiForecastScope = 'MINE';
-                savePwaAuthSession(rememberMe);
-                saveStateToLocal();
-                syncAuthGateVisibility();
-                setActiveRole('PRODUSEN');
-                switchTab('tab-sid');
-                showToast('Akun Demo Produsen Aktif', 'Menggunakan Akun Demo Produsen terpisah.', 'success');
-                return;
-            }
-
-            window.appState.isAdminLoggedIn = false;
-            window.appState.activeUserSid = 'DEMO-KONSUMEN';
-            window.appState.activeRole = 'KONSUMEN';
-            savePwaAuthSession(rememberMe);
-            saveStateToLocal();
-            syncAuthGateVisibility();
-            setActiveRole('KONSUMEN');
-            switchTab('tab-sid');
-            showToast('Akun Demo Konsumen Aktif', 'Menggunakan Akun Demo Konsumen terpisah (tidak mengubah data warga asli).', 'success');
+            window.cleanupAnyDemoData();
+            showToast('Akun Demo Dinonaktifkan', 'Sistem kini menggunakan data autentik 40 KK RT 13 tanpa akun simulasi.', 'info');
         };
 
         // --- B.4: Form Daftar Akun Baru di Halaman Login ---
@@ -1609,7 +1479,7 @@ export function initAuthAndRoleController() {
             initFiftyTransactionsAndDualRoles();
             loadSavedLocalState();
             initFiftyTransactionsAndDualRoles();
-            ensureIsolatedDemoAccounts();
+            cleanupAnyDemoData();
 
             // Pulihkan sesi PWA jika "Biarkan tetap masuk di HP ini" dicentang (atau masih dalam sesi aktif)
             try {

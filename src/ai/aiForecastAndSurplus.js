@@ -863,17 +863,25 @@ export function initAiForecastAndSurplusEngine() {
                 const absorbed = Number(l.localAbsorbedKg) || 0;
                 const avail = Number(l.availableStockKg) || 0;
                 const unabsorbed = Number(l.unabsorbedSurplusKg) || 0;
+                const daysRemaining = Number(l.freshnessDaysRemaining != null ? l.freshnessDaysRemaining : 3);
+                const isExpired = daysRemaining <= 0 || Boolean(l.isExpiredSurplus);
 
-                const surplusKg = unabsorbed > 0 ? unabsorbed : avail;
+                // Poin 8: Jika produk melewati masa segar, otomatis menjadi surplus
+                let surplusKg = unabsorbed > 0 ? unabsorbed : avail;
+                if (isExpired && avail > 0) {
+                    surplusKg = avail;
+                }
+
                 const prod = members.find(m => m.sid === l.producerSid);
-                const isConfirmed = Boolean(l.surplusConfirmedByProducer || (prod && prod.surplusConfirmedByProducer));
+                // Jika lewat masa segar, otomatis terkonfirmasi untuk penarikan admin ke MBG / Koperasi
+                const isConfirmed = isExpired || Boolean(l.surplusConfirmedByProducer || (prod && prod.surplusConfirmedByProducer));
 
                 if (surplusKg > 0 && isConfirmed) {
                     surplusItems.push({
                         listingId: l.id,
                         producerSid: l.producerSid,
                         producerName: prod ? prod.name : l.producerName,
-                        commodity: l.commodity,
+                        commodity: l.commodity + (isExpired ? ' (Surplus Lewat Masa Segar)' : ''),
                         category: l.category,
                         unit: l.unit || 'Kg',
                         cycle: prod ? (prod.harvestCycleWeekly || 'Panen Mingguan') : 'Panen Mingguan',
@@ -881,7 +889,8 @@ export function initAiForecastAndSurplusEngine() {
                         absorbedKg: absorbed,
                         surplusKg: surplusKg,
                         fairPrice: Number(l.fairPrice) || 10000,
-                        confirmed: true
+                        confirmed: true,
+                        isExpired: isExpired
                     });
                 }
             });

@@ -1297,19 +1297,9 @@ export function initSupabaseAndStorageService() {
                         </div>
                     </div>
 
-                    <!-- KOTAK PINDAH PERAN (1 AKUN 2 PERAN: KONSUMEN <-> PRODUSEN - Point 3) -->
-                    <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-50 via-white to-emerald-50 border-2 border-amber-300 shadow-2xs space-y-3">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                            <div class="space-y-0.5">
-                                <span class="text-xs font-bold text-stone-900 block">
-                                    1 Akun KK • 2 Peran Fleksibel — Mode Aktif: <strong class="${isCurrentlyProducer ? 'text-amber-800' : 'text-emerald-800'}">${roleLabel}</strong>
-                                </span>
-                                <p class="text-xs text-stone-600 leading-snug">
-                                    Anda dapat berpindah peran antara <strong>Konsumen (Belanja Pangan)</strong> dan <strong>Produsen (Kelola Stok, Panen &amp; Analisis AI)</strong> cukup dengan 1 akun login.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                    <!-- KOTAK PINDAH PERAN (1 AKUN 2 PERAN: KONSUMEN <-> PRODUSEN) -->
+                    <div class="p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-50 via-white to-emerald-50 border-2 border-amber-300 shadow-2xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                             <button type="button" onclick="switchProfileRoleMode('KONSUMEN')"
                                 class="py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer ${!isCurrentlyProducer ? 'bg-emerald-700 text-white shadow-sm ring-2 ring-emerald-300' : 'bg-white hover:bg-emerald-50 text-stone-700 border border-stone-300'}">
                                 <i class="fa-solid fa-basket-shopping"></i>
@@ -1325,42 +1315,44 @@ export function initSupabaseAndStorageService() {
 
                     ${producerGardenSectionHtml}
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
-                        <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                            <span class="text-xs text-stone-500 block">Tampilan Saat Ini</span>
-                            <strong class="text-sm font-bold text-emerald-800">${roleLabel}</strong>
+                    ${!isCurrentlyProducer ? `
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+                            <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
+                                <span class="text-xs text-stone-500 block">Tampilan Saat Ini</span>
+                                <strong class="text-sm font-bold text-emerald-800">${roleLabel}</strong>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
+                                <span class="text-xs text-stone-500 block">Jumlah Anggota KK</span>
+                                <strong class="font-mono text-base font-extrabold text-stone-900">${member.familySize || 4} Jiwa</strong>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
+                                <span class="text-xs text-stone-500 block">Kebutuhan Pangan Keluarga</span>
+                                <strong class="font-mono text-base font-extrabold text-forest-800">${member.monthlyFoodNeedKg || 60} Kg / Bulan</strong>
+                            </div>
                         </div>
-                        <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                            <span class="text-xs text-stone-500 block">Jumlah Anggota KK</span>
-                            <strong class="font-mono text-base font-extrabold text-stone-900">${member.familySize || 4} Jiwa</strong>
-                        </div>
-                        <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                            <span class="text-xs text-stone-500 block">Kebutuhan Pangan Keluarga</span>
-                            <strong class="font-mono text-base font-extrabold text-forest-800">${member.monthlyFoodNeedKg || 60} Kg / Bulan</strong>
-                        </div>
-                    </div>
 
-                    <div class="bg-white p-4 rounded-xl border border-stone-200 space-y-2.5">
-                        <span class="text-xs font-bold text-stone-800 block">Rincian Kebutuhan Pangan Keluarga (Per Bulan):</span>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center text-xs">
-                            <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
-                                <span class="text-stone-500 block">🍚 Beras</span>
-                                <strong class="font-mono font-bold text-stone-900">${n.beras || 30} Kg</strong>
-                            </div>
-                            <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
-                                <span class="text-stone-500 block">🥬 Sayur</span>
-                                <strong class="font-mono font-bold text-stone-900">${n.sayur || 12} Kg</strong>
-                            </div>
-                            <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
-                                <span class="text-stone-500 block">🥚 Telur</span>
-                                <strong class="font-mono font-bold text-stone-900">${n.telur || 6} Kg</strong>
-                            </div>
-                            <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
-                                <span class="text-stone-500 block">🐟 Ikan &amp; Lauk</span>
-                                <strong class="font-mono font-bold text-stone-900">${n.ikan || 12} Kg</strong>
+                        <div class="bg-white p-4 rounded-xl border border-stone-200 space-y-2.5">
+                            <span class="text-xs font-bold text-stone-800 block">Rincian Kebutuhan Pangan Keluarga (Per Bulan):</span>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center text-xs">
+                                <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
+                                    <span class="text-stone-500 block">🍚 Beras</span>
+                                    <strong class="font-mono font-bold text-stone-900">${n.beras || 30} Kg</strong>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
+                                    <span class="text-stone-500 block">🥬 Sayur</span>
+                                    <strong class="font-mono font-bold text-stone-900">${n.sayur || 12} Kg</strong>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
+                                    <span class="text-stone-500 block">🥚 Telur</span>
+                                    <strong class="font-mono font-bold text-stone-900">${n.telur || 6} Kg</strong>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
+                                    <span class="text-stone-500 block">🐟 Ikan &amp; Lauk</span>
+                                    <strong class="font-mono font-bold text-stone-900">${n.ikan || 12} Kg</strong>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -1650,6 +1642,13 @@ export function initSupabaseAndStorageService() {
             const inDeliveryOrders = myOrders.filter(t => t.orderStatus === 'SIAP_DIAMBIL');
             const completedOrders = myOrders.filter(t => !t.orderStatus || t.orderStatus === 'SELESAI_LUNAS');
 
+            // Jika semua pesanan sudah disiapkan / selesai lunas, sembunyikan banner alert di lapak saya
+            if (pendingPrepareOrders.length === 0 && inDeliveryOrders.length === 0) {
+                panel.classList.add('hidden');
+                panel.innerHTML = '';
+                return;
+            }
+
             panel.classList.remove('hidden');
 
             if (pendingPrepareOrders.length > 0) {
@@ -1694,28 +1693,6 @@ export function initSupabaseAndStorageService() {
                         class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 shrink-0 cursor-pointer">
                         <i class="fa-solid fa-clipboard-check"></i>
                         <span>Kelola Status Pesanan</span>
-                    </button>
-                `;
-            } else {
-                panel.className = 'p-4 rounded-2xl bg-emerald-50/90 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-2xs';
-                panel.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
-                            <i class="fa-solid fa-circle-check"></i>
-                        </div>
-                        <div>
-                            <strong class="text-sm font-bold text-emerald-950 block">
-                                Seluruh Pesanan Kebun Anda Berstatus Selesai &amp; Lunas!
-                            </strong>
-                            <p class="text-emerald-800 text-[11px]">
-                                Total <strong id="producerOrdersCountBadge" class="font-mono">${completedOrders.length} Pesanan</strong> dari tetangga RT 13 di akun kebun Anda telah selesai diproses dan lunas.
-                            </p>
-                        </div>
-                    </div>
-                    <button type="button" onclick="switchTab('tab-orders')"
-                        class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 shrink-0 cursor-pointer">
-                        <i class="fa-solid fa-receipt"></i>
-                        <span>Lihat Riwayat Pesanan Lunas</span>
                     </button>
                 `;
             }
