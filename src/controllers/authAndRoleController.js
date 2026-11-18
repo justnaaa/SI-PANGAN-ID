@@ -1098,7 +1098,7 @@ export function initAuthAndRoleController() {
                 rawNik: nik,
                 pinCode: pin,
                 role: role,
-                isDualRole: false,
+                isDualRole: role === 'PRODUSEN',
                 producerCommodity: comm,
                 capacityKg: cap,
                 familySize: familySize,
