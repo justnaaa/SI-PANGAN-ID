@@ -5,6 +5,22 @@
  */
 
 export function initAuthAndRoleController() {
+        function saveStateToLocal() {
+            if (typeof window.saveStateToLocal === 'function') window.saveStateToLocal();
+        }
+        function enforceSidebarTabVisibility(role) {
+            if (typeof window.enforceSidebarTabVisibility === 'function') window.enforceSidebarTabVisibility(role);
+        }
+        function switchTab(tabId) {
+            if (typeof window.switchTab === 'function') window.switchTab(tabId);
+        }
+        function showToast(title, msg, type) {
+            if (typeof window.showToast === 'function') window.showToast(title, msg, type);
+        }
+        function renderAll() {
+            if (typeof window.renderAll === 'function') window.renderAll();
+        }
+
         // 9.9 Kalkulasi Food Loss <= 5% & Dynamic Counters
         window.updateFoodLossAndDynamicCounters = function updateFoodLossAndDynamicCounters() {
             const members = (window.appState.members || []).filter(m => !m.isDemoAccount);
@@ -145,31 +161,39 @@ export function initAuthAndRoleController() {
         };
 
         // 9.11 Pembagian Porsi Tampilan yang Ketat per Peran (Konsumen, Produsen, Admin)
-        const _origExecuteBuy = handleExecuteBuy;
-        window.handleExecuteBuy = function(e) {
-            _origExecuteBuy(e);
-            syncAllDataToSupabaseNow(false);
-        };
+        const _origExecuteBuy = window.handleExecuteBuy;
+        if (typeof _origExecuteBuy === 'function') {
+            window.handleExecuteBuy = function(e) {
+                _origExecuteBuy(e);
+                if (typeof syncAllDataToSupabaseNow === 'function') syncAllDataToSupabaseNow(false);
+            };
+        }
 
-        const _origCreateListing = handleCreateListing;
-        window.handleCreateListing = function(e) {
-            _origCreateListing(e);
-            syncAllDataToSupabaseNow(false);
-        };
+        const _origCreateListing = window.handleCreateListing;
+        if (typeof _origCreateListing === 'function') {
+            window.handleCreateListing = function(e) {
+                _origCreateListing(e);
+                if (typeof syncAllDataToSupabaseNow === 'function') syncAllDataToSupabaseNow(false);
+            };
+        }
 
-        const _origSaveMemberEdit = executeSaveMemberEdit;
-        window.executeSaveMemberEdit = function() {
-            _origSaveMemberEdit();
-            syncAllDataToSupabaseNow(false);
-        };
+        const _origSaveMemberEdit = window.executeSaveMemberEdit;
+        if (typeof _origSaveMemberEdit === 'function') {
+            window.executeSaveMemberEdit = function() {
+                _origSaveMemberEdit();
+                if (typeof syncAllDataToSupabaseNow === 'function') syncAllDataToSupabaseNow(false);
+            };
+        }
 
-        const _origApproveMemberUpdate = approveMemberUpdate;
-        window.approveMemberUpdate = function(sid) {
-            _origApproveMemberUpdate(sid);
-            syncAllDataToSupabaseNow(false);
-        };
+        const _origApproveMemberUpdate = window.approveMemberUpdate;
+        if (typeof _origApproveMemberUpdate === 'function') {
+            window.approveMemberUpdate = function(sid) {
+                _origApproveMemberUpdate(sid);
+                if (typeof syncAllDataToSupabaseNow === 'function') syncAllDataToSupabaseNow(false);
+            };
+        }
 
-        window.setActiveRole = function(role) {
+        function baseSetActiveRole(role) {
             if (role === 'ADMIN' && !window.appState.isAdminLoggedIn) {
                 requestAdminRole();
                 return;
@@ -179,6 +203,17 @@ export function initAuthAndRoleController() {
             }
 
             window.appState.activeRole = role;
+
+            const headerLabel = document.getElementById('headerActiveUserLabel');
+            if (headerLabel && window.appState.activeUserSid) {
+                if (window.appState.isAdminLoggedIn || role === 'ADMIN') {
+                    headerLabel.textContent = 'Pengurus RT 13 (Admin)';
+                } else {
+                    const m = (window.appState.members || []).find(x => x.sid === window.appState.activeUserSid);
+                    const roleText = role === 'PRODUSEN' ? 'Produsen' : 'Konsumen';
+                    if (m) headerLabel.textContent = `${m.name} (${roleText})`;
+                }
+            }
 
             const topBtns = {
                 'KONSUMEN': document.getElementById('topRoleBtnKonsumen'),
@@ -351,34 +386,38 @@ export function initAuthAndRoleController() {
             }
 
             renderAll();
-        };
+        }
+        window.setActiveRole = baseSetActiveRole;
+        function setActiveRole(role) {
+            return window.setActiveRole(role);
+        }
 
         // --- 9. MASTER RENDER ALL ---
         window.renderAll = function renderAll() {
-            updateFoodLossAndDynamicCounters();
-            renderHeaderStats();
-            populateCitizenDatalist();
-            renderActiveUserProfileCard();
-            renderMyOwnKkSummaryCard();
-            renderPendingVerificationCards();
-            renderPendingUpdateVerificationCards();
-            renderMembersTable();
-            renderMarketListings();
-            if (typeof populateOrdersProducerFilter === 'function') populateOrdersProducerFilter();
-            if (typeof renderProducerOrders === 'function') renderProducerOrders();
-            renderProducerBuyerOrdersPanel();
-            renderPersonalConsumerOrders();
-            renderAiMatchingPanel();
-            generateAiDemands();
-            renderMusyawarahTransparency();
-            renderSupplierDistributionPanel();
-            renderDemandsBoard();
-            renderAdminSurplusCenter();
-            renderTransactionsLedger();
-            syncLiveSurplusData();
-            updateCharts();
-            renderFluctuationChart(currentFluctuationCommodity || 'Sayur Kangkung (KWT Pekarangan)');
-        }
+            if (typeof window.updateFoodLossAndDynamicCounters === 'function') window.updateFoodLossAndDynamicCounters();
+            if (typeof window.renderHeaderStats === 'function') window.renderHeaderStats();
+            if (typeof window.populateCitizenDatalist === 'function') window.populateCitizenDatalist();
+            if (typeof window.renderActiveUserProfileCard === 'function') window.renderActiveUserProfileCard();
+            if (typeof window.renderMyOwnKkSummaryCard === 'function') window.renderMyOwnKkSummaryCard();
+            if (typeof window.renderPendingVerificationCards === 'function') window.renderPendingVerificationCards();
+            if (typeof window.renderPendingUpdateVerificationCards === 'function') window.renderPendingUpdateVerificationCards();
+            if (typeof window.renderMembersTable === 'function') window.renderMembersTable();
+            if (typeof window.renderMarketListings === 'function') window.renderMarketListings();
+            if (typeof window.populateOrdersProducerFilter === 'function') window.populateOrdersProducerFilter();
+            if (typeof window.renderProducerOrders === 'function') window.renderProducerOrders();
+            if (typeof window.renderProducerBuyerOrdersPanel === 'function') window.renderProducerBuyerOrdersPanel();
+            if (typeof window.renderPersonalConsumerOrders === 'function') window.renderPersonalConsumerOrders();
+            if (typeof window.renderAiMatchingPanel === 'function') window.renderAiMatchingPanel();
+            if (typeof window.generateAiDemands === 'function') window.generateAiDemands();
+            if (typeof window.renderMusyawarahTransparency === 'function') window.renderMusyawarahTransparency();
+            if (typeof window.renderSupplierDistributionPanel === 'function') window.renderSupplierDistributionPanel();
+            if (typeof window.renderDemandsBoard === 'function') window.renderDemandsBoard();
+            if (typeof window.renderAdminSurplusCenter === 'function') window.renderAdminSurplusCenter();
+            if (typeof window.renderTransactionsLedger === 'function') window.renderTransactionsLedger();
+            if (typeof window.syncLiveSurplusData === 'function') window.syncLiveSurplusData();
+            if (typeof window.updateCharts === 'function') window.updateCharts();
+            if (typeof window.renderFluctuationChart === 'function') window.renderFluctuationChart(window.currentFluctuationCommodity || 'Sayur Kangkung (KWT Pekarangan)');
+        };
 
         // =========================================================================
 
@@ -672,13 +711,14 @@ export function initAuthAndRoleController() {
             }
         };
 
-        window.normalizeCitizenName = function normalizeCitizenName(str) {
+        function normalizeCitizenName(str) {
             return String(str || '')
                 .toLowerCase()
                 .replace(/^(bpk\.?|bapak|ibu|pak|bu|sdr\.?|ny\.?)\s+/i, '')
                 .replace(/\s+/g, ' ')
                 .trim();
         }
+        window.normalizeCitizenName = normalizeCitizenName;
 
         window.showGateLoginError = function showGateLoginError(msg) {
             const errBox = document.getElementById('gateLoginErrorBox');
@@ -740,13 +780,19 @@ export function initAuthAndRoleController() {
                 }
                 member = members.find(m => m.rawNik === identityVal);
             } else {
-                // Validasi Nama Ketat (Tanpa perlu menulis "Bpk." / "Ibu" / "Pak")
+                // Validasi Nama Fleksibel & Ramah (Prioritas: Persis -> Berawalan Nama Depan -> Kata Nama)
                 const cleanInputName = normalizeCitizenName(identityVal);
                 member = members.find(m =>
                     normalizeCitizenName(m.name) === cleanInputName ||
                     m.name.toLowerCase().trim() === idLower ||
                     m.sid.toLowerCase().trim() === idLower
                 );
+                if (!member && cleanInputName.length >= 3) {
+                    member = members.find(m => normalizeCitizenName(m.name).startsWith(cleanInputName));
+                }
+                if (!member && cleanInputName.length >= 3) {
+                    member = members.find(m => normalizeCitizenName(m.name).split(' ').includes(cleanInputName));
+                }
             }
 
             if (!member) {
@@ -766,7 +812,7 @@ export function initAuthAndRoleController() {
             }
 
             // Login Valid: Tentukan peran awal sesuai profil akun (dan bisa berganti peran di menu Profile jika Dual-Role)
-            const initialRole = member.role === 'PRODUSEN' ? 'PRODUSEN' : 'KONSUMEN';
+            const initialRole = (member.role === 'PRODUSEN' || member.isDualRole) ? 'PRODUSEN' : 'KONSUMEN';
             window.appState.isAdminLoggedIn = false;
             window.appState.activeUserSid = member.sid;
             window.appState.activeRole = initialRole;
@@ -784,6 +830,9 @@ export function initAuthAndRoleController() {
 
             syncAuthGateVisibility();
             setActiveRole(initialRole);
+            if (typeof renderAll === 'function') {
+                renderAll();
+            }
             switchTab('tab-sid');
 
             showToast('Berhasil Masuk', `Selamat datang, ${member.name} (${initialRole === 'PRODUSEN' ? 'Mode Produsen' : 'Mode Konsumen'}).`, 'success');
@@ -1094,6 +1143,17 @@ export function initAuthAndRoleController() {
             window.appState.activeUserSid = newMember.sid;
             window.appState.activeRole = role;
 
+            const headerLabel = document.getElementById('headerActiveUserLabel');
+            if (headerLabel && window.appState.activeUserSid) {
+                if (window.appState.isAdminLoggedIn || role === 'ADMIN') {
+                    headerLabel.textContent = 'Pengurus RT 13 (Admin)';
+                } else {
+                    const m = (window.appState.members || []).find(x => x.sid === window.appState.activeUserSid);
+                    const roleText = role === 'PRODUSEN' ? 'Produsen' : 'Konsumen';
+                    if (m) headerLabel.textContent = `${m.name} (${roleText})`;
+                }
+            }
+
             saveStateToLocal();
             syncAuthGateVisibility();
             setActiveRole(role);
@@ -1103,7 +1163,7 @@ export function initAuthAndRoleController() {
         };
 
         // --- Sinkronisasi Layar Login Awal vs Aplikasi Utama (B.1 & B.2) ---
-        window.syncAuthGateVisibility = function() {
+        function syncAuthGateVisibility() {
             const isLogged = Boolean(window.appState.activeUserSid || window.appState.isAdminLoggedIn);
             const gateEl = document.getElementById('authGateScreen');
             const headerEl = document.getElementById('mainAppHeader');
@@ -1121,9 +1181,11 @@ export function initAuthAndRoleController() {
                 if (headerEl) headerEl.classList.remove('hidden');
                 if (mainEl) mainEl.classList.remove('hidden');
                 if (mobileNavEl) mobileNavEl.classList.remove('hidden');
-                renderMobileBottomNav();
+                if (typeof renderMobileBottomNav === 'function') renderMobileBottomNav();
+                else if (typeof window.renderMobileBottomNav === 'function') window.renderMobileBottomNav();
             }
-        };
+        }
+        window.syncAuthGateVisibility = syncAuthGateVisibility;
 
         // Override logoutCitizenAccount agar kembali ke halaman Login bersih (#authGateScreen)
         window.logoutCitizenAccount = function() {

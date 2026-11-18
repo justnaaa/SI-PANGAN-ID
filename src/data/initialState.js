@@ -1421,4 +1421,17 @@ export function initAppStateData() {
             ]
         };
 
+        // Pastikan seluruh produsen (dan warga dengan komoditas pekarangan) memiliki isDualRole: true & pinCode: '1234'
+        if (Array.isArray(window.appState.members)) {
+            window.appState.members.forEach((m, idx) => {
+                const isProd = m.role === 'PRODUSEN' || idx < 10 || (m.producerCommodity && m.producerCommodity !== '-');
+                if (isProd) {
+                    m.role = 'PRODUSEN';
+                    m.isDualRole = true;
+                } else {
+                    m.isDualRole = Boolean(m.isDualRole);
+                }
+                if (!m.pinCode) m.pinCode = '1234';
+            });
+        }
 }

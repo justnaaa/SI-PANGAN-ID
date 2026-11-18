@@ -5,13 +5,17 @@
  */
 
 export function initSupabaseAndStorageService() {
-        window.SUPABASE_URL = 'https://kspiocqtljlsdrxkxbtt.supabase.co';
-        window.SUPABASE_ANON_KEY = 'sb_publishable_UGIrOb7sBe9lW4EakOm7ew_w-FtoA8g';
-        window.LOCAL_STORAGE_KEY = 'SI_PANGAN_PRODUCTION_DB_V2';
+        const SUPABASE_URL = 'https://kspiocqtljlsdrxkxbtt.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_UGIrOb7sBe9lW4EakOm7ew_w-FtoA8g';
+        const LOCAL_STORAGE_KEY = 'SI_PANGAN_PRODUCTION_DB_V2';
+        window.SUPABASE_URL = SUPABASE_URL;
+        window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
+        window.LOCAL_STORAGE_KEY = LOCAL_STORAGE_KEY;
+        let supabaseClient = null;
         window.supabaseClient = null;
 
         // Standar Konsumsi Pangan Bapanas (Badan Pangan Nasional) per Jiwa per Bulan
-        window.BAPANAS_STANDARDS_PER_CAPITA_MONTH = {
+        const BAPANAS_STANDARDS_PER_CAPITA_MONTH = {
             beras: 7.5,   // 0.25 Kg / jiwa / hari
             sayur: 3.0,   // 0.10 Kg / jiwa / hari
             telur: 1.5,   // 0.05 Kg / jiwa / hari
@@ -19,9 +23,10 @@ export function initSupabaseAndStorageService() {
             ayam: 1.0,    // 0.033 Kg / jiwa / hari
             tempe: 1.5    // 0.05 Kg / jiwa / hari
         };
+        window.BAPANAS_STANDARDS_PER_CAPITA_MONTH = BAPANAS_STANDARDS_PER_CAPITA_MONTH;
 
         // Siklus Panen Mingguan per Produsen KWT / Warga RT 13
-        window.PRODUCER_WEEKLY_CYCLES = {
+        const PRODUCER_WEEKLY_CYCLES = {
             'SID-RT13-001': 'Panen Setiap Senin & Kamis (Siklus 21 Hari)',
             'SID-RT13-002': 'Panen Setiap Selasa & Jumat (Siklus 18 Hari)',
             'SID-RT13-003': 'Panen Raya & Giling Mingguan (Setiap Rabu)',
@@ -33,10 +38,47 @@ export function initSupabaseAndStorageService() {
             'SID-RT13-009': 'Panen Telur Harian (Rekap Setiap Jumat)',
             'SID-RT13-010': 'Panen Telur Bebek Mingguan (Setiap Sabtu)'
         };
+        window.PRODUCER_WEEKLY_CYCLES = PRODUCER_WEEKLY_CYCLES;
+
+        function formatRupiah(n) {
+            return typeof window.formatRupiah === 'function' ? window.formatRupiah(n) : 'Rp ' + Number(n).toLocaleString('id-ID');
+        }
+        function saveStateToLocal() {
+            if (typeof window.saveStateToLocal === 'function') window.saveStateToLocal();
+        }
+        function renderAll() {
+            if (typeof window.renderAll === 'function') window.renderAll();
+        }
+        function setActiveRole(role) {
+            if (typeof window.setActiveRole === 'function') window.setActiveRole(role);
+        }
+        function switchTab(tabId) {
+            if (typeof window.switchTab === 'function') window.switchTab(tabId);
+        }
+        function showToast(title, msg, type) {
+            if (typeof window.showToast === 'function') window.showToast(title, msg, type);
+        }
 
         // 9.1 Inisialisasi 40 KK Dual-Role & Generator 50 Transaksi Riil
         window.initFiftyTransactionsAndDualRoles = function initFiftyTransactionsAndDualRoles() {
             const members = window.appState.members || [];
+
+            // Universal 2-Role Configuration: Seluruh produsen (10 KK KWT & pekarangan) otomatis memiliki 2 peran (Konsumen <-> Produsen)
+            members.forEach((m, idx) => {
+                const isProducer = m.role === 'PRODUSEN' || idx < 10 || (m.producerCommodity && m.producerCommodity !== '-');
+                if (isProducer) {
+                    m.role = 'PRODUSEN';
+                    m.isDualRole = true;
+                    m.harvestCycleWeekly = PRODUCER_WEEKLY_CYCLES[m.sid] || m.harvestCycleWeekly || 'Panen Rutin Setiap Minggu';
+                } else {
+                    m.isDualRole = Boolean(m.isDualRole);
+                    m.harvestCycleWeekly = m.harvestCycleWeekly || '-';
+                }
+                if (!m.pinCode) m.pinCode = '1234';
+                if (m.surplusNotified === undefined) m.surplusNotified = false;
+                if (m.surplusConfirmedByProducer === undefined) m.surplusConfirmedByProducer = false;
+            });
+
             const joko = members.find(m => m.sid === 'SID-RT13-006');
             if (joko) {
                 joko.name = 'Pak Joko Susilo';
@@ -48,19 +90,6 @@ export function initSupabaseAndStorageService() {
                 }
                 joko.capacityKg = Math.max(80, Number(joko.capacityKg) || 80);
             }
-
-            members.forEach((m, idx) => {
-                if (m.role === 'PRODUSEN' || idx < 10) {
-                    m.isDualRole = true;
-                    m.harvestCycleWeekly = PRODUCER_WEEKLY_CYCLES[m.sid] || 'Panen Rutin Setiap Minggu';
-                } else {
-                    m.isDualRole = Boolean(m.isDualRole);
-                    m.harvestCycleWeekly = m.harvestCycleWeekly || '-';
-                }
-                if (!m.pinCode) m.pinCode = '1234';
-                if (m.surplusNotified === undefined) m.surplusNotified = false;
-                if (m.surplusConfirmedByProducer === undefined) m.surplusConfirmedByProducer = false;
-            });
 
             const preConfirmedListingIds = ['list-001', 'list-002', 'list-003'];
             (window.appState.listings || []).forEach(l => {
@@ -176,6 +205,14 @@ export function initSupabaseAndStorageService() {
                 if (parsed && Array.isArray(parsed.members) && parsed.members.length >= 40) {
                     window.appState.members = parsed.members;
                     window.membersData = parsed.members;
+                    window.appState.members.forEach((m, idx) => {
+                        const isProd = m.role === 'PRODUSEN' || idx < 10 || (m.producerCommodity && m.producerCommodity !== '-');
+                        if (isProd) {
+                            m.role = 'PRODUSEN';
+                            m.isDualRole = true;
+                        }
+                        if (!m.pinCode) m.pinCode = '1234';
+                    });
                 }
                 if (parsed && Array.isArray(parsed.listings) && parsed.listings.length > 0) {
                     window.appState.listings = parsed.listings;
@@ -480,7 +517,7 @@ export function initSupabaseAndStorageService() {
         };
 
         // Legacy compatibility shims
-        window.populateLoginMemberDropdown = populateCitizenDatalist;
+        window.populateLoginMemberDropdown = window.populateCitizenDatalist;
         window.executeSimpleMemberLogin = window.executeSecureCitizenLogin;
 
         window.toggleDualRoleSidMode = function toggleDualRoleSidMode() {
@@ -668,8 +705,7 @@ export function initSupabaseAndStorageService() {
                 'Terima kasih! Komoditas surplus Anda kini resmi tampil di Pusat Penarikan Resume Surplus (Dashboard Monev Admin) untuk disalurkan ke Koperasi / Program MBG.',
                 'success'
             );
-        }
-        window.acknowledgeProducerSurplusAlert = acknowledgeProducerSurplusAlert;
+        };
 
         // Fungsi Admin di Tab Analisis AI & Pasar: Tarik Data Surplus & Beritahu Produsen untuk Menyiapkan (Point 7)
         window.adminPullAndNotifySurplus = function (producerSid, listingId, surplusKg) {
@@ -811,8 +847,7 @@ export function initSupabaseAndStorageService() {
                 'success'
             );
         };
-        window.handleAddMember = handleRegisterMember;
-        window.handleRegisterMember = handleRegisterMember;
+        window.handleAddMember = window.handleRegisterMember;
 
         window.handleSubmitSelfRegister = function(e) {
             if (e && e.preventDefault) e.preventDefault();
@@ -1016,6 +1051,9 @@ export function initSupabaseAndStorageService() {
             }
             saveStateToLocal();
             setActiveRole(targetRole);
+            if (typeof renderAll === 'function') {
+                renderAll();
+            }
             switchTab('tab-sid');
 
             showToast(
@@ -1525,7 +1563,6 @@ export function initSupabaseAndStorageService() {
             syncAllDataToSupabaseNow(false);
             showToast('Pembaruan KK Disetujui Admin!', `Data KK ${item.name} (${item.sid}) resmi diperbarui menjadi ${item.newFamilySize} Jiwa (${item.newFoodNeedKg} Kg/bln).`, 'success');
         };
-        window.approveMemberUpdate = approveMemberUpdate;
 
         window.rejectMemberUpdate = function(sidOrId) {
             const queue = window.appState.pendingKkUpdates || [];
@@ -1702,8 +1739,9 @@ export function initSupabaseAndStorageService() {
             const mlVelocity3DaysKg = Math.round(
                 transactions.slice(0, 20).reduce((s, t) => s + (Number(t.quantityKg) || 0), 0) * 0.25
             );
+            const threshold = window.VOTE_THRESHOLD || 5;
             const validVotingKg = demands
-                .filter(d => (d.votes || 0) >= VOTE_THRESHOLD && d.status !== 'TERPENUHI_LOKAL')
+                .filter(d => (d.votes || 0) >= threshold && d.status !== 'TERPENUHI_LOKAL')
                 .reduce((s, d) => s + Math.round((Number(d.totalDemandKg) || 20) * 0.15), 0);
 
             const totalDemand3Days = Math.max(40, Math.round((bapanas3DaysKg * 0.65) + (mlVelocity3DaysKg * 0.35) + validVotingKg));
@@ -1713,8 +1751,8 @@ export function initSupabaseAndStorageService() {
             if (harvestInput) harvestInput.value = totalSupply3Days;
             if (demandInput) demandInput.value = totalDemand3Days;
 
-            calculateSurplusPrediction(true);
-            renderPerProducerAiForecast();
+            if (typeof window.calculateSurplusPrediction === 'function') window.calculateSurplusPrediction(true);
+            if (typeof window.renderPerProducerAiForecast === 'function') window.renderPerProducerAiForecast();
         };
 
         window.aiForecastScope = 'ALL';
