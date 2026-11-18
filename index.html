@@ -188,89 +188,90 @@
          PORTAL LOGIN & DAFTAR AKUN TERPADU SI-PANGAN ID (#authGateScreen)
          Tampil penuh saat pertama kali aplikasi dibuka (sebelum login)
          ========================================================================= -->
-    <div id="authGateScreen" class="min-h-screen w-full flex flex-col justify-center items-center px-4 py-8 bg-slate-50 text-slate-900">
-        <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
-            <!-- Header Brand (Sesuai Desain Gambar) -->
-            <div class="pt-8 pb-5 px-6 text-center space-y-2 border-b border-slate-100">
-                <div class="w-14 h-14 rounded-2xl bg-[#059669] text-white flex items-center justify-center mx-auto shadow-sm text-2xl">
+    <div id="authGateScreen" class="h-dvh w-full flex flex-col justify-center items-center px-4 py-2 bg-slate-50 text-slate-900 overflow-y-auto">
+        <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden my-auto">
+            <!-- Header Brand (Ringkas & Tanpa Perlu Scroll) -->
+            <div class="pt-5 pb-3.5 px-6 text-center space-y-1 border-b border-slate-100">
+                <div class="w-12 h-12 rounded-2xl bg-[#059669] text-white flex items-center justify-center mx-auto shadow-sm text-xl">
                     <i class="fa-solid fa-seedling"></i>
                 </div>
-                <h1 class="font-sans text-2xl font-extrabold tracking-tight text-slate-900 pt-1">SI-PANGAN ID</h1>
-                <p class="text-xs font-medium text-slate-500">RT 13 Yosomulyo • Kota Metro</p>
+                <h1 class="font-sans text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 pt-0.5">SI-PANGAN ID</h1>
+                <p class="text-[11px] font-medium text-slate-500">RT 13 Yosomulyo • Kota Metro</p>
             </div>
 
             <!-- BOX 1: FORM LOGIN -->
-            <div id="gateLoginFormContainer" class="p-6 sm:p-7 space-y-5">
-                <form onsubmit="handleGateLoginSubmit(event)" class="space-y-4" novalidate>
+            <div id="gateLoginFormContainer" class="p-5 sm:p-6 space-y-3.5">
+                <form onsubmit="handleGateLoginSubmit(event)" class="space-y-3" novalidate>
                     <!-- Alert Error Box (Muncul jika NIK/Nama atau PIN salah) -->
-                    <div id="gateLoginErrorBox" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-start gap-2">
+                    <div id="gateLoginErrorBox" class="hidden p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-start gap-2">
                         <i class="fa-solid fa-circle-exclamation text-rose-600 mt-0.5 shrink-0"></i>
                         <span id="gateLoginErrorText">Nama/NIK atau PIN Rahasia salah.</span>
                     </div>
 
-                    <!-- 1. Nama atau NIK (Single Identity) -->
+                    <!-- 1. Nama Lengkap atau NIK -->
                     <div>
-                        <label for="gateLoginIdentity" class="block text-xs sm:text-sm font-bold text-slate-700 mb-2">
-                            Nama atau NIK (Single Identity)
+                        <label for="gateLoginIdentity" class="block text-xs sm:text-sm font-bold text-slate-700 mb-1.5">
+                            Nama Lengkap atau NIK
                         </label>
                         <input type="text" id="gateLoginIdentity" required autocomplete="off"
                             placeholder="Masukkan nama atau NIK Anda"
                             oninput="document.getElementById('gateLoginErrorBox')?.classList.add('hidden')"
-                            class="w-full h-12 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 font-medium focus:outline-none focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/15 transition">
+                            class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 font-medium focus:outline-none focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/15 transition">
                     </div>
 
                     <!-- 2. PIN Rahasia (4 Angka) -->
                     <div>
-                        <label for="gateLoginPin" class="block text-xs sm:text-sm font-bold text-slate-700 mb-2">
+                        <label for="gateLoginPin" class="block text-xs sm:text-sm font-bold text-slate-700 mb-1.5">
                             PIN Rahasia (4 Angka)
                         </label>
                         <input type="password" id="gateLoginPin" maxlength="4" inputmode="numeric" required
                             placeholder="••••"
                             oninput="document.getElementById('gateLoginErrorBox')?.classList.add('hidden')"
-                            class="w-full h-12 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 font-mono font-bold tracking-widest focus:outline-none focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/15 transition">
+                            class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 font-mono font-bold tracking-widest focus:outline-none focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/15 transition">
                     </div>
 
                     <!-- Checkbox Biarkan tetap masuk di HP ini -->
                     <div class="pt-0.5">
-                        <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
+                        <label class="inline-flex items-center gap-2 cursor-pointer select-none">
                             <input type="checkbox" id="gateRememberMe" checked
-                                class="w-5 h-5 rounded-md accent-[#059669] cursor-pointer">
-                            <span class="text-xs sm:text-sm font-semibold text-slate-700">Biarkan tetap masuk di HP ini</span>
+                                class="w-4 h-4 rounded accent-[#059669] cursor-pointer">
+                            <span class="text-xs font-semibold text-slate-700">Biarkan tetap masuk di HP ini</span>
                         </label>
                     </div>
 
                     <button type="submit"
-                        class="w-full py-3.5 px-4 rounded-xl bg-[#059669] hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2 cursor-pointer">
+                        class="w-full py-3 px-4 rounded-xl bg-[#059669] hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2 cursor-pointer">
                         <span>Masuk</span>
                     </button>
                 </form>
 
-                <!-- Tombol Daftar Akun Baru -->
-                <div class="text-center pt-1">
+                <!-- Teks Daftar Akun Warga Baru (Hanya tulisan Daftar Akun Warga Baru yang bisa diklik) -->
+                <div class="text-center pt-0.5 text-xs text-slate-500">
+                    <span>Belum terdaftar di RT 13?</span>
                     <button type="button" onclick="switchAuthGateMode('REGISTER')"
-                        class="text-xs font-bold text-[#059669] hover:underline cursor-pointer">
-                        Belum terdaftar di RT 13? Daftar Akun Warga Baru
+                        class="font-bold text-[#059669] hover:underline cursor-pointer ml-1">
+                        Daftar Akun Warga Baru
                     </button>
                 </div>
 
-                <!-- Akun Demo Penjurian (1-Klik) -->
-                <div class="pt-4 border-t border-slate-100 space-y-2.5">
+                <!-- Akun Demo Penjurian (Terpisah dari Data Warga Asli) -->
+                <div class="pt-3 border-t border-slate-100 space-y-2">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">
-                        Akun Demo Penjurian
+                        Akun Simulasi / Demo (Terpisah dari Data Warga)
                     </span>
                     <div class="grid grid-cols-3 gap-2">
                         <button type="button" onclick="quickDemoLogin('KONSUMEN')"
-                            class="py-2 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-900 font-bold text-[11px] flex flex-col items-center gap-1 transition cursor-pointer">
+                            class="py-1.5 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-900 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer">
                             <i class="fa-solid fa-basket-shopping text-emerald-600"></i>
                             <span>Konsumen</span>
                         </button>
                         <button type="button" onclick="quickDemoLogin('PRODUSEN')"
-                            class="py-2 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 font-bold text-[11px] flex flex-col items-center gap-1 transition cursor-pointer">
+                            class="py-1.5 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer">
                             <i class="fa-solid fa-seedling text-amber-600"></i>
                             <span>Produsen</span>
                         </button>
                         <button type="button" onclick="quickDemoLogin('ADMIN')"
-                            class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 font-bold text-[11px] flex flex-col items-center gap-1 transition cursor-pointer">
+                            class="py-1.5 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 font-bold text-[11px] flex items-center justify-center gap-1.5 transition cursor-pointer">
                             <i class="fa-solid fa-user-shield text-slate-700"></i>
                             <span>Admin</span>
                         </button>
@@ -401,7 +402,6 @@
                     <div class="min-w-0">
                         <div class="flex items-center gap-1.5 sm:gap-2">
                             <span class="serif-heading font-bold text-base sm:text-lg tracking-tight text-forest-900 leading-none truncate">SI-PANGAN ID</span>
-                            <span id="headerRolePillBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0">Konsumen</span>
                         </div>
                         <p class="text-[10px] sm:text-[11px] text-stone-500 hidden md:block leading-none mt-1 truncate">
                             RT 13 RW 05 Kelurahan Yosomulyo • Kota Metro</p>
@@ -409,18 +409,18 @@
                 </div>
             </div>
 
-            <!-- Right: Logged-in User Identity & Logout Button -->
+            <!-- Right: Logged-in User Identity & Always-Visible Logout Button -->
             <div class="flex items-center gap-2 shrink-0">
                 <button onclick="switchTab('tab-sid')" id="headerActiveUserBtn"
                     class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all bg-stone-50 border-stone-200 text-stone-800 hover:bg-stone-100 cursor-pointer"
                     title="Lihat Profile Saya">
                     <i class="fa-solid fa-circle-user text-forest-700"></i>
-                    <span id="headerActiveUserLabel" class="truncate max-w-[120px] sm:max-w-[200px]">Pengguna Aktif</span>
+                    <span id="headerActiveUserLabel" class="truncate max-w-[140px] sm:max-w-[240px]">Pengguna (Konsumen)</span>
                 </button>
 
-                <button onclick="logoutCitizenAccount()"
-                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-800 text-xs font-bold transition-all cursor-pointer"
-                    title="Keluar dari Akun">
+                <button id="headerLogoutBtn" type="button" onclick="logoutCitizenAccount()"
+                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-300 bg-rose-50 hover:bg-rose-100 text-rose-800 text-xs font-bold transition-all cursor-pointer shrink-0"
+                    title="Keluar ke Halaman Login">
                     <i class="fa-solid fa-right-from-bracket text-rose-600"></i>
                     <span>Keluar</span>
                 </button>
@@ -1753,122 +1753,80 @@
             </section>
 
             <!-- =================================================================
-                 TAB ORDERS: PESANAN & PEMBELI PANEN PRODUSEN (#tab-orders)
+                 TAB ORDERS: PESANAN MASUK & REKAP PEMBELI (#tab-orders)
                  ================================================================= -->
-            <section id="tab-orders" class="tab-pane hidden space-y-6">
-                <!-- Header Banner -->
-                <div class="bg-white rounded-2xl p-6 sm:p-7 border border-stone-200/80 shadow-xs space-y-4">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div class="space-y-1">
-                            <div class="flex items-center gap-2.5">
-                                <span class="w-8 h-8 rounded-xl bg-forest-100 text-forest-800 flex items-center justify-center text-sm font-bold shadow-xs">
-                                    <i class="fa-solid fa-receipt"></i>
-                                </span>
-                                <h2 class="text-xl font-bold text-stone-900 tracking-tight">Pesanan Masuk & Rekap Pembeli</h2>
-                                <span id="ordersCountBadgeHeader" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-forest-100 text-forest-800 border border-forest-200">
+            <section id="tab-orders" class="tab-pane hidden space-y-4">
+                <!-- Header & Ringkasan Metrik Rapi -->
+                <div class="bg-white rounded-2xl p-4 sm:p-6 border border-stone-200/80 shadow-xs space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-100 pb-3.5">
+                        <div class="space-y-0.5">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h2 class="serif-heading text-lg sm:text-xl font-bold text-stone-900">Pesanan Masuk &amp; Rekap Pembeli</h2>
+                                <span id="ordersCountBadgeHeader" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                                     0 Pesanan
                                 </span>
                             </div>
-                            <p class="text-xs text-stone-500 leading-relaxed max-w-2xl">
-                                Pantau siapa saja warga RT 13 yang membeli hasil panen pekarangan Anda, jumlah kilogram yang dipesan, metode pengantaran, dan bukti struk pembayaran resmi.
+                            <p id="ordersPersonalProducerText" class="text-xs font-semibold text-forest-800">
+                                Daftar pesanan komoditas pangan
                             </p>
                         </div>
-                        <div class="flex flex-wrap items-center gap-2.5">
-                            <!-- Badge Identitas Personal Produsen (Muncul saat login sebagai Produsen) -->
-                            <div id="ordersPersonalProducerBadge" class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-2 text-xs font-bold text-emerald-900">
-                                <i class="fa-solid fa-user-lock text-emerald-700"></i>
-                                <span id="ordersPersonalProducerText">Kebun Saya: Ibu Sri Wahyuni</span>
-                            </div>
-                            <!-- Filter Semua Produsen (Hanya muncul untuk Admin RT 13) -->
-                            <div id="ordersAdminFilterBox" class="hidden items-center gap-2 bg-stone-50 border border-stone-200 rounded-xl px-3 py-1.5">
-                                <label for="ordersProducerFilter" class="text-xs text-stone-500 font-semibold shrink-0">
-                                    <i class="fa-solid fa-store text-forest-700 mr-1"></i> Filter Admin:
-                                </label>
-                                <select id="ordersProducerFilter" onchange="renderProducerOrders()" class="bg-transparent text-xs font-bold text-stone-800 focus:outline-none">
-                                    <option value="ALL">Semua Produsen (Rekap RT 13)</option>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            <div id="ordersPersonalProducerBadge" class="hidden"></div>
+                            <!-- Filter Produsen (Khusus Admin) -->
+                            <div id="ordersAdminFilterBox" class="hidden items-center gap-2 bg-stone-50 border border-stone-200 rounded-xl px-3 py-1.5 w-full sm:w-auto">
+                                <i class="fa-solid fa-filter text-forest-700 text-xs"></i>
+                                <select id="ordersProducerFilter" onchange="renderProducerOrders()" class="bg-transparent text-xs font-bold text-stone-800 focus:outline-none w-full sm:w-auto">
+                                    <option value="ALL">Semua Produsen</option>
                                 </select>
                             </div>
-                            <button onclick="exportOrdersCsv()" class="px-3.5 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition flex items-center gap-1.5 border border-stone-200 cursor-pointer">
-                                <i class="fa-solid fa-file-csv text-forest-700 text-sm"></i>
-                                <span>Unduh Rekap CSV</span>
+                            <button onclick="exportOrdersCsv()" class="px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition flex items-center gap-1.5 border border-stone-200 cursor-pointer">
+                                <i class="fa-solid fa-download text-forest-700"></i>
+                                <span>Unduh CSV</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- 3 Metric Cards Ringkas & Bersih -->
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
-                        <div class="p-4 rounded-xl bg-gradient-to-br from-forest-50/70 to-emerald-50/40 border border-forest-150 flex items-center gap-3.5">
-                            <div class="w-10 h-10 rounded-xl bg-forest-600 text-white flex items-center justify-center text-base shrink-0 shadow-xs">
-                                <i class="fa-solid fa-bag-shopping"></i>
-                            </div>
-                            <div>
-                                <span class="text-[11px] font-semibold text-forest-700 uppercase tracking-wider block">Total Pesanan</span>
-                                <span id="ordersCountDisplay" class="text-lg font-bold text-stone-900 mono-num">0</span>
-                                <span class="text-[10px] text-stone-500 block">Transaksi selesai</span>
+                    <!-- 3 Kartu Metrik Proporsional -->
+                    <div class="grid grid-cols-3 gap-2.5 sm:gap-4 text-center">
+                        <div class="p-3 sm:p-4 rounded-xl bg-stone-50 border border-stone-200">
+                            <span class="text-[10px] sm:text-xs font-semibold text-stone-500 block">Jumlah Pesanan</span>
+                            <strong id="ordersCountDisplay" class="text-base sm:text-xl font-extrabold text-stone-900 mono-num">0</strong>
+                        </div>
+                        <div class="p-3 sm:p-4 rounded-xl bg-amber-50/60 border border-amber-200">
+                            <span class="text-[10px] sm:text-xs font-semibold text-amber-800 block">Volume Terjual</span>
+                            <div class="inline-flex items-baseline gap-1">
+                                <strong id="ordersKgDisplay" class="text-base sm:text-xl font-extrabold text-amber-950 mono-num">0</strong>
+                                <span class="text-xs font-bold text-amber-800">Kg</span>
                             </div>
                         </div>
-
-                        <div class="p-4 rounded-xl bg-gradient-to-br from-paddy-50/70 to-amber-50/40 border border-paddy-150 flex items-center gap-3.5">
-                            <div class="w-10 h-10 rounded-xl bg-paddy-600 text-white flex items-center justify-center text-base shrink-0 shadow-xs">
-                                <i class="fa-solid fa-weight-hanging"></i>
-                            </div>
-                            <div>
-                                <span class="text-[11px] font-semibold text-paddy-800 uppercase tracking-wider block">Panen Terjual</span>
-                                <div class="flex items-baseline gap-1">
-                                    <span id="ordersKgDisplay" class="text-lg font-bold text-stone-900 mono-num">0</span>
-                                    <span class="text-xs font-semibold text-stone-600">Kg</span>
-                                </div>
-                                <span class="text-[10px] text-stone-500 block">Total volume terserap warga</span>
-                            </div>
-                        </div>
-
-                        <div class="p-4 rounded-xl bg-gradient-to-br from-emerald-50/70 to-teal-50/40 border border-emerald-150 flex items-center gap-3.5">
-                            <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-base shrink-0 shadow-xs">
-                                <i class="fa-solid fa-money-bill-wave"></i>
-                            </div>
-                            <div>
-                                <span class="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider block">Uang Diterima</span>
-                                <span id="ordersEarnedDisplay" class="text-lg font-bold text-stone-900 mono-num">Rp 0</span>
-                                <span class="text-[10px] text-stone-500 block">Kas lunas tanpa potongan</span>
-                            </div>
+                        <div class="p-3 sm:p-4 rounded-xl bg-emerald-50/70 border border-emerald-200">
+                            <span class="text-[10px] sm:text-xs font-semibold text-emerald-800 block">Total Pendapatan</span>
+                            <strong id="ordersEarnedDisplay" class="text-sm sm:text-xl font-extrabold text-emerald-950 mono-num">Rp 0</strong>
                         </div>
                     </div>
-                </div>
 
-                <!-- Filter & Pencarian Pesanan -->
-                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-stone-200/80 shadow-xs space-y-4">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div class="relative flex-1">
+                    <!-- Pencarian & Filter Pengambilan -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                        <div class="relative sm:col-span-2">
                             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400 text-xs"></i>
-                            <input type="text" id="ordersSearchInput" oninput="renderProducerOrders()" placeholder="Cari nama warga pembeli, SID, atau komoditas..." class="w-full pl-9 pr-3.5 py-2 rounded-xl border border-stone-200 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-forest-600 bg-stone-50/60 focus:bg-white transition">
+                            <input type="text" id="ordersSearchInput" oninput="renderProducerOrders()" placeholder="Cari nama pembeli atau komoditas..."
+                                class="w-full h-11 pl-9 pr-3.5 rounded-xl border border-stone-200 text-xs text-stone-800 placeholder-stone-400 focus:outline-none focus:border-forest-600 bg-stone-50/60 focus:bg-white transition">
                         </div>
-                        <div class="flex items-center gap-2">
-                            <select id="ordersDeliveryFilter" onchange="renderProducerOrders()" class="px-3 py-2 rounded-xl border border-stone-200 text-xs font-medium text-stone-700 bg-white focus:outline-none focus:border-forest-600">
-                                <option value="ALL">Semua Metode Pengantaran</option>
-                                <option value="AMBIL">Ambil Sendiri di Kebun</option>
-                                <option value="DIANTAR">Diantar ke Rumah Warga</option>
+                        <div>
+                            <select id="ordersDeliveryFilter" onchange="renderProducerOrders()"
+                                class="w-full h-11 px-3 rounded-xl border border-stone-200 text-xs font-bold text-stone-700 bg-white focus:outline-none focus:border-forest-600">
+                                <option value="ALL">Semua Metode Pengambilan</option>
+                                <option value="AMBIL">Ambil Sendiri</option>
+                                <option value="DIANTAR">COD / Diantar</option>
                             </select>
                         </div>
                     </div>
-
-                    <!-- Daftar Kartu Pesanan Bersih & User Friendly -->
-                    <div id="producerOrdersCardContainer" class="space-y-3 pt-1">
-                        <!-- Populated dynamically by renderProducerOrders() -->
-                    </div>
                 </div>
 
-                <!-- Bagian Pelanggan Setia RT 13 -->
-                <div class="bg-white rounded-2xl p-5 border border-stone-200/80 shadow-xs space-y-3">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-users text-forest-700 text-sm"></i>
-                            <h3 class="text-sm font-bold text-stone-900">Pelanggan Warga Teraktif di RT 13</h3>
-                        </div>
-                        <span class="text-[11px] text-stone-500">Berdasarkan frekuensi belanja pangan segar</span>
-                    </div>
-                    <div id="producerTopBuyersList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                        <!-- Populated dynamically -->
-                    </div>
+                <!-- Daftar Pesanan -->
+                <div id="producerOrdersCardContainer" class="space-y-3">
+                    <!-- Diisi dinamis oleh renderProducerOrders() -->
                 </div>
             </section>
 
@@ -6529,6 +6487,7 @@
             const roleFilter = filterSelect?.value || 'ALL';
 
             const filtered = window.appState.members.filter(m => {
+                if (m.isDemoAccount) return false;
                 const matchSearch = m.name.toLowerCase().includes(search) ||
                     m.sid.toLowerCase().includes(search) ||
                     (m.producerCommodity || '').toLowerCase().includes(search) ||
@@ -6578,7 +6537,10 @@
                             <span>${getMemberDisplayName(m)}</span>
                             ${m.sid === window.appState.activeUserSid ? '<span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 text-[9px] font-bold">Akun Saya</span>' : ''}
                         </div>
-                        <div class="text-[11px] font-mono text-slate-500 mt-0.5">NIK: ${getMemberDisplayNik(m)}</div>
+                        <div class="text-[11px] font-mono text-slate-500 mt-0.5 flex flex-wrap items-center gap-2">
+                            <span>NIK: ${getMemberDisplayNik(m)}</span>
+                            ${isTableAdmin ? `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 font-bold text-[10px]"><i class="fa-solid fa-key mr-1 text-amber-700"></i>PIN: ${m.pinCode || (m.rawNik ? m.rawNik.slice(-4) : '1234')}</span>` : ''}
+                        </div>
                     </td>
                     <td class="py-3.5 px-4">
                         ${getMemberTierBadge(m.socialTier, m.aidReceivedThisMonth)}
@@ -6943,10 +6905,10 @@
         function filterMarketCategory(cat) {
             currentMarketCategory = cat;
             document.querySelectorAll('.market-cat-btn').forEach(b => {
-                b.className = "market-cat-btn px-3 py-1 rounded-lg font-semibold text-stone-600 hover:bg-stone-100";
+                b.className = "market-cat-btn shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 transition cursor-pointer";
             });
             const btn = document.getElementById(`catBtn-${cat === 'ALL' ? 'ALL' : cat.split(' ')[0]}`);
-            if (btn) btn.className = "market-cat-btn px-3 py-1 rounded-lg font-semibold bg-forest-800 text-white";
+            if (btn) btn.className = "market-cat-btn shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold bg-forest-800 text-white shadow-2xs transition cursor-pointer";
             renderMarketListings();
         }
 
@@ -6954,8 +6916,10 @@
             const grid = document.getElementById('marketListingsGrid');
             if (!grid) return;
 
+            const isDemoSession = String(window.appState.activeUserSid || '').startsWith('DEMO-');
             const isProdMode = (window.appState.activeRole === 'PRODUSEN' && window.appState.activeUserSid && !window.appState.isAdminLoggedIn);
             const filtered = window.appState.listings.filter(l => {
+                if (!isDemoSession && l.isDemoListing) return false;
                 if (isProdMode && l.producerSid !== window.appState.activeUserSid) return false;
                 if (currentMarketCategory === 'ALL') return true;
                 return l.category === currentMarketCategory;
@@ -7886,6 +7850,7 @@
 
             // Update status tombol aktif
             document.querySelectorAll('.fluct-tab-btn').forEach(btn => {
+                btn.className = "fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer";
                 btn.className = "fluct-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-stone-600 hover:text-stone-900 hover:bg-white cursor-pointer";
             });
             const activeBtn = document.getElementById(FLUCTUATION_DATA[commodityKey].btnId);
@@ -11340,7 +11305,7 @@
             const elHeaderLabel = document.getElementById('headerActiveUserLabel');
             const elHeaderDualBtn = document.getElementById('headerDualRoleBtn');
             const elDualCard = document.getElementById('dualRoleSwitchCard');
-            const logoutBtn = document.querySelector('button[onclick="logoutCitizenAccount()"]');
+            const logoutBtn = document.querySelector('#tab-konsep button[onclick="logoutCitizenAccount()"]');
 
             // 1. KONDISI GUEST: BELUM ADA AKUN LOGIN
             if (!member) {
@@ -11378,7 +11343,10 @@
             if (elAvatar) elAvatar.textContent = initials;
             if (elName) elName.textContent = member.name;
             if (elSid) elSid.textContent = `${member.sid} • ${member.address || 'RT 13 Yosomulyo'}`;
-            if (elHeaderLabel) elHeaderLabel.textContent = `${member.name} (${member.sid.slice(-3)})`;
+            if (elHeaderLabel) {
+                const modeRoleStr = window.appState.isAdminLoggedIn ? 'Admin' : (window.appState.activeRole === 'PRODUSEN' ? 'Produsen' : 'Konsumen');
+                elHeaderLabel.textContent = `${member.name} (${modeRoleStr})`;
+            }
             if (elFamily) elFamily.textContent = `${member.familySize || 4} Jiwa`;
             if (elNeed) elNeed.textContent = `${member.monthlyFoodNeedKg || 35} Kg/bln`;
 
@@ -11754,6 +11722,59 @@
             );
         };
 
+        window.addProducerGardenCommodity = function(e) {
+            if (e) e.preventDefault();
+            const activeSid = window.appState?.activeUserSid;
+            const member = (window.appState?.members || []).find(m => m.sid === activeSid);
+            if (!member) return;
+
+            const commName = String(document.getElementById('profileNewCommName')?.value || '').trim();
+            const commCategory = document.getElementById('profileNewCommCategory')?.value || 'Sayur Pekarangan';
+            const commStock = Math.max(1, Number(document.getElementById('profileNewCommStock')?.value) || 15);
+            const commPrice = Math.max(500, Number(document.getElementById('profileNewCommPrice')?.value) || 6000);
+
+            if (!commName) {
+                showToast('Nama Komoditas Kosong', 'Masukkan nama hasil panen pekarangan (contoh: Sayur Kangkung).', 'warning');
+                return;
+            }
+
+            member.isDualRole = true;
+            if (!member.producerCommodity || member.producerCommodity === '-') {
+                member.producerCommodity = commName;
+            } else if (!member.producerCommodity.toLowerCase().includes(commName.toLowerCase())) {
+                member.producerCommodity = member.producerCommodity + ', ' + commName;
+            }
+            member.capacityKg = (Number(member.capacityKg) || 0) + commStock;
+
+            window.appState.listings.unshift({
+                id: 'list-' + Date.now(),
+                producerSid: member.sid,
+                producerName: member.name,
+                commodity: commName,
+                category: commCategory,
+                unit: 'Kg',
+                initialHarvestKg: commStock,
+                availableStockKg: commStock,
+                localAbsorbedKg: 0,
+                unabsorbedSurplusKg: 0,
+                fairPrice: commPrice,
+                marketPrice: Math.round((commPrice * 1.3) / 500) * 500,
+                tengkulakPrice: Math.round((commPrice * 0.75) / 500) * 500,
+                harvestDate: 'Hari Ini',
+                freshnessWindow: 'Segar Panen Pagi',
+                freshnessDaysRemaining: 4,
+                location: member.address || 'RT 13 Yosomulyo',
+                distanceKm: member.distanceKm || 0.12,
+                icon: commCategory.includes('Lauk') ? 'fa-fish' : commCategory.includes('Beras') ? 'fa-wheat-awn' : 'fa-seedling',
+                description: `Hasil panen segar ${commName} dari pekarangan ${member.name} (${member.address || 'RT 13'}).`,
+                isDemoListing: Boolean(member.isDemoAccount)
+            });
+
+            saveStateToLocal();
+            renderAll();
+            showToast('Komoditas Ditambahkan', `${commName} (${commStock} Kg) berhasil ditambahkan ke Lapak Kebun Anda.`, 'success');
+        };
+
         function renderMyOwnKkSummaryCard() {
             const card = document.getElementById('myOwnKkSummaryCard');
             if (!card) return;
@@ -11767,12 +11788,11 @@
             }
 
             const isCurrentlyProducer = window.appState.activeRole === 'PRODUSEN';
-            const isDualCapable = Boolean(member.role === 'PRODUSEN' || member.isDualRole);
-            const roleLabel = isCurrentlyProducer ? 'Mode Produsen (Kelola Stok & Panen)' : 'Mode Konsumen (Belanja Pangan)';
+            const roleLabel = isCurrentlyProducer ? 'Penjual Hasil Kebun (Produsen)' : 'Pembeli Pangan (Konsumen)';
             const nextRoleTarget = isCurrentlyProducer ? 'KONSUMEN' : 'PRODUSEN';
             const switchBtnLabel = isCurrentlyProducer
-                ? 'Ganti Peran / Mode Konsumen (Belanja Pangan)'
-                : 'Ganti Peran / Mode Produsen (Kelola Stok)';
+                ? 'Buka Pasar Warga (Mode Pembeli)'
+                : 'Buka Lapak Kebun (Mode Penjual)';
 
             const pendingUpd = (window.appState?.pendingKkUpdates || []).find(u => u.sid === activeSid);
             const n = member.needs || {
@@ -11782,26 +11802,102 @@
                 ikan: Math.round((member.familySize || 4) * 3.0)
             };
 
+            const myGardenListings = (window.appState.listings || []).filter(l => l.producerSid === member.sid);
+
+            const producerGardenSectionHtml = (isCurrentlyProducer || member.role === 'PRODUSEN' || member.isDualRole) ? `
+                <!-- KOMODITAS PEKARANGAN YANG DIHASILKAN (KHUSUS PRODUSEN - MOBILE FRIENDLY) -->
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border-2 border-emerald-200 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
+                        <div>
+                            <h4 class="font-bold text-sm sm:text-base text-stone-900 flex items-center gap-2">
+                                <i class="fa-solid fa-seedling text-emerald-600"></i>
+                                Komoditas Pekarangan yang Dihasilkan
+                            </h4>
+                            <p class="text-xs text-stone-500">Daftar tanaman/ternak pekarangan Anda yang tampil di Pasar Warga.</p>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold self-start sm:self-center">
+                            ${myGardenListings.length} Komoditas Aktif
+                        </span>
+                    </div>
+
+                    <!-- Daftar Komoditas Kebun Saat Ini -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        ${myGardenListings.length > 0 ? myGardenListings.map(item => `
+                            <div class="p-3 rounded-xl bg-stone-50 border border-stone-200 flex items-center justify-between gap-2">
+                                <div class="min-w-0">
+                                    <strong class="text-xs sm:text-sm text-stone-900 block truncate">${item.commodity}</strong>
+                                    <span class="text-[11px] font-mono text-forest-800 font-semibold">Stok: ${item.availableStockKg} Kg • ${formatRupiah(item.fairPrice)}/Kg</span>
+                                </div>
+                                <button type="button" onclick="openEditListingModal('${item.id}')"
+                                    class="px-3 py-1.5 rounded-lg bg-white hover:bg-amber-50 border border-stone-300 text-stone-700 font-bold text-xs shrink-0 cursor-pointer">
+                                    <i class="fa-solid fa-pen text-amber-600 mr-1"></i>Ubah
+                                </button>
+                            </div>
+                        `).join('') : `
+                            <div class="col-span-full p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-500 text-center">
+                                Belum ada komoditas yang ditambahkan. Silakan tambahkan komoditas di bawah ini.
+                            </div>
+                        `}
+                    </div>
+
+                    <!-- Form Mudah Tambah Komoditas Pekarangan Baru -->
+                    <form onsubmit="addProducerGardenCommodity(event)" class="p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-200 space-y-3">
+                        <span class="text-xs font-bold text-emerald-950 block">
+                            <i class="fa-solid fa-circle-plus text-emerald-700 mr-1"></i>Tambah Komoditas Pekarangan Baru:
+                        </span>
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+                            <div class="sm:col-span-2">
+                                <label class="block text-[11px] font-semibold text-stone-600 mb-1">Nama Komoditas *</label>
+                                <input type="text" id="profileNewCommName" required placeholder="Cth: Sayur Kangkung / Lele"
+                                    class="w-full h-11 px-3 rounded-xl border border-stone-300 bg-white text-stone-900 font-semibold focus:outline-none focus:border-forest-700">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-stone-600 mb-1">Kategori</label>
+                                <select id="profileNewCommCategory"
+                                    class="w-full h-11 px-2.5 rounded-xl border border-stone-300 bg-white text-stone-900 font-semibold focus:outline-none focus:border-forest-700">
+                                    <option value="Sayur Pekarangan">Sayur</option>
+                                    <option value="Lauk & Protein">Lauk/Ikan/Telur</option>
+                                    <option value="Beras & Padi">Beras/Padi</option>
+                                    <option value="Olahan Pangan">Olahan</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 sm:col-span-1">
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-stone-600 mb-1">Stok (Kg)</label>
+                                    <input type="number" id="profileNewCommStock" min="1" value="15" required
+                                        class="w-full h-11 px-2.5 rounded-xl border border-stone-300 bg-white font-mono font-bold text-stone-900">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-semibold text-stone-600 mb-1">Harga/Kg</label>
+                                    <input type="number" id="profileNewCommPrice" min="500" step="500" value="6000" required
+                                        class="w-full h-11 px-2 rounded-xl border border-stone-300 bg-white font-mono font-bold text-stone-900">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit"
+                            class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Simpan Komoditas Pekarangan</span>
+                        </button>
+                    </form>
+                </div>
+            ` : '';
+
             card.innerHTML = `
                 <div class="space-y-4">
                     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-emerald-200/70 pb-4">
-                        <div class="space-y-1.5">
+                        <div class="space-y-1">
                             <div class="flex flex-wrap items-center gap-2">
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-forest-800 text-white flex items-center gap-1">
                                     <i class="fa-solid fa-user"></i> Profile Saya
                                 </span>
-                                ${isDualCapable ? `
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
-                                        <i class="fa-solid fa-layer-group mr-1"></i> Akun 1 KK 2 Peran (Konsumen &amp; Produsen)
-                                    </span>
-                                ` : ''}
                                 ${pendingUpd ? `
                                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
                                         <i class="fa-solid fa-clock mr-1"></i> Menunggu Validasi Admin (${pendingUpd.newFamilySize} Jiwa • ${pendingUpd.newFoodNeedKg} Kg/bln)
                                     </span>
                                 ` : `
                                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                                        <i class="fa-solid fa-circle-check mr-1"></i> Akun Aktif Terverifikasi
+                                        <i class="fa-solid fa-circle-check mr-1"></i> Akun Aktif
                                     </span>
                                 `}
                             </div>
@@ -11817,24 +11913,21 @@
                             <button type="button" onclick="openCitizenSelfUpdateModal()"
                                 class="w-full sm:w-auto px-4 py-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
                                 <i class="fa-solid fa-pen-to-square text-emerald-300"></i>
-                                <span>Perbarui Profile &amp; Kebutuhan Pangan</span>
+                                <span>Ubah Data Keluarga &amp; Pangan</span>
                             </button>
                         </div>
                     </div>
 
-                    <!-- KOTAK GANTI PERAN / MODE PRODUSEN (1 KK 2 PERAN TANPA AKUN GANDA) -->
+                    <!-- KOTAK PINDAH MODE BELANJA / JUAL PANEN (BAHASA SEHARI-HARI YANG RAMAH WARGA) -->
                     <div class="p-4 rounded-2xl bg-gradient-to-r from-amber-50 via-white to-emerald-50 border-2 border-amber-300 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div class="space-y-1">
-                            <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded bg-amber-200/80 text-amber-950 text-[10px] font-bold uppercase tracking-wider">
-                                    1 Akun KK • 2 Peran Fleksibel
-                                </span>
-                                <span class="text-xs font-bold text-stone-800">
-                                    Mode Aktif: <strong class="${isCurrentlyProducer ? 'text-amber-800' : 'text-emerald-800'}">${roleLabel}</strong>
-                                </span>
-                            </div>
+                            <span class="text-xs font-bold text-stone-900 block">
+                                Sekarang Anda di: <strong class="${isCurrentlyProducer ? 'text-amber-800' : 'text-emerald-800'}">${roleLabel}</strong>
+                            </span>
                             <p class="text-xs text-stone-600 leading-snug">
-                                Anda dapat berpindah antara halaman belanja (Konsumen) dan halaman kelola stok/panen (Produsen) cukup dengan 1 kali login tanpa membuat akun ganda.
+                                ${isCurrentlyProducer
+                                    ? 'Ingin berbelanja sayur dan kebutuhan dapur tetangga? Tekan tombol di samping untuk membuka Pasar Warga.'
+                                    : 'Punya hasil panen sayur, ternak, atau kolam di rumah? Tekan tombol di samping untuk menjual hasil kebun Anda.'}
                             </p>
                         </div>
                         <button type="button" onclick="switchProfileRoleMode('${nextRoleTarget}')"
@@ -11844,9 +11937,11 @@
                         </button>
                     </div>
 
+                    ${producerGardenSectionHtml}
+
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
                         <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                            <span class="text-xs text-stone-500 block">Mode Peran Saat Ini</span>
+                            <span class="text-xs text-stone-500 block">Tampilan Saat Ini</span>
                             <strong class="text-sm font-bold text-emerald-800">${roleLabel}</strong>
                         </div>
                         <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
@@ -11854,13 +11949,13 @@
                             <strong class="font-mono text-base font-extrabold text-stone-900">${member.familySize || 4} Jiwa</strong>
                         </div>
                         <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                            <span class="text-xs text-stone-500 block">Estimasi Kebutuhan Pangan</span>
+                            <span class="text-xs text-stone-500 block">Kebutuhan Pangan Keluarga</span>
                             <strong class="font-mono text-base font-extrabold text-forest-800">${member.monthlyFoodNeedKg || 60} Kg / Bulan</strong>
                         </div>
                     </div>
 
                     <div class="bg-white p-4 rounded-xl border border-stone-200 space-y-2.5">
-                        <span class="text-xs font-bold text-stone-800 block">Rincian Estimasi Kebutuhan Pangan Keluarga (Per Bulan):</span>
+                        <span class="text-xs font-bold text-stone-800 block">Rincian Kebutuhan Pangan Keluarga (Per Bulan):</span>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center text-xs">
                             <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
                                 <span class="text-stone-500 block">🍚 Beras</span>
@@ -12849,9 +12944,9 @@
 
         // 9.9 Kalkulasi Food Loss <= 5% & Dynamic Counters
         function updateFoodLossAndDynamicCounters() {
-            const members = window.appState.members || [];
-            const listings = window.appState.listings || [];
-            const transactions = window.appState.transactions || [];
+            const members = (window.appState.members || []).filter(m => !m.isDemoAccount);
+            const listings = (window.appState.listings || []).filter(l => !l.isDemoListing);
+            const transactions = (window.appState.transactions || []).filter(t => !t.isDemoTx);
 
             document.querySelectorAll('.dynamic-kk-count').forEach(el => {
                 el.textContent = members.length;
@@ -13580,9 +13675,10 @@
             window.appState.activeRole = initialRole;
             window.aiForecastScope = 'MINE';
 
-            if (rememberMe) {
-                saveStateToLocal();
+            if (typeof savePwaAuthSession === 'function') {
+                savePwaAuthSession(rememberMe);
             }
+            saveStateToLocal();
 
             const idEl = document.getElementById('gateLoginIdentity');
             const pinEl = document.getElementById('gateLoginPin');
@@ -13596,46 +13692,184 @@
             showToast('Berhasil Masuk', `Selamat datang, ${member.name}.`, 'success');
         };
 
-        // --- B.5: Akun Demo Penjurian (1-Klik Masuk untuk Konsumen, Produsen, Admin) ---
-        window.quickDemoLogin = function(demoRole) {
+        // --- Point 6: Akun Demo Terpisah (Tidak Mengganggu 40 KK Warga Asli) ---
+        const PWA_REMEMBER_KEY = 'SI_PANGAN_PWA_REMEMBER_SESSION_V1';
+
+        window.savePwaAuthSession = function(rememberMe) {
+            const payload = {
+                activeUserSid: window.appState.activeUserSid,
+                activeRole: window.appState.activeRole,
+                isAdminLoggedIn: Boolean(window.appState.isAdminLoggedIn),
+                rememberMe: Boolean(rememberMe),
+                savedAt: Date.now()
+            };
+            try {
+                sessionStorage.setItem(PWA_REMEMBER_KEY, JSON.stringify(payload));
+                if (rememberMe) {
+                    localStorage.setItem(PWA_REMEMBER_KEY, JSON.stringify(payload));
+                } else {
+                    localStorage.removeItem(PWA_REMEMBER_KEY);
+                }
+            } catch (err) {
+                console.warn('PWA Session error:', err);
+            }
+        };
+
+        window.ensureIsolatedDemoAccounts = function() {
             const members = window.appState.members || [];
+            const listings = window.appState.listings || [];
+            const txs = window.appState.transactions || [];
+
+            // 1. Akun Demo Konsumen Terpisah
+            if (!members.some(m => m.sid === 'DEMO-KONSUMEN')) {
+                members.push({
+                    sid: 'DEMO-KONSUMEN',
+                    sidShort: 'DEMO-K01',
+                    name: 'Akun Demo Konsumen',
+                    publicName: 'Akun Demo Konsumen',
+                    nikHash: 'demo0001',
+                    maskedNik: '999913********01',
+                    rawNik: '9999130000000001',
+                    pinCode: '1234',
+                    role: 'KONSUMEN',
+                    isDualRole: false,
+                    isDemoAccount: true,
+                    producerCommodity: '-',
+                    capacityKg: 0,
+                    familySize: 4,
+                    monthlyIncome: 2500000,
+                    monthlyFoodNeedKg: 60,
+                    needs: { beras: 30, sayur: 12, telur: 6, ikan: 12, ayam: 4, tempe: 4 },
+                    socialTier: 'MANDIRI',
+                    distanceKm: 0.1,
+                    walletEarned: 0,
+                    subsidyReceivedKg: 0,
+                    address: 'Simulasi Penjurian RT 13'
+                });
+            }
+
+            // 2. Akun Demo Produsen Terpisah
+            if (!members.some(m => m.sid === 'DEMO-PRODUSEN')) {
+                members.push({
+                    sid: 'DEMO-PRODUSEN',
+                    sidShort: 'DEMO-P01',
+                    name: 'Akun Demo Produsen',
+                    publicName: 'Akun Demo Produsen',
+                    nikHash: 'demo0002',
+                    maskedNik: '999913********02',
+                    rawNik: '9999130000000002',
+                    pinCode: '1234',
+                    role: 'PRODUSEN',
+                    isDualRole: true,
+                    isDemoAccount: true,
+                    producerCommodity: 'Sayur Bayam & Kangkung (Kebun Demo)',
+                    capacityKg: 45,
+                    familySize: 4,
+                    monthlyIncome: 2800000,
+                    monthlyFoodNeedKg: 60,
+                    needs: { beras: 30, sayur: 12, telur: 6, ikan: 12, ayam: 4, tempe: 4 },
+                    socialTier: 'MANDIRI',
+                    distanceKm: 0.1,
+                    walletEarned: 150000,
+                    subsidyReceivedKg: 0,
+                    address: 'Kebun Simulasi KWT RT 13'
+                });
+            }
+
+            // Produk khusus Akun Demo Produsen (Agar tidak mengubah stok petani asli saat diuji)
+            if (!listings.some(l => l.id === 'list-demo-produsen')) {
+                listings.unshift({
+                    id: 'list-demo-produsen',
+                    producerSid: 'DEMO-PRODUSEN',
+                    producerName: 'Akun Demo Produsen',
+                    commodity: 'Sayur Bayam Hijau (Kebun Demo)',
+                    category: 'Sayur Pekarangan',
+                    unit: 'Kg',
+                    initialHarvestKg: 35,
+                    availableStockKg: 25,
+                    localAbsorbedKg: 10,
+                    unabsorbedSurplusKg: 0,
+                    fairPrice: 5000,
+                    marketPrice: 7500,
+                    tengkulakPrice: 3500,
+                    harvestDate: 'Hari Ini',
+                    freshnessWindow: 'Segar Panen Pagi',
+                    freshnessDaysRemaining: 4,
+                    location: 'Kebun Simulasi KWT RT 13',
+                    distanceKm: 0.1,
+                    icon: 'fa-seedling',
+                    description: 'Produk khusus simulasi Akun Demo Produsen (Terpisah dari stok petani warga asli).',
+                    isDemoListing: true
+                });
+            }
+
+            // Pesanan masuk khusus Akun Demo Produsen (Siap diuji klik "Siapkan Pesanan")
+            if (!txs.some(t => t.id === 'TX-DEMO-001')) {
+                txs.unshift({
+                    id: 'TX-DEMO-001',
+                    listingId: 'list-demo-produsen',
+                    timestamp: 'Hari Ini, 09:15',
+                    type: 'JUAL_BELI_PASAR',
+                    producerSid: 'DEMO-PRODUSEN',
+                    producerName: 'Akun Demo Produsen',
+                    consumerSid: 'DEMO-KONSUMEN',
+                    consumerName: 'Akun Demo Konsumen',
+                    commodity: 'Sayur Bayam Hijau (Kebun Demo)',
+                    quantityKg: 3,
+                    unitPrice: 5000,
+                    subtotal: 15000,
+                    producerNet: 15000,
+                    deliveryMethod: 'COD / Diantar (+Rp 2.000)',
+                    deliveryFee: 2000,
+                    totalPaid: 17000,
+                    orderStatus: 'MENUNGGU_KONFIRMASI',
+                    stockDeducted: false,
+                    isDemoTx: true,
+                    status: 'TERVERIFIKASI_SINGLE_ID'
+                });
+            }
+        };
+
+        window.quickDemoLogin = function(demoRole) {
+            ensureIsolatedDemoAccounts();
+            const rememberMe = Boolean(document.getElementById('gateRememberMe')?.checked);
+
             if (demoRole === 'ADMIN') {
                 window.appState.isAdminLoggedIn = true;
                 window.appState.activeUserSid = 'ADMIN-RT13';
                 window.appState.activeRole = 'ADMIN';
+                savePwaAuthSession(rememberMe);
                 saveStateToLocal();
                 syncAuthGateVisibility();
                 setActiveRole('ADMIN');
                 switchTab('tab-dampak');
-                showToast('Akun Demo Admin Aktif', 'Masuk sebagai Pengurus / Admin RT 13 Yosomulyo.', 'success');
+                showToast('Mode Demo Admin Aktif', 'Masuk sebagai Admin (Pengurus RT 13). Klik tombol Keluar di kanan atas untuk kembali ke Login.', 'success');
                 return;
             }
 
             if (demoRole === 'PRODUSEN') {
-                // Pilih Ibu Sri Wahyuni (Produsen Sayur Bayam)
-                const prodMember = members.find(m => m.sid === 'SID-RT13-002') || members.find(m => m.role === 'PRODUSEN') || members[0];
                 window.appState.isAdminLoggedIn = false;
-                window.appState.activeUserSid = prodMember.sid;
+                window.appState.activeUserSid = 'DEMO-PRODUSEN';
                 window.appState.activeRole = 'PRODUSEN';
                 window.aiForecastScope = 'MINE';
+                savePwaAuthSession(rememberMe);
                 saveStateToLocal();
                 syncAuthGateVisibility();
                 setActiveRole('PRODUSEN');
                 switchTab('tab-market');
-                showToast('Akun Demo Produsen Aktif', `Masuk sebagai Produsen: ${prodMember.name} (${prodMember.producerCommodity}).`, 'success');
+                showToast('Akun Demo Produsen Aktif', 'Menggunakan Akun Demo Produsen terpisah (tidak mengubah data warga asli).', 'success');
                 return;
             }
 
-            // Default Demo KONSUMEN: Pilih Ibu Fitri Handayani (SID-RT13-020)
-            const konsMember = members.find(m => m.sid === 'SID-RT13-020') || members.find(m => m.role === 'KONSUMEN') || members[10];
             window.appState.isAdminLoggedIn = false;
-            window.appState.activeUserSid = konsMember.sid;
+            window.appState.activeUserSid = 'DEMO-KONSUMEN';
             window.appState.activeRole = 'KONSUMEN';
+            savePwaAuthSession(rememberMe);
             saveStateToLocal();
             syncAuthGateVisibility();
             setActiveRole('KONSUMEN');
             switchTab('tab-market');
-            showToast('Akun Demo Konsumen Aktif', `Masuk sebagai Konsumen: ${konsMember.name} (${konsMember.sid}).`, 'success');
+            showToast('Akun Demo Konsumen Aktif', 'Menggunakan Akun Demo Konsumen terpisah (tidak mengubah data warga asli).', 'success');
         };
 
         // --- B.4: Form Daftar Akun Baru di Halaman Login ---
@@ -14053,14 +14287,14 @@
                 grid.className = 'grid grid-cols-3 gap-1 max-w-md mx-auto';
                 const pendingCount = (window.appState.transactions || []).filter(t => t.producerSid === window.appState.activeUserSid && t.orderStatus === 'MENUNGGU_KONFIRMASI').length;
                 items = [
-                    { id: 'tab-market', icon: 'fa-seedling', label: 'Produk & AI' },
+                    { id: 'tab-market', icon: 'fa-seedling', label: 'Lapak Kebun' },
                     { id: 'tab-orders', icon: 'fa-clipboard-check', label: pendingCount > 0 ? `Pesanan (${pendingCount})` : 'Pesanan Masuk' },
                     { id: 'tab-sid', icon: 'fa-user', label: 'Profile' }
                 ];
             } else {
                 grid.className = 'grid grid-cols-3 gap-1 max-w-md mx-auto';
                 items = [
-                    { id: 'tab-market', icon: 'fa-basket-shopping', label: 'Pilih Komoditas' },
+                    { id: 'tab-market', icon: 'fa-store', label: 'Pasar Warga' },
                     { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Usulan Pangan' },
                     { id: 'tab-sid', icon: 'fa-user', label: 'Profile' }
                 ];
@@ -14109,12 +14343,11 @@
             if (consumerBanner) consumerBanner.classList.add('hidden');
             if (aiFluctPanel) aiFluctPanel.classList.toggle('hidden', role !== 'ADMIN');
 
+            const headerLogoutBtn = document.getElementById('headerLogoutBtn');
+            if (headerLogoutBtn) headerLogoutBtn.classList.remove('hidden');
+
             if (role === 'KONSUMEN') {
-                if (roleBadge) {
-                    roleBadge.textContent = 'Konsumen';
-                    roleBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shrink-0';
-                }
-                if (navMarketTitle) navMarketTitle.textContent = 'Pilih Komoditas';
+                if (navMarketTitle) navMarketTitle.textContent = 'Pasar Warga';
                 if (navMarketSub) navMarketSub.textContent = 'Belanja Pangan Segar';
                 if (navSidTitle) navSidTitle.textContent = 'Profile';
                 if (navSidSub) navSidSub.textContent = 'Data KK & Kebutuhan Pangan';
@@ -14125,14 +14358,10 @@
                 if (consumerOrdersCard) consumerOrdersCard.classList.remove('hidden');
                 if (catFilterBar) catFilterBar.classList.remove('hidden');
             } else if (role === 'PRODUSEN') {
-                if (roleBadge) {
-                    roleBadge.textContent = 'Produsen';
-                    roleBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 shrink-0';
-                }
-                if (navMarketTitle) navMarketTitle.textContent = 'Produk & AI Kebun';
-                if (navMarketSub) navMarketSub.textContent = 'Upload Panen, Stok & AI';
+                if (navMarketTitle) navMarketTitle.textContent = 'Lapak Kebun';
+                if (navMarketSub) navMarketSub.textContent = 'Stok Panen & Ramalan AI';
                 if (navSidTitle) navSidTitle.textContent = 'Profile';
-                if (navSidSub) navSidSub.textContent = 'Data Akun & Kebun Saya';
+                if (navSidSub) navSidSub.textContent = 'Data Kebun & Komoditas';
                 if (sidTopAdminCard) sidTopAdminCard.classList.add('hidden');
                 if (sidRegCard) sidRegCard.classList.add('hidden');
                 if (sidDirCard) sidDirCard.classList.add('hidden');
@@ -14140,14 +14369,10 @@
                 if (consumerOrdersCard) consumerOrdersCard.classList.add('hidden');
                 if (catFilterBar) catFilterBar.classList.add('hidden');
             } else if (role === 'ADMIN') {
-                if (roleBadge) {
-                    roleBadge.textContent = 'Admin RT 13';
-                    roleBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-forest-100 text-forest-900 border border-forest-300 shrink-0';
-                }
-                if (navMarketTitle) navMarketTitle.textContent = 'Katalog Komoditas';
-                if (navMarketSub) navMarketSub.textContent = 'Pantau Stok Pasar';
-                if (navSidTitle) navSidTitle.textContent = 'Data 40 KK & Validasi';
-                if (navSidSub) navSidSub.textContent = 'Verifikasi Warga & KK';
+                if (navMarketTitle) navMarketTitle.textContent = 'Pasar Warga';
+                if (navMarketSub) navMarketSub.textContent = 'Pantau Stok Komoditas';
+                if (navSidTitle) navSidTitle.textContent = 'Data 40 KK & PIN';
+                if (navSidSub) navSidSub.textContent = 'Direktori Warga & Validasi';
                 if (sidTopAdminCard) sidTopAdminCard.classList.remove('hidden');
                 if (sidRegCard) sidRegCard.classList.add('hidden');
                 if (sidDirCard) sidDirCard.classList.remove('hidden');
@@ -14165,12 +14390,16 @@
         window.renderAll = function() {
             _prevRenderAll();
             const headerLabel = document.getElementById('headerActiveUserLabel');
+            const headerLogoutBtn = document.getElementById('headerLogoutBtn');
+            if (headerLogoutBtn) headerLogoutBtn.classList.remove('hidden');
+
             if (headerLabel) {
-                if (window.appState.isAdminLoggedIn) {
-                    headerLabel.textContent = 'Admin Pengurus RT 13';
+                if (window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN') {
+                    headerLabel.textContent = 'Pengurus RT 13 (Admin)';
                 } else if (window.appState.activeUserSid) {
                     const m = (window.appState.members || []).find(x => x.sid === window.appState.activeUserSid);
-                    if (m) headerLabel.textContent = m.name;
+                    const roleText = window.appState.activeRole === 'PRODUSEN' ? 'Produsen' : 'Konsumen';
+                    if (m) headerLabel.textContent = `${m.name} (${roleText})`;
                 }
             }
             if (typeof renderProducerWorkspaceAndAutoAi === 'function') renderProducerWorkspaceAndAutoAi();
@@ -14178,19 +14407,40 @@
             if (typeof renderMobileBottomNav === 'function') renderMobileBottomNav();
         };
 
+        // Update handleGateLoginSubmit & logoutCitizenAccount untuk sinkronisasi PWA Remember Me
+        const _origLogoutCitizen = window.logoutCitizenAccount;
+        window.logoutCitizenAccount = function() {
+            try {
+                localStorage.removeItem(PWA_REMEMBER_KEY);
+                sessionStorage.removeItem(PWA_REMEMBER_KEY);
+            } catch (e) {}
+            _origLogoutCitizen();
+        };
+        window.logoutAdminRole = window.logoutCitizenAccount;
+
         // Initialize on DOM load
         document.addEventListener('DOMContentLoaded', () => {
             initFiftyTransactionsAndDualRoles();
             loadSavedLocalState();
             initFiftyTransactionsAndDualRoles();
+            ensureIsolatedDemoAccounts();
 
-            // Pastikan setiap produsen memiliki minimal 1 pesanan berstatus MENUNGGU_KONFIRMASI untuk diuji tombol "Siapkan Pesanan"
-            const txs = window.appState.transactions || [];
-            const sriOrders = txs.filter(t => t.producerSid === 'SID-RT13-002');
-            if (sriOrders.length > 0 && !sriOrders.some(t => t.orderStatus === 'MENUNGGU_KONFIRMASI')) {
-                sriOrders[0].orderStatus = 'MENUNGGU_KONFIRMASI';
-                sriOrders[0].stockDeducted = false;
-            }
+            // Pulihkan sesi PWA jika "Biarkan tetap masuk di HP ini" dicentang (atau masih dalam sesi aktif)
+            try {
+                const savedSessionRaw = localStorage.getItem(PWA_REMEMBER_KEY) || sessionStorage.getItem(PWA_REMEMBER_KEY);
+                if (savedSessionRaw) {
+                    const s = JSON.parse(savedSessionRaw);
+                    if (s && (s.activeUserSid || s.isAdminLoggedIn)) {
+                        window.appState.activeUserSid = s.activeUserSid;
+                        window.appState.activeRole = s.activeRole || 'KONSUMEN';
+                        window.appState.isAdminLoggedIn = Boolean(s.isAdminLoggedIn);
+                    }
+                } else {
+                    // Jika tidak dicentang "Biarkan tetap masuk", mulai dari layar login
+                    window.appState.activeUserSid = null;
+                    window.appState.isAdminLoggedIn = false;
+                }
+            } catch (e) {}
 
             autoFillBapanasNeedsFromFamilySize(4);
             initPwaSupport();
