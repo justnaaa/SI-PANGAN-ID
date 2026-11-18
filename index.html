@@ -188,101 +188,105 @@
          PORTAL LOGIN & DAFTAR AKUN TERPADU SI-PANGAN ID (#authGateScreen)
          Tampil penuh saat pertama kali aplikasi dibuka (sebelum login)
          ========================================================================= -->
-    <div id="authGateScreen" class="min-h-screen w-full flex flex-col justify-center items-center px-4 py-8 bg-gradient-to-b from-forest-900 via-forest-800 to-stone-900 text-stone-900">
-        <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden">
-            <!-- Header Brand -->
-            <div class="bg-forest-900 text-white p-6 text-center space-y-2 border-b border-forest-800">
-                <div class="w-14 h-14 rounded-2xl bg-emerald-500 text-forest-950 flex items-center justify-center mx-auto shadow-lg text-2xl font-bold">
+    <div id="authGateScreen" class="min-h-screen w-full flex flex-col justify-center items-center px-4 py-8 bg-slate-50 text-slate-900">
+        <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
+            <!-- Header Brand (Sesuai Desain Gambar) -->
+            <div class="pt-8 pb-5 px-6 text-center space-y-2 border-b border-slate-100">
+                <div class="w-14 h-14 rounded-2xl bg-[#059669] text-white flex items-center justify-center mx-auto shadow-sm text-2xl">
                     <i class="fa-solid fa-seedling"></i>
                 </div>
-                <h1 class="serif-heading text-2xl font-bold tracking-tight">SI-PANGAN ID</h1>
-                <p class="text-xs text-forest-200">RT 13 RW 05 Kelurahan Yosomulyo • Kota Metro</p>
-            </div>
-
-            <!-- Tab Switcher: Masuk Akun vs Daftar Akun Baru -->
-            <div class="grid grid-cols-2 bg-stone-100 p-1.5 m-5 mb-0 rounded-2xl border border-stone-200">
-                <button type="button" id="gateTabBtnLogin" onclick="switchAuthGateMode('LOGIN')"
-                    class="py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all bg-forest-800 text-white shadow-xs cursor-pointer">
-                    <i class="fa-solid fa-right-to-bracket mr-1.5"></i>Masuk Akun
-                </button>
-                <button type="button" id="gateTabBtnRegister" onclick="switchAuthGateMode('REGISTER')"
-                    class="py-2.5 px-3 rounded-xl font-bold text-xs sm:text-sm transition-all text-stone-600 hover:text-stone-900 cursor-pointer">
-                    <i class="fa-solid fa-user-plus mr-1.5"></i>Daftar Baru
-                </button>
+                <h1 class="font-sans text-2xl font-extrabold tracking-tight text-slate-900 pt-1">SI-PANGAN ID</h1>
+                <p class="text-xs font-medium text-slate-500">RT 13 Yosomulyo • Kota Metro</p>
             </div>
 
             <!-- BOX 1: FORM LOGIN -->
-            <div id="gateLoginFormContainer" class="p-5 sm:p-6 space-y-4">
-                <form onsubmit="handleGateLoginSubmit(event)" class="space-y-4">
-                    <!-- 1. Identitas / Peran Akun -->
-                    <div>
-                        <label class="block text-xs font-bold text-stone-700 mb-1.5">1. Identitas / Peran Akun *</label>
-                        <select id="gateLoginRole" onchange="handleGateRoleChange(this.value)"
-                            class="w-full h-12 px-3.5 rounded-xl border-2 border-stone-300 bg-white font-bold text-stone-900 focus:outline-none focus:border-forest-700">
-                            <option value="KONSUMEN">Konsumen (Warga Pembeli - 40 KK)</option>
-                            <option value="PRODUSEN">Produsen (Petani Pekarangan / KWT)</option>
-                            <option value="ADMIN">Admin (Pengurus RT 13)</option>
-                        </select>
+            <div id="gateLoginFormContainer" class="p-6 sm:p-7 space-y-5">
+                <form onsubmit="handleGateLoginSubmit(event)" class="space-y-4" novalidate>
+                    <!-- Alert Error Box (Muncul jika NIK/Nama atau PIN salah) -->
+                    <div id="gateLoginErrorBox" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-start gap-2">
+                        <i class="fa-solid fa-circle-exclamation text-rose-600 mt-0.5 shrink-0"></i>
+                        <span id="gateLoginErrorText">Nama/NIK atau PIN Rahasia salah.</span>
                     </div>
 
-                    <!-- 2. Pilih / Ketik Nama Pengguna -->
-                    <div id="gateUserPickerGroup">
-                        <label class="block text-xs font-bold text-stone-700 mb-1.5">2. Nama Pengguna *</label>
-                        <select id="gateLoginUserSelect" onchange="handleGateUserSelectChange(this.value)"
-                            class="w-full h-12 px-3.5 rounded-xl border-2 border-stone-300 bg-white font-semibold text-stone-900 focus:outline-none focus:border-forest-700">
-                            <!-- Diisi otomatis sesuai peran: 40 KK Konsumen atau Daftar Produsen -->
-                        </select>
+                    <!-- 1. Nama atau NIK (Single Identity) -->
+                    <div>
+                        <label for="gateLoginIdentity" class="block text-xs sm:text-sm font-bold text-slate-700 mb-2">
+                            Nama atau NIK (Single Identity)
+                        </label>
+                        <input type="text" id="gateLoginIdentity" required autocomplete="off"
+                            placeholder="Masukkan nama atau NIK Anda"
+                            oninput="document.getElementById('gateLoginErrorBox')?.classList.add('hidden')"
+                            class="w-full h-12 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 font-medium focus:outline-none focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/15 transition">
                     </div>
 
-                    <!-- 3. ID / Username (NIK) -->
+                    <!-- 2. PIN Rahasia (4 Angka) -->
                     <div>
-                        <label class="block text-xs font-bold text-stone-700 mb-1.5">3. ID / Username (NIK) *</label>
-                        <input type="text" id="gateLoginNik" required placeholder="Masukkan NIK / ID Akun"
-                            oninput="handleGateNikInput(this.value)"
-                            class="w-full h-12 px-3.5 rounded-xl border-2 border-stone-300 bg-stone-50 font-mono font-bold text-stone-900 focus:bg-white focus:outline-none focus:border-forest-700">
+                        <label for="gateLoginPin" class="block text-xs sm:text-sm font-bold text-slate-700 mb-2">
+                            PIN Rahasia (4 Angka)
+                        </label>
+                        <input type="password" id="gateLoginPin" maxlength="4" inputmode="numeric" required
+                            placeholder="••••"
+                            oninput="document.getElementById('gateLoginErrorBox')?.classList.add('hidden')"
+                            class="w-full h-12 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 font-mono font-bold tracking-widest focus:outline-none focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/15 transition">
                     </div>
 
-                    <!-- 4. Password / PIN -->
-                    <div>
-                        <label class="block text-xs font-bold text-stone-700 mb-1.5">4. Password / PIN *</label>
-                        <input type="password" id="gateLoginPin" required placeholder="Masukkan PIN / Password"
-                            class="w-full h-12 px-3.5 rounded-xl border-2 border-stone-300 bg-white font-mono font-extrabold text-stone-900 tracking-widest focus:outline-none focus:border-forest-700">
+                    <!-- Checkbox Biarkan tetap masuk di HP ini -->
+                    <div class="pt-0.5">
+                        <label class="inline-flex items-center gap-2.5 cursor-pointer select-none">
+                            <input type="checkbox" id="gateRememberMe" checked
+                                class="w-5 h-5 rounded-md accent-[#059669] cursor-pointer">
+                            <span class="text-xs sm:text-sm font-semibold text-slate-700">Biarkan tetap masuk di HP ini</span>
+                        </label>
                     </div>
 
                     <button type="submit"
-                        class="w-full py-3.5 px-4 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-[0.99] text-white font-bold text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-right-to-bracket text-emerald-300"></i>
-                        <span>Masuk ke SI-PANGAN ID</span>
+                        class="w-full py-3.5 px-4 rounded-xl bg-[#059669] hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-sm shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-2 cursor-pointer">
+                        <span>Masuk</span>
                     </button>
                 </form>
 
-                <!-- Akun Demo Penjurian (1-Klik Masuk) -->
-                <div class="pt-4 border-t border-stone-200 space-y-2.5">
-                    <span class="text-[11px] font-bold text-stone-500 uppercase tracking-wider block text-center">
-                        Akses Cepat Akun Demo Penjurian
+                <!-- Tombol Daftar Akun Baru -->
+                <div class="text-center pt-1">
+                    <button type="button" onclick="switchAuthGateMode('REGISTER')"
+                        class="text-xs font-bold text-[#059669] hover:underline cursor-pointer">
+                        Belum terdaftar di RT 13? Daftar Akun Warga Baru
+                    </button>
+                </div>
+
+                <!-- Akun Demo Penjurian (1-Klik) -->
+                <div class="pt-4 border-t border-slate-100 space-y-2.5">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">
+                        Akun Demo Penjurian
                     </span>
                     <div class="grid grid-cols-3 gap-2">
                         <button type="button" onclick="quickDemoLogin('KONSUMEN')"
-                            class="py-2.5 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-900 font-bold text-xs flex flex-col items-center gap-1 transition cursor-pointer">
-                            <i class="fa-solid fa-basket-shopping text-emerald-600 text-sm"></i>
-                            <span>Demo Konsumen</span>
+                            class="py-2 px-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-900 font-bold text-[11px] flex flex-col items-center gap-1 transition cursor-pointer">
+                            <i class="fa-solid fa-basket-shopping text-emerald-600"></i>
+                            <span>Konsumen</span>
                         </button>
                         <button type="button" onclick="quickDemoLogin('PRODUSEN')"
-                            class="py-2.5 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 font-bold text-xs flex flex-col items-center gap-1 transition cursor-pointer">
-                            <i class="fa-solid fa-seedling text-amber-600 text-sm"></i>
-                            <span>Demo Produsen</span>
+                            class="py-2 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-900 font-bold text-[11px] flex flex-col items-center gap-1 transition cursor-pointer">
+                            <i class="fa-solid fa-seedling text-amber-600"></i>
+                            <span>Produsen</span>
                         </button>
                         <button type="button" onclick="quickDemoLogin('ADMIN')"
-                            class="py-2.5 px-2 rounded-xl bg-stone-100 hover:bg-stone-200 border border-stone-300 text-stone-900 font-bold text-xs flex flex-col items-center gap-1 transition cursor-pointer">
-                            <i class="fa-solid fa-user-shield text-forest-800 text-sm"></i>
-                            <span>Demo Admin</span>
+                            class="py-2 px-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 font-bold text-[11px] flex flex-col items-center gap-1 transition cursor-pointer">
+                            <i class="fa-solid fa-user-shield text-slate-700"></i>
+                            <span>Admin</span>
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- BOX 2: FORM DAFTAR AKUN BARU (Tanpa Input Gaji/Penghasilan) -->
-            <div id="gateRegisterFormContainer" class="hidden p-5 sm:p-6 space-y-4">
+            <div id="gateRegisterFormContainer" class="hidden p-6 sm:p-7 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h2 class="font-bold text-sm sm:text-base text-slate-900">Daftar Akun Warga Baru</h2>
+                    <button type="button" onclick="switchAuthGateMode('LOGIN')"
+                        class="text-xs font-bold text-[#059669] hover:underline cursor-pointer">
+                        &larr; Kembali ke Login
+                    </button>
+                </div>
                 <form onsubmit="handleGateRegisterSubmit(event)" class="space-y-3.5">
                     <div>
                         <label class="block text-xs font-bold text-stone-700 mb-1">Nomor Induk Kependudukan (NIK 16 Digit) *</label>
@@ -13478,67 +13482,118 @@
             }
         };
 
+        function normalizeCitizenName(str) {
+            return String(str || '')
+                .toLowerCase()
+                .replace(/^(bpk\.?|bapak|ibu|pak|bu|sdr\.?|ny\.?)\s+/i, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function showGateLoginError(msg) {
+            const errBox = document.getElementById('gateLoginErrorBox');
+            const errText = document.getElementById('gateLoginErrorText');
+            if (errBox && errText) {
+                errText.textContent = msg;
+                errBox.classList.remove('hidden');
+            }
+            showToast('Gagal Masuk', msg, 'error');
+        }
+
         window.handleGateLoginSubmit = function(e) {
             if (e) e.preventDefault();
-            const role = document.getElementById('gateLoginRole')?.value || 'KONSUMEN';
-            const selectedSid = document.getElementById('gateLoginUserSelect')?.value;
-            const nikVal = String(document.getElementById('gateLoginNik')?.value || '').trim();
+            const identityVal = String(document.getElementById('gateLoginIdentity')?.value || '').trim();
             const pinVal = String(document.getElementById('gateLoginPin')?.value || '').trim();
+            const rememberMe = Boolean(document.getElementById('gateRememberMe')?.checked);
 
-            if (!pinVal) {
-                showToast('PIN Belum Diisi', 'Silakan masukkan PIN / Password akun Anda.', 'warning');
+            if (!identityVal) {
+                showGateLoginError('Silakan masukkan Nama atau 16 digit NIK Anda.');
+                document.getElementById('gateLoginIdentity')?.focus();
                 return;
             }
 
-            if (role === 'ADMIN') {
-                if (pinVal === '1234' || pinVal === '2026' || pinVal.toLowerCase() === 'admin') {
+            if (!pinVal || pinVal.length < 4) {
+                showGateLoginError('Silakan masukkan 4 angka PIN Rahasia Anda.');
+                document.getElementById('gateLoginPin')?.focus();
+                return;
+            }
+
+            // Cek jika login sebagai Admin RT
+            const idLower = identityVal.toLowerCase();
+            if (idLower === 'admin' || idLower === 'admin-rt13' || idLower === 'pengurus rt') {
+                if (pinVal === '1234' || pinVal === '2026') {
                     window.appState.isAdminLoggedIn = true;
                     window.appState.activeUserSid = 'ADMIN-RT13';
                     window.appState.activeRole = 'ADMIN';
-                    saveStateToLocal();
+                    if (rememberMe) saveStateToLocal();
                     syncAuthGateVisibility();
                     setActiveRole('ADMIN');
                     switchTab('tab-dampak');
                     showToast('Login Admin Berhasil', 'Selamat datang di Dashboard Monev & AI Admin RT 13.', 'success');
                 } else {
-                    showToast('PIN Admin Salah', 'Gunakan PIN Admin (1234 / 2026).', 'error');
+                    showGateLoginError('PIN Rahasia Admin salah! Periksa kembali PIN Anda.');
                 }
                 return;
             }
 
             const members = window.appState.members || [];
-            let member = members.find(m =>
-                (m.rawNik && m.rawNik === nikVal) ||
-                m.sid.toLowerCase() === nikVal.toLowerCase() ||
-                m.name.toLowerCase() === nikVal.toLowerCase()
-            );
-            if (!member && selectedSid) {
-                member = members.find(m => m.sid === selectedSid);
+            const isNumericInput = /^\d+$/.test(identityVal);
+            let member = null;
+
+            if (isNumericInput) {
+                // Validasi NIK Ketat: Harus 16 angka dan persis sama (jika kurang 1 angka otomatis ditolak!)
+                if (identityVal.length !== 16) {
+                    showGateLoginError(`NIK tidak valid (${identityVal.length} angka). NIK harus tepat 16 angka!`);
+                    return;
+                }
+                member = members.find(m => m.rawNik === identityVal);
+            } else {
+                // Validasi Nama Ketat (Tanpa perlu menulis "Bpk." / "Ibu" / "Pak")
+                const cleanInputName = normalizeCitizenName(identityVal);
+                member = members.find(m =>
+                    normalizeCitizenName(m.name) === cleanInputName ||
+                    m.name.toLowerCase().trim() === idLower ||
+                    m.sid.toLowerCase().trim() === idLower
+                );
             }
 
             if (!member) {
-                showToast('Akun Tidak Ditemukan', 'Pastikan NIK atau Nama Pengguna terdaftar di RT 13.', 'error');
+                showGateLoginError('Nama atau NIK tidak ditemukan! Pastikan ejaan nama atau 16 angka NIK benar.');
                 return;
             }
 
-            const validPin1 = member.pinCode ? String(member.pinCode) : '1234';
-            const validPin2 = member.rawNik ? String(member.rawNik).slice(-4) : '1234';
-            if (pinVal !== validPin1 && pinVal !== validPin2 && pinVal !== '1234') {
-                showToast('Password / PIN Salah', 'Periksa kembali PIN Anda (Default: 4 digit akhir NIK atau 1234).', 'error');
+            // Validasi PIN Rahasia 4 Angka secara ketat
+            const validPin1 = member.pinCode ? String(member.pinCode).trim() : null;
+            const validPin2 = member.rawNik ? String(member.rawNik).slice(-4) : null;
+            const isPinMatch = (validPin1 && pinVal === validPin1) || (validPin2 && pinVal === validPin2);
+
+            if (!isPinMatch) {
+                showGateLoginError('PIN Rahasia salah! Tidak dapat masuk ke akun.');
+                document.getElementById('gateLoginPin')?.focus();
                 return;
             }
 
+            // Login Valid: Tentukan peran awal sesuai profil akun (dan bisa berganti peran di menu Profile jika Dual-Role)
+            const initialRole = member.role === 'PRODUSEN' ? 'PRODUSEN' : 'KONSUMEN';
             window.appState.isAdminLoggedIn = false;
             window.appState.activeUserSid = member.sid;
-            window.appState.activeRole = role;
+            window.appState.activeRole = initialRole;
             window.aiForecastScope = 'MINE';
 
-            saveStateToLocal();
+            if (rememberMe) {
+                saveStateToLocal();
+            }
+
+            const idEl = document.getElementById('gateLoginIdentity');
+            const pinEl = document.getElementById('gateLoginPin');
+            if (idEl) idEl.value = '';
+            if (pinEl) pinEl.value = '';
+
             syncAuthGateVisibility();
-            setActiveRole(role);
+            setActiveRole(initialRole);
             switchTab('tab-market');
 
-            showToast('Berhasil Masuk', `Selamat datang, ${member.name} (Mode ${role === 'PRODUSEN' ? 'Produsen' : 'Konsumen'}).`, 'success');
+            showToast('Berhasil Masuk', `Selamat datang, ${member.name}.`, 'success');
         };
 
         // --- B.5: Akun Demo Penjurian (1-Klik Masuk untuk Konsumen, Produsen, Admin) ---
