@@ -1062,18 +1062,21 @@ export function initCoreAppController() {
                                     ` : ''}
                                 </div>
                             ` : (window.appState.isAdminLoggedIn || (window.appState.activeUserSid && window.appState.activeUserSid === l.producerSid)) ? `
-                                <div class="grid grid-cols-2 gap-2">
+                                <div class="grid grid-cols-12 gap-1.5">
                                     ${l.availableStockKg > 0 ? `
-                                        <button onclick="openBuyModal('${l.id}')" class="py-2.5 px-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+                                        <button onclick="openBuyModal('${l.id}')" class="col-span-5 py-2.5 px-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-1 shadow-xs cursor-pointer">
                                             <i class="fa-solid fa-cart-shopping"></i>
                                             <span>Beli</span>
                                         </button>
                                     ` : `
-                                        <button disabled class="py-2.5 px-2 rounded-xl bg-stone-200 text-stone-500 text-xs font-bold cursor-not-allowed">Stok Habis</button>
+                                        <button disabled class="col-span-5 py-2.5 px-2 rounded-xl bg-stone-200 text-stone-500 text-xs font-bold cursor-not-allowed">Habis</button>
                                     `}
-                                    <button onclick="openEditListingModal('${l.id}')" class="py-2.5 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                    <button onclick="openEditListingModal('${l.id}')" class="col-span-5 py-2.5 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
                                         <i class="fa-solid fa-pen-to-square text-amber-600"></i>
-                                        <span>Edit Stok/Harga</span>
+                                        <span>Edit</span>
+                                    </button>
+                                    <button onclick="deleteListing('${l.id}')" class="col-span-2 py-2.5 px-1 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 text-xs font-bold transition flex items-center justify-center cursor-pointer" title="Hapus Komoditas">
+                                        <i class="fa-solid fa-trash-can text-rose-600"></i>
                                     </button>
                                 </div>
                             ` : `
@@ -1296,6 +1299,63 @@ export function initCoreAppController() {
             if (typeof window.renderProducerWorkspaceAndAutoAi === 'function') window.renderProducerWorkspaceAndAutoAi();
 
             showToast('Stok & Harga Diperbarui', `${l.commodity} berhasil diperbarui: Stok ${newStock} Kg, Harga ${formatRupiah(newPrice)}. Tercatat di Buku Besar Audit.`, 'success');
+        };
+
+        // === CRUD: HAPUS (DELETE) KOMODITAS DARI LAPAK OLEH PRODUSEN / ADMIN ===
+        window.deleteListing = function(listingId) {
+            const listings = window.appState.listings || [];
+            const l = listings.find(item => item.id === listingId);
+            if (!l) return;
+
+            const isAllowed = window.appState.isAdminLoggedIn || (window.appState.activeUserSid && window.appState.activeUserSid === l.producerSid);
+            if (!isAllowed) {
+                showToast('Akses Ditolak', 'Hanya produsen pemilik komoditas atau Admin yang dapat menghapus komoditas ini.', 'error');
+                return;
+            }
+
+            if (!confirm(`Hapus Komoditas dari Lapak Kebun?\n\nApakah Anda yakin ingin menghapus "${l.commodity}" (Stok: ${l.availableStockKg} ${l.unit || 'Kg'}) dari lapak pasar? Tindakan ini akan dicatat di Buku Besar Audit Inventaris.`)) {
+                return;
+            }
+
+            // Catat di Buku Besar Audit Log
+            if (!window.appState.inventoryAuditLogs) window.appState.inventoryAuditLogs = [];
+            const now = new Date();
+            const logEntry = {
+                id: `AUDIT-DEL-${Date.now()}`,
+                timestamp: `${now.getDate()} Okt 2026, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
+                listingId: l.id,
+                commodity: l.commodity,
+                producerSid: l.producerSid,
+                producerName: l.producerName,
+                oldStock: l.availableStockKg,
+                newStock: 0,
+                oldPrice: l.fairPrice,
+                newPrice: 0,
+                reason: `Penghapusan produk "${l.commodity}" dari lapak oleh ${window.appState.isAdminLoggedIn ? 'Admin RT 13' : l.producerName}`
+            };
+            window.appState.inventoryAuditLogs.unshift(logEntry);
+
+            // Hapus dari data listings
+            window.appState.listings = window.appState.listings.filter(item => item.id !== listingId);
+
+            saveStateToLocal();
+            closeModal('modalEditListing');
+
+            renderMarketListings();
+            renderPerProducerAiForecast();
+            if (typeof window.renderActiveUserProfileCard === 'function') window.renderActiveUserProfileCard();
+            if (typeof window.renderAdminSurplusCenter === 'function') window.renderAdminSurplusCenter();
+            if (typeof window.renderProducerWorkspaceAndAutoAi === 'function') window.renderProducerWorkspaceAndAutoAi();
+            if (typeof window.updateFoodLossAndDynamicCounters === 'function') window.updateFoodLossAndDynamicCounters();
+
+            showToast('Komoditas Berhasil Dihapus', `Produk "${l.commodity}" berhasil dihapus dari sistem.`, 'info');
+        };
+
+        window.handleDeleteCurrentListing = function() {
+            const listingId = document.getElementById('editListingId')?.value;
+            if (listingId) {
+                window.deleteListing(listingId);
+            }
         };
 
         window.openBuyModal = function openBuyModal(listingId) {

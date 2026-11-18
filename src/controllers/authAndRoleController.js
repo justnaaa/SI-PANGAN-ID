@@ -1394,9 +1394,20 @@ export function initAuthAndRoleController() {
             const aiFluctPanel = document.getElementById('aiMarketFluctuationPanel');
             const catFilterBar = document.getElementById('marketCategoryFilterBar');
 
-            // Sembunyikan banner ajakan & grafik fluktuasi dari Konsumen/Produsen agar fokus & bersih (C.3 & D.1)
+            // Sembunyikan banner ajakan, pastikan grafik fluktuasi & proyeksi 3 hari tampil untuk Produsen & Admin
             if (consumerBanner) consumerBanner.classList.add('hidden');
-            if (aiFluctPanel) aiFluctPanel.classList.toggle('hidden', role !== 'ADMIN');
+            if (aiFluctPanel) {
+                if (role === 'KONSUMEN') {
+                    aiFluctPanel.classList.add('hidden');
+                } else {
+                    aiFluctPanel.classList.remove('hidden');
+                    if (typeof window.renderFluctuationChart === 'function') {
+                        setTimeout(() => {
+                            window.renderFluctuationChart(window.currentFluctuationCommodity || 'Sayur Kangkung (KWT Pekarangan)');
+                        }, 50);
+                    }
+                }
+            }
 
             const headerLogoutBtn = document.getElementById('headerLogoutBtn');
             if (headerLogoutBtn) headerLogoutBtn.classList.remove('hidden');

@@ -1211,10 +1211,17 @@ export function initSupabaseAndStorageService() {
                                     <strong class="text-xs sm:text-sm text-stone-900 block truncate">${item.commodity}</strong>
                                     <span class="text-[11px] font-mono text-forest-800 font-semibold">Stok: ${item.availableStockKg} Kg • ${formatRupiah(item.fairPrice)}/Kg</span>
                                 </div>
-                                <button type="button" onclick="openEditListingModal('${item.id}')"
-                                    class="px-3 py-1.5 rounded-lg bg-white hover:bg-amber-50 border border-stone-300 text-stone-700 font-bold text-xs shrink-0 cursor-pointer">
-                                    <i class="fa-solid fa-pen text-amber-600 mr-1"></i>Ubah
-                                </button>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <button type="button" onclick="openEditListingModal('${item.id}')"
+                                        class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-amber-50 border border-stone-300 text-stone-700 font-bold text-xs cursor-pointer">
+                                        <i class="fa-solid fa-pen text-amber-600 mr-1"></i>Ubah
+                                    </button>
+                                    <button type="button" onclick="deleteListing('${item.id}')"
+                                        class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs cursor-pointer"
+                                        title="Hapus Komoditas">
+                                        <i class="fa-solid fa-trash-can text-rose-600"></i>
+                                    </button>
+                                </div>
                             </div>
                         `).join('') : `
                             <div class="col-span-full p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-500 text-center">
