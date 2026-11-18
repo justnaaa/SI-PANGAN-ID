@@ -254,6 +254,14 @@
                     </button>
                 </div>
 
+                <!-- Petunjuk Login Admin RT 13 -->
+                <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                    <p class="text-[11px] text-slate-600 leading-snug">
+                        <i class="fa-solid fa-circle-info text-forest-700 mr-1"></i>
+                        Akses Admin RT: Masukkan Nama <strong>admin</strong> &amp; PIN <strong>1234</strong>
+                    </p>
+                </div>
+
                 <!-- Akun Demo Penjurian (Terpisah dari Data Warga Asli) -->
                 <div class="pt-3 border-t border-slate-100 space-y-2">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-center">
@@ -1463,19 +1471,36 @@
                     </div>
                 </div>
 
-                <!-- Pilihan Kategori Komoditas (Langsung tampil untuk Konsumen memilih komoditas) -->
-                <div id="marketCategoryFilterBar" class="bg-white rounded-2xl p-3.5 sm:p-4 border border-stone-200/80 shadow-2xs flex items-center gap-2 overflow-x-auto no-scrollbar">
-                    <span class="text-stone-500 text-xs font-bold shrink-0 mr-1"><i class="fa-solid fa-basket-shopping text-forest-700 mr-1"></i>Pilih Komoditas:</span>
-                    <button onclick="filterMarketCategory('ALL')" id="catBtn-ALL"
-                        class="market-cat-btn shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold bg-forest-800 text-white cursor-pointer">Semua Komoditas</button>
-                    <button onclick="filterMarketCategory('Sayur Pekarangan')" id="catBtn-Sayur"
-                        class="market-cat-btn shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 cursor-pointer">Sayur Pekarangan</button>
-                    <button onclick="filterMarketCategory('Beras & Padi')" id="catBtn-Beras"
-                        class="market-cat-btn shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 cursor-pointer">Beras &amp; Padi</button>
-                    <button onclick="filterMarketCategory('Lauk & Protein')" id="catBtn-Protein"
-                        class="market-cat-btn shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 cursor-pointer">Lauk &amp; Protein</button>
-                    <button onclick="filterMarketCategory('Olahan Pangan')" id="catBtn-Olahan"
-                        class="market-cat-btn shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 cursor-pointer">Olahan Pangan</button>
+                <!-- Pilihan Kategori Komoditas (Tampil rapi tanpa perlu scroll kanan-kiri di HP) -->
+                <div id="marketCategoryFilterBar" class="bg-white rounded-2xl p-3 sm:p-4 border border-stone-200/80 shadow-2xs space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-stone-700 text-xs font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-basket-shopping text-forest-700"></i> Pilih Komoditas:
+                        </span>
+                        <span class="text-[10px] text-stone-400 font-medium hidden sm:inline">Pilah komoditas segar RT 13</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2">
+                        <button onclick="filterMarketCategory('ALL')" id="catBtn-ALL"
+                            class="market-cat-btn col-span-2 sm:col-span-1 py-2 px-2.5 rounded-xl text-xs font-bold bg-forest-800 text-white shadow-2xs text-center cursor-pointer transition">
+                            Semua Komoditas
+                        </button>
+                        <button onclick="filterMarketCategory('Sayur Pekarangan')" id="catBtn-Sayur"
+                            class="market-cat-btn py-2 px-2.5 rounded-xl text-xs font-bold text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center cursor-pointer transition">
+                            🥬 Sayur Mayur
+                        </button>
+                        <button onclick="filterMarketCategory('Beras & Padi')" id="catBtn-Beras"
+                            class="market-cat-btn py-2 px-2.5 rounded-xl text-xs font-bold text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center cursor-pointer transition">
+                            🌾 Beras &amp; Padi
+                        </button>
+                        <button onclick="filterMarketCategory('Lauk & Protein')" id="catBtn-Protein"
+                            class="market-cat-btn py-2 px-2.5 rounded-xl text-xs font-bold text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center cursor-pointer transition">
+                            🐟 Lauk &amp; Telur
+                        </button>
+                        <button onclick="filterMarketCategory('Olahan Pangan')" id="catBtn-Olahan"
+                            class="market-cat-btn py-2 px-2.5 rounded-xl text-xs font-bold text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center cursor-pointer transition">
+                            🍱 Olahan Pangan
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Banner Khusus Konsumen: Ajakan Menjadi Produsen Pekarangan -->
@@ -2595,7 +2620,7 @@
                                     Rekapitulasi Kebutuhan Pangan <span class="dynamic-kk-count">40</span> KK (Bulanan)
                                 </h4>
                                 <button type="button" onclick="switchTab('tab-sid')" class="text-[11px] font-bold text-emerald-800 hover:underline cursor-pointer">
-                                    Lihat Data 40 KK &rarr;
+                                    Lihat Direktori (<span class="dynamic-kk-count">40</span> KK) &rarr;
                                 </button>
                             </div>
                             <div id="adminMonevKkNeedsSummary" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
@@ -2717,11 +2742,18 @@
                                     title="Nomor WhatsApp Pengelola Koperasi / Dapur MBG">
                             </div>
 
-                            <div class="md:col-span-4">
-                                <button type="button" onclick="handleDispatchUnifiedSurplusViaWa()"
-                                    class="w-full h-11 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm hover:shadow transition flex items-center justify-center gap-2 cursor-pointer">
+                            <div class="md:col-span-4 flex flex-col sm:flex-row gap-2">
+                                <button type="button" onclick="handleDispatchUnifiedSurplusViaWa(true)"
+                                    class="flex-1 h-11 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-sm hover:shadow transition flex items-center justify-center gap-1.5 cursor-pointer"
+                                    title="Tarik seluruh surplus panen dan salurkan langsung ke Tab Penyaluran &amp; Pesanan">
+                                    <i class="fa-solid fa-truck-fast text-amber-300"></i>
+                                    <span>Tarik ke Penyaluran</span>
+                                </button>
+                                <button type="button" onclick="handleDispatchUnifiedSurplusViaWa(false)"
+                                    class="h-11 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm hover:shadow transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                                    title="Salurkan dan kirim ringkasan paket melalui WhatsApp resmi">
                                     <i class="fa-brands fa-whatsapp text-base"></i>
-                                    <span>Tarik Data &amp; Salurkan via WhatsApp</span>
+                                    <span>Kirim WA</span>
                                 </button>
                             </div>
                         </div>
@@ -6917,10 +6949,14 @@
         function filterMarketCategory(cat) {
             currentMarketCategory = cat;
             document.querySelectorAll('.market-cat-btn').forEach(b => {
-                b.className = "market-cat-btn shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold text-stone-600 hover:bg-stone-100 transition cursor-pointer";
+                const isAll = b.id === 'catBtn-ALL';
+                b.className = `market-cat-btn ${isAll ? 'col-span-2 sm:col-span-1' : ''} py-2 px-2.5 rounded-xl text-xs font-bold text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center cursor-pointer transition`;
             });
             const btn = document.getElementById(`catBtn-${cat === 'ALL' ? 'ALL' : cat.split(' ')[0]}`);
-            if (btn) btn.className = "market-cat-btn shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold bg-forest-800 text-white shadow-2xs transition cursor-pointer";
+            if (btn) {
+                const isAll = btn.id === 'catBtn-ALL';
+                btn.className = `market-cat-btn ${isAll ? 'col-span-2 sm:col-span-1' : ''} py-2 px-2.5 rounded-xl text-xs font-bold bg-forest-800 text-white shadow-2xs text-center cursor-pointer transition`;
+            }
             renderMarketListings();
         }
 
@@ -7136,37 +7172,52 @@
             const selectedSid = producerSelect.value;
             const members = window.membersData || (window.appState && window.appState.members) || [];
             const producer = members.find(m => m.sid === selectedSid || m.sidShort === selectedSid);
-            if (!producer || !producer.producerCommodity) return;
+            if (!producer) return;
 
-            const rawComm = (producer.producerCommodity || '').trim();
-            if (!rawComm || rawComm === '-') return;
-
-            // Cari kecocokan langsung pada opsi dropdown komoditas proposal
-            let matchedOption = Array.from(commoditySelect.options).find(opt => opt.value === rawComm);
-
-            // Jika belum persis sama, lakukan pencocokan cerdas berdasarkan kata kunci komoditas proposal
-            if (!matchedOption) {
-                const lower = rawComm.toLowerCase();
-                matchedOption = Array.from(commoditySelect.options).find(opt => {
-                    const optLower = opt.value.toLowerCase();
-                    if (lower.includes("kangkung") && optLower.includes("kangkung")) return true;
-                    if (lower.includes("bayam") && optLower.includes("bayam")) return true;
-                    if (lower.includes("cabai") && optLower.includes("cabai")) return true;
-                    if (lower.includes("sawi") && optLower.includes("sawi")) return true;
-                    if (lower.includes("bawang") && optLower.includes("bawang")) return true;
-                    if (lower.includes("lele") && optLower.includes("lele")) return true;
-                    if (lower.includes("nila") && optLower.includes("nila")) return true;
-                    if (lower.includes("telur bebek") && optLower.includes("telur bebek")) return true;
-                    if (lower.includes("telur ayam") && optLower.includes("telur ayam")) return true;
-                    if (lower.includes("ayam") && !lower.includes("telur") && optLower.includes("ayam") && !optLower.includes("telur")) return true;
-                    if ((lower.includes("beras") || lower.includes("padi") || lower.includes("ciherang")) && optLower.includes("beras")) return true;
-                    return false;
+            // Kumpulkan komoditas terdaftar milik produsen ini agar dropdown ringkas & terarah
+            let myCommList = [];
+            if (Array.isArray(producer.registeredCommodities) && producer.registeredCommodities.length > 0) {
+                myCommList = producer.registeredCommodities.map(c => typeof c === 'string' ? c : c.name);
+            }
+            const myExistingListings = (window.appState.listings || []).filter(l => l.producerSid === selectedSid);
+            myExistingListings.forEach(l => {
+                if (l.commodity && !myCommList.includes(l.commodity)) myCommList.push(l.commodity);
+            });
+            if (producer.producerCommodity && producer.producerCommodity !== '-') {
+                producer.producerCommodity.split(',').forEach(c => {
+                    const cleanC = c.trim();
+                    if (cleanC && !myCommList.includes(cleanC)) myCommList.push(cleanC);
                 });
             }
 
-            if (matchedOption) {
-                commoditySelect.value = matchedOption.value;
+            if (myCommList.length === 0) {
+                myCommList = ['Sayur Kangkung (KWT Pekarangan)', 'Sayur Bayam Hijau (KWT Pekarangan)'];
             }
+
+            // Isi dropdown newListingName KHUSUS komoditas kebun terdaftar produsen ini (Dropdown ringkas & terarah)
+            if (myCommList.length > 0) {
+                commoditySelect.innerHTML = myCommList.map(comm => `
+                    <option value="${comm}">${comm}</option>
+                `).join('');
+            } else {
+                commoditySelect.innerHTML = `
+                    <option value="Sayur Kangkung (KWT Pekarangan)">Sayur Kangkung (KWT Pekarangan)</option>
+                    <option value="Sayur Bayam Hijau (KWT Pekarangan)">Sayur Bayam Hijau (KWT Pekarangan)</option>
+                `;
+            }
+
+            // Hapus duplikasi opsi
+            const seen = new Set();
+            for (let i = commoditySelect.options.length - 1; i >= 0; i--) {
+                const val = commoditySelect.options[i].value;
+                if (seen.has(val)) {
+                    commoditySelect.remove(i);
+                } else {
+                    seen.add(val);
+                }
+            }
+
+            commoditySelect.selectedIndex = 0;
             handleCommodityChange();
         }
 
@@ -7771,23 +7822,6 @@
                 volatilityText: "Volatilitas Terkendali",
                 volatilityClass: "bg-emerald-100 text-emerald-800",
                 producerAdvisory: "Ikan nila pekarangan digemari konsumen keluarga. Jaga sirkulasi kolam dan beri pakan teratur menjelang panen.",
-                consumerAdvisory: "Ikan nila segar hidup dari kolam tetangga, manis dan kaya protein hewani bebas bau lumpur."
-            },
-            "Telur Ayam Pekarangan (Ternak Warga RT 13)": {
-                shortName: "Telur Ayam",
-                category: "Lauk & Protein",
-                btnId: "btnFluct-Telur",
-                historical: [28000, 28200, 28500, 29000, 29200, 29500, 29800, 30000],
-                prediction: [null, null, null, null, null, null, null, 30000, 30400, 30800, 31200],
-                pengepulPrice: 22000,
-                marketPrice: 30000,
-                predictionH3: 31200,
-                deltaText: "+Rp 1.200 (+4.0%)",
-                trendType: "UP",
-                trendBadgeText: "Defisit Konsumsi",
-                trendBadgeClass: "bg-rose-100 text-rose-800 border-rose-200",
-                volatilityText: "Permintaan Tinggi",
-                volatilityClass: "bg-rose-100 text-rose-800",
                 producerAdvisory: "Proyeksi 3 Hari ke Depan: Kebutuhan konsumsi warga RT 13 diperkirakan kekurangan (Defisit) -30 Butir Telur Ayam. Tindakan Sistem: Memprioritaskan hasil ternak unggas warga RT 13 untuk memenuhi kebutuhan dapur tetangga terdekat.",
                 consumerAdvisory: "Kebutuhan telur ayam dapur warga sedang tinggi. Rekomendasi Konsumen: Amankan asupan protein keluarga langsung dari peternak pekarangan tetangga."
             },
@@ -8002,11 +8036,26 @@
             });
         }
 
+        function findMarketIntel(commodityName) {
+            if (!commodityName) return Object.values(LAMPUNG_MARKET_INTELLIGENCE)[0];
+            if (LAMPUNG_MARKET_INTELLIGENCE[commodityName]) return LAMPUNG_MARKET_INTELLIGENCE[commodityName];
+            const clean = commodityName.toLowerCase().trim();
+            for (const [key, val] of Object.entries(LAMPUNG_MARKET_INTELLIGENCE)) {
+                const keyClean = key.toLowerCase();
+                if (keyClean.includes(clean) || clean.includes(keyClean)) return val;
+                const words = clean.split(/[\s,()/-]+/).filter(w => w.length >= 4);
+                for (const w of words) {
+                    if (keyClean.includes(w)) return val;
+                }
+            }
+            return Object.values(LAMPUNG_MARKET_INTELLIGENCE)[0];
+        }
+
         function handleCommodityChange() {
             const selectEl = document.getElementById('newListingName');
             if (!selectEl) return;
             const commodityName = selectEl.value;
-            const intel = LAMPUNG_MARKET_INTELLIGENCE[commodityName] || Object.values(LAMPUNG_MARKET_INTELLIGENCE)[0];
+            const intel = findMarketIntel(commodityName);
 
             const tengkulakInput = document.getElementById('newListingTengkulakPrice');
             const marketInput = document.getElementById('newListingMarketPrice');
@@ -10568,20 +10617,25 @@
             let cardsHtml = '';
             orders.forEach(t => {
                 const isAmbil = (t.deliveryMethod || '').toLowerCase().includes('ambil');
+                const isSurplusDispatch = t.type === 'EKSPANSI_PASAR_LUAR' || t.status === 'TERVERIFIKASI_MBG_KOPERASI' || String(t.commodity || '').includes('Surplus');
                 const buyerMember = (window.appState.members || []).find(m => m.sid === t.consumerSid);
-                const buyerAddress = buyerMember ? buyerMember.address : 'Warga RT 13 Metro Pusat';
-                const buyerName = t.consumerName || (buyerMember ? buyerMember.name : 'Warga RT 13');
+                const buyerAddress = isSurplusDispatch ? 'Mitra MBG / Koperasi Pangan Kota Metro' : (buyerMember ? buyerMember.address : 'Warga RT 13 Metro Pusat');
+                const buyerName = t.consumerName || (buyerMember ? buyerMember.name : (isSurplusDispatch ? 'Mitra Penyaluran Surplus' : 'Warga RT 13'));
                 const initials = buyerName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
 
                 cardsHtml += `
-                    <div class="p-4 sm:p-5 rounded-2xl border border-stone-200/90 bg-white hover:border-forest-300 transition shadow-2xs space-y-3.5">
+                    <div class="p-4 sm:p-5 rounded-2xl border ${isSurplusDispatch ? 'border-purple-300 bg-purple-50/20' : 'border-stone-200/90 bg-white'} hover:border-forest-300 transition shadow-2xs space-y-3.5">
                         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-2.5">
                             <div class="flex items-center gap-2">
-                                <span class="font-mono text-xs font-bold text-forest-800 bg-forest-50 px-2 py-0.5 rounded border border-forest-200">${t.id}</span>
+                                <span class="font-mono text-xs font-bold ${isSurplusDispatch ? 'text-purple-800 bg-purple-100 border-purple-200' : 'text-forest-800 bg-forest-50 border-forest-200'} px-2 py-0.5 rounded border">${t.id}</span>
                                 <span class="text-xs text-stone-500"><i class="fa-regular fa-clock text-stone-400 mr-1"></i>${t.timestamp}</span>
                             </div>
                             <div class="flex items-center gap-2">
-                                ${t.orderStatus === 'MENUNGGU_KONFIRMASI' ? `
+                                ${isSurplusDispatch ? `
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-300 flex items-center gap-1">
+                                        <i class="fa-solid fa-truck-fast text-purple-600"></i> Penyaluran Surplus MBG/Koperasi
+                                    </span>
+                                ` : t.orderStatus === 'MENUNGGU_KONFIRMASI' ? `
                                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1">
                                         <i class="fa-solid fa-hourglass-start text-amber-600"></i> Menunggu Disiapkan
                                     </span>
@@ -10600,13 +10654,13 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                             <div class="flex items-start gap-3 bg-stone-50/70 p-3 rounded-xl border border-stone-150">
-                                <div class="w-9 h-9 rounded-full bg-forest-700 text-white font-bold flex items-center justify-center shrink-0 text-xs shadow-2xs">
+                                <div class="w-9 h-9 rounded-full ${isSurplusDispatch ? 'bg-purple-700' : 'bg-forest-700'} text-white font-bold flex items-center justify-center shrink-0 text-xs shadow-2xs">
                                     ${initials}
                                 </div>
                                 <div class="space-y-0.5 min-w-0">
                                     <div class="flex items-center gap-1.5 flex-wrap">
                                         <span class="font-bold text-stone-900 truncate">${buyerName}</span>
-                                        <span class="font-mono text-[10px] text-stone-500 bg-white px-1.5 py-0.5 rounded border border-stone-200">${t.consumerSid || 'SID-RT13'}</span>
+                                        <span class="font-mono text-[10px] ${isSurplusDispatch ? 'text-purple-700 bg-purple-50 border-purple-200' : 'text-stone-500 bg-white border-stone-200'} px-1.5 py-0.5 rounded border">${isSurplusDispatch ? 'Mitra Penyaluran' : (t.consumerSid || 'SID-RT13')}</span>
                                     </div>
                                     <p class="text-[11px] text-stone-500 truncate"><i class="fa-solid fa-location-dot text-stone-400 mr-1"></i>${buyerAddress}</p>
                                 </div>
@@ -10622,8 +10676,13 @@
                                     </div>
                                 </div>
                                 <div class="text-right space-y-1">
-                                    <span class="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block">Pengantaran</span>
-                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${isAmbil ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-blue-50 text-blue-800 border border-blue-200'}">
+                                    <span class="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block">Metode Pengiriman</span>
+                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${isSurplusDispatch ? 'bg-purple-100 text-purple-900 border border-purple-300' : (isAmbil ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-blue-50 text-blue-800 border border-blue-200')}">
+                                        <i class="fa-solid ${isSurplusDispatch ? 'fa-truck-fast text-purple-700' : (isAmbil ? 'fa-person-walking' : 'fa-motorcycle')} mr-1"></i>${isSurplusDispatch ? 'Penyaluran Kolektif Admin' : (isAmbil ? 'Ambil di Kebun' : 'Diantar Warga')}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                                         <i class="fa-solid ${isAmbil ? 'fa-person-walking' : 'fa-motorcycle'} mr-1"></i>${isAmbil ? 'Ambil di Kebun' : 'Diantar Warga'}
                                     </span>
                                 </div>
@@ -11319,6 +11378,29 @@
             const elDualCard = document.getElementById('dualRoleSwitchCard');
             const logoutBtn = document.querySelector('#tab-konsep button[onclick="logoutCitizenAccount()"]');
 
+            // 0. KONDISI LOGIN ADMIN RT 13
+            if (window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN' || activeSid === 'ADMIN-RT13') {
+                if (elAvatar) elAvatar.innerHTML = '<i class="fa-solid fa-user-shield text-amber-300 text-lg"></i>';
+                if (elName) elName.textContent = 'Pengurus RT 13 (Admin)';
+                if (elSid) elSid.textContent = 'ADMIN-RT13 • Pengurus RT 13 & PKK Kelurahan Yosomulyo';
+                if (elBadge) {
+                    elBadge.textContent = 'Admin Pengurus RT';
+                    elBadge.className = 'px-2.5 py-1 rounded-full text-[11px] font-bold bg-forest-800 text-white border border-forest-700';
+                }
+                if (logoutBtn) logoutBtn.classList.remove('hidden');
+                if (elDualCard) elDualCard.classList.add('hidden');
+                if (elHeaderDualBtn) {
+                    elHeaderDualBtn.classList.add('hidden');
+                    elHeaderDualBtn.classList.remove('flex');
+                }
+                const realCount = (window.appState.members || []).filter(m => !m.isDemoAccount).length;
+                if (elFamily) elFamily.textContent = `${realCount} KK Warga`;
+                if (elNeed) elNeed.textContent = 'Monev Terpadu';
+                if (elTxCount) elTxCount.textContent = `${window.appState.transactions?.length || 50} Pesanan`;
+                if (elHeaderLabel) elHeaderLabel.textContent = 'Pengurus RT 13 (Admin)';
+                return;
+            }
+
             // 1. KONDISI GUEST: BELUM ADA AKUN LOGIN
             if (!member) {
                 if (elAvatar) elAvatar.innerHTML = '<i class="fa-solid fa-user-lock text-emerald-300 text-lg"></i>';
@@ -11743,11 +11825,19 @@
             const commName = String(document.getElementById('profileNewCommName')?.value || '').trim();
             const commCategory = document.getElementById('profileNewCommCategory')?.value || 'Sayur Pekarangan';
             const commStock = Math.max(1, Number(document.getElementById('profileNewCommStock')?.value) || 15);
-            const commPrice = Math.max(500, Number(document.getElementById('profileNewCommPrice')?.value) || 6000);
 
             if (!commName) {
                 showToast('Nama Komoditas Kosong', 'Masukkan nama hasil panen pekarangan (contoh: Sayur Kangkung).', 'warning');
                 return;
+            }
+
+            // Cari patokan harga adil Bapanas
+            let fairPrice = 5000;
+            const intelKeys = Object.keys(LAMPUNG_MARKET_INTELLIGENCE || {});
+            const matchedKey = intelKeys.find(k => k.toLowerCase().includes(commName.toLowerCase()) || commName.toLowerCase().includes(k.toLowerCase()));
+            if (matchedKey && LAMPUNG_MARKET_INTELLIGENCE[matchedKey]) {
+                const info = LAMPUNG_MARKET_INTELLIGENCE[matchedKey];
+                fairPrice = info.recommendedPrice || info.fairPrice || Math.round(((info.pengepulPrice || 3000) + (info.marketLampungPrice || 7000)) / 2);
             }
 
             member.isDualRole = true;
@@ -11757,6 +11847,16 @@
                 member.producerCommodity = member.producerCommodity + ', ' + commName;
             }
             member.capacityKg = (Number(member.capacityKg) || 0) + commStock;
+
+            // Simpan komoditas terdaftar ke profil produsen
+            member.registeredCommodities = Array.isArray(member.registeredCommodities) ? member.registeredCommodities : [];
+            if (!member.registeredCommodities.some(c => (typeof c === 'string' ? c : c.name).toLowerCase() === commName.toLowerCase())) {
+                member.registeredCommodities.push({
+                    name: commName,
+                    category: commCategory,
+                    stock: commStock
+                });
+            }
 
             window.appState.listings.unshift({
                 id: 'list-' + Date.now(),
@@ -11769,22 +11869,22 @@
                 availableStockKg: commStock,
                 localAbsorbedKg: 0,
                 unabsorbedSurplusKg: 0,
-                fairPrice: commPrice,
-                marketPrice: Math.round((commPrice * 1.3) / 500) * 500,
-                tengkulakPrice: Math.round((commPrice * 0.75) / 500) * 500,
+                fairPrice: fairPrice,
+                marketPrice: Math.round((fairPrice * 1.3) / 500) * 500,
+                tengkulakPrice: Math.round((fairPrice * 0.75) / 500) * 500,
                 harvestDate: 'Hari Ini',
                 freshnessWindow: 'Segar Panen Pagi',
                 freshnessDaysRemaining: 4,
                 location: member.address || 'RT 13 Yosomulyo',
                 distanceKm: member.distanceKm || 0.12,
                 icon: commCategory.includes('Lauk') ? 'fa-fish' : commCategory.includes('Beras') ? 'fa-wheat-awn' : 'fa-seedling',
-                description: `Hasil panen segar ${commName} dari pekarangan ${member.name} (${member.address || 'RT 13'}).`,
+                description: `Hasil panen segar ${commName} dari pekarangan ${member.name} (${member.address || 'RT 13'}). (Harga adil otomatis Bapanas).`,
                 isDemoListing: Boolean(member.isDemoAccount)
             });
 
             saveStateToLocal();
             renderAll();
-            showToast('Komoditas Ditambahkan', `${commName} (${commStock} Kg) berhasil ditambahkan ke Lapak Kebun Anda.`, 'success');
+            showToast('Komoditas Ditambahkan', `${commName} (${commStock} Kg) berhasil didaftarkan ke kebun Anda. Harga adil dihitung otomatis dari data Bapanas saat dipasarkan.`, 'success');
         };
 
         function renderMyOwnKkSummaryCard() {
@@ -11793,6 +11893,64 @@
 
             const activeSid = window.appState?.activeUserSid;
             const member = activeSid ? (window.appState?.members || []).find(m => m.sid === activeSid) : null;
+
+            // Jika login sebagai Admin RT
+            if (window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN' || activeSid === 'ADMIN-RT13') {
+                const realCount = (window.appState.members || []).filter(m => !m.isDemoAccount).length;
+                const prodCount = (window.appState.members || []).filter(m => !m.isDemoAccount && m.role === 'PRODUSEN').length;
+                const txCount = (window.appState.transactions || []).length;
+                card.innerHTML = `
+                    <div class="bg-gradient-to-br from-slate-900 via-forest-900 to-emerald-950 text-white rounded-2xl p-5 sm:p-6 border border-slate-700 shadow-md space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-800/60 pb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-400/40 flex items-center justify-center text-xl shrink-0">
+                                    <i class="fa-solid fa-user-shield"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                                            Konsol Pengurus RT 13
+                                        </span>
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                            Status: Aktif Penuh
+                                        </span>
+                                    </div>
+                                    <h3 class="serif-heading text-lg sm:text-xl font-bold text-white mt-0.5">
+                                        Direktori Warga Single Identity (<span class="dynamic-kk-count">${realCount}</span> KK) &amp; Pantau PIN
+                                    </h3>
+                                    <p class="text-xs text-emerald-200/80">Kelola dan pantau data 40 KK, verifikasi anggota keluarga, serta bantuan PIN warga yang lupa.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="switchTab('tab-dampak')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                                    <i class="fa-solid fa-chart-pie"></i> Monev &amp; Surplus
+                                </button>
+                                <button type="button" onclick="switchTab('tab-orders')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border border-white/20">
+                                    <i class="fa-solid fa-truck-fast"></i> Penyaluran Surplus
+                                </button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2.5 sm:gap-4 text-center text-xs">
+                            <div class="bg-white/10 p-2.5 rounded-xl border border-white/10">
+                                <span class="text-[10px] text-emerald-300 block">Total Kepala Keluarga</span>
+                                <strong class="font-mono text-base font-bold text-white">${realCount} KK</strong>
+                            </div>
+                            <div class="bg-white/10 p-2.5 rounded-xl border border-white/10">
+                                <span class="text-[10px] text-emerald-300 block">Produsen Aktif</span>
+                                <strong class="font-mono text-base font-bold text-amber-300">${prodCount} Kebun KWT</strong>
+                            </div>
+                            <div class="bg-white/10 p-2.5 rounded-xl border border-white/10">
+                                <span class="text-[10px] text-emerald-300 block">Total Transaksi</span>
+                                <strong class="font-mono text-base font-bold text-white">${txCount} Transaksi</strong>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                const sidDirCard = document.getElementById('sidDirectoryTableCard');
+                if (sidDirCard) sidDirCard.classList.remove('hidden');
+                if (typeof renderMembersTable === 'function') renderMembersTable();
+                return;
+            }
 
             if (!member) {
                 card.innerHTML = '';
@@ -11857,39 +12015,35 @@
                         <span class="text-xs font-bold text-emerald-950 block">
                             <i class="fa-solid fa-circle-plus text-emerald-700 mr-1"></i>Tambah Komoditas Pekarangan Baru:
                         </span>
-                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
-                            <div class="sm:col-span-2">
-                                <label class="block text-[11px] font-semibold text-stone-600 mb-1">Nama Komoditas *</label>
-                                <input type="text" id="profileNewCommName" required placeholder="Cth: Sayur Kangkung / Lele"
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-stone-600 mb-1">Nama Komoditas Kebun *</label>
+                                <input type="text" id="profileNewCommName" required placeholder="Cth: Sayur Kangkung / Bayam / Lele"
                                     class="w-full h-11 px-3 rounded-xl border border-stone-300 bg-white text-stone-900 font-semibold focus:outline-none focus:border-forest-700">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-stone-600 mb-1">Kategori</label>
                                 <select id="profileNewCommCategory"
                                     class="w-full h-11 px-2.5 rounded-xl border border-stone-300 bg-white text-stone-900 font-semibold focus:outline-none focus:border-forest-700">
-                                    <option value="Sayur Pekarangan">Sayur</option>
-                                    <option value="Lauk & Protein">Lauk/Ikan/Telur</option>
-                                    <option value="Beras & Padi">Beras/Padi</option>
-                                    <option value="Olahan Pangan">Olahan</option>
+                                    <option value="Sayur Pekarangan">Sayur Pekarangan</option>
+                                    <option value="Lauk & Protein">Lauk / Ikan / Telur</option>
+                                    <option value="Beras & Padi">Beras &amp; Padi</option>
+                                    <option value="Olahan Pangan">Olahan Pangan</option>
                                 </select>
                             </div>
-                            <div class="grid grid-cols-2 gap-2 sm:col-span-1">
-                                <div>
-                                    <label class="block text-[11px] font-semibold text-stone-600 mb-1">Stok (Kg)</label>
-                                    <input type="number" id="profileNewCommStock" min="1" value="15" required
-                                        class="w-full h-11 px-2.5 rounded-xl border border-stone-300 bg-white font-mono font-bold text-stone-900">
-                                </div>
-                                <div>
-                                    <label class="block text-[11px] font-semibold text-stone-600 mb-1">Harga/Kg</label>
-                                    <input type="number" id="profileNewCommPrice" min="500" step="500" value="6000" required
-                                        class="w-full h-11 px-2 rounded-xl border border-stone-300 bg-white font-mono font-bold text-stone-900">
-                                </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-stone-600 mb-1">Estimasi Stok Panen (Kg) *</label>
+                                <input type="number" id="profileNewCommStock" min="1" value="20" required
+                                    class="w-full h-11 px-3 rounded-xl border border-stone-300 bg-white font-mono font-bold text-stone-900 focus:outline-none focus:border-forest-700">
                             </div>
                         </div>
+                        <p class="text-[11px] text-emerald-800">
+                            <i class="fa-solid fa-circle-info mr-1"></i>Harga adil tidak perlu diisi manual di profil. Sistem otomatis memuat patokan <strong>Harga Adil Bapanas</strong> (antara harga tengkulak dan pasar induk) saat komoditas diposting di pasar.
+                        </p>
                         <button type="submit"
                             class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
                             <i class="fa-solid fa-plus"></i>
-                            <span>Simpan Komoditas Pekarangan</span>
+                            <span>Simpan Komoditas ke Kebun Saya</span>
                         </button>
                     </form>
                 </div>
@@ -12716,7 +12870,8 @@
                 const avail = Number(l.availableStockKg) || 0;
                 const unabsorbed = Number(l.unabsorbedSurplusKg) || 0;
 
-                const surplusKg = unabsorbed > 0 ? unabsorbed : (avail >= 15 ? avail : 0);
+                // Hitung surplus: jika ada unabsorbedSurplusKg > 0 ATAU ada sisa stok panen (avail > 0)
+                const surplusKg = unabsorbed > 0 ? unabsorbed : avail;
                 if (surplusKg > 0) {
                     const prod = members.find(m => m.sid === l.producerSid);
                     surplusItems.push({
@@ -12818,17 +12973,113 @@
                         `}
                     </td>
                     <td class="py-3 px-4 text-right">
-                        <button type="button" onclick="notifyProducerSurplus('${item.listingId}')"
-                            class="px-3 py-1.5 rounded-xl ${item.notified ? 'bg-stone-100 text-stone-700 border border-stone-300' : 'bg-amber-500 hover:bg-amber-600 text-white shadow-2xs'} font-bold text-[11px] transition inline-flex items-center gap-1.5 cursor-pointer">
-                            <i class="fa-solid fa-bell"></i>
-                            <span>${item.notified ? 'Kirim Ulang Info' : 'Beritahu Produsen'}</span>
-                        </button>
+                        <div class="flex items-center justify-end gap-1.5">
+                            <button type="button" onclick="notifyProducerSurplus('${item.listingId}')"
+                                class="px-2.5 py-1.5 rounded-xl ${item.notified ? 'bg-stone-100 text-stone-700 border border-stone-300' : 'bg-amber-500 hover:bg-amber-600 text-white shadow-2xs'} font-bold text-[11px] transition inline-flex items-center gap-1 cursor-pointer"
+                                title="Kirim notifikasi info surplus ke petani">
+                                <i class="fa-solid fa-bell"></i>
+                                <span>${item.notified ? 'Info Terkirim' : 'Beritahu'}</span>
+                            </button>
+                            <button type="button" onclick="dispatchSingleSurplusToDistribution('${item.listingId}')"
+                                class="px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] transition inline-flex items-center gap-1 cursor-pointer shadow-2xs"
+                                title="Tarik surplus komoditas ini dan salurkan ke Koperasi / Dapur MBG">
+                                <i class="fa-solid fa-truck-fast"></i>
+                                <span>Salurkan</span>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
         }
 
-        function notifyProducerSurplus(listingId) {
+        window.dispatchSingleSurplusToDistribution = function(listingId) {
+            const listing = (window.appState.listings || []).find(l => l.id === listingId);
+            if (!listing) return;
+
+            const targetInstSelect = document.getElementById('surplusTargetInstitution');
+            const targetInst = targetInstSelect ? targetInstSelect.value : 'MBG_METRO';
+            const targetName = targetInst === 'MBG_METRO'
+                ? 'Satuan Pelayanan Pemenuhan Gizi (Dapur MBG) Kota Metro'
+                : 'Koperasi Produsen Kelurahan Yosomulyo';
+
+            const surplusKg = (listing.unabsorbedSurplusKg || 0) > 0 ? listing.unabsorbedSurplusKg : listing.availableStockKg;
+            const fairPrice = Number(listing.fairPrice) || 6000;
+            const subtotal = surplusKg * fairPrice;
+
+            if (surplusKg <= 0) {
+                showToast('Stok Kosong', 'Stok surplus komoditas ini sudah tidak ada.', 'warning');
+                return;
+            }
+
+            if ((listing.unabsorbedSurplusKg || 0) > 0) {
+                listing.unabsorbedSurplusKg = 0;
+            } else {
+                listing.availableStockKg = 0;
+            }
+            listing.localAbsorbedKg = (listing.localAbsorbedKg || 0) + surplusKg;
+            listing.surplusNotified = true;
+
+            const prod = (window.appState.members || []).find(m => m.sid === listing.producerSid);
+            if (prod) {
+                prod.walletEarned = (prod.walletEarned || 0) + subtotal;
+                prod.surplusNotified = true;
+                prod.surplusNotifiedMsg = `Panen surplus Anda (${surplusKg} Kg ${listing.commodity}) telah disalurkan oleh Admin RT 13 ke ${targetName}.`;
+            }
+
+            const txId = `TX-RT13-MBG${Math.floor(100 + Math.random() * 900)}`;
+            window.appState.transactions.unshift({
+                id: txId,
+                timestamp: 'Baru Saja • Penyaluran Surplus',
+                type: 'EKSPANSI_PASAR_LUAR',
+                orderStatus: 'SELESAI_LUNAS',
+                producerSid: listing.producerSid,
+                producerName: listing.producerName,
+                consumerSid: targetInst,
+                consumerName: targetName,
+                commodity: `${listing.commodity} (Surplus Panen)`,
+                quantityKg: surplusKg,
+                unitPrice: fairPrice,
+                subtotal: subtotal,
+                producerNet: subtotal,
+                deliveryMethod: 'Penyaluran Kolektif via Admin RT',
+                deliveryFee: 0,
+                totalPaid: subtotal,
+                status: 'TERVERIFIKASI_MBG_KOPERASI'
+            });
+
+            if (typeof musyawarahTransparencyState !== 'undefined' && Array.isArray(musyawarahTransparencyState.activities)) {
+                musyawarahTransparencyState.activities.unshift({
+                    id: `act-mbg-${Date.now()}`,
+                    time: 'Baru saja',
+                    category: 'Penyaluran Surplus MBG/Koperasi',
+                    description: `Admin RT 13 menarik dan menyalurkan ${surplusKg} Kg ${listing.commodity} senilai ${formatRupiah(subtotal)} dari ${listing.producerName} ke ${targetName}.`,
+                    isNew: true
+                });
+            }
+
+            // Reset filter transaksi pesanan agar langsung muncul paling atas
+            const filterSelect = document.getElementById('ordersProducerFilter');
+            if (filterSelect) filterSelect.value = 'ALL';
+            const deliveryFilter = document.getElementById('ordersDeliveryFilter');
+            if (deliveryFilter) deliveryFilter.value = 'ALL';
+            const searchInput = document.getElementById('ordersSearchInput');
+            if (searchInput) searchInput.value = '';
+
+            renderAll();
+            syncAllDataToSupabaseNow(false);
+
+            showToast(
+                'Surplus Berhasil Ditarik & Disalurkan!',
+                `${surplusKg} Kg ${listing.commodity} berhasil disalurkan ke ${targetName} dan dicatat di Tab Penyaluran & Pesanan.`,
+                'success'
+            );
+
+            setTimeout(() => {
+                switchTab('tab-orders');
+            }, 500);
+        };
+
+        window.notifyProducerSurplus = function(listingId) {
             const listing = (window.appState.listings || []).find(l => l.id === listingId);
             if (!listing) return;
 
@@ -12858,9 +13109,9 @@
                 `Notifikasi surplus +${surplusKg} Kg ${listing.commodity} telah dikirim ke akun ${listing.producerName} (${listing.producerSid}).`,
                 'success'
             );
-        }
+        };
 
-        function handleDispatchUnifiedSurplusViaWa() {
+        window.handleDispatchUnifiedSurplusViaWa = function(skipWhatsApp = false) {
             const surplusItems = getActiveSurplusItems();
             if (surplusItems.length === 0) {
                 showToast('Tidak Ada Surplus Tersisa', 'Seluruh stok surplus sudah terserap atau telah disalurkan.', 'info');
@@ -12917,6 +13168,7 @@
                 id: txId,
                 timestamp: 'Baru Saja • Paket Kolektif',
                 type: 'EKSPANSI_PASAR_LUAR',
+                orderStatus: 'SELESAI_LUNAS',
                 producerSid: 'KOLEKTIF-KWT-RT13',
                 producerName: `${surplusItems.length} Produsen KWT RT 13`,
                 consumerSid: targetInst,
@@ -12942,17 +13194,37 @@
                 });
             }
 
+            // Reset filter transaksi pesanan agar langsung muncul paling atas
+            const filterSelect = document.getElementById('ordersProducerFilter');
+            if (filterSelect) filterSelect.value = 'ALL';
+            const deliveryFilter = document.getElementById('ordersDeliveryFilter');
+            if (deliveryFilter) deliveryFilter.value = 'ALL';
+            const searchInput = document.getElementById('ordersSearchInput');
+            if (searchInput) searchInput.value = '';
+
             renderAll();
             syncAllDataToSupabaseNow(false);
 
-            const waUrl = `https://wa.me/${waPhone}?text=${encodeURIComponent(waMessage)}`;
-            window.open(waUrl, '_blank', 'noopener,noreferrer');
+            if (!skipWhatsApp) {
+                try {
+                    const waUrl = `https://wa.me/${waPhone}?text=${encodeURIComponent(waMessage)}`;
+                    window.open(waUrl, '_blank', 'noopener,noreferrer');
+                } catch (err) {
+                    console.warn('Popup blocked:', err);
+                }
+            }
+
             showToast(
-                '1 Paket Surplus Disalurkan via WhatsApp!',
-                `Total ${totalKg} Kg (${formatRupiah(totalVal)}) diteruskan ke ${targetName} dan seluruh produsen telah diberitahu.`,
+                '1 Paket Surplus Berhasil Disalurkan!',
+                `Total ${totalKg} Kg (${formatRupiah(totalVal)}) dipindahkan ke Tab Penyaluran & Pesanan.`,
                 'success'
             );
-        }
+
+            // Otomatis berpindah ke tab pesanan & penyaluran
+            setTimeout(() => {
+                switchTab('tab-orders');
+            }, 600);
+        };
 
         // 9.9 Kalkulasi Food Loss <= 5% & Dynamic Counters
         function updateFoodLossAndDynamicCounters() {
@@ -13796,7 +14068,12 @@
                     role: 'PRODUSEN',
                     isDualRole: true,
                     isDemoAccount: true,
-                    producerCommodity: 'Sayur Bayam & Kangkung (Kebun Demo)',
+                    producerCommodity: 'Sayur Bayam Hijau (KWT Pekarangan), Sayur Kangkung (KWT Pekarangan)',
+                    registeredCommodities: [
+                        { name: 'Sayur Bayam Hijau (KWT Pekarangan)', unit: 'Kg', cycleDays: 25 },
+                        { name: 'Sayur Kangkung (KWT Pekarangan)', unit: 'Kg', cycleDays: 20 },
+                        { name: 'Cabai Rawit Merah (Pekarangan KWT)', unit: 'Kg', cycleDays: 90 }
+                    ],
                     capacityKg: 45,
                     familySize: 4,
                     monthlyIncome: 2800000,
@@ -14252,8 +14529,8 @@
         window.renderAdminMonevSummary = function() {
             const kkEl = document.getElementById('adminMonevKkNeedsSummary');
             const prodEl = document.getElementById('adminMonevProducerSummary');
-            const members = window.appState.members || [];
-            const listings = window.appState.listings || [];
+            const members = (window.appState.members || []).filter(m => !m.isDemoAccount);
+            const listings = (window.appState.listings || []).filter(l => !l.isDemoListing);
 
             if (kkEl) {
                 const totalJiwa = members.reduce((s, m) => s + (Number(m.familySize) || 4), 0);
@@ -14414,9 +14691,10 @@
                 if (sidTopAdminCard) sidTopAdminCard.classList.remove('hidden');
                 if (sidRegCard) sidRegCard.classList.add('hidden');
                 if (sidDirCard) sidDirCard.classList.remove('hidden');
-                if (myOwnKkCard) myOwnKkCard.classList.add('hidden');
+                if (myOwnKkCard) myOwnKkCard.classList.remove('hidden');
                 if (consumerOrdersCard) consumerOrdersCard.classList.add('hidden');
                 if (catFilterBar) catFilterBar.classList.remove('hidden');
+                if (typeof renderMembersTable === 'function') renderMembersTable();
             }
 
             if (typeof renderProducerWorkspaceAndAutoAi === 'function') renderProducerWorkspaceAndAutoAi();
