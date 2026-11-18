@@ -7,6 +7,10 @@
  */
 
 export function initAiForecastAndSurplusEngine() {
+        function formatRupiah(n) {
+            return typeof window.formatRupiah === 'function' ? window.formatRupiah(n) : 'Rp ' + Number(n).toLocaleString('id-ID');
+        }
+
         // TAB 4: AI MATCHING, PREDIKSI & ROUND-ROBIN ALLOCATION
         window.renderAiMatchingPanel = function renderAiMatchingPanel() {
             const container = document.getElementById('aiMatchingRecommendationsContainer');
@@ -848,7 +852,7 @@ export function initAiForecastAndSurplusEngine() {
             }).join('');
         }
 
-        window.getActiveSurplusItems = function getActiveSurplusItems() {
+        function getActiveSurplusItems() {
             const listings = window.appState.listings || [];
             const members = window.appState.members || [];
             const surplusItems = [];
@@ -883,6 +887,7 @@ export function initAiForecastAndSurplusEngine() {
             });
             return surplusItems;
         }
+        window.getActiveSurplusItems = getActiveSurplusItems;
 
         window.renderAdminSurplusCenter = function renderAdminSurplusCenter() {
             const tbody = document.getElementById('adminWeeklySurplusTableBody');
@@ -931,14 +936,73 @@ export function initAiForecastAndSurplusEngine() {
                     </tr>
                 `;
                 if (previewTextEl) {
-                    previewTextEl.textContent = 'Menunggu penarikan & konfirmasi surplus komoditas dari produsen melalui Tab Analisis AI & Pasar.';
+                    previewTextEl.innerHTML = `
+                        <div class="text-stone-500 italic text-xs py-2 text-center">
+                            <i class="fa-solid fa-circle-info text-amber-600 mr-1"></i>
+                            Belum ada komoditas surplus aktif di Pusat Penarikan Resume Surplus. Tarik data surplus dari tab Analisis AI &amp; Pasar agar produsen mengonfirmasi ketersediaan paket.
+                        </div>
+                    `;
                 }
                 return;
             }
 
-            const summaryParts = surplusItems.map(item => `${item.commodity} (${item.surplusKg} ${item.unit} - ${item.producerName})`);
             if (previewTextEl) {
-                previewTextEl.textContent = `[PAKET RESUME SURPLUS TERKONFIRMASI RT 13 YOSOMULYO]: Total ${totalSurplusKg} Kg senilai ${formatRupiah(totalSurplusVal)} terdiri dari: ${summaryParts.join('; ')}.`;
+                const targetInstSelect = document.getElementById('surplusTargetInstitution');
+                const targetInst = targetInstSelect ? targetInstSelect.value : 'MBG_METRO';
+                const targetName = targetInst === 'KOPERASI_YOSOMULYO'
+                    ? 'Koperasi Produsen Kelurahan Yosomulyo'
+                    : 'Dapur Makan Bergizi Gratis (MBG) Kota Metro';
+
+                previewTextEl.innerHTML = `
+                    <div class="space-y-3 font-sans">
+                        <!-- Header Resume Paket -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-emerald-100">
+                            <div>
+                                <div class="text-xs font-bold text-forest-900 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-box-open text-emerald-600"></i>
+                                    <span>Paket Resume Terpadu Siap Salurkan (1 Pengiriman Kolektif)</span>
+                                </div>
+                                <span class="text-[11px] text-stone-500">
+                                    Mitra Penerima Terpilih: <strong class="text-emerald-800">${targetName}</strong>
+                                </span>
+                            </div>
+                            <div class="text-left sm:text-right shrink-0">
+                                <span class="text-xs font-mono font-extrabold text-forest-900 block">${totalSurplusKg.toLocaleString('id-ID')} Kg • ${formatRupiah(totalSurplusVal)}</span>
+                                <span class="text-[10px] text-emerald-700 font-semibold">${surplusItems.length} Komoditas Terkonfirmasi</span>
+                            </div>
+                        </div>
+
+                        <!-- Rincian Isi Paket Komoditas Sesuai Tabel Pusat Penarikan -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5 text-xs">
+                            ${surplusItems.map((item, idx) => `
+                                <div class="p-3 rounded-xl bg-emerald-50/60 border border-emerald-200 flex flex-col justify-between gap-2 shadow-2xs">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div class="min-w-0">
+                                            <strong class="text-stone-900 block truncate text-xs">${idx + 1}. ${item.commodity}</strong>
+                                            <span class="text-[10px] text-stone-600 block">${item.producerName} (${item.producerSid})</span>
+                                            <span class="text-[10px] text-stone-400 block"><i class="fa-solid fa-rotate mr-1"></i>${item.cycle}</span>
+                                        </div>
+                                        <span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 font-mono font-extrabold text-xs shrink-0 border border-amber-300">
+                                            +${item.surplusKg} ${item.unit}
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between pt-1.5 border-t border-emerald-200/60 text-[11px]">
+                                        <span class="text-stone-700 font-mono font-bold">${formatRupiah(item.surplusKg * item.fairPrice)} <span class="text-[10px] font-normal text-stone-500">(@ ${formatRupiah(item.fairPrice)})</span></span>
+                                        <span class="text-[10px] font-bold text-emerald-800 flex items-center gap-1 bg-white px-2 py-0.5 rounded border border-emerald-300">
+                                            <i class="fa-solid fa-circle-check text-emerald-600"></i> Siap Salur
+                                        </span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <!-- Teks Dokumen Resmi Pengiriman -->
+                        <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200 text-[11px] font-mono text-stone-700 leading-relaxed">
+                            <span class="text-stone-500 block mb-0.5 font-bold uppercase text-[10px]">Teks Ringkasan Dokumen Penyaluran (Siap Kirim WA / Eksekusi):</span>
+                            &ldquo;1 Paket Resume Surplus Pangan RT 13 Yosomulyo senilai <strong>${formatRupiah(totalSurplusVal)}</strong> (${totalSurplusKg} Kg) berisi: ${surplusItems.map(s => `${s.commodity} +${s.surplusKg} ${s.unit} (${s.producerName})`).join('; ')}. Siap dijemput/disalurkan ke ${targetName}.&rdquo;
+                        </div>
+                    </div>
+                `;
             }
 
             tbody.innerHTML = surplusItems.map(item => `

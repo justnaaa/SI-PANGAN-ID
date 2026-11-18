@@ -2342,7 +2342,7 @@
                                     Monitoring Siklus Panen Mingguan &amp; Surplus Tidak Terserap Pasar
                                 </span>
                                 <span id="adminSurplusCountPill" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-forest-100 text-forest-800">
-                                    3 Produsen Surplus Minggu Ini
+                                    3 Komoditas Terkonfirmasi Siap Salurkan
                                 </span>
                             </div>
                             <h2 class="serif-heading text-xl sm:text-2xl font-bold text-stone-900">
@@ -2356,8 +2356,8 @@
                         <!-- Kotak Resume 1 Paket Surplus Siap Salurkan -->
                         <div class="p-4 rounded-2xl bg-gradient-to-br from-forest-900 to-emerald-900 text-white space-y-2 shrink-0 min-w-[260px]">
                             <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-300 block">Total 1 Paket Resume Surplus Aktif</span>
-                            <div id="adminTotalSurplusPackageKg" class="serif-heading text-2xl font-bold text-white mono-num">435 Kg</div>
-                            <span id="adminTotalSurplusPackageValue" class="text-xs text-emerald-200 font-mono block">Estimasi Nilai: Rp 5.530.000</span>
+                            <div id="adminTotalSurplusPackageKg" class="serif-heading text-2xl font-bold text-white mono-num">440 Kg</div>
+                            <span id="adminTotalSurplusPackageValue" class="text-xs text-emerald-200 font-mono block">Estimasi Nilai: Rp 6.010.000</span>
                         </div>
                     </div>
 
@@ -2415,7 +2415,7 @@
                                 <label for="surplusTargetInstitution" class="block text-[11px] font-bold text-stone-700 mb-1">
                                     1. Pilih Mitra Penyerap Surplus (Koperasi / MBG):
                                 </label>
-                                <select id="surplusTargetInstitution" class="w-full h-11 px-3.5 rounded-xl border border-emerald-300 bg-white text-xs font-bold text-stone-900 focus:outline-none focus:border-emerald-600 shadow-2xs">
+                                <select id="surplusTargetInstitution" onchange="if(typeof renderAdminSurplusCenter === 'function') renderAdminSurplusCenter()" class="w-full h-11 px-3.5 rounded-xl border border-emerald-300 bg-white text-xs font-bold text-stone-900 focus:outline-none focus:border-emerald-600 shadow-2xs">
                                     <option value="MBG_METRO">Dapur Makan Bergizi Gratis (MBG) Kota Metro</option>
                                     <option value="KOPERASI_YOSOMULYO">Koperasi Produsen Kelurahan Yosomulyo</option>
                                 </select>
