@@ -11697,6 +11697,59 @@
         };
 
         // --- 9.4b FITUR WARGA PERBARUI DATA KK SENDIRI (TERKUNCI KE AKUN LOGIN + VERIFIKASI ADMIN) ---
+        window.switchProfileRoleMode = function(targetRole) {
+            const activeSid = window.appState?.activeUserSid;
+            const members = window.appState?.members || [];
+            const member = members.find(m => m.sid === activeSid);
+            if (!member) return;
+
+            if (targetRole === 'PRODUSEN') {
+                member.isDualRole = true;
+                if (!member.producerCommodity || member.producerCommodity === '-') {
+                    member.producerCommodity = 'Sayur Pekarangan KWT';
+                    member.capacityKg = member.capacityKg || 30;
+                }
+                const hasListing = (window.appState.listings || []).some(l => l.producerSid === member.sid);
+                if (!hasListing) {
+                    window.appState.listings.unshift({
+                        id: 'list-' + Date.now(),
+                        producerSid: member.sid,
+                        producerName: member.name,
+                        commodity: member.producerCommodity,
+                        category: 'Sayur Pekarangan',
+                        unit: 'Kg',
+                        initialHarvestKg: member.capacityKg || 30,
+                        availableStockKg: member.capacityKg || 30,
+                        localAbsorbedKg: 0,
+                        unabsorbedSurplusKg: 0,
+                        fairPrice: 6000,
+                        marketPrice: 9000,
+                        tengkulakPrice: 4500,
+                        harvestDate: 'Hari Ini',
+                        freshnessWindow: 'Segar Panen Pagi',
+                        freshnessDaysRemaining: 4,
+                        location: member.address || 'RT 13 Yosomulyo',
+                        distanceKm: member.distanceKm || 0.15,
+                        icon: 'fa-seedling',
+                        description: `Hasil panen segar pekarangan keluarga ${member.name}.`
+                    });
+                }
+            }
+
+            window.appState.activeRole = targetRole;
+            saveStateToLocal();
+            setActiveRole(targetRole);
+            switchTab('tab-market');
+
+            showToast(
+                targetRole === 'PRODUSEN' ? 'Mode Produsen Aktif' : 'Mode Konsumen Aktif',
+                targetRole === 'PRODUSEN'
+                    ? `Berpindah ke Halaman Kelola Stok & Panen (${member.name}).`
+                    : `Berpindah ke Halaman Belanja Komoditas (${member.name}).`,
+                'success'
+            );
+        };
+
         function renderMyOwnKkSummaryCard() {
             const card = document.getElementById('myOwnKkSummaryCard');
             if (!card) return;
@@ -11709,7 +11762,14 @@
                 return;
             }
 
-            const roleLabel = window.appState.activeRole === 'PRODUSEN' ? 'Produsen (Petani / KWT)' : 'Konsumen (Warga RT 13)';
+            const isCurrentlyProducer = window.appState.activeRole === 'PRODUSEN';
+            const isDualCapable = Boolean(member.role === 'PRODUSEN' || member.isDualRole);
+            const roleLabel = isCurrentlyProducer ? 'Mode Produsen (Kelola Stok & Panen)' : 'Mode Konsumen (Belanja Pangan)';
+            const nextRoleTarget = isCurrentlyProducer ? 'KONSUMEN' : 'PRODUSEN';
+            const switchBtnLabel = isCurrentlyProducer
+                ? 'Ganti Peran / Mode Konsumen (Belanja Pangan)'
+                : 'Ganti Peran / Mode Produsen (Kelola Stok)';
+
             const pendingUpd = (window.appState?.pendingKkUpdates || []).find(u => u.sid === activeSid);
             const n = member.needs || {
                 beras: Math.round((member.familySize || 4) * 7.5),
@@ -11726,6 +11786,11 @@
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-forest-800 text-white flex items-center gap-1">
                                     <i class="fa-solid fa-user"></i> Profile Saya
                                 </span>
+                                ${isDualCapable ? `
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                        <i class="fa-solid fa-layer-group mr-1"></i> Akun 1 KK 2 Peran (Konsumen &amp; Produsen)
+                                    </span>
+                                ` : ''}
                                 ${pendingUpd ? `
                                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
                                         <i class="fa-solid fa-clock mr-1"></i> Menunggu Validasi Admin (${pendingUpd.newFamilySize} Jiwa • ${pendingUpd.newFoodNeedKg} Kg/bln)
@@ -11753,9 +11818,31 @@
                         </div>
                     </div>
 
+                    <!-- KOTAK GANTI PERAN / MODE PRODUSEN (1 KK 2 PERAN TANPA AKUN GANDA) -->
+                    <div class="p-4 rounded-2xl bg-gradient-to-r from-amber-50 via-white to-emerald-50 border-2 border-amber-300 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded bg-amber-200/80 text-amber-950 text-[10px] font-bold uppercase tracking-wider">
+                                    1 Akun KK • 2 Peran Fleksibel
+                                </span>
+                                <span class="text-xs font-bold text-stone-800">
+                                    Mode Aktif: <strong class="${isCurrentlyProducer ? 'text-amber-800' : 'text-emerald-800'}">${roleLabel}</strong>
+                                </span>
+                            </div>
+                            <p class="text-xs text-stone-600 leading-snug">
+                                Anda dapat berpindah antara halaman belanja (Konsumen) dan halaman kelola stok/panen (Produsen) cukup dengan 1 kali login tanpa membuat akun ganda.
+                            </p>
+                        </div>
+                        <button type="button" onclick="switchProfileRoleMode('${nextRoleTarget}')"
+                            class="px-4 py-3 rounded-xl ${isCurrentlyProducer ? 'bg-emerald-700 hover:bg-emerald-800 text-white' : 'bg-amber-600 hover:bg-amber-700 text-white'} font-bold text-xs shadow-sm transition flex items-center justify-center gap-2 shrink-0 cursor-pointer">
+                            <i class="fa-solid fa-repeat"></i>
+                            <span>${switchBtnLabel}</span>
+                        </button>
+                    </div>
+
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
                         <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                            <span class="text-xs text-stone-500 block">Identitas Peran</span>
+                            <span class="text-xs text-stone-500 block">Mode Peran Saat Ini</span>
                             <strong class="text-sm font-bold text-emerald-800">${roleLabel}</strong>
                         </div>
                         <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
