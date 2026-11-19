@@ -1625,33 +1625,26 @@
                         </div>
 
                         <!-- Sumber Parameter Machine Learning & Standar Pangan Resmi -->
-                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 pt-3 border-t border-stone-200/70 text-[11px]">
-                            <div class="p-2.5 rounded-xl bg-white border border-stone-200 flex items-center gap-2">
-                                <i class="fa-solid fa-scale-unbalanced-flip text-emerald-700 text-sm"></i>
-                                <div>
-                                    <strong class="block text-stone-900">Standar AKG Bapanas</strong>
-                                    <span class="text-[10px] text-stone-500">Beras 0,25kg • Sayur 0,1kg/jiwa/hr</span>
-                                </div>
-                            </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3 border-t border-stone-200/70 text-[11px]">
                             <div class="p-2.5 rounded-xl bg-white border border-stone-200 flex items-center gap-2">
                                 <i class="fa-solid fa-chart-line text-paddy-700 text-sm"></i>
                                 <div>
                                     <strong class="block text-stone-900">Historis PIHPS Kota Metro</strong>
-                                    <span class="text-[10px] text-stone-500">Elastisitas Harga 11 Komoditas</span>
+                                    <span class="text-[10px] text-stone-500" id="mlPihpsCommodityCountLabel">Elastisitas Harga 11 Komoditas</span>
                                 </div>
                             </div>
                             <div class="p-2.5 rounded-xl bg-white border border-stone-200 flex items-center gap-2">
                                 <i class="fa-solid fa-seedling text-forest-700 text-sm"></i>
                                 <div>
                                     <strong class="block text-stone-900">Kapasitas Tanam KWT</strong>
-                                    <span class="text-[10px] text-stone-500" id="mlProducerCapLabel">10 Produsen Pekarangan</span>
+                                    <span class="text-[10px] text-stone-500" id="mlProducerCapLabel">10 Produsen KWT Aktif</span>
                                 </div>
                             </div>
                             <div class="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center gap-2">
                                 <i class="fa-solid fa-microchip text-emerald-700 text-sm"></i>
                                 <div>
-                                    <strong class="block text-emerald-950">Akurasi ML (<span class="dynamic-tx-count">50</span> Transaksi)</strong>
-                                    <span class="text-[10px] font-mono font-bold text-emerald-700" id="mlAccuracyBadge">94,6% Confidence</span>
+                                    <strong class="block text-emerald-950">Akurasi ML (<span id="mlTransactionsCountLabel" class="dynamic-tx-count">50</span> Transaksi)</strong>
+                                    <span class="text-[10px] font-mono font-bold text-emerald-700" id="mlAccuracyBadge">94,8% Confidence</span>
                                 </div>
                             </div>
                         </div>
@@ -1817,8 +1810,8 @@
                      ========================================================= -->
                 <!-- 1. Header & Matriks Ringkasan (Overview) -->
                 <div class="space-y-5">
-                    <!-- Header -->
-                    <div
+                    <!-- Header (Khusus Admin: Gambaran Umum Musyawarah RT 13) -->
+                    <div id="musyawarahOverviewHeader"
                         class="flex flex-col gap-4 rounded-2xl border border-emerald-100 bg-white p-5 sm:p-7 shadow-sm sm:flex-row sm:items-center sm:justify-between">
                         <div class="space-y-2">
                             <span
@@ -2097,10 +2090,10 @@
                         </span>
                         <span class="text-xs text-stone-500">Demokrasi Pangan Tingkat RT</span>
                     </div>
-                    <h2 class="serif-heading text-2xl font-bold text-stone-900">
-                        Musyawarah Permintaan Konsumen & Master Katalog Admin
+                    <h2 id="musyawarahSectionTitle" class="serif-heading text-2xl font-bold text-stone-900">
+                        Papan Musyawarah Pangan
                     </h2>
-                    <p class="text-stone-600 text-xs sm:text-sm leading-relaxed max-w-4xl">
+                    <p id="musyawarahSectionSubtitle" class="text-stone-600 text-xs sm:text-sm leading-relaxed max-w-4xl">
                         Konsumen warga memberikan suara (voting) untuk komoditas pangan yang paling dibutuhkan dalam
                         keluarga. Pilihan yang masuk menjadi <strong>sinyal pasar terbuka</strong> bagi produsen
                         pekarangan RT 13 untuk menanam, atau menjadi mandat bagi admin koperasi untuk memasok dari luar

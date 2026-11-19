@@ -416,9 +416,20 @@ export function initAiForecastAndSurplusEngine() {
 
             const mlAccEl = document.getElementById('mlAccuracyBadge');
             const mlCapEl = document.getElementById('mlProducerCapLabel');
+            const mlPihpsEl = document.getElementById('mlPihpsCommodityCountLabel');
+            const mlTxEl = document.getElementById('mlTransactionsCountLabel');
+
             const confidence = Math.min(99.4, (91.5 + (transactions.length * 0.065))).toFixed(1).replace('.', ',');
             if (mlAccEl) mlAccEl.textContent = `${confidence}% Confidence`;
             if (mlCapEl) mlCapEl.textContent = `${producers.length} Produsen KWT Aktif`;
+            if (mlTxEl) mlTxEl.textContent = `${transactions.length}`;
+            if (mlPihpsEl) {
+                const pihpsCount = Object.keys(window.LAMPUNG_MARKET_INTELLIGENCE || {}).length || 11;
+                mlPihpsEl.textContent = `Elastisitas Harga ${pihpsCount} Komoditas`;
+            }
+            document.querySelectorAll('.dynamic-tx-count').forEach(el => {
+                el.textContent = `${transactions.length}`;
+            });
 
             const forecastList = [];
             producers.forEach(p => {

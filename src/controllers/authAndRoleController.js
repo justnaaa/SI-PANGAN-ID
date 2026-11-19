@@ -307,12 +307,21 @@ export function initAuthAndRoleController() {
                 if (adminMasterCatalogFormBox) adminMasterCatalogFormBox.classList.add('hidden');
 
                 const sidTopAdminCard = document.getElementById('sidTopAdminCard');
+                const musyawarahOverviewHeader = document.getElementById('musyawarahOverviewHeader');
                 const musyawarahHeaderProducerBox = document.getElementById('musyawarahHeaderProducerBox');
                 const musyawarahTimelineCard = document.getElementById('musyawarahDistributionTimelineCard');
+                const musyawarahSectionTitle = document.getElementById('musyawarahSectionTitle');
+                const musyawarahSectionSubtitle = document.getElementById('musyawarahSectionSubtitle');
+
                 if (sidTopAdminCard) sidTopAdminCard.classList.add('hidden');
+                if (musyawarahOverviewHeader) musyawarahOverviewHeader.classList.add('hidden');
                 if (musyawarahHeaderProducerBox) musyawarahHeaderProducerBox.classList.add('hidden');
                 if (musyawarahTimelineCard) musyawarahTimelineCard.classList.add('hidden');
                 if (producerBuyerOrdersPanel) producerBuyerOrdersPanel.classList.add('hidden');
+                if (musyawarahSectionTitle) musyawarahSectionTitle.textContent = 'Papan Musyawarah Pangan';
+                if (musyawarahSectionSubtitle) {
+                    musyawarahSectionSubtitle.innerHTML = 'Konsumen warga memberikan 1 suara (1 SID = 1 Suara) untuk komoditas pangan yang paling dibutuhkan keluarga. Pilihan warga menjadi <strong>sinyal pasar terbuka</strong> bagi produsen pekarangan KWT.';
+                }
 
                 enforceSidebarTabVisibility('KONSUMEN');
                 window.appState.privacyMode = 'PUBLIC';
@@ -338,17 +347,27 @@ export function initAuthAndRoleController() {
                 if (consumerBecomeProducerBanner) consumerBecomeProducerBanner.classList.add('hidden');
                 if (adminVotingControls) adminVotingControls.classList.add('hidden');
                 if (adminVulnerableAidSection) adminVulnerableAidSection.classList.add('hidden');
-                if (musyawarahProducerOverviewCards) musyawarahProducerOverviewCards.classList.remove('hidden');
-                if (forumIntervensiCommunityCard) forumIntervensiCommunityCard.classList.remove('hidden');
-                if (supplierDistributionPanelBox) supplierDistributionPanelBox.classList.remove('hidden');
+                // Tab Usulan Pangan dirapikan khusus Produsen: fokus ke Papan Musyawarah untuk Tarik Sinyal Produksi
+                if (musyawarahProducerOverviewCards) musyawarahProducerOverviewCards.classList.add('hidden');
+                if (forumIntervensiCommunityCard) forumIntervensiCommunityCard.classList.add('hidden');
+                if (supplierDistributionPanelBox) supplierDistributionPanelBox.classList.add('hidden');
                 if (adminMasterCatalogFormBox) adminMasterCatalogFormBox.classList.add('hidden');
 
                 const sidTopAdminCard = document.getElementById('sidTopAdminCard');
+                const musyawarahOverviewHeader = document.getElementById('musyawarahOverviewHeader');
                 const musyawarahHeaderProducerBox = document.getElementById('musyawarahHeaderProducerBox');
                 const musyawarahTimelineCard = document.getElementById('musyawarahDistributionTimelineCard');
-                if (sidTopAdminCard) sidTopAdminCard.classList.add('hidden'); // Produsen fokus ke form & tabel direktori tanpa panel verifikasi admin
-                if (musyawarahHeaderProducerBox) musyawarahHeaderProducerBox.classList.remove('hidden');
-                if (musyawarahTimelineCard) musyawarahTimelineCard.classList.add('hidden'); // Timeline distribusi hanya untuk audit Admin
+                const musyawarahSectionTitle = document.getElementById('musyawarahSectionTitle');
+                const musyawarahSectionSubtitle = document.getElementById('musyawarahSectionSubtitle');
+
+                if (sidTopAdminCard) sidTopAdminCard.classList.add('hidden');
+                if (musyawarahOverviewHeader) musyawarahOverviewHeader.classList.add('hidden');
+                if (musyawarahHeaderProducerBox) musyawarahHeaderProducerBox.classList.add('hidden');
+                if (musyawarahTimelineCard) musyawarahTimelineCard.classList.add('hidden');
+                if (musyawarahSectionTitle) musyawarahSectionTitle.textContent = 'Papan Musyawarah Pangan';
+                if (musyawarahSectionSubtitle) {
+                    musyawarahSectionSubtitle.innerHTML = 'Produsen meninjau usulan kebutuhan pangan warga RT 13 dan <strong>menarik sinyal produksi</strong> langsung ke kebun Anda. Stok dapat diedit sewaktu-waktu dan otomatis dianalisa oleh AI Surplus &amp; Jadwal Tanam.';
+                }
 
                 enforceSidebarTabVisibility('PRODUSEN');
                 window.appState.privacyMode = 'PUBLIC';
@@ -380,11 +399,17 @@ export function initAuthAndRoleController() {
                 if (adminMasterCatalogFormBox) adminMasterCatalogFormBox.classList.remove('hidden');
 
                 const sidTopAdminCard = document.getElementById('sidTopAdminCard');
+                const musyawarahOverviewHeader = document.getElementById('musyawarahOverviewHeader');
                 const musyawarahHeaderProducerBox = document.getElementById('musyawarahHeaderProducerBox');
                 const musyawarahTimelineCard = document.getElementById('musyawarahDistributionTimelineCard');
+                const musyawarahSectionTitle = document.getElementById('musyawarahSectionTitle');
+
                 if (sidTopAdminCard) sidTopAdminCard.classList.remove('hidden');
+                if (musyawarahOverviewHeader) musyawarahOverviewHeader.classList.remove('hidden');
                 if (musyawarahHeaderProducerBox) musyawarahHeaderProducerBox.classList.remove('hidden');
                 if (musyawarahTimelineCard) musyawarahTimelineCard.classList.remove('hidden'); // Tampil untuk role Admin
+                if (musyawarahSectionTitle) musyawarahSectionTitle.textContent = 'Papan Musyawarah Pangan & Master Katalog Admin';
+                if (producerBuyerOrdersPanel) producerBuyerOrdersPanel.classList.add('hidden'); // Sudah ada tab khusus #tab-orders
                 if (producerBuyerOrdersPanel) producerBuyerOrdersPanel.classList.add('hidden'); // Sudah ada tab khusus #tab-orders
 
                 enforceSidebarTabVisibility('ADMIN');
@@ -1338,12 +1363,13 @@ export function initAuthAndRoleController() {
                     { id: 'tab-orders', icon: 'fa-clipboard-list', label: 'Pesanan' }
                 ];
             } else if (role === 'PRODUSEN') {
-                grid.className = 'grid grid-cols-4 gap-1 max-w-md mx-auto';
+                grid.className = 'grid grid-cols-5 gap-1 max-w-md mx-auto';
                 const pendingCount = (window.appState.transactions || []).filter(t => t.producerSid === window.appState.activeUserSid && t.orderStatus === 'MENUNGGU_KONFIRMASI').length;
                 items = [
                     { id: 'tab-sid', icon: 'fa-user', label: 'Profile' },
                     { id: 'tab-market', icon: 'fa-seedling', label: 'Lapak Kebun' },
                     { id: 'tab-orders', icon: 'fa-clipboard-check', label: pendingCount > 0 ? `Pesanan (${pendingCount})` : 'Pesanan' },
+                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Usulan Pangan' },
                     { id: 'tab-matching', icon: 'fa-microchip', label: 'Analisis AI' }
                 ];
             } else {

@@ -705,7 +705,34 @@ export function initPriceAdvisorEngine() {
             const producerSid = document.getElementById('newListingProducerSid').value;
             const producer = window.appState.members.find(m => m.sid === producerSid);
 
-            const name = document.getElementById('newListingName').value.trim();
+            const name = (document.getElementById('newListingName')?.value || '').trim();
+            if (!name || name === '') {
+                showToast("Komoditas Belum Ada", "Belum ada komoditas kebun yang dipilih. Silakan tambahkan komoditas di Profil terlebih dahulu.", "warning");
+                return;
+            }
+
+            // Validasi Ketat: Pastikan komoditas benar-benar ada di daftar kebun yang dihasilkan oleh produsen ini
+            let myValidComms = [];
+            if (Array.isArray(producer?.registeredCommodities)) {
+                producer.registeredCommodities.forEach(c => {
+                    const cName = typeof c === 'string' ? c : c.name;
+                    if (cName) myValidComms.push(cName.toLowerCase().trim());
+                });
+            }
+            if (producer?.producerCommodity && producer.producerCommodity !== '-') {
+                producer.producerCommodity.split(',').forEach(c => {
+                    if (c.trim()) myValidComms.push(c.toLowerCase().trim());
+                });
+            }
+            (window.appState.listings || []).filter(l => l.producerSid === producerSid).forEach(l => {
+                if (l.commodity) myValidComms.push(l.commodity.toLowerCase().trim());
+            });
+
+            if (myValidComms.length > 0 && !myValidComms.includes(name.toLowerCase())) {
+                showToast("Komoditas Tidak Terdaftar", `Komoditas "${name}" tidak ada dalam daftar kebun yang dihasilkan oleh ${producer?.name || 'produsen'}. Tambahkan di Profil terlebih dahulu.`, "error");
+                return;
+            }
+
             const category = document.getElementById('newListingCategory').value;
             const qty = Number(document.getElementById('newListingQtyKg').value);
             const price = Number(document.getElementById('newListingPrice').value);

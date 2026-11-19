@@ -91,6 +91,27 @@ export function initSupabaseAndStorageService() {
                 joko.capacityKg = Math.max(80, Number(joko.capacityKg) || 80);
             }
 
+            // Bersihkan data sampah uji coba (misal komoditas 'tes' atau 'test') dari seluruh produsen & listings
+            members.forEach(m => {
+                if (Array.isArray(m.registeredCommodities)) {
+                    m.registeredCommodities = m.registeredCommodities.filter(c => {
+                        const cName = typeof c === 'string' ? c : c.name;
+                        return cName.trim().toLowerCase() !== 'tes' && cName.trim().toLowerCase() !== 'test';
+                    });
+                }
+                if (m.producerCommodity && m.producerCommodity !== '-') {
+                    const parts = m.producerCommodity.split(',')
+                        .map(p => p.trim())
+                        .filter(p => p.toLowerCase() !== 'tes' && p.toLowerCase() !== 'test');
+                    m.producerCommodity = parts.length > 0 ? parts.join(', ') : '-';
+                }
+            });
+            if (Array.isArray(window.appState.listings)) {
+                window.appState.listings = window.appState.listings.filter(l => 
+                    (l.commodity || '').trim().toLowerCase() !== 'tes' && (l.commodity || '').trim().toLowerCase() !== 'test'
+                );
+            }
+
             const preConfirmedListingIds = ['list-001', 'list-002', 'list-003'];
             (window.appState.listings || []).forEach(l => {
                 l.isSpecialCase = false;
@@ -1132,7 +1153,11 @@ export function initSupabaseAndStorageService() {
             });
 
             saveStateToLocal();
+            if (typeof syncAllDataToSupabaseNow === 'function') syncAllDataToSupabaseNow(false);
             renderAll();
+            if (typeof populateProducerDropdown === 'function') populateProducerDropdown();
+            if (typeof handleProducerSelectionChange === 'function') handleProducerSelectionChange();
+            if (typeof renderPerProducerAiForecast === 'function') renderPerProducerAiForecast();
             showToast('Komoditas Ditambahkan', `${commName} (${commStock} Kg) berhasil didaftarkan ke kebun Anda. Harga adil dihitung otomatis dari data Bapanas saat dipasarkan.`, 'success');
         };
 
