@@ -63,7 +63,7 @@ export function initSupabaseAndStorageService() {
         window.initFiftyTransactionsAndDualRoles = function initFiftyTransactionsAndDualRoles() {
             const members = window.appState.members || [];
 
-            // Universal 2-Role Configuration: Seluruh produsen (10 KK KWT & pekarangan) otomatis memiliki 2 peran (Konsumen <-> Produsen)
+            // Universal 2-Role Configuration: Hanya 10 produsen (KWT & pekarangan) yang otomatis memiliki 2 peran (Konsumen <-> Produsen)
             members.forEach((m, idx) => {
                 const isProducer = m.role === 'PRODUSEN' || idx < 10 || (m.producerCommodity && m.producerCommodity !== '-');
                 if (isProducer) {
@@ -71,8 +71,11 @@ export function initSupabaseAndStorageService() {
                     m.isDualRole = true;
                     m.harvestCycleWeekly = PRODUCER_WEEKLY_CYCLES[m.sid] || m.harvestCycleWeekly || 'Panen Rutin Setiap Minggu';
                 } else {
-                    m.isDualRole = Boolean(m.isDualRole);
-                    m.harvestCycleWeekly = m.harvestCycleWeekly || '-';
+                    m.role = 'KONSUMEN';
+                    m.isDualRole = false;
+                    m.producerCommodity = '-';
+                    m.capacityKg = 0;
+                    m.harvestCycleWeekly = '-';
                 }
                 if (!m.pinCode) m.pinCode = '1234';
                 if (m.surplusNotified === undefined) m.surplusNotified = false;
@@ -231,6 +234,9 @@ export function initSupabaseAndStorageService() {
                         if (isProd) {
                             m.role = 'PRODUSEN';
                             m.isDualRole = true;
+                        } else {
+                            m.role = 'KONSUMEN';
+                            m.isDualRole = false;
                         }
                         if (!m.pinCode) m.pinCode = '1234';
                     });
@@ -485,7 +491,7 @@ export function initSupabaseAndStorageService() {
 
             // Login Berhasil & Kunci Identitas ke Sesi Aktif
             window.appState.activeUserSid = member.sid;
-            const isDual = Boolean(member.isDualRole || member.role === 'PRODUSEN');
+            const isDual = Boolean(member.isDualRole && member.role === 'PRODUSEN');
 
             if (!window.appState.isAdminLoggedIn) {
                 setActiveRole(isDual ? 'PRODUSEN' : 'KONSUMEN');
@@ -616,7 +622,7 @@ export function initSupabaseAndStorageService() {
             // 2. KONDISI SUDAH LOGIN DENGAN NAMA + PIN
             if (logoutBtn) logoutBtn.classList.remove('hidden');
 
-            const isDual = Boolean(member.isDualRole || member.role === 'PRODUSEN');
+            const isDual = Boolean(member.isDualRole && member.role === 'PRODUSEN');
             const initials = member.name.replace(/^(Ibu|Pak|Bpk\.)\s+/i, '').substring(0, 2).toUpperCase();
 
             const elHeaderDualLabel = document.getElementById('headerDualRoleLabel');
@@ -1033,6 +1039,12 @@ export function initSupabaseAndStorageService() {
             const member = members.find(m => m.sid === activeSid);
             if (!member) return;
 
+            // Hanya akun Produsen (dual-role) yang memiliki izin berganti mode antara Produsen dan Konsumen
+            if (!member.isDualRole && member.role !== 'PRODUSEN') {
+                showToast("Akun Konsumen Murni", "Akun Anda adalah Konsumen Rumah Tangga. Anda dapat berbelanja di Pasar Warga dan menggunakan hak suara di Musyawarah Pangan.", "info");
+                return;
+            }
+
             if (targetRole === 'PRODUSEN') {
                 member.isDualRole = true;
                 if (!member.producerCommodity || member.producerCommodity === '-') {
@@ -1195,8 +1207,11 @@ export function initSupabaseAndStorageService() {
             }
             card.classList.remove('hidden');
 
-            const isCurrentlyProducer = window.appState.activeRole === 'PRODUSEN';
-            const roleLabel = isCurrentlyProducer ? 'Penjual Hasil Kebun (Produsen)' : 'Pembeli Pangan (Konsumen)';
+            const isProducerUser = Boolean(member.isDualRole && member.role === 'PRODUSEN');
+            const isCurrentlyProducer = isProducerUser && window.appState.activeRole === 'PRODUSEN';
+            const roleLabel = isProducerUser
+                ? (isCurrentlyProducer ? 'Penjual Hasil Kebun (Produsen)' : 'Pembeli Pangan (Konsumen)')
+                : 'Konsumen Rumah Tangga (Pembeli Pangan)';
             const nextRoleTarget = isCurrentlyProducer ? 'KONSUMEN' : 'PRODUSEN';
             const switchBtnLabel = isCurrentlyProducer
                 ? 'Buka Pasar Warga (Mode Pembeli)'
@@ -1212,7 +1227,7 @@ export function initSupabaseAndStorageService() {
 
             const myGardenListings = (window.appState.listings || []).filter(l => l.producerSid === member.sid);
 
-            const producerGardenSectionHtml = (isCurrentlyProducer || member.role === 'PRODUSEN' || member.isDualRole) ? `
+            const producerGardenSectionHtml = isProducerUser ? `
                 <!-- KOMODITAS PEKARANGAN YANG DIHASILKAN (KHUSUS PRODUSEN - MOBILE FRIENDLY) -->
                 <div class="bg-white p-4 sm:p-5 rounded-2xl border-2 border-emerald-200 space-y-4">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
@@ -1329,21 +1344,38 @@ export function initSupabaseAndStorageService() {
                         </div>
                     </div>
 
-                    <!-- KOTAK PINDAH PERAN (1 AKUN 2 PERAN: KONSUMEN <-> PRODUSEN) -->
-                    <div class="p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-50 via-white to-emerald-50 border-2 border-amber-300 shadow-2xs">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <button type="button" onclick="switchProfileRoleMode('KONSUMEN')"
-                                class="py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer ${!isCurrentlyProducer ? 'bg-emerald-700 text-white shadow-sm ring-2 ring-emerald-300' : 'bg-white hover:bg-emerald-50 text-stone-700 border border-stone-300'}">
-                                <i class="fa-solid fa-basket-shopping"></i>
-                                <span>Mode Konsumen (Belanja Pasar) ${!isCurrentlyProducer ? '• AKTIF' : ''}</span>
-                            </button>
-                            <button type="button" onclick="switchProfileRoleMode('PRODUSEN')"
-                                class="py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer ${isCurrentlyProducer ? 'bg-amber-600 text-white shadow-sm ring-2 ring-amber-300' : 'bg-white hover:bg-amber-50 text-stone-700 border border-stone-300'}">
-                                <i class="fa-solid fa-seedling"></i>
-                                <span>Mode Produsen (Kelola Kebun &amp; AI) ${isCurrentlyProducer ? '• AKTIF' : ''}</span>
-                            </button>
+                    <!-- KOTAK PINDAH PERAN (HANYA MUNCUL PADA AKUN PRODUSEN YANG MEMILIKI DUAL-ROLE) -->
+                    ${isProducerUser ? `
+                        <div class="p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-50 via-white to-emerald-50 border-2 border-amber-300 shadow-2xs">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <button type="button" onclick="switchProfileRoleMode('KONSUMEN')"
+                                    class="py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer ${!isCurrentlyProducer ? 'bg-emerald-700 text-white shadow-sm ring-2 ring-emerald-300' : 'bg-white hover:bg-emerald-50 text-stone-700 border border-stone-300'}">
+                                    <i class="fa-solid fa-basket-shopping"></i>
+                                    <span>Mode Konsumen (Belanja Pasar) ${!isCurrentlyProducer ? '• AKTIF' : ''}</span>
+                                </button>
+                                <button type="button" onclick="switchProfileRoleMode('PRODUSEN')"
+                                    class="py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer ${isCurrentlyProducer ? 'bg-amber-600 text-white shadow-sm ring-2 ring-amber-300' : 'bg-white hover:bg-amber-50 text-stone-700 border border-stone-300'}">
+                                    <i class="fa-solid fa-seedling"></i>
+                                    <span>Mode Produsen (Kelola Kebun &amp; AI) ${isCurrentlyProducer ? '• AKTIF' : ''}</span>
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    ` : `
+                        <div class="p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shadow-2xs">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-sm font-bold shrink-0">
+                                    <i class="fa-solid fa-basket-shopping"></i>
+                                </div>
+                                <div class="text-xs">
+                                    <strong class="text-emerald-950 font-bold block">Peran: Konsumen Murni Rumah Tangga RT 13</strong>
+                                    <span class="text-emerald-800">Akun ini khusus untuk belanja pangan segar warga, cek harga pasar induk, dan pemenuhan gizi keluarga.</span>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 rounded-full bg-emerald-200 text-emerald-900 text-xs font-bold shrink-0 self-start sm:self-center">
+                                Murni Konsumen
+                            </span>
+                        </div>
+                    `}
 
                     ${producerGardenSectionHtml}
 
@@ -1417,7 +1449,7 @@ export function initSupabaseAndStorageService() {
             setVal('selfUpdateNeedAyam', n.ayam ?? 4);
             setVal('selfUpdateNeedTempe', n.tempe ?? 6);
 
-            const roleVal = (member.role === 'PRODUSEN' || member.isDualRole) ? 'PRODUSEN' : 'KONSUMEN';
+            const roleVal = (member.role === 'PRODUSEN' && member.isDualRole) ? 'PRODUSEN' : 'KONSUMEN';
             setVal('selfUpdateRole', roleVal);
             setVal('selfUpdateCommodity', member.producerCommodity && member.producerCommodity !== '-' ? member.producerCommodity : 'Sayur Pekarangan KWT');
             setVal('selfUpdateCapacityKg', member.capacityKg || 30);
@@ -1611,7 +1643,7 @@ export function initSupabaseAndStorageService() {
             document.getElementById('modalDetailSid').textContent = m.sid;
             document.getElementById('modalDetailNik').textContent = isDetailAdmin ? (m.rawNik || m.maskedNik) : (m.maskedNik || '187201********00');
             document.getElementById('modalDetailHash').textContent = m.nikHash || 'a8f5c9e2';
-            document.getElementById('modalDetailRole').textContent = (m.isDualRole || m.role === 'PRODUSEN')
+            document.getElementById('modalDetailRole').textContent = (m.isDualRole && m.role === 'PRODUSEN')
                 ? `1 SID 2 Peran: Produsen (${m.producerCommodity}) & Konsumen`
                 : 'Konsumen Rumah Tangga';
 

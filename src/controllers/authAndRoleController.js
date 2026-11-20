@@ -856,7 +856,7 @@ export function initAuthAndRoleController() {
             }
 
             // Login Valid: Tentukan peran awal sesuai profil akun (dan bisa berganti peran di menu Profile jika Dual-Role)
-            const initialRole = (member.role === 'PRODUSEN' || member.isDualRole) ? 'PRODUSEN' : 'KONSUMEN';
+            const initialRole = (member.role === 'PRODUSEN' && member.isDualRole) ? 'PRODUSEN' : 'KONSUMEN';
             window.appState.isAdminLoggedIn = false;
             window.appState.activeUserSid = member.sid;
             window.appState.activeRole = initialRole;
