@@ -178,99 +178,74 @@ export function initReceiptPdfService() {
                 const buyerMember = (window.appState.members || []).find(m => m.sid === t.consumerSid);
                 const buyerAddress = isSurplusDispatch ? 'Mitra MBG / Koperasi Pangan Kota Metro' : (buyerMember ? buyerMember.address : 'Warga RT 13 Metro Pusat');
                 const buyerName = t.consumerName || (buyerMember ? buyerMember.name : (isSurplusDispatch ? 'Mitra Penyaluran Surplus' : 'Warga RT 13'));
-                const initials = buyerName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+                const buyerPhone = buyerMember?.phone || '081271230011';
+                const cleanBuyerPhone = String(buyerPhone).replace(/[^0-9]/g, '').replace(/^0/, '62');
+
+                const buyerWaMsg = `Halo ${buyerName}, saya ${t.producerName} (Produsen SI-PANGAN ID RT 13). Mengenai pesanan Anda ${t.id} untuk ${t.commodity} (${t.quantityKg} Kg). Status: ${t.orderStatus === 'SIAP_DIAMBIL' ? 'Sudah Siap Diambil di Kebun' : (t.orderStatus === 'SELESAI_LUNAS' ? 'Selesai & Lunas' : 'Sedang Disiapkan')}. Mohon koordinasi pengambilannya. Terima kasih!`;
+                const buyerWaUrl = `https://wa.me/${cleanBuyerPhone}?text=${encodeURIComponent(buyerWaMsg)}`;
+
+                const isDone = t.orderStatus === 'SELESAI_LUNAS' || t.orderStatus === 'SELESAI';
+                const isReady = t.orderStatus === 'SIAP_DIAMBIL';
+                const isPending = !isDone && !isReady;
 
                 cardsHtml += `
-                    <div class="p-4 sm:p-5 rounded-2xl border ${isSurplusDispatch ? 'border-purple-300 bg-purple-50/20' : 'border-stone-200/90 bg-white'} hover:border-forest-300 transition shadow-2xs space-y-3.5">
-                        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-stone-100 pb-2.5">
-                            <div class="flex items-center gap-2">
-                                <span class="font-mono text-xs font-bold ${isSurplusDispatch ? 'text-purple-800 bg-purple-100 border-purple-200' : 'text-forest-800 bg-forest-50 border-forest-200'} px-2 py-0.5 rounded border">${t.id}</span>
-                                <span class="text-xs text-stone-500"><i class="fa-regular fa-clock text-stone-400 mr-1"></i>${t.timestamp}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                ${isSurplusDispatch ? `
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-900 border border-purple-300 flex items-center gap-1">
-                                        <i class="fa-solid fa-truck-fast text-purple-600"></i> Penyaluran Surplus MBG/Koperasi
-                                    </span>
-                                ` : t.orderStatus === 'MENUNGGU_KONFIRMASI' ? `
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1">
-                                        <i class="fa-solid fa-hourglass-start text-amber-600"></i> Menunggu Disiapkan
-                                    </span>
-                                ` : t.orderStatus === 'SIAP_DIAMBIL' ? `
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-900 border border-blue-300 flex items-center gap-1">
-                                        <i class="fa-solid fa-box-open text-blue-600"></i> Siap Diambil / Diantar
-                                    </span>
-                                ` : `
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1">
-                                        <i class="fa-solid fa-circle-check text-emerald-600"></i> Selesai &amp; Lunas
-                                    </span>
-                                `}
-                                <span class="text-sm font-bold text-forest-900 mono-num">${formatRupiah(t.producerNet || t.subtotal)}</span>
-                            </div>
+                    <div class="p-4 sm:p-5 rounded-3xl border border-slate-200/90 bg-white hover:shadow-md transition shadow-2xs space-y-3">
+                        <!-- 1. Header Pill ID & Harga (Sesuai Referensi Canvas Mobile Image 2) -->
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-[#B45309] bg-[#FEF3C7] px-3 py-1 rounded-full font-mono">${t.id}</span>
+                            <span class="font-extrabold text-base sm:text-lg text-slate-900 mono-num">${formatRupiah(t.producerNet || t.subtotal)}</span>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                            <div class="flex items-start gap-3 bg-stone-50/70 p-3 rounded-xl border border-stone-150">
-                                <div class="w-9 h-9 rounded-full ${isSurplusDispatch ? 'bg-purple-700' : 'bg-forest-700'} text-white font-bold flex items-center justify-center shrink-0 text-xs shadow-2xs">
-                                    ${initials}
-                                </div>
-                                <div class="space-y-0.5 min-w-0">
-                                    <div class="flex items-center gap-1.5 flex-wrap">
-                                        <span class="font-bold text-stone-900 truncate">${buyerName}</span>
-                                        <span class="font-mono text-[10px] ${isSurplusDispatch ? 'text-purple-700 bg-purple-50 border-purple-200' : 'text-stone-500 bg-white border-stone-200'} px-1.5 py-0.5 rounded border">${isSurplusDispatch ? 'Mitra Penyaluran' : (t.consumerSid || 'SID-RT13')}</span>
-                                    </div>
-                                    <p class="text-[11px] text-stone-500 truncate"><i class="fa-solid fa-location-dot text-stone-400 mr-1"></i>${buyerAddress}</p>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center justify-between bg-stone-50/70 p-3 rounded-xl border border-stone-150">
-                                <div class="space-y-0.5">
-                                    <span class="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block">Hasil Panen</span>
-                                    <strong class="text-stone-800 text-xs">${t.commodity}</strong>
-                                    <div class="flex items-center gap-1.5 pt-0.5">
-                                        <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-paddy-100 text-paddy-900 font-mono">${t.quantityKg} Kg</span>
-                                        <span class="text-[10px] text-stone-500">(@ ${formatRupiah(t.unitPrice)}/Kg)</span>
-                                    </div>
-                                </div>
-                                <div class="text-right space-y-1">
-                                    <span class="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block">Metode Pengiriman</span>
-                                    <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${isSurplusDispatch ? 'bg-purple-100 text-purple-900 border border-purple-300' : (isAmbil ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-blue-50 text-blue-800 border border-blue-200')}">
-                                        <i class="fa-solid ${isSurplusDispatch ? 'fa-truck-fast text-purple-700' : (isAmbil ? 'fa-person-walking' : 'fa-motorcycle')} mr-1"></i>${isSurplusDispatch ? 'Penyaluran Kolektif Admin' : (isAmbil ? 'Ambil di Kebun' : 'Diantar Warga')}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                                        <i class="fa-solid ${isAmbil ? 'fa-person-walking' : 'fa-motorcycle'} mr-1"></i>${isAmbil ? 'Ambil di Kebun' : 'Diantar Warga'}
-                                    </span>
-                                </div>
-                            </div>
+                        <!-- 2. Komoditas, Pembeli, & Alamat -->
+                        <div>
+                            <h4 class="font-extrabold text-sm sm:text-base text-slate-900 leading-snug">
+                                ${t.commodity} (${t.quantityKg} Kg)
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-1">
+                                <span>Pembeli: <b class="text-slate-900">${buyerName}</b></span>
+                                <span class="font-mono text-slate-500">(${t.consumerSid || 'SID-RT13'})</span>
+                            </p>
+                            <p class="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                                <span class="text-rose-500 text-xs">📍</span>
+                                <span>${buyerAddress} • ${isSurplusDispatch ? 'Penyaluran MBG' : (isAmbil ? 'Ambil di Kebun' : 'Diantar Warga')}</span>
+                            </p>
                         </div>
 
-                        <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-stone-100 text-xs">
-                            <span class="text-[11px] text-stone-500">
-                                Produsen: <strong>${t.producerName}</strong> (${t.producerSid})
-                            </span>
-                            <div class="flex items-center gap-2">
-                                ${t.orderStatus === 'MENUNGGU_KONFIRMASI' ? `
-                                    <button type="button" onclick="updateOrderStatus('${t.id}', 'SIAP_DIAMBIL')"
-                                        class="px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition cursor-pointer">
-                                        <i class="fa-solid fa-boxes-packing"></i>
-                                        <span>Siapkan Pesanan</span>
-                                    </button>
-                                ` : t.orderStatus === 'SIAP_DIAMBIL' ? `
-                                    <button type="button" onclick="updateOrderStatus('${t.id}', 'SELESAI_LUNAS')"
-                                        class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs transition cursor-pointer">
-                                        <i class="fa-solid fa-circle-check"></i>
-                                        <span>Selesai &amp; Lunas</span>
-                                    </button>
-                                ` : ''}
-                                <button type="button" onclick="viewTransactionReceipt('${t.id}')" class="px-3.5 py-2 rounded-xl bg-stone-100 hover:bg-forest-50 hover:text-forest-800 text-stone-700 font-bold transition flex items-center gap-1.5 text-xs border border-stone-200 cursor-pointer">
-                                    <i class="fa-solid fa-file-lines text-forest-700"></i>
-                                    <span>Detail Pesanan</span>
+                        <!-- 3. Dua Tombol Sejajar (💬 Chat WA & Tombol Status Sesuai Mockup) -->
+                        <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-slate-100">
+                            <a href="${buyerWaUrl}" target="_blank" rel="noopener noreferrer"
+                               class="bg-[#E8F5E9] hover:bg-emerald-100 text-[#0F5132] font-bold text-xs py-2.5 px-2 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer">
+                                <span>💬</span>
+                                <span>Chat WA</span>
+                            </a>
+                            ${isPending ? `
+                                <button type="button" onclick="updateOrderStatus('${t.id}', 'SIAP_DIAMBIL')"
+                                    class="bg-[#D97706] hover:bg-amber-700 text-white font-bold text-xs py-2.5 px-2 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+                                    <span>✓ Siapkan Pesanan</span>
                                 </button>
-                                <button type="button" onclick="downloadOrderReceiptPdf('${t.id}')" class="px-3 py-2 rounded-xl bg-forest-50 hover:bg-forest-100 text-forest-800 font-bold transition flex items-center gap-1.5 text-xs border border-forest-200 cursor-pointer" title="Unduh Struk PDF">
-                                    <i class="fa-solid fa-file-pdf text-forest-700"></i>
-                                    <span>Struk PDF</span>
+                            ` : isReady ? `
+                                <button type="button" onclick="updateOrderStatus('${t.id}', 'SELESAI_LUNAS')"
+                                    class="bg-[#D97706] hover:bg-amber-700 text-white font-bold text-xs py-2.5 px-2 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+                                    <span>✓ Tandai Selesai</span>
+                                </button>
+                            ` : `
+                                <button type="button" disabled
+                                    class="bg-[#F1F5F9] text-slate-600 font-bold text-xs py-2.5 px-2 rounded-2xl border border-slate-200 flex items-center justify-center gap-1.5 cursor-default">
+                                    <span>✅ Selesai &amp; Lunas</span>
+                                </button>
+                            `}
+                        </div>
+
+                        <!-- 4. Quick Action Struk & PDF Ringkas -->
+                        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
+                            <span>Waktu: ${t.timestamp || 'Hari Ini'}</span>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="viewTransactionReceipt('${t.id}')" class="text-slate-600 hover:text-slate-900 font-semibold underline cursor-pointer">
+                                    Lihat Struk
+                                </button>
+                                <span>•</span>
+                                <button type="button" onclick="downloadOrderReceiptPdf('${t.id}')" class="text-emerald-700 hover:text-emerald-900 font-semibold underline cursor-pointer">
+                                    Unduh PDF
                                 </button>
                             </div>
                         </div>

@@ -1433,6 +1433,75 @@ export function initAuthAndRoleController() {
             }).join('');
         };
 
+        // --- A.4: RENDER SEGMENTED TOP TAB NAVIGATION BAR (Mobile & Desktop) ---
+        window.renderTopTabBar = function() {
+            const container = document.getElementById('mainTopTabItems');
+            if (!container) return;
+
+            const role = window.appState.activeRole || 'KONSUMEN';
+            const activePane = document.querySelector('.tab-pane:not(.hidden)');
+            const activeTabId = activePane ? activePane.id : (role === 'ADMIN' ? 'tab-dampak' : 'tab-market');
+
+            const activeSid = window.appState.activeUserSid;
+            const myOrders = (window.appState.transactions || []).filter(t => t.consumerSid === activeSid);
+            const readyOrdersCount = myOrders.filter(t => t.orderStatus === 'SIAP_DIAMBIL').length;
+
+            const producerOrders = (window.appState.transactions || []).filter(t => t.producerSid === activeSid);
+            const pendingProducerOrdersCount = producerOrders.filter(t => t.orderStatus === 'MENUNGGU_KONFIRMASI').length;
+
+            let tabs = [];
+            if (role === 'KONSUMEN') {
+                tabs = [
+                    { id: 'tab-market', icon: 'fa-store', label: 'Pasar Warga' },
+                    { id: 'tab-orders', icon: 'fa-bag-shopping', label: 'Pesanan Saya', count: myOrders.length, highlight: readyOrdersCount > 0 },
+                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Usulan Warga' },
+                    { id: 'tab-sid', icon: 'fa-user', label: 'Profil KK' }
+                ];
+            } else if (role === 'PRODUSEN') {
+                tabs = [
+                    { id: 'tab-market', icon: 'fa-seedling', label: 'Lapak Kebun' },
+                    { id: 'tab-orders', icon: 'fa-clipboard-check', label: 'Pesanan Masuk', count: producerOrders.length, highlight: pendingProducerOrdersCount > 0 },
+                    { id: 'tab-matching', icon: 'fa-microchip', label: 'Analisis AI' },
+                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Sinyal Warga' },
+                    { id: 'tab-sid', icon: 'fa-user', label: 'Profil Kebun' }
+                ];
+            } else {
+                tabs = [
+                    { id: 'tab-dampak', icon: 'fa-chart-pie', label: 'Monev & Surplus' },
+                    { id: 'tab-matching', icon: 'fa-microchip', label: 'Analisis AI' },
+                    { id: 'tab-sid', icon: 'fa-users', label: 'Data 40 KK' },
+                    { id: 'tab-orders', icon: 'fa-clipboard-list', label: 'Rekap Pesanan' },
+                    { id: 'tab-market', icon: 'fa-store', label: 'Pasar Warga' }
+                ];
+            }
+
+            const activeThemeClass = role === 'PRODUSEN' 
+                ? 'bg-[#9A3412] text-white shadow-xs' 
+                : role === 'ADMIN' 
+                ? 'bg-slate-900 text-white shadow-xs' 
+                : 'bg-[#0F5132] text-white shadow-xs';
+
+            container.innerHTML = tabs.map(tab => {
+                const isActive = activeTabId === tab.id;
+                let countBadge = '';
+                if (tab.count !== undefined) {
+                    const badgeBg = isActive 
+                        ? 'bg-white/25 text-white' 
+                        : (tab.highlight ? 'bg-amber-500 text-white animate-pulse' : 'bg-slate-200 text-slate-700');
+                    countBadge = `<span class="text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1 ${badgeBg}">${tab.count}</span>`;
+                }
+
+                return `
+                    <button type="button" onclick="switchTab('${tab.id}')"
+                        class="py-2 px-3 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0 ${isActive ? activeThemeClass : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}">
+                        <i class="fa-solid ${tab.icon} text-xs"></i>
+                        <span>${tab.label}</span>
+                        ${countBadge}
+                    </button>
+                `;
+            }).join('');
+        };
+
         // Hook ke switchTab, setActiveRole, dan renderAll agar semua komponen baru ter-update otomatis
         const _prevSwitchTab = window.switchTab;
         window.switchTab = function(tabId) {
@@ -1445,6 +1514,7 @@ export function initAuthAndRoleController() {
                     if (typeof renderProducerOrders === 'function') renderProducerOrders();
                 }
             }
+            if (typeof renderTopTabBar === 'function') renderTopTabBar();
             if (typeof renderMobileBottomNav === 'function') renderMobileBottomNav();
             if (typeof renderProducerWorkspaceAndAutoAi === 'function') renderProducerWorkspaceAndAutoAi();
             if (typeof renderAdminMonevSummary === 'function') renderAdminMonevSummary();
@@ -1507,8 +1577,21 @@ export function initAuthAndRoleController() {
                 if (catFilterBar) catFilterBar.classList.remove('hidden');
                 if (consumerOrdersView) consumerOrdersView.classList.remove('hidden');
                 if (producerOrdersView) producerOrdersView.classList.add('hidden');
+
+                const consumerOrderShortcut = document.getElementById('consumerMyOrdersShortcutBanner');
+                const consumerMarketCount = document.getElementById('consumerMarketOrdersCount');
+                if (consumerOrderShortcut) {
+                    consumerOrderShortcut.classList.remove('hidden');
+                    const activeSid = window.appState.activeUserSid;
+                    const myOrdersCount = (window.appState.transactions || []).filter(t => t.consumerSid === activeSid).length;
+                    if (consumerMarketCount) consumerMarketCount.textContent = myOrdersCount;
+                }
+
                 if (typeof renderPersonalConsumerOrders === 'function') renderPersonalConsumerOrders();
             } else if (role === 'PRODUSEN') {
+                const consumerOrderShortcut = document.getElementById('consumerMyOrdersShortcutBanner');
+                if (consumerOrderShortcut) consumerOrderShortcut.classList.add('hidden');
+
                 if (navMarketTitle) navMarketTitle.textContent = 'Lapak Kebun';
                 if (navMarketSub) navMarketSub.textContent = 'Stok Panen & Ramalan AI';
                 if (navOrdersTitle) navOrdersTitle.textContent = 'Pesanan Masuk';
@@ -1524,6 +1607,9 @@ export function initAuthAndRoleController() {
                 if (producerOrdersView) producerOrdersView.classList.remove('hidden');
                 if (typeof renderProducerOrders === 'function') renderProducerOrders();
             } else if (role === 'ADMIN') {
+                const consumerOrderShortcut = document.getElementById('consumerMyOrdersShortcutBanner');
+                if (consumerOrderShortcut) consumerOrderShortcut.classList.add('hidden');
+
                 if (navMarketTitle) navMarketTitle.textContent = 'Pasar Warga';
                 if (navMarketSub) navMarketSub.textContent = 'Pantau Stok Komoditas';
                 if (navOrdersTitle) navOrdersTitle.textContent = 'Rekap Pesanan';
@@ -1541,6 +1627,7 @@ export function initAuthAndRoleController() {
                 if (typeof renderProducerOrders === 'function') renderProducerOrders();
             }
 
+            if (typeof renderTopTabBar === 'function') renderTopTabBar();
             if (typeof renderProducerWorkspaceAndAutoAi === 'function') renderProducerWorkspaceAndAutoAi();
             if (typeof renderAdminMonevSummary === 'function') renderAdminMonevSummary();
             if (typeof renderMobileBottomNav === 'function') renderMobileBottomNav();
@@ -1562,6 +1649,7 @@ export function initAuthAndRoleController() {
                     if (m) headerLabel.textContent = `${m.name} (${roleText})`;
                 }
             }
+            if (typeof renderTopTabBar === 'function') renderTopTabBar();
             if (typeof renderProducerWorkspaceAndAutoAi === 'function') renderProducerWorkspaceAndAutoAi();
             if (typeof renderAdminMonevSummary === 'function') renderAdminMonevSummary();
             if (typeof renderMobileBottomNav === 'function') renderMobileBottomNav();

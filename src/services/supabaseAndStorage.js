@@ -2049,7 +2049,7 @@ export function initSupabaseAndStorageService() {
                 const activeMember = (window.appState?.members || []).find(m => m.sid === activeSid);
                 const buyerName = activeMember ? activeMember.name : activeSid;
                 const producerAddress = producer?.address || 'Kebun RT 13 Yosomulyo';
-                const distanceText = producer?.distanceKm ? `${Math.round(producer.distanceKm * 1000)} Meter dari rumah` : 'Di lingkungan RT 13';
+                const distanceText = producer?.distanceKm ? `${Math.round(producer.distanceKm * 1000)}m dari rumah` : 'Di lingkungan RT 13';
 
                 const isReady = t.orderStatus === 'SIAP_DIAMBIL';
                 const isDone = t.orderStatus === 'SELESAI_LUNAS' || t.orderStatus === 'SELESAI';
@@ -2061,79 +2061,67 @@ export function initSupabaseAndStorageService() {
                 
                 const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMsg)}`;
 
-                const statusBadge = isDone 
-                    ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Selesai &amp; Lunas</span>`
-                    : isReady
-                    ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-900 border border-blue-400 flex items-center gap-1 animate-pulse"><i class="fa-solid fa-box-open text-blue-600"></i> Siap Diambil / Diantar</span>`
-                    : `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1"><i class="fa-solid fa-hourglass-start text-amber-600"></i> Sedang Disiapkan Produsen</span>`;
-
                 return `
-                    <div class="bg-white p-4 sm:p-5 rounded-3xl border ${isReady ? 'border-blue-400 bg-blue-50/20 ring-2 ring-blue-400/20 shadow-sm' : 'border-slate-200/90 shadow-xs'} hover:shadow-md transition space-y-3">
+                    <div class="bg-white p-4 sm:p-5 rounded-3xl border ${isReady ? 'border-amber-300 ring-2 ring-amber-300/30 shadow-sm' : 'border-slate-200/90 shadow-xs'} hover:shadow-md transition space-y-3">
+                        <!-- 1. Header Pill & Harga (Sesuai Referensi Canvas Mobile Image 1) -->
                         <div class="flex justify-between items-center">
-                            <span class="text-[11px] font-extrabold ${isReady ? 'text-blue-800 bg-blue-100' : 'text-[#0F5132] bg-[#E8F5E9]'} px-2.5 py-1 rounded-xl font-mono">${t.id}</span>
-                            <span class="font-extrabold text-sm sm:text-base text-slate-900">${formatRupiah(t.totalPaid || t.subtotal)}</span>
+                            <span class="text-xs font-extrabold text-[#0F5132] bg-[#E8F5E9] px-3 py-1 rounded-xl font-mono">${t.id}</span>
+                            <span class="font-extrabold text-base sm:text-lg text-slate-900 mono-num">${formatRupiah(t.totalPaid || t.subtotal)}</span>
                         </div>
+
+                        <!-- 2. Komoditas & Kebun Produsen -->
                         <div>
-                            <h4 class="font-extrabold text-sm sm:text-base text-slate-900 leading-snug flex items-center gap-1.5">
-                                ${isReady ? '<span class="text-base">📦</span>' : ''}
-                                <span>${t.commodity} (${t.quantityKg} Kg)</span>
+                            <h4 class="font-extrabold text-sm sm:text-base text-slate-900 leading-snug">
+                                ${t.commodity} (${t.quantityKg} Kg)
                             </h4>
-                            <p class="text-xs text-slate-600 mt-1 flex items-center gap-1.5 flex-wrap">
-                                <span>Kebun: <b class="text-slate-800">${t.producerName}</b></span>
+                            <p class="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
+                                <span>Kebun: <b class="text-slate-700">${t.producerName}</b></span>
                                 <span>•</span>
-                                <span class="text-forest-800 font-semibold">${t.deliveryMethod || 'Ambil di Kebun'}</span>
+                                <span class="text-slate-600 font-medium">${t.deliveryMethod || 'Ambil di Kebun'}</span>
                             </p>
-                            <p class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
-                                <i class="fa-solid fa-location-dot text-rose-500"></i>
+                            <p class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
+                                <i class="fa-solid fa-location-dot text-rose-500 text-[10px]"></i>
                                 <span>${producerAddress} (${distanceText})</span>
                             </p>
                         </div>
 
+                        <!-- 3. Status Badge (⏳ Disiapkan • Waktu / ✅ Selesai • Sudah Diambil) -->
                         <div class="flex items-center gap-2 text-xs flex-wrap">
-                            ${statusBadge}
-                            <span class="text-slate-400 text-[11px]">• ${t.processedAt ? `Diproses: ${t.processedAt}` : (t.timestamp || 'Hari Ini')}</span>
+                            ${isDone ? `
+                                <span class="px-2.5 py-1 rounded-xl text-xs font-bold bg-[#DCFCE7] text-[#15803D] border border-emerald-300 flex items-center gap-1.5">
+                                    <span>✅</span>
+                                    <span>Selesai</span>
+                                </span>
+                                <span class="text-slate-500 text-xs font-medium">• Sudah Diambil</span>
+                            ` : `
+                                <span class="px-2.5 py-1 rounded-xl text-xs font-bold bg-[#FEF3C7] text-[#D97706] border border-amber-300 flex items-center gap-1.5">
+                                    <span>⏳</span>
+                                    <span>Disiapkan</span>
+                                </span>
+                                <span class="text-slate-500 text-xs font-medium">• ${t.processedAt || (isReady ? 'Hari ini, 16.00 (Siap Ambil)' : 'Menunggu Konfirmasi')}</span>
+                            `}
                         </div>
 
+                        <!-- 4. Tombol Aksi Konfirmasi Ambil Jika Sudah Siap Diambil -->
                         ${isReady ? `
-                            <!-- Aksi Khusus Pesanan Siap Diambil -->
-                            <div class="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50/60 border border-blue-200 text-xs space-y-2">
-                                <p class="text-[11px] text-blue-950 font-bold flex items-center gap-1.5">
-                                    <i class="fa-solid fa-circle-check text-blue-600 text-sm"></i>
-                                    <span>Sudah selesai dipetik &amp; dikemas. Siap diambil di kebun produsen!</span>
-                                </p>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    <a href="${waUrl}" target="_blank" rel="noopener noreferrer"
-                                       class="bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-2xs">
-                                        <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
-                                        <span>Chat WA Produsen</span>
-                                    </a>
-                                    <button type="button" onclick="confirmReceiveOrder('${t.id}')"
-                                        class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer">
-                                        <i class="fa-solid fa-circle-check"></i>
-                                        <span>Konfirmasi Sudah Diterima</span>
-                                    </button>
-                                </div>
-                            </div>
+                            <button type="button" onclick="confirmReceiveOrder('${t.id}')"
+                                class="w-full py-2.5 px-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Konfirmasi Panen Sudah Diterima</span>
+                            </button>
                         ` : ''}
 
-                        <div class="pt-2.5 border-t border-slate-100 flex flex-wrap gap-2">
-                            ${!isReady ? `
-                                <a href="${waUrl}" target="_blank" rel="noopener noreferrer"
-                                   class="flex-1 bg-[#E8F5E9] hover:bg-emerald-100 text-[#0F5132] font-bold text-xs py-2.5 px-3 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-2xs">
-                                    <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
-                                    <span>Chat WA Produsen</span>
-                                </a>
-                            ` : ''}
+                        <!-- 5. Dua Tombol Sejajar (💬 Chat WA Produsen & 📄 Lihat Struk) -->
+                        <div class="grid grid-cols-2 gap-2.5 pt-1">
+                            <a href="${waUrl}" target="_blank" rel="noopener noreferrer"
+                               class="bg-[#E8F5E9] hover:bg-emerald-100 text-[#0F5132] font-bold text-xs py-2.5 px-2 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-2xs">
+                                <span>💬</span>
+                                <span>Chat WA Produsen</span>
+                            </a>
                             <button type="button" onclick="viewTransactionReceipt('${t.id}')"
-                                    class="${isReady ? 'flex-1' : ''} bg-[#F7FAF8] hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs py-2 px-3 rounded-2xl transition flex items-center justify-center gap-1 cursor-pointer">
-                                <i class="fa-solid fa-receipt text-slate-500"></i>
-                                <span>Lihat Struk Pengambilan</span>
-                            </button>
-                            <button type="button" onclick="downloadOrderReceiptPdf('${t.id}')"
-                                    class="bg-[#F7FAF8] hover:bg-slate-100 border border-slate-200 text-forest-800 font-bold text-xs py-2 px-2.5 rounded-2xl transition flex items-center gap-1 cursor-pointer"
-                                    title="Unduh PDF Struk">
-                                <i class="fa-solid fa-file-arrow-down text-forest-700"></i>
-                                <span>PDF</span>
+                                    class="bg-[#F8FAFC] hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs py-2.5 px-2 rounded-2xl transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs">
+                                <span>📄</span>
+                                <span>Lihat Struk</span>
                             </button>
                         </div>
                     </div>

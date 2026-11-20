@@ -3643,10 +3643,17 @@ export function initCoreAppController() {
             if (e && e.preventDefault) e.preventDefault();
 
             const producerName = (document.getElementById('regProducerName')?.value || '').trim();
+            const phone = (document.getElementById('regProducerPhone')?.value || '').trim();
             const sid = document.getElementById('regProducerSidSelect')?.value || 'SID-RT13-001';
             const location = (document.getElementById('regProducerLocation')?.value || '').trim();
             const commodity = (document.getElementById('regProducerCommodity')?.value || '').trim();
             const capacity = parseInt(document.getElementById('regProducerCapacity')?.value) || 25;
+
+            // Simpan nomor WhatsApp aktif ke profil anggota
+            const member = (window.appState?.members || []).find(m => m.sid === sid);
+            if (member && phone) {
+                member.phone = phone;
+            }
 
             // Masukkan ke daftar validasi izin kelompok produsen di admin
             const container = document.getElementById('producerPermitList');
@@ -3656,9 +3663,9 @@ export function initCoreAppController() {
                 newCard.innerHTML = `
                     <div>
                         <strong class="text-stone-900 block text-xs">${producerName} (${sid})</strong>
-                        <span class="text-[10px] text-stone-600">Komoditas: ${commodity} • Estimasi: ${capacity} Kg/bln • Lokasi: ${location}</span>
+                        <span class="text-[10px] text-stone-600">Komoditas: ${commodity} • Estimasi: ${capacity} Kg/bln • WA: ${phone || member?.phone || '-'}</span>
                     </div>
-                    <button type="button" onclick="approveProducerPermit('${producerName}', '${commodity}')" class="px-2.5 py-1 rounded text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition flex items-center gap-1 cursor-pointer">
+                    <button type="button" onclick="approveProducerPermit('${producerName}', '${commodity}', '${sid}')" class="px-2.5 py-1 rounded text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition flex items-center gap-1 cursor-pointer">
                         <i class="fa-solid fa-check"></i> Validasi Izin
                     </button>
                 `;
@@ -3666,11 +3673,21 @@ export function initCoreAppController() {
             }
 
             closeModal('modalRegisterProducer');
-            showToast("Pengajuan Terkirim", "Permohonan izin produsen telah dikirim ke Pengurus RT 13 untuk verifikasi.", "success");
+            showToast("Pengajuan Terkirim", "Permohonan izin produsen telah dikirim ke Pengurus RT 13 dengan nomor WhatsApp terverifikasi.", "success");
         }
 
-        window.approveProducerPermit = function approveProducerPermit(name, commodity) {
+        window.approveProducerPermit = function approveProducerPermit(name, commodity, sid) {
+            if (sid) {
+                const mem = (window.appState?.members || []).find(m => m.sid === sid);
+                if (mem) {
+                    mem.isProducer = true;
+                    mem.registeredProducer = true;
+                    mem.role = 'PRODUSEN';
+                    mem.productionStatus = 'PRODUSEN';
+                }
+            }
             showToast("Izin Diterbitkan", `Izin operasional produsen ${name} (${commodity}) resmi divalidasi oleh RT 13.`, "success");
+            if (typeof renderAll === 'function') renderAll();
         }
 
         window.handleSubmitSelfRegister = function handleSubmitSelfRegister(e) {

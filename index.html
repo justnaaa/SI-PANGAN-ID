@@ -528,6 +528,16 @@
         <main class="flex-1 min-w-0 space-y-6">
 
             <!-- =================================================================
+                 SEGMENTED TOP TAB NAVIGATION (Mobile & Desktop)
+                 1-Klik akses cepat: Pasar Warga, Pesanan Saya, Usulan, Profil KK
+                 ================================================================= -->
+            <div id="mainTopTabBar" class="sticky top-[58px] z-20 bg-stone-50/95 backdrop-blur-md py-1.5 -mx-1 px-1">
+                <div id="mainTopTabItems" class="flex items-center gap-1.5 sm:gap-2 p-1.5 bg-white rounded-2xl border border-stone-200 shadow-xs overflow-x-auto no-scrollbar">
+                    <!-- Populated dynamically by renderTopTabBar() based on active role & orders count -->
+                </div>
+            </div>
+
+            <!-- =================================================================
                  TAB 2: SINGLE IDENTITY & REGISTRASI PERAN WARGA (#tab-sid)
                  ================================================================= -->
             <section id="tab-sid" class="tab-pane space-y-6">
@@ -1183,6 +1193,23 @@
                     </div>
                 </div>
 
+                <!-- Banner Akses Cepat Pesanan Saya (Khusus Konsumen - Tepat di Bawah Pasar) -->
+                <div id="consumerMyOrdersShortcutBanner" class="p-4 rounded-2xl bg-[#E8F5E9] border border-emerald-200/90 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs shadow-2xs">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-[#0F5132] text-white flex items-center justify-center font-bold text-base shadow-xs shrink-0">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                        </div>
+                        <div>
+                            <strong class="text-sm font-bold text-[#0F5132] block">Pesanan Belanja Pangan Anda</strong>
+                            <p class="text-stone-600 text-[11px]">Pantau status panen yang disiapkan produsen, struk belanja, dan chat WA langsung.</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="switchTab('tab-orders')" class="px-4 py-2 rounded-xl bg-[#0F5132] hover:bg-emerald-900 text-white font-bold text-xs shadow-xs transition flex items-center gap-2 shrink-0 cursor-pointer">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                        <span>Buka Pesanan Saya (<span id="consumerMarketOrdersCount">0</span>)</span>
+                    </button>
+                </div>
+
                 <!-- Banner Khusus Konsumen: Ajakan Menjadi Produsen Pekarangan -->
                 <div id="consumerBecomeProducerBanner" class="p-4 rounded-2xl bg-gradient-to-r from-amber-50 via-stone-50 to-emerald-50 border border-amber-200 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
                     <div class="flex items-center gap-3">
@@ -1520,23 +1547,28 @@
                             </div>
                         </div>
 
-                        <!-- 3 Kartu Metrik Proporsional -->
-                        <div class="grid grid-cols-3 gap-2.5 sm:gap-4 text-center">
-                            <div class="p-3 sm:p-4 rounded-xl bg-stone-50 border border-stone-200">
-                                <span class="text-[10px] sm:text-xs font-semibold text-stone-500 block">Jumlah Pesanan</span>
-                                <strong id="ordersCountDisplay" class="text-base sm:text-xl font-extrabold text-stone-900 mono-num">0</strong>
+                        <!-- 3 Kartu Metrik Proporsional (Sesuai Desain Canvas Mobile) -->
+                        <div class="grid grid-cols-3 gap-2 sm:gap-3 text-center">
+                            <div class="p-3 sm:p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+                                <span class="text-[11px] font-semibold text-slate-500 block">Pesanan</span>
+                                <strong id="ordersCountDisplay" class="text-base sm:text-xl font-extrabold text-slate-900 mono-num">0</strong>
                             </div>
-                            <div class="p-3 sm:p-4 rounded-xl bg-amber-50/60 border border-amber-200">
-                                <span class="text-[10px] sm:text-xs font-semibold text-amber-800 block">Volume Terjual</span>
+                            <div class="p-3 sm:p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+                                <span class="text-[11px] font-semibold text-slate-500 block">Terjual</span>
                                 <div class="inline-flex items-baseline gap-1">
-                                    <strong id="ordersKgDisplay" class="text-base sm:text-xl font-extrabold text-amber-950 mono-num">0</strong>
-                                    <span class="text-xs font-bold text-amber-800">Kg</span>
+                                    <strong id="ordersKgDisplay" class="text-base sm:text-xl font-extrabold text-[#D97706] mono-num">0</strong>
+                                    <span class="text-xs font-bold text-[#D97706]">Kg</span>
                                 </div>
                             </div>
-                            <div class="p-3 sm:p-4 rounded-xl bg-emerald-50/70 border border-emerald-200">
-                                <span class="text-[10px] sm:text-xs font-semibold text-emerald-800 block">Total Pendapatan</span>
-                                <strong id="ordersEarnedDisplay" class="text-sm sm:text-xl font-extrabold text-emerald-950 mono-num">Rp 0</strong>
+                            <div class="p-3 sm:p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
+                                <span class="text-[11px] font-semibold text-slate-500 block">Omzet</span>
+                                <strong id="ordersEarnedDisplay" class="text-sm sm:text-xl font-extrabold text-[#0F5132] mono-num">Rp 0</strong>
                             </div>
+                        </div>
+
+                        <!-- Subheader Sesuai Mockup Canvas Mobile -->
+                        <div class="pt-1 flex items-center justify-between">
+                            <h3 class="text-xs font-extrabold tracking-wider text-slate-500 uppercase">DAFTAR PESANAN WARGA</h3>
                         </div>
 
                         <!-- Pencarian & Filter Pengambilan -->
@@ -4009,6 +4041,11 @@
                 <div>
                     <label class="block font-semibold text-stone-700 mb-1">Nama Kelompok Tani / Petani Pekarangan *</label>
                     <input type="text" id="regProducerName" placeholder="Cth: KWT Anggrek Asri (Ibu Nurul)" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-emerald-600">
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-stone-700 mb-1">Nomor WhatsApp Aktif (Untuk Chat &amp; Konfirmasi Pesanan) *</label>
+                    <input type="tel" id="regProducerPhone" placeholder="Cth: 0812-7123-0001" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono text-stone-900 focus:outline-none focus:border-emerald-600">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
