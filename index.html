@@ -1173,26 +1173,12 @@
                             <span>Cek Patokan Harga Pasar Induk (Bapanas)</span>
                         </button>
                     </div>
-                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 sm:gap-2">
-                        <button onclick="filterMarketCategory('ALL')" id="catBtn-ALL"
-                            class="market-cat-btn col-span-2 sm:col-span-1 py-2 px-2.5 rounded-xl text-xs font-bold bg-forest-800 text-white shadow-2xs text-center cursor-pointer transition">
-                            Semua Komoditas
-                        </button>
-                        <button onclick="filterMarketCategory('Sayur Pekarangan')" id="catBtn-Sayur"
-                            class="market-cat-btn py-2 px-2.5 rounded-xl text-xs font-bold text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center cursor-pointer transition">
-                            🥬 Sayur Mayur
-                        </button>
-                        <button onclick="filterMarketCategory('Beras & Padi')" id="catBtn-Beras"
-                            class="market-cat-btn py-2 px-2.5 rounded-xl text-xs font-bold text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center cursor-pointer transition">
-                            🌾 Beras &amp; Padi
-                        </button>
-                        <button onclick="filterMarketCategory('Lauk & Protein')" id="catBtn-Protein"
-                            class="market-cat-btn py-2 px-2.5 rounded-xl text-xs font-bold text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center cursor-pointer transition">
-                            🐟 Lauk &amp; Telur
-                        </button>
-                        <button onclick="filterMarketCategory('Olahan Pangan')" id="catBtn-Olahan"
-                            class="market-cat-btn py-2 px-2.5 rounded-xl text-xs font-bold text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center cursor-pointer transition">
-                            🍱 Olahan Pangan
+                    <div id="marketCategoryButtonsContainer" class="flex flex-wrap gap-1.5 sm:gap-2">
+                        <!-- Tombol Kategori Komoditas Dinamis Otomatis Dirender Berdasarkan Data Pasar Aktif -->
+                        <button type="button" onclick="filterMarketCategory('ALL')"
+                            class="market-cat-btn py-2 px-3 rounded-xl text-xs font-bold bg-forest-800 text-white shadow-2xs border border-forest-800 ring-2 ring-forest-800/30 flex items-center gap-1.5 cursor-pointer transition">
+                            <span>🛒</span>
+                            <span>Semua Komoditas</span>
                         </button>
                     </div>
                 </div>

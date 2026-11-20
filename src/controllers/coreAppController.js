@@ -866,21 +866,103 @@ export function initCoreAppController() {
         // TAB 3: SMART FOOD MARKET LISTINGS
         window.currentMarketCategory = 'ALL';
 
-        window.filterMarketCategory = function filterMarketCategory(cat) {
-            currentMarketCategory = cat;
-            document.querySelectorAll('.market-cat-btn').forEach(b => {
-                const isAll = b.id === 'catBtn-ALL';
-                b.className = `market-cat-btn ${isAll ? 'col-span-2 sm:col-span-1' : ''} py-2 px-2.5 rounded-xl text-xs font-bold text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-center cursor-pointer transition`;
-            });
-            const btn = document.getElementById(`catBtn-${cat === 'ALL' ? 'ALL' : cat.split(' ')[0]}`);
-            if (btn) {
-                const isAll = btn.id === 'catBtn-ALL';
-                btn.className = `market-cat-btn ${isAll ? 'col-span-2 sm:col-span-1' : ''} py-2 px-2.5 rounded-xl text-xs font-bold bg-forest-800 text-white shadow-2xs text-center cursor-pointer transition`;
-            }
-            renderMarketListings();
-        }
+        window.renderMarketCategoryFilterButtons = function renderMarketCategoryFilterButtons() {
+            const container = document.getElementById('marketCategoryButtonsContainer');
+            if (!container) return;
 
-        window.renderMarketListings = function renderMarketListings() {
+            const isDemoSession = String(window.appState?.activeUserSid || '').startsWith('DEMO-');
+            const isProdMode = (window.appState?.activeRole === 'PRODUSEN' && window.appState?.activeUserSid && !window.appState?.isAdminLoggedIn);
+
+            const visibleListings = (window.appState?.listings || []).filter(l => {
+                if (!isDemoSession && l.isDemoListing) return false;
+                if (isProdMode && l.producerSid !== window.appState?.activeUserSid) return false;
+                return true;
+            });
+
+            // Kategori dasar standar RT 13
+            const defaultCategories = ['Sayur Pekarangan', 'Beras & Padi', 'Lauk & Protein', 'Olahan Pangan'];
+            const categoryMap = new Map();
+            defaultCategories.forEach(cat => categoryMap.set(cat, 0));
+
+            // Kumpulkan kategori dari listings dan hitung jumlah komoditasnya secara dinamis
+            visibleListings.forEach(l => {
+                const cat = (l.category || '').trim();
+                if (cat) {
+                    categoryMap.set(cat, (categoryMap.get(cat) || 0) + 1);
+                }
+            });
+
+            // Helper icon kategori komoditas
+            function getCategoryIcon(cat) {
+                const c = (cat || '').toLowerCase();
+                if (c.includes('sayur') || c.includes('kebun') || c.includes('pekarangan') || c.includes('daun') || c.includes('tomat') || c.includes('terong') || c.includes('kangkung') || c.includes('bayam')) return '🥬';
+                if (c.includes('beras') || c.includes('padi') || c.includes('gabah') || c.includes('ketan')) return '🌾';
+                if (c.includes('lauk') || c.includes('ikan') || c.includes('lele') || c.includes('nila') || c.includes('telur') || c.includes('protein') || c.includes('ayam') || c.includes('daging') || c.includes('unggas')) return '🐟';
+                if (c.includes('olahan') || c.includes('kue') || c.includes('snack') || c.includes('makanan') || c.includes('keripik') || c.includes('sambal')) return '🍱';
+                if (c.includes('bumbu') || c.includes('rimpang') || c.includes('cabai') || c.includes('cabe') || c.includes('bawang') || c.includes('jahe') || c.includes('kunyit')) return '🌶️';
+                if (c.includes('buah') || c.includes('pisang') || c.includes('pepaya') || c.includes('mangga')) return '🍌';
+                if (c.includes('sembako') || c.includes('pokok') || c.includes('gula') || c.includes('minyak')) return '🛒';
+                if (c.includes('susu') || c.includes('minuman') || c.includes('kedelai')) return '🥛';
+                if (c.includes('madu')) return '🍯';
+                return '🌱';
+            }
+
+            // Validasi currentMarketCategory
+            if (window.currentMarketCategory !== 'ALL' && !categoryMap.has(window.currentMarketCategory)) {
+                window.currentMarketCategory = 'ALL';
+            }
+
+            const isAllActive = window.currentMarketCategory === 'ALL';
+            let html = `
+                <button type="button" data-category="ALL" onclick="window.filterMarketCategory('ALL')"
+                    class="market-cat-btn py-2 px-3 rounded-xl text-xs font-bold cursor-pointer transition flex items-center gap-1.5 ${
+                        isAllActive
+                            ? 'bg-forest-800 text-white shadow-2xs border border-forest-800 ring-2 ring-forest-800/30'
+                            : 'text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200/90 hover:border-stone-300'
+                    }">
+                    <span>🛒</span>
+                    <span>Semua Komoditas</span>
+                    <span class="text-[10px] py-0.5 px-1.5 rounded-full font-bold ml-0.5 ${
+                        isAllActive ? 'bg-white/20 text-white' : 'bg-stone-200/80 text-stone-600'
+                    }">${visibleListings.length}</span>
+                </button>
+            `;
+
+            categoryMap.forEach((count, cat) => {
+                const isActive = window.currentMarketCategory === cat;
+                const icon = getCategoryIcon(cat);
+                const safeCatAttr = cat.replace(/"/g, '&quot;');
+                html += `
+                    <button type="button" data-category="${safeCatAttr}" onclick="window.filterMarketCategory(this.getAttribute('data-category'))"
+                        class="market-cat-btn py-2 px-3 rounded-xl text-xs font-bold cursor-pointer transition flex items-center gap-1.5 ${
+                            isActive
+                                ? 'bg-forest-800 text-white shadow-2xs border border-forest-800 ring-2 ring-forest-800/30'
+                                : 'text-stone-700 bg-stone-50 hover:bg-stone-100 border border-stone-200/90 hover:border-stone-300'
+                        }">
+                        <span>${icon}</span>
+                        <span>${cat}</span>
+                        <span class="text-[10px] py-0.5 px-1.5 rounded-full font-bold ml-0.5 ${
+                            isActive ? 'bg-white/20 text-white' : 'bg-stone-200/80 text-stone-600'
+                        }">${count}</span>
+                    </button>
+                `;
+            });
+
+            container.innerHTML = html;
+        };
+
+        window.filterMarketCategory = function filterMarketCategory(cat) {
+            window.currentMarketCategory = cat;
+            if (typeof window.renderMarketCategoryFilterButtons === 'function') {
+                window.renderMarketCategoryFilterButtons();
+            }
+            renderMarketListings(true);
+        };
+
+        window.renderMarketListings = function renderMarketListings(skipFilterButtons = false) {
+            if (!skipFilterButtons && typeof window.renderMarketCategoryFilterButtons === 'function') {
+                window.renderMarketCategoryFilterButtons();
+            }
             const grid = document.getElementById('marketListingsGrid');
             if (!grid) return;
 
@@ -889,8 +971,8 @@ export function initCoreAppController() {
             const filtered = window.appState.listings.filter(l => {
                 if (!isDemoSession && l.isDemoListing) return false;
                 if (isProdMode && l.producerSid !== window.appState.activeUserSid) return false;
-                if (currentMarketCategory === 'ALL') return true;
-                return l.category === currentMarketCategory;
+                if (window.currentMarketCategory === 'ALL') return true;
+                return l.category === window.currentMarketCategory;
             });
 
             grid.innerHTML = filtered.map(l => {
