@@ -736,21 +736,24 @@ export function initPriceAdvisorEngine() {
             CANONICAL_BAPANAS_CATALOG.forEach(cat => {
                 // Cari apakah ada listing produsen yang aktif di database RT 13
                 let matchedListing = null;
+                let totalStockForCat = 0;
                 for (const l of activeListings) {
                     const lComm = (l.commodity || '').toLowerCase();
                     const lClean = cleanCommodityTitle(l.commodity).toLowerCase();
                     const isMatch = cat.keywords.some(kw => lComm.includes(kw) || lClean.includes(kw));
                     if (isMatch) {
+                        matchedListingIds.add(l.id);
+                        const stock = Number(l.availableStockKg || 0);
+                        if (stock > 0) totalStockForCat += stock;
                         // Prioritaskan listing yang memiliki sisa stok tersedia
-                        if (!matchedListing || (Number(l.availableStockKg || 0) > 0 && Number(matchedListing.availableStockKg || 0) <= 0)) {
+                        if (!matchedListing || (stock > 0 && Number(matchedListing.availableStockKg || 0) <= 0)) {
                             matchedListing = l;
                         }
                     }
                 }
 
-                const hasStock = Boolean(matchedListing && Number(matchedListing.availableStockKg || 0) > 0);
+                const hasStock = totalStockForCat > 0;
                 if (hasStock) {
-                    matchedListingIds.add(matchedListing.id);
                     totalAvailableInMarket++;
                 }
 
@@ -759,7 +762,6 @@ export function initPriceAdvisorEngine() {
                 const pMetro = cat.pMetro;
                 const hematNominal = Math.max(0, pMetro - pHargaMarket);
                 const hematPct = Math.max(5, Math.round((hematNominal / pMetro) * 100));
-                const stockKg = matchedListing ? Number(matchedListing.availableStockKg || 0) : 0;
 
                 rows.push({
                     name: cat.name,
@@ -768,21 +770,24 @@ export function initPriceAdvisorEngine() {
                     pMetro,
                     pHargaMarket,
                     isAvailableInMarket: hasStock,
-                    stockKg,
+                    stockKg: totalStockForCat,
                     hematNominal,
                     hematPct
                 });
             });
 
-            // 2. Tambahkan komoditas tambahan dari database produsen (jika ada komoditas baru di luar 25 katalog standar)
+            // 2. Tambahkan komoditas baru dari database produsen (jika produsen menjual produk di luar 25 katalog standar)
             const addedExtraNames = new Set();
             activeListings.forEach(l => {
                 if (matchedListingIds.has(l.id)) return;
                 const clean = cleanCommodityTitle(l.commodity);
                 if (!clean) return;
 
-                // Hindari jika nama sudah ada di katalog standar
-                const alreadyInCatalog = CANONICAL_BAPANAS_CATALOG.some(c => c.name.toLowerCase() === clean.toLowerCase());
+                // Hindari jika nama sudah tercakup di katalog standar Bapanas
+                const alreadyInCatalog = CANONICAL_BAPANAS_CATALOG.some(c => 
+                    c.name.toLowerCase() === clean.toLowerCase() ||
+                    c.keywords.some(kw => clean.toLowerCase().includes(kw))
+                );
                 if (alreadyInCatalog) return;
                 if (addedExtraNames.has(clean.toLowerCase())) return;
                 addedExtraNames.add(clean.toLowerCase());
