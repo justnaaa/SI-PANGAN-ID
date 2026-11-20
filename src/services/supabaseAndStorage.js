@@ -1060,7 +1060,7 @@ export function initSupabaseAndStorageService() {
 
             // Hanya akun Produsen (dual-role) yang memiliki izin berganti mode antara Produsen dan Konsumen
             if (!member.isDualRole && member.role !== 'PRODUSEN') {
-                showToast("Akun Konsumen Murni", "Akun Anda adalah Konsumen Rumah Tangga. Anda dapat berbelanja di Pasar Warga dan menggunakan hak suara di Musyawarah Pangan.", "info");
+                showToast("Akun Konsumen", "Akun Anda adalah Konsumen Rumah Tangga. Anda dapat berbelanja di Pasar Warga dan menggunakan hak suara di Musyawarah Pangan.", "info");
                 return;
             }
 
@@ -1230,7 +1230,7 @@ export function initSupabaseAndStorageService() {
             const isCurrentlyProducer = isProducerUser && window.appState.activeRole === 'PRODUSEN';
             const roleLabel = isProducerUser
                 ? (isCurrentlyProducer ? 'Penjual Hasil Kebun (Produsen)' : 'Pembeli Pangan (Konsumen)')
-                : 'Konsumen Rumah Tangga (Pembeli Pangan)';
+                : 'Konsumen Rumah Tangga';
             const nextRoleTarget = isCurrentlyProducer ? 'KONSUMEN' : 'PRODUSEN';
             const switchBtnLabel = isCurrentlyProducer
                 ? 'Buka Pasar Warga (Mode Pembeli)'
@@ -1379,22 +1379,7 @@ export function initSupabaseAndStorageService() {
                                 </button>
                             </div>
                         </div>
-                    ` : `
-                        <div class="p-3.5 rounded-2xl bg-emerald-50 border-2 border-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shadow-2xs">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-sm font-bold shrink-0">
-                                    <i class="fa-solid fa-basket-shopping"></i>
-                                </div>
-                                <div class="text-xs">
-                                    <strong class="text-emerald-950 font-bold block">Peran: Konsumen Murni Rumah Tangga RT 13</strong>
-                                    <span class="text-emerald-800">Akun ini khusus untuk belanja pangan segar warga, cek harga pasar induk, dan pemenuhan gizi keluarga.</span>
-                                </div>
-                            </div>
-                            <span class="px-3 py-1 rounded-full bg-emerald-200 text-emerald-900 text-xs font-bold shrink-0 self-start sm:self-center">
-                                Murni Konsumen
-                            </span>
-                        </div>
-                    `}
+                    ` : ''}
 
                     ${producerGardenSectionHtml}
 
