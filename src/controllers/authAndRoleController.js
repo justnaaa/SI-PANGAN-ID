@@ -587,80 +587,105 @@ export function initAuthAndRoleController() {
             const currentStock = listing ? listing.availableStockKg : '-';
 
             const statusBadgeHtml = t.orderStatus === 'MENUNGGU_KONFIRMASI'
-                ? '<span class="px-3 py-1 rounded-full bg-amber-100 text-amber-900 font-bold text-xs border border-amber-300"><i class="fa-solid fa-hourglass-start mr-1"></i>Menunggu Diproses Produsen</span>'
+                ? '<span class="px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#B45309] font-bold text-[11px] border border-amber-300 inline-flex items-center gap-1"><span>⏳</span> <span>Menunggu Diproses Produsen</span></span>'
                 : t.orderStatus === 'SIAP_DIAMBIL'
-                ? '<span class="px-3 py-1 rounded-full bg-blue-100 text-blue-900 font-bold text-xs border border-blue-300"><i class="fa-solid fa-box-open mr-1"></i>Sedang Diproses (Siap Diambil / COD)</span>'
-                : '<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 font-bold text-xs border border-emerald-300"><i class="fa-solid fa-circle-check mr-1"></i>Pesanan Selesai</span>';
+                ? '<span class="px-2.5 py-1 rounded-full bg-blue-100 text-blue-900 font-bold text-[11px] border border-blue-300 inline-flex items-center gap-1"><span>📦</span> <span>Siap Diambil di Kebun</span></span>'
+                : '<span class="px-2.5 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold text-[11px] border border-emerald-300 inline-flex items-center gap-1"><span>✅</span> <span>Pesanan Selesai &amp; Lunas</span></span>';
 
             const canProcess = (window.appState.activeRole === 'PRODUSEN' || window.appState.isAdminLoggedIn);
 
             modalBody.innerHTML = `
-                <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-3.5 text-xs">
-                    <div class="text-center pb-3 border-b border-stone-200 space-y-1.5">
-                        <div class="font-bold text-stone-900 text-sm">DETAIL PESANAN PANGAN</div>
-                        <div class="font-mono text-[11px] text-stone-500">ID Pesanan: <strong>${t.id}</strong> • ${t.timestamp}</div>
-                        <div class="pt-1">${statusBadgeHtml}</div>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 py-1 border-b border-stone-200">
-                        <div class="bg-white p-3 rounded-xl border border-stone-200">
-                            <span class="block text-[10px] font-bold text-stone-400 uppercase">Data Pembeli (Konsumen):</span>
-                            <strong class="text-stone-900 text-xs block mt-0.5">${t.consumerName || 'Warga RT 13'}</strong>
-                            <span class="text-[11px] text-stone-600 block"><i class="fa-solid fa-location-dot text-emerald-600 mr-1"></i>${buyerAddress}</span>
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3.5 text-xs font-sans">
+                    <!-- 1. Header Struk Resmi -->
+                    <div class="text-center pb-3 border-b-2 border-dashed border-slate-200 space-y-1">
+                        <div class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#0F5132] text-white text-base font-bold shadow-2xs mb-0.5">
+                            🌱
                         </div>
-                        <div class="bg-white p-3 rounded-xl border border-stone-200">
-                            <span class="block text-[10px] font-bold text-stone-400 uppercase">Data Kebun (Produsen):</span>
-                            <strong class="text-stone-900 text-xs block mt-0.5">${t.producerName}</strong>
-                            <span class="text-[11px] text-stone-600 block"><i class="fa-solid fa-seedling text-forest-700 mr-1"></i>${producerAddress}</span>
+                        <h4 class="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight leading-tight">LUMBUNG PANGAN MANDIRI RT 13</h4>
+                        <p class="text-[10px] text-slate-500 font-medium">Kelurahan Yosomulyo • Kota Metro</p>
+                        <div class="pt-1 flex items-center justify-center gap-2 text-[11px]">
+                            <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">${t.id}</span>
+                            <span class="text-slate-400">•</span>
+                            <span class="text-slate-500 font-mono">${t.timestamp || 'Hari Ini'}</span>
+                        </div>
+                        <div class="pt-1.5 flex justify-center">
+                            ${statusBadgeHtml}
                         </div>
                     </div>
 
-                    <div class="bg-white p-3.5 rounded-xl border border-stone-200 space-y-2">
-                        <div class="flex justify-between items-center">
+                    <!-- 2. Rincian Pihak Terkait (Responsif di Layar Ponsel) -->
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/80 space-y-2 text-xs">
+                        <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <strong class="text-stone-900 text-sm block">${t.commodity}</strong>
-                                <span class="text-[11px] text-stone-500 font-mono">${t.quantityKg} Kg x ${formatRupiah(t.unitPrice)}</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Pembeli:</span>
+                                <strong class="text-slate-900 block font-bold text-xs truncate">${t.consumerName || 'Warga RT 13'}</strong>
+                                <span class="text-[10px] text-slate-500 font-mono">${t.consumerSid || 'SID-RT13'}</span>
                             </div>
-                            <span class="font-mono font-bold text-sm text-stone-900">${formatRupiah(t.subtotal)}</span>
+                            <div class="text-right">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Penjual Kebun:</span>
+                                <strong class="text-slate-900 block font-bold text-xs truncate">${t.producerName}</strong>
+                                <span class="text-[10px] text-slate-500 font-mono">${t.producerSid || 'SID-RT13'}</span>
+                            </div>
                         </div>
-                        <div class="flex justify-between items-center text-[11px] text-stone-600 pt-1.5 border-t border-stone-100">
-                            <span>Metode Pengambilan: <strong>${t.deliveryMethod || 'Ambil Sendiri'}</strong></span>
-                            <span class="font-mono">${formatRupiah(t.deliveryFee || 0)}</span>
-                        </div>
-                        <div class="flex justify-between items-center text-xs font-bold text-forest-900 pt-1.5 border-t border-stone-200">
-                            <span>TOTAL PEMBAYARAN</span>
-                            <span class="font-mono text-sm">${formatRupiah(t.totalPaid || t.subtotal)}</span>
+                        <div class="pt-2 border-t border-slate-200/60 text-[11px] text-slate-600 flex items-center gap-1.5 flex-wrap">
+                            <span class="text-rose-500 text-xs">📍</span>
+                            <span>Metode: <b class="text-slate-800">${t.deliveryMethod || 'Ambil di Kebun'}</b></span>
+                            <span class="text-slate-400">•</span>
+                            <span class="truncate max-w-[220px] text-slate-500">${buyerAddress}</span>
                         </div>
                     </div>
 
-                    <!-- Informasi Stok Produsen -->
-                    <div class="p-3 rounded-xl ${t.stockDeducted ? 'bg-emerald-50 border border-emerald-200 text-emerald-900' : 'bg-amber-50 border border-amber-200 text-amber-900'} text-[11px] flex items-center justify-between">
+                    <!-- 3. Rincian Barang & Nominal -->
+                    <div class="space-y-2 py-2 border-b-2 border-dashed border-slate-200">
+                        <div class="flex justify-between items-start gap-2 text-xs">
+                            <div class="min-w-0 flex-1">
+                                <strong class="text-slate-900 block font-bold text-sm leading-snug">${t.commodity}</strong>
+                                <span class="text-[11px] text-slate-500 font-mono">${t.quantityKg} Kg × ${formatRupiah(t.unitPrice)}</span>
+                            </div>
+                            <span class="font-extrabold text-slate-900 font-mono text-sm shrink-0">${formatRupiah(t.subtotal)}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-[11px] text-slate-500 pt-1">
+                            <span>Biaya Serah Terima</span>
+                            <span class="font-mono text-emerald-800 font-semibold">${formatRupiah(t.deliveryFee || 0)} (0% Komisi)</span>
+                        </div>
+                    </div>
+
+                    <!-- 4. Total Bayar Utuh -->
+                    <div class="flex justify-between items-center pt-0.5 text-slate-900">
                         <div>
-                            <strong class="block">${t.stockDeducted ? '✓ Stok Produk Telah Dikurangi Otomatis' : '⏳ Stok Menunggu Pesanan Diproses'}</strong>
-                            <span>${t.stockBefore !== undefined ? `Stok Awal: ${t.stockBefore} Kg → Sisa Stok: ${t.stockAfter} Kg (-${t.quantityKg} Kg)` : `Sisa Stok Produk Saat Ini: ${currentStock} Kg`}</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">TOTAL PEMBAYARAN</span>
+                            <span class="text-[10px] text-emerald-800 font-medium">100% diterima utuh produsen</span>
                         </div>
+                        <strong class="text-lg sm:text-xl font-extrabold text-[#0F5132] font-mono">${formatRupiah(t.totalPaid || t.subtotal)}</strong>
                     </div>
 
-                    <div class="pt-1">
-                        <button type="button" onclick="downloadOrderReceiptPdf('${t.id}')"
-                            class="w-full py-2.5 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-file-pdf text-amber-300"></i>
-                            <span>Unduh Struk Transaksi (Otomatis PDF)</span>
-                        </button>
+                    <!-- 5. Tanda Sah Lumbung Pangan -->
+                    <div class="pt-2 text-center text-[10px] text-slate-400 border-t border-slate-100 space-y-1">
+                        <span class="inline-flex items-center gap-1 font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                            <i class="fa-solid fa-circle-check text-emerald-600"></i> Sah &amp; Terverifikasi Single Identity RT 13
+                        </span>
+                        <p class="text-[9px] text-slate-400 font-mono">
+                            Buku Kas Digital Kel. Yosomulyo • Enkripsi SHA-256
+                        </p>
                     </div>
 
+                    <!-- 6. Aksi Cepat Jika Produsen Membuka Struk -->
                     ${canProcess && t.orderStatus === 'MENUNGGU_KONFIRMASI' ? `
-                        <button type="button" onclick="closeModal('modalOrderReceipt'); updateOrderStatus('${t.id}', 'SIAP_DIAMBIL');"
-                            class="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-boxes-packing"></i>
-                            <span>Proses &amp; Siapkan Pesanan Sekarang (Kurangi Stok ${t.quantityKg} Kg)</span>
-                        </button>
+                        <div class="pt-1">
+                            <button type="button" onclick="closeModal('modalOrderReceipt'); updateOrderStatus('${t.id}', 'SIAP_DIAMBIL');"
+                                class="w-full py-2.5 px-3 rounded-xl bg-[#D97706] hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i class="fa-solid fa-boxes-packing"></i>
+                                <span>Tandai: Siap Diambil di Kebun</span>
+                            </button>
+                        </div>
                     ` : canProcess && t.orderStatus === 'SIAP_DIAMBIL' ? `
-                        <button type="button" onclick="closeModal('modalOrderReceipt'); updateOrderStatus('${t.id}', 'SELESAI_LUNAS');"
-                            class="w-full py-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-circle-check"></i>
-                            <span>Konfirmasi Pesanan Selesai &amp; Diterima Pembeli</span>
-                        </button>
+                        <div class="pt-1">
+                            <button type="button" onclick="closeModal('modalOrderReceipt'); updateOrderStatus('${t.id}', 'SELESAI_LUNAS');"
+                                class="w-full py-2.5 px-3 rounded-xl bg-[#0F5132] hover:bg-emerald-900 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i class="fa-solid fa-circle-check text-emerald-300"></i>
+                                <span>Tandai: Pesanan Selesai &amp; Lunas</span>
+                            </button>
+                        </div>
                     ` : ''}
                 </div>
             `;

@@ -188,64 +188,90 @@ export function initReceiptPdfService() {
                 const isReady = t.orderStatus === 'SIAP_DIAMBIL';
                 const isPending = !isDone && !isReady;
 
+                // Status Badge Jelas & Kontras
+                const statusBadge = isDone
+                    ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-[#DCFCE7] text-[#15803D] border border-emerald-300 flex items-center gap-1.5"><span>✅</span> <span>Selesai &amp; Lunas</span></span>`
+                    : isReady
+                    ? `<span class="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-900 border border-blue-300 flex items-center gap-1.5"><span>📦</span> <span>Siap Diambil Pembeli</span></span>`
+                    : `<span class="px-3 py-1 rounded-full text-xs font-bold bg-[#FEF3C7] text-[#B45309] border border-amber-300 flex items-center gap-1.5"><span>⏳</span> <span>Perlu Disiapkan</span></span>`;
+
                 cardsHtml += `
-                    <div class="p-4 sm:p-5 rounded-3xl border border-slate-200/90 bg-white hover:shadow-md transition shadow-2xs space-y-3">
-                        <!-- 1. Header Pill ID & Harga (Sesuai Referensi Canvas Mobile Image 2) -->
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-bold text-[#B45309] bg-[#FEF3C7] px-3 py-1 rounded-full font-mono">${t.id}</span>
-                            <span class="font-extrabold text-base sm:text-lg text-slate-900 mono-num">${formatRupiah(t.producerNet || t.subtotal)}</span>
+                    <div class="p-4 sm:p-5 rounded-3xl border border-slate-200/90 bg-white hover:shadow-md transition shadow-2xs space-y-3.5">
+                        <!-- 1. Header Bar: Status Badge di Kiri, ID & Waktu di Kanan -->
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <div class="flex items-center gap-2">
+                                ${statusBadge}
+                                <span class="font-mono text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-0.5 rounded-lg border border-slate-200">${t.id}</span>
+                            </div>
+                            <span class="text-[11px] text-slate-400 font-medium"><i class="fa-regular fa-clock mr-1"></i>${t.timestamp || 'Hari Ini'}</span>
                         </div>
 
-                        <!-- 2. Komoditas, Pembeli, & Alamat -->
-                        <div>
-                            <h4 class="font-extrabold text-sm sm:text-base text-slate-900 leading-snug">
-                                ${t.commodity} (${t.quantityKg} Kg)
-                            </h4>
-                            <p class="text-xs text-slate-600 mt-1">
-                                <span>Pembeli: <b class="text-slate-900">${buyerName}</b></span>
-                                <span class="font-mono text-slate-500">(${t.consumerSid || 'SID-RT13'})</span>
-                            </p>
-                            <p class="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                                <span class="text-rose-500 text-xs">📍</span>
-                                <span>${buyerAddress} • ${isSurplusDispatch ? 'Penyaluran MBG' : (isAmbil ? 'Ambil di Kebun' : 'Diantar Warga')}</span>
+                        <!-- 2. Box Komoditas & Qty yang Harus Disiapkan (Sangat Jelas & Menonjol) -->
+                        <div class="bg-slate-50 p-3 sm:p-3.5 rounded-2xl border border-slate-200/90 flex items-center justify-between gap-3">
+                            <div class="min-w-0 flex-1">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Yang Harus Dipanen / Disiapkan:</span>
+                                <h4 class="font-extrabold text-sm sm:text-base text-slate-900 leading-snug truncate mt-0.5">${t.commodity}</h4>
+                                <span class="text-[11px] text-slate-500 font-mono">@ ${formatRupiah(t.unitPrice)}/Kg</span>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="inline-block px-3 py-1 rounded-xl text-sm sm:text-base font-black bg-amber-100 text-amber-900 border border-amber-300 font-mono">
+                                    ${t.quantityKg} Kg
+                                </span>
+                                <strong class="block text-xs sm:text-sm font-extrabold text-[#0F5132] mt-1 font-mono">
+                                    ${formatRupiah(t.producerNet || t.subtotal)}
+                                </strong>
+                            </div>
+                        </div>
+
+                        <!-- 3. Detail Pembeli & Metode Pengambilan -->
+                        <div class="text-xs text-slate-600 space-y-1">
+                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                <span>Pembeli: <b class="text-slate-900 font-bold">${buyerName}</b> <span class="font-mono text-slate-500 text-[11px]">(${t.consumerSid || 'SID-RT13'})</span></span>
+                                <span class="inline-flex items-center gap-1 font-bold ${isAmbil ? 'text-emerald-800 bg-emerald-50 border border-emerald-200' : 'text-blue-800 bg-blue-50 border border-blue-200'} px-2 py-0.5 rounded-lg text-[10px]">
+                                    <i class="fa-solid ${isAmbil ? 'fa-person-walking text-emerald-600' : 'fa-motorcycle text-blue-600'}"></i>
+                                    <span>${isSurplusDispatch ? 'Penyaluran MBG' : (isAmbil ? 'Ambil Sendiri di Kebun' : 'Diantar Warga')}</span>
+                                </span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 flex items-center gap-1 truncate">
+                                <span class="text-rose-500">📍</span>
+                                <span>${buyerAddress}</span>
                             </p>
                         </div>
 
-                        <!-- 3. Dua Tombol Sejajar (💬 Chat WA & Tombol Status Sesuai Mockup) -->
-                        <div class="grid grid-cols-2 gap-2.5 pt-2 border-t border-slate-100">
-                            <a href="${buyerWaUrl}" target="_blank" rel="noopener noreferrer"
-                               class="bg-[#E8F5E9] hover:bg-emerald-100 text-[#0F5132] font-bold text-xs py-2.5 px-2 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer">
-                                <span>💬</span>
-                                <span>Chat WA</span>
-                            </a>
+                        <!-- 4. Tombol Utama Status (Ukuran Besar, Anti-Salah Pencet) -->
+                        <div class="pt-1">
                             ${isPending ? `
                                 <button type="button" onclick="updateOrderStatus('${t.id}', 'SIAP_DIAMBIL')"
-                                    class="bg-[#D97706] hover:bg-amber-700 text-white font-bold text-xs py-2.5 px-2 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
-                                    <span>✓ Siapkan Pesanan</span>
+                                    class="w-full h-11 rounded-2xl bg-[#D97706] hover:bg-amber-700 active:scale-[0.99] text-white font-extrabold text-xs shadow-sm flex items-center justify-center gap-2 cursor-pointer transition">
+                                    <i class="fa-solid fa-boxes-packing text-sm"></i>
+                                    <span>Selesai Petik &amp; Siap Diambil Pembeli</span>
                                 </button>
                             ` : isReady ? `
                                 <button type="button" onclick="updateOrderStatus('${t.id}', 'SELESAI_LUNAS')"
-                                    class="bg-[#D97706] hover:bg-amber-700 text-white font-bold text-xs py-2.5 px-2 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
-                                    <span>✓ Tandai Selesai</span>
+                                    class="w-full h-11 rounded-2xl bg-[#0F5132] hover:bg-emerald-900 active:scale-[0.99] text-white font-extrabold text-xs shadow-sm flex items-center justify-center gap-2 cursor-pointer transition">
+                                    <i class="fa-solid fa-circle-check text-sm text-emerald-300"></i>
+                                    <span>Tandai Selesai (Sudah Diterima Pembeli)</span>
                                 </button>
                             ` : `
-                                <button type="button" disabled
-                                    class="bg-[#F1F5F9] text-slate-600 font-bold text-xs py-2.5 px-2 rounded-2xl border border-slate-200 flex items-center justify-center gap-1.5 cursor-default">
-                                    <span>✅ Selesai &amp; Lunas</span>
-                                </button>
+                                <div class="w-full h-10 rounded-2xl bg-slate-100 text-slate-600 font-bold text-xs flex items-center justify-center gap-1.5 select-none border border-slate-200">
+                                    <span>✅</span>
+                                    <span>Pesanan Telah Selesai &amp; Lunas</span>
+                                </div>
                             `}
                         </div>
 
-                        <!-- 4. Quick Action Struk & PDF Ringkas -->
-                        <div class="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
-                            <span>Waktu: ${t.timestamp || 'Hari Ini'}</span>
+                        <!-- 5. Baris Bawah: Tombol Chat WhatsApp & Struk (Terpisah Jelas) -->
+                        <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                            <a href="${buyerWaUrl}" target="_blank" rel="noopener noreferrer"
+                               class="py-2 px-3 rounded-xl bg-[#E8F5E9] hover:bg-emerald-100 text-[#0F5132] font-bold text-xs transition inline-flex items-center gap-1.5 shadow-2xs cursor-pointer">
+                                <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                                <span>Chat WA (${buyerPhone})</span>
+                            </a>
                             <div class="flex items-center gap-2">
-                                <button type="button" onclick="viewTransactionReceipt('${t.id}')" class="text-slate-600 hover:text-slate-900 font-semibold underline cursor-pointer">
-                                    Lihat Struk
-                                </button>
-                                <span>•</span>
-                                <button type="button" onclick="downloadOrderReceiptPdf('${t.id}')" class="text-emerald-700 hover:text-emerald-900 font-semibold underline cursor-pointer">
-                                    Unduh PDF
+                                <button type="button" onclick="viewTransactionReceipt('${t.id}')"
+                                        class="py-2 px-3 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-xs transition inline-flex items-center gap-1 cursor-pointer shadow-2xs">
+                                    <i class="fa-solid fa-file-lines text-slate-400"></i>
+                                    <span>Lihat Struk</span>
                                 </button>
                             </div>
                         </div>
@@ -322,69 +348,87 @@ export function initReceiptPdfService() {
             const producerMember = (window.appState.members || []).find(m => m.sid === t.producerSid);
             const producerAddress = producerMember ? producerMember.address : 'Pekarangan KWT RT 13';
 
+            const isDone = t.orderStatus === 'SELESAI_LUNAS' || t.orderStatus === 'SELESAI';
+            const isReady = t.orderStatus === 'SIAP_DIAMBIL';
+            const statusBadgeHtml = isDone
+                ? '<span class="px-2.5 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold text-[11px] border border-emerald-300 inline-flex items-center gap-1"><span>✅</span> <span>Pesanan Selesai &amp; Lunas</span></span>'
+                : isReady
+                ? '<span class="px-2.5 py-1 rounded-full bg-blue-100 text-blue-900 font-bold text-[11px] border border-blue-300 inline-flex items-center gap-1"><span>📦</span> <span>Siap Diambil di Kebun</span></span>'
+                : '<span class="px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#B45309] font-bold text-[11px] border border-amber-300 inline-flex items-center gap-1"><span>⏳</span> <span>Menunggu Diproses Produsen</span></span>';
+
             modalBody.innerHTML = `
-                <div class="bg-stone-50 p-4 rounded-xl border border-stone-200 space-y-3 font-mono text-[11px]">
-                    <div class="text-center pb-2 border-b border-dashed border-stone-300 space-y-0.5">
-                        <div class="font-bold text-stone-900 text-sm">LUMBUNG PANGAN MANDIRI RT 13</div>
-                        <div class="text-stone-500 text-[10px]">Kel. Yosomulyo, Kec. Metro Pusat, Kota Metro</div>
-                        <div class="text-[10px] text-stone-400">No. Transaksi: ${t.id} • ${t.timestamp}</div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2 text-stone-600 py-1 border-b border-dashed border-stone-300">
-                        <div>
-                            <span class="block text-[10px] text-stone-400">PEMBELI (WARGA):</span>
-                            <strong class="text-stone-900">${t.consumerName || 'Warga RT 13'}</strong>
-                            <div class="text-[10px]">${t.consumerSid || '-'}</div>
-                            <div class="text-[10px] text-stone-500 truncate">${buyerAddress}</div>
+                <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3.5 text-xs font-sans">
+                    <!-- 1. Header Struk Resmi -->
+                    <div class="text-center pb-3 border-b-2 border-dashed border-slate-200 space-y-1">
+                        <div class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#0F5132] text-white text-base font-bold shadow-2xs mb-0.5">
+                            🌱
                         </div>
-                        <div class="text-right">
-                            <span class="block text-[10px] text-stone-400">PENJUAL (PRODUSEN):</span>
-                            <strong class="text-stone-900">${t.producerName}</strong>
-                            <div class="text-[10px]">${t.producerSid || '-'}</div>
-                            <div class="text-[10px] text-stone-500 truncate">${producerAddress}</div>
+                        <h4 class="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight leading-tight">LUMBUNG PANGAN MANDIRI RT 13</h4>
+                        <p class="text-[10px] text-slate-500 font-medium">Kelurahan Yosomulyo • Kota Metro</p>
+                        <div class="pt-1 flex items-center justify-center gap-2 text-[11px]">
+                            <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">${t.id}</span>
+                            <span class="text-slate-400">•</span>
+                            <span class="text-slate-500 font-mono">${t.timestamp || 'Hari Ini'}</span>
+                        </div>
+                        <div class="pt-1.5 flex justify-center">
+                            ${statusBadgeHtml}
                         </div>
                     </div>
 
-                    <div class="space-y-1.5 py-1 border-b border-dashed border-stone-300">
-                        <div class="flex justify-between items-center text-stone-800">
+                    <!-- 2. Rincian Pihak Terkait (Responsif di Layar Ponsel) -->
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/80 space-y-2 text-xs">
+                        <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <strong class="block">${t.commodity}</strong>
-                                <span class="text-[10px] text-stone-500">${t.quantityKg} Kg x ${formatRupiah(t.unitPrice)}</span>
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Pembeli:</span>
+                                <strong class="text-slate-900 block font-bold text-xs truncate">${t.consumerName || 'Warga RT 13'}</strong>
+                                <span class="text-[10px] text-slate-500 font-mono">${t.consumerSid || 'SID-RT13'}</span>
                             </div>
-                            <span class="font-bold">${formatRupiah(t.subtotal)}</span>
+                            <div class="text-right">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Penjual Kebun:</span>
+                                <strong class="text-slate-900 block font-bold text-xs truncate">${t.producerName}</strong>
+                                <span class="text-[10px] text-slate-500 font-mono">${t.producerSid || 'SID-RT13'}</span>
+                            </div>
                         </div>
-                        <div class="flex justify-between items-center text-stone-600 text-[10px]">
-                            <span>Pengantaran: ${t.deliveryMethod || 'Ambil Sendiri'}</span>
-                            <span>${formatRupiah(t.deliveryFee || 0)}</span>
-                        </div>
-                    </div>
-
-                    <div class="pt-1 space-y-1">
-                        <div class="flex justify-between items-center text-xs font-bold text-stone-900">
-                            <span>TOTAL DIBAYAR</span>
-                            <span class="text-forest-800 text-sm">${formatRupiah(t.totalPaid || t.subtotal)}</span>
-                        </div>
-                        <div class="flex justify-between items-center text-[10px] text-stone-500">
-                            <span>Pendapatan Bersih Petani</span>
-                            <span class="font-bold text-stone-800">${formatRupiah(t.producerNet || t.subtotal)}</span>
+                        <div class="pt-2 border-t border-slate-200/60 text-[11px] text-slate-600 flex items-center gap-1.5 flex-wrap">
+                            <span class="text-rose-500 text-xs">📍</span>
+                            <span>Metode: <b class="text-slate-800">${t.deliveryMethod || 'Ambil di Kebun'}</b></span>
+                            <span class="text-slate-400">•</span>
+                            <span class="truncate max-w-[220px] text-slate-500">${buyerAddress}</span>
                         </div>
                     </div>
 
-                    <div class="pt-3 text-center border-t border-dashed border-stone-300 space-y-1">
-                        <span class="inline-block px-3 py-1 rounded bg-emerald-100 text-emerald-900 font-bold text-[10px] border border-emerald-300">
-                            ✓ LUNAS &amp; TERVERIFIKASI SINGLE IDENTITY
+                    <!-- 3. Rincian Barang & Nominal -->
+                    <div class="space-y-2 py-2 border-b-2 border-dashed border-slate-200">
+                        <div class="flex justify-between items-start gap-2 text-xs">
+                            <div class="min-w-0 flex-1">
+                                <strong class="text-slate-900 block font-bold text-sm leading-snug">${t.commodity}</strong>
+                                <span class="text-[11px] text-slate-500 font-mono">${t.quantityKg} Kg × ${formatRupiah(t.unitPrice)}</span>
+                            </div>
+                            <span class="font-extrabold text-slate-900 font-mono text-sm shrink-0">${formatRupiah(t.subtotal)}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-[11px] text-slate-500 pt-1">
+                            <span>Biaya Serah Terima</span>
+                            <span class="font-mono text-emerald-800 font-semibold">${formatRupiah(t.deliveryFee || 0)} (0% Komisi)</span>
+                        </div>
+                    </div>
+
+                    <!-- 4. Total Bayar Utuh -->
+                    <div class="flex justify-between items-center pt-0.5 text-slate-900">
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">TOTAL PEMBAYARAN</span>
+                            <span class="text-[10px] text-emerald-800 font-medium">100% diterima utuh produsen</span>
+                        </div>
+                        <strong class="text-lg sm:text-xl font-extrabold text-[#0F5132] font-mono">${formatRupiah(t.totalPaid || t.subtotal)}</strong>
+                    </div>
+
+                    <!-- 5. Tanda Sah Lumbung Pangan -->
+                    <div class="pt-2 text-center text-[10px] text-slate-400 border-t border-slate-100 space-y-1">
+                        <span class="inline-flex items-center gap-1 font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                            <i class="fa-solid fa-circle-check text-emerald-600"></i> Sah &amp; Terverifikasi Single Identity RT 13
                         </span>
-                        <p class="text-[9px] text-stone-400">
-                            Dicatat pada Buku Kas Digital RT 13 Yosomulyo. Transaksi resmi bebas tengkulak.
+                        <p class="text-[9px] text-slate-400 font-mono">
+                            Buku Kas Digital Kel. Yosomulyo • Enkripsi SHA-256
                         </p>
-                    </div>
-
-                    <div class="pt-2">
-                        <button type="button" onclick="downloadOrderReceiptPdf('${t.id}')"
-                            class="w-full py-2.5 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-file-pdf text-amber-300"></i>
-                            <span>Unduh Struk Transaksi (Otomatis PDF)</span>
-                        </button>
                     </div>
                 </div>
             `;
