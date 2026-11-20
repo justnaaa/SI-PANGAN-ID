@@ -1421,15 +1421,19 @@ export function initAppStateData() {
             ]
         };
 
-        // Pastikan seluruh produsen (dan warga dengan komoditas pekarangan) memiliki isDualRole: true & pinCode: '1234'
+        // Pastikan 10 Produsen awal memiliki isDualRole: true, dan 30 Konsumen (SID-011 s.d. 040) terkunci sebagai Konsumen Murni
         if (Array.isArray(window.appState.members)) {
             window.appState.members.forEach((m, idx) => {
-                const isProd = m.role === 'PRODUSEN' || idx < 10 || (m.producerCommodity && m.producerCommodity !== '-');
-                if (isProd) {
+                const num = m.sid ? parseInt(m.sid.split('-')[2] || '0', 10) : (idx + 1);
+                const isBaseProd = num >= 1 && num <= 10;
+                if (isBaseProd) {
                     m.role = 'PRODUSEN';
                     m.isDualRole = true;
-                } else {
-                    m.isDualRole = Boolean(m.isDualRole);
+                } else if (num <= 40) {
+                    m.role = 'KONSUMEN';
+                    m.isDualRole = false;
+                    m.producerCommodity = '-';
+                    m.capacityKg = 0;
                 }
                 if (!m.pinCode) m.pinCode = '1234';
             });

@@ -63,14 +63,15 @@ export function initSupabaseAndStorageService() {
         window.initFiftyTransactionsAndDualRoles = function initFiftyTransactionsAndDualRoles() {
             const members = window.appState.members || [];
 
-            // Universal 2-Role Configuration: Hanya 10 produsen (KWT & pekarangan) yang otomatis memiliki 2 peran (Konsumen <-> Produsen)
+            // Universal 2-Role Configuration: Hanya 10 produsen awal (SID-RT13-001 s.d. 010) yang memiliki 2 peran (Konsumen <-> Produsen)
             members.forEach((m, idx) => {
-                const isProducer = m.role === 'PRODUSEN' || idx < 10 || (m.producerCommodity && m.producerCommodity !== '-');
-                if (isProducer) {
+                const num = m.sid ? parseInt(m.sid.split('-')[2] || '0', 10) : (idx + 1);
+                const isBaseProd = num >= 1 && num <= 10;
+                if (isBaseProd) {
                     m.role = 'PRODUSEN';
                     m.isDualRole = true;
                     m.harvestCycleWeekly = PRODUCER_WEEKLY_CYCLES[m.sid] || m.harvestCycleWeekly || 'Panen Rutin Setiap Minggu';
-                } else {
+                } else if (num <= 40) {
                     m.role = 'KONSUMEN';
                     m.isDualRole = false;
                     m.producerCommodity = '-';
@@ -230,13 +231,17 @@ export function initSupabaseAndStorageService() {
                     window.appState.members = parsed.members;
                     window.membersData = parsed.members;
                     window.appState.members.forEach((m, idx) => {
-                        const isProd = m.role === 'PRODUSEN' || idx < 10 || (m.producerCommodity && m.producerCommodity !== '-');
-                        if (isProd) {
+                        const num = m.sid ? parseInt(m.sid.split('-')[2] || '0', 10) : (idx + 1);
+                        const isBaseProd = num >= 1 && num <= 10;
+                        if (isBaseProd) {
                             m.role = 'PRODUSEN';
                             m.isDualRole = true;
-                        } else {
+                        } else if (num <= 40) {
                             m.role = 'KONSUMEN';
                             m.isDualRole = false;
+                            m.producerCommodity = '-';
+                            m.capacityKg = 0;
+                            m.harvestCycleWeekly = '-';
                         }
                         if (!m.pinCode) m.pinCode = '1234';
                     });
@@ -402,6 +407,20 @@ export function initSupabaseAndStorageService() {
                 if (!error && data && data.payload) {
                     const p = data.payload;
                     if (Array.isArray(p.members) && p.members.length >= 40) {
+                        p.members.forEach((m, idx) => {
+                            const num = m.sid ? parseInt(m.sid.split('-')[2] || '0', 10) : (idx + 1);
+                            const isBaseProd = num >= 1 && num <= 10;
+                            if (isBaseProd) {
+                                m.role = 'PRODUSEN';
+                                m.isDualRole = true;
+                            } else if (num <= 40) {
+                                m.role = 'KONSUMEN';
+                                m.isDualRole = false;
+                                m.producerCommodity = '-';
+                                m.capacityKg = 0;
+                                m.harvestCycleWeekly = '-';
+                            }
+                        });
                         window.appState.members = p.members;
                         window.membersData = p.members;
                     }
