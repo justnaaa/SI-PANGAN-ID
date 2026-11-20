@@ -1410,9 +1410,11 @@ export function initAuthAndRoleController() {
                 ];
             } else {
                 grid.className = 'grid grid-cols-4 gap-1 max-w-md mx-auto';
+                const activeSid = window.appState.activeUserSid;
+                const readyCount = (window.appState.transactions || []).filter(t => t.consumerSid === activeSid && t.orderStatus === 'SIAP_DIAMBIL').length;
                 items = [
                     { id: 'tab-market', icon: 'fa-store', label: 'Pasar' },
-                    { id: 'tab-orders', icon: 'fa-bag-shopping', label: 'Pesanan' },
+                    { id: 'tab-orders', icon: 'fa-bag-shopping', label: readyCount > 0 ? `Pesanan (${readyCount})` : 'Pesanan' },
                     { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Usulan' },
                     { id: 'tab-sid', icon: 'fa-user', label: 'Profile' }
                 ];

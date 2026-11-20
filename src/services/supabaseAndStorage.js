@@ -1864,48 +1864,117 @@ export function initSupabaseAndStorageService() {
             renderPerProducerAiForecast();
         };
 
+        // --- 9.6a PENGELOLAAN PESANAN KONSUMEN & FILTER SUB-TAB (SIAP DIAMBIL, PROSES, SELESAI) ---
+        window.currentConsumerOrdersFilter = 'ALL';
+
+        window.setConsumerOrdersFilter = function(filterStatus) {
+            window.currentConsumerOrdersFilter = filterStatus;
+            window.renderPersonalConsumerOrders();
+        };
+
+        window.confirmReceiveOrder = function(txId) {
+            const txs = window.appState.transactions || [];
+            const tx = txs.find(t => t.id === txId);
+            if (!tx) return;
+
+            if (confirm(`Konfirmasi Penerimaan Barang?\n\nApakah Anda sudah menerima/mengambil komoditas "${tx.commodity}" (${tx.quantityKg} Kg) dari kebun ${tx.producerName}? Pesanan akan ditandai selesai lunas.`)) {
+                if (typeof window.updateOrderStatus === 'function') {
+                    window.updateOrderStatus(txId, 'SELESAI_LUNAS');
+                } else {
+                    tx.orderStatus = 'SELESAI_LUNAS';
+                    tx.completedAt = new Date().toLocaleString('id-ID');
+                    if (typeof saveStateToLocal === 'function') saveStateToLocal();
+                    if (typeof renderAll === 'function') renderAll();
+                    showToast('Pesanan Selesai', `Pesanan ${tx.id} berhasil ditandai selesai. Terima kasih telah berbelanja pangan lokal!`, 'success');
+                }
+            }
+        };
+
         window.renderPersonalConsumerOrders = function renderPersonalConsumerOrders() {
             const card = document.getElementById('personalConsumerOrdersCard');
             const listEl = document.getElementById('personalConsumerOrdersList');
             const alertBox = document.getElementById('consumerOrderProcessedAlertBox');
+            const filterBar = document.getElementById('consumerOrdersFilterBar');
             const nameEl = document.getElementById('personalConsumerNameLabel');
             const badgeEl = document.getElementById('personalConsumerOrderCountBadge');
             if (!card || !listEl) return;
 
-            const activeSid = window.appState?.activeUserSid || 'SID-RT13-002';
+            const activeSid = window.appState?.activeUserSid || 'SID-RT13-011';
             const member = (window.appState?.members || []).find(m => m.sid === activeSid);
             if (nameEl && member) nameEl.textContent = `${member.name} • ${member.sid}`;
 
             const myOrders = (window.appState?.transactions || []).filter(t => t.consumerSid === activeSid);
             if (badgeEl) badgeEl.textContent = `${myOrders.length} Pesanan Saya`;
 
-            // Cek apakah ada pesanan yang sedang/telah diproses oleh produsen (SIAP_DIAMBIL)
+            // Kelompokkan pesanan berdasarkan status transaksi
             const readyOrders = myOrders.filter(t => t.orderStatus === 'SIAP_DIAMBIL');
+            const pendingOrders = myOrders.filter(t => t.orderStatus === 'MENUNGGU_KONFIRMASI');
+            const completedOrders = myOrders.filter(t => !t.orderStatus || t.orderStatus === 'SELESAI_LUNAS' || t.orderStatus === 'SELESAI');
+
+            // Render Sub-Tab Filter Bar Status Pesanan Konsumen
+            if (filterBar) {
+                const current = window.currentConsumerOrdersFilter || 'ALL';
+                const tabs = [
+                    { id: 'ALL', label: 'Semua Pesanan', count: myOrders.length, icon: 'fa-list-check' },
+                    { id: 'SIAP_DIAMBIL', label: 'Siap Diambil / Diantar', count: readyOrders.length, icon: 'fa-box-open', highlight: readyOrders.length > 0 },
+                    { id: 'MENUNGGU_KONFIRMASI', label: 'Sedang Disiapkan', count: pendingOrders.length, icon: 'fa-hourglass-start' },
+                    { id: 'SELESAI_LUNAS', label: 'Selesai Lunas', count: completedOrders.length, icon: 'fa-circle-check' }
+                ];
+
+                filterBar.innerHTML = tabs.map(tab => {
+                    const isActive = current === tab.id;
+                    const isReadyTab = tab.id === 'SIAP_DIAMBIL';
+                    
+                    let activeClass = '';
+                    if (isActive) {
+                        activeClass = isReadyTab 
+                            ? 'bg-blue-600 text-white shadow-2xs border border-blue-600 ring-2 ring-blue-300' 
+                            : 'bg-forest-800 text-white shadow-2xs border border-forest-800 ring-2 ring-forest-300';
+                    } else {
+                        activeClass = (tab.highlight && isReadyTab)
+                            ? 'bg-blue-50 text-blue-900 border-2 border-blue-400 hover:bg-blue-100 font-extrabold animate-pulse'
+                            : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border border-stone-200/90';
+                    }
+
+                    return `
+                        <button type="button" onclick="setConsumerOrdersFilter('${tab.id}')"
+                            class="py-2 px-3 rounded-xl font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer text-xs ${activeClass}">
+                            <i class="fa-solid ${tab.icon}"></i>
+                            <span>${tab.label}</span>
+                            <span class="text-[10px] py-0.5 px-1.5 rounded-full font-bold ml-0.5 ${
+                                isActive ? 'bg-white/20 text-white' : (tab.highlight && isReadyTab ? 'bg-blue-600 text-white font-extrabold' : 'bg-stone-200/80 text-stone-700')
+                            }">${tab.count}</span>
+                        </button>
+                    `;
+                }).join('');
+            }
+
+            // Banner Notifikasi Khusus Pesanan yang Telah Dikonfirmasi Produsen & Siap Diambil
             if (alertBox) {
                 if (readyOrders.length > 0) {
                     alertBox.classList.remove('hidden');
                     alertBox.innerHTML = `
-                        <div class="p-4 rounded-2xl bg-blue-50 border-2 border-blue-400 text-blue-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                        <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-50 via-indigo-50/50 to-emerald-50 border-2 border-blue-400 text-blue-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
                             <div class="flex items-start gap-3">
-                                <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 text-base font-bold shadow-2xs mt-0.5">
-                                    <i class="fa-solid fa-box-open"></i>
+                                <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 text-base font-bold shadow-2xs mt-0.5">
+                                    <i class="fa-solid fa-box-open animate-bounce"></i>
                                 </div>
-                                <div class="text-xs leading-snug space-y-0.5">
-                                    <div class="flex items-center gap-2">
-                                        <strong class="text-sm font-bold text-blue-950">Pesanan Anda Telah Diproses Produsen!</strong>
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-200 text-blue-900 border border-blue-300">
-                                            ${readyOrders.length} Pesanan Siap
+                                <div class="text-xs leading-snug space-y-1">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <strong class="text-sm font-bold text-blue-950">Pesanan Telah Dikonfirmasi &amp; Siap Diambil!</strong>
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-600 text-white shadow-2xs">
+                                            ${readyOrders.length} Pesanan Siap Ambil
                                         </span>
                                     </div>
-                                    <p class="text-blue-800">
-                                        Pesanan <strong>${readyOrders.map(o => `${o.commodity} (${o.quantityKg} Kg)`).join(', ')}</strong> telah disiapkan oleh produsen kebun dan <strong>siap diambil atau diantar</strong> ke alamat rumah Anda.
+                                    <p class="text-blue-900 font-medium">
+                                        Produsen telah memetik dan menyiapkan panen segar Anda. Silakan hubungi produsen untuk janjian waktu ambil, atau langsung menuju kebun warga RT 13.
                                     </p>
                                 </div>
                             </div>
-                            <button type="button" onclick="viewTransactionReceipt('${readyOrders[0].id}')"
-                                class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shrink-0 transition cursor-pointer shadow-xs flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-receipt"></i>
-                                <span>Lihat Struk Pengambilan</span>
+                            <button type="button" onclick="setConsumerOrdersFilter('SIAP_DIAMBIL')"
+                                class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shrink-0 transition cursor-pointer shadow-xs flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-box-open"></i>
+                                <span>Lihat Pesanan Siap Ambil (${readyOrders.length})</span>
                             </button>
                         </div>
                     `;
@@ -1913,6 +1982,17 @@ export function initSupabaseAndStorageService() {
                     alertBox.classList.add('hidden');
                     alertBox.innerHTML = '';
                 }
+            }
+
+            // Tentukan pesanan yang akan ditampilkan sesuai filter aktif
+            const currentFilter = window.currentConsumerOrdersFilter || 'ALL';
+            let displayedOrders = myOrders;
+            if (currentFilter === 'SIAP_DIAMBIL') {
+                displayedOrders = readyOrders;
+            } else if (currentFilter === 'MENUNGGU_KONFIRMASI') {
+                displayedOrders = pendingOrders;
+            } else if (currentFilter === 'SELESAI_LUNAS') {
+                displayedOrders = completedOrders;
             }
 
             if (myOrders.length === 0) {
@@ -1932,48 +2012,122 @@ export function initSupabaseAndStorageService() {
                 return;
             }
 
-            listEl.innerHTML = myOrders.map(t => {
+            if (displayedOrders.length === 0) {
+                let emptyTitle = 'Tidak Ada Pesanan';
+                let emptyDesc = 'Belum ada pesanan pada kategori filter ini.';
+                if (currentFilter === 'SIAP_DIAMBIL') {
+                    emptyTitle = 'Belum Ada Pesanan Siap Diambil';
+                    emptyDesc = 'Seluruh pesanan Anda saat ini masih dalam proses penyiapan oleh produsen atau sudah selesai lunas.';
+                } else if (currentFilter === 'MENUNGGU_KONFIRMASI') {
+                    emptyTitle = 'Tidak Ada Pesanan yang Menunggu';
+                    emptyDesc = 'Tidak ada pesanan Anda yang sedang menunggu konfirmasi produsen.';
+                } else if (currentFilter === 'SELESAI_LUNAS') {
+                    emptyTitle = 'Belum Ada Riwayat Selesai';
+                    emptyDesc = 'Belum ada transaksi pesanan yang telah selesai diterima.';
+                }
+
+                listEl.innerHTML = `
+                    <div class="col-span-full p-6 rounded-3xl bg-stone-50 border border-stone-200 text-xs text-stone-500 text-center space-y-2">
+                        <div class="w-10 h-10 rounded-2xl bg-stone-200 text-stone-600 flex items-center justify-center mx-auto text-base">
+                            <i class="fa-solid fa-box-archive"></i>
+                        </div>
+                        <p class="font-bold text-stone-700">${emptyTitle}</p>
+                        <p class="max-w-md mx-auto text-stone-500">${emptyDesc}</p>
+                        <button type="button" onclick="setConsumerOrdersFilter('ALL')" class="mt-2 px-3.5 py-1.5 rounded-xl bg-stone-200 hover:bg-stone-300 text-stone-700 font-bold text-xs transition inline-flex items-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-list-check"></i>
+                            <span>Tampilkan Semua Pesanan</span>
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = displayedOrders.map(t => {
                 const producer = (window.appState?.members || []).find(m => m.sid === t.producerSid || m.name === t.producerName);
                 const producerPhone = producer?.phone || '081271230001';
                 const cleanPhone = String(producerPhone).replace(/[^0-9]/g, '').replace(/^0/, '62');
                 const activeMember = (window.appState?.members || []).find(m => m.sid === activeSid);
                 const buyerName = activeMember ? activeMember.name : activeSid;
-                const waMsg = `Halo ${t.producerName}, saya ${buyerName} (${activeSid}). Ingin konfirmasi pesanan saya ${t.id} di SI-PANGAN ID untuk komoditas ${t.commodity} (${t.quantityKg} Kg). Mohon informasi penyiapannya. Terima kasih!`;
-                const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMsg)}`;
+                const producerAddress = producer?.address || 'Kebun RT 13 Yosomulyo';
+                const distanceText = producer?.distanceKm ? `${Math.round(producer.distanceKm * 1000)} Meter dari rumah` : 'Di lingkungan RT 13';
+
                 const isReady = t.orderStatus === 'SIAP_DIAMBIL';
-                const isDone = t.orderStatus === 'SELESAI';
+                const isDone = t.orderStatus === 'SELESAI_LUNAS' || t.orderStatus === 'SELESAI';
+                const isPending = !isReady && !isDone;
+
+                const waMsg = isReady
+                    ? `Halo ${t.producerName}, saya ${buyerName} (${activeSid}). Pesanan saya ${t.id} (${t.commodity} - ${t.quantityKg} Kg) sudah tercatat Siap Diambil di SI-PANGAN ID. Saya ingin janjian waktu pengambilan ke ${producerAddress}. Terima kasih!`
+                    : `Halo ${t.producerName}, saya ${buyerName} (${activeSid}). Ingin konfirmasi pesanan saya ${t.id} di SI-PANGAN ID untuk komoditas ${t.commodity} (${t.quantityKg} Kg). Mohon informasi penyiapannya. Terima kasih!`;
+                
+                const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMsg)}`;
+
                 const statusBadge = isDone 
-                    ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Selesai</span>`
+                    ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Selesai &amp; Lunas</span>`
                     : isReady
-                    ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-900 border border-blue-300">📦 Siap Diambil / Diantar</span>`
-                    : `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">⏳ Sedang Disiapkan</span>`;
+                    ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-900 border border-blue-400 flex items-center gap-1 animate-pulse"><i class="fa-solid fa-box-open text-blue-600"></i> Siap Diambil / Diantar</span>`
+                    : `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1"><i class="fa-solid fa-hourglass-start text-amber-600"></i> Sedang Disiapkan Produsen</span>`;
 
                 return `
-                    <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-sm transition space-y-3">
+                    <div class="bg-white p-4 sm:p-5 rounded-3xl border ${isReady ? 'border-blue-400 bg-blue-50/20 ring-2 ring-blue-400/20 shadow-sm' : 'border-slate-200/90 shadow-xs'} hover:shadow-md transition space-y-3">
                         <div class="flex justify-between items-center">
-                            <span class="text-[11px] font-extrabold text-[#0F5132] bg-[#E8F5E9] px-2.5 py-1 rounded-xl font-mono">${t.id}</span>
+                            <span class="text-[11px] font-extrabold ${isReady ? 'text-blue-800 bg-blue-100' : 'text-[#0F5132] bg-[#E8F5E9]'} px-2.5 py-1 rounded-xl font-mono">${t.id}</span>
                             <span class="font-extrabold text-sm sm:text-base text-slate-900">${formatRupiah(t.totalPaid || t.subtotal)}</span>
                         </div>
                         <div>
-                            <h4 class="font-extrabold text-sm sm:text-base text-slate-900 leading-snug">${t.commodity} (${t.quantityKg} Kg)</h4>
-                            <p class="text-xs text-slate-500 mt-0.5">
-                                Kebun: <b class="text-slate-800">${t.producerName}</b> • ${t.deliveryMethod || 'Ambil di Kebun'}
+                            <h4 class="font-extrabold text-sm sm:text-base text-slate-900 leading-snug flex items-center gap-1.5">
+                                ${isReady ? '<span class="text-base">📦</span>' : ''}
+                                <span>${t.commodity} (${t.quantityKg} Kg)</span>
+                            </h4>
+                            <p class="text-xs text-slate-600 mt-1 flex items-center gap-1.5 flex-wrap">
+                                <span>Kebun: <b class="text-slate-800">${t.producerName}</b></span>
+                                <span>•</span>
+                                <span class="text-forest-800 font-semibold">${t.deliveryMethod || 'Ambil di Kebun'}</span>
+                            </p>
+                            <p class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
+                                <i class="fa-solid fa-location-dot text-rose-500"></i>
+                                <span>${producerAddress} (${distanceText})</span>
                             </p>
                         </div>
-                        <div class="flex items-center gap-2 text-xs">
+
+                        <div class="flex items-center gap-2 text-xs flex-wrap">
                             ${statusBadge}
                             <span class="text-slate-400 text-[11px]">• ${t.processedAt ? `Diproses: ${t.processedAt}` : (t.timestamp || 'Hari Ini')}</span>
                         </div>
+
+                        ${isReady ? `
+                            <!-- Aksi Khusus Pesanan Siap Diambil -->
+                            <div class="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50/60 border border-blue-200 text-xs space-y-2">
+                                <p class="text-[11px] text-blue-950 font-bold flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check text-blue-600 text-sm"></i>
+                                    <span>Sudah selesai dipetik &amp; dikemas. Siap diambil di kebun produsen!</span>
+                                </p>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <a href="${waUrl}" target="_blank" rel="noopener noreferrer"
+                                       class="bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-2xs">
+                                        <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                                        <span>Chat WA Produsen</span>
+                                    </a>
+                                    <button type="button" onclick="confirmReceiveOrder('${t.id}')"
+                                        class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs py-2 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        <span>Konfirmasi Sudah Diterima</span>
+                                    </button>
+                                </div>
+                            </div>
+                        ` : ''}
+
                         <div class="pt-2.5 border-t border-slate-100 flex flex-wrap gap-2">
-                            <a href="${waUrl}" target="_blank" rel="noopener noreferrer"
-                               class="flex-1 bg-[#E8F5E9] hover:bg-emerald-100 text-[#0F5132] font-bold text-xs py-2.5 px-3 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-2xs">
-                                <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
-                                <span>Chat WA Produsen</span>
-                            </a>
+                            ${!isReady ? `
+                                <a href="${waUrl}" target="_blank" rel="noopener noreferrer"
+                                   class="flex-1 bg-[#E8F5E9] hover:bg-emerald-100 text-[#0F5132] font-bold text-xs py-2.5 px-3 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-2xs">
+                                    <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                                    <span>Chat WA Produsen</span>
+                                </a>
+                            ` : ''}
                             <button type="button" onclick="viewTransactionReceipt('${t.id}')"
-                                    class="bg-[#F7FAF8] hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs py-2 px-3 rounded-2xl transition flex items-center gap-1 cursor-pointer">
+                                    class="${isReady ? 'flex-1' : ''} bg-[#F7FAF8] hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs py-2 px-3 rounded-2xl transition flex items-center justify-center gap-1 cursor-pointer">
                                 <i class="fa-solid fa-receipt text-slate-500"></i>
-                                <span>Lihat Struk</span>
+                                <span>Lihat Struk Pengambilan</span>
                             </button>
                             <button type="button" onclick="downloadOrderReceiptPdf('${t.id}')"
                                     class="bg-[#F7FAF8] hover:bg-slate-100 border border-slate-200 text-forest-800 font-bold text-xs py-2 px-2.5 rounded-2xl transition flex items-center gap-1 cursor-pointer"
@@ -1985,7 +2139,7 @@ export function initSupabaseAndStorageService() {
                     </div>
                 `;
             }).join('');
-        }
+        };
 
 
 }
