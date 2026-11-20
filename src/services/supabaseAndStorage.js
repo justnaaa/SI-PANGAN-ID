@@ -115,6 +115,7 @@ export function initSupabaseAndStorageService() {
             });
             if (Array.isArray(window.appState.listings)) {
                 window.appState.listings = window.appState.listings.filter(l => 
+                    (typeof window.isProducerMember === 'function' ? window.isProducerMember(l.producerSid) : true) &&
                     (l.commodity || '').trim().toLowerCase() !== 'tes' && (l.commodity || '').trim().toLowerCase() !== 'test'
                 );
             }
@@ -245,6 +246,7 @@ export function initSupabaseAndStorageService() {
                             m.producerCommodity = '-';
                             m.capacityKg = 0;
                             m.harvestCycleWeekly = '-';
+                            m.registeredCommodities = [];
                         }
                         if (!m.phone) {
                             m.phone = '08127123' + String(num).padStart(4, '0');
@@ -253,7 +255,9 @@ export function initSupabaseAndStorageService() {
                     });
                 }
                 if (parsed && Array.isArray(parsed.listings) && parsed.listings.length > 0) {
-                    window.appState.listings = parsed.listings;
+                    window.appState.listings = parsed.listings.filter(l => 
+                        typeof window.isProducerMember === 'function' ? window.isProducerMember(l.producerSid) : true
+                    );
                 }
                 if (parsed && Array.isArray(parsed.transactions) && parsed.transactions.length >= 50) {
                     window.appState.transactions = parsed.transactions;
@@ -279,6 +283,12 @@ export function initSupabaseAndStorageService() {
 
         window.saveStateToLocal = function saveStateToLocal() {
             try {
+                // Pastikan integritas 100%: Jangan simpan listing dari akun yang bukan produsen sah
+                if (Array.isArray(window.appState.listings)) {
+                    window.appState.listings = window.appState.listings.filter(l => 
+                        typeof window.isProducerMember === 'function' ? window.isProducerMember(l.producerSid) : true
+                    );
+                }
                 const payload = {
                     members: window.appState.members,
                     listings: window.appState.listings,
@@ -767,6 +777,10 @@ export function initSupabaseAndStorageService() {
             const members = window.appState.members || [];
             const listings = window.appState.listings || [];
             const prod = members.find(m => m.sid === producerSid);
+            if (!prod || (typeof window.isProducerMember === 'function' && !window.isProducerMember(prod))) {
+                showToast("Bukan Produsen", "Warga yang dipilih adalah Konsumen Murni dan tidak memiliki izin/stok produsen.", "warning");
+                return;
+            }
             let listing = listingId ? listings.find(l => l.id === listingId) : listings.find(l => l.producerSid === producerSid);
 
             if (!listing && prod) {
@@ -1067,43 +1081,11 @@ export function initSupabaseAndStorageService() {
             const member = members.find(m => m.sid === activeSid);
             if (!member) return;
 
-            // Hanya akun Produsen (dual-role) yang memiliki izin berganti mode antara Produsen dan Konsumen
-            if (!member.isDualRole && member.role !== 'PRODUSEN') {
-                showToast("Akun Konsumen", "Akun Anda terdaftar sebagai Konsumen. Jika mulai memanen hasil pekarangan, ajukan peran Produsen melalui tombol 'Ubah Data Keluarga & Pangan'.", "info");
+            // Hanya akun Produsen sah (dual-role) yang memiliki izin berganti mode antara Produsen dan Konsumen
+            const isProd = typeof window.isProducerMember === 'function' ? window.isProducerMember(member) : (member.role === 'PRODUSEN');
+            if (!isProd) {
+                showToast("Akun Konsumen Murni", "Akun Anda terdaftar sebagai 100% Konsumen Rumah Tangga. Jika mulai memanen pekarangan, ajukan peran Produsen melalui tombol 'Ubah Data Keluarga & Pangan'.", "info");
                 return;
-            }
-
-            if (targetRole === 'PRODUSEN') {
-                member.isDualRole = true;
-                if (!member.producerCommodity || member.producerCommodity === '-') {
-                    member.producerCommodity = 'Sayur Pekarangan KWT';
-                    member.capacityKg = member.capacityKg || 30;
-                }
-                const hasListing = (window.appState.listings || []).some(l => l.producerSid === member.sid);
-                if (!hasListing) {
-                    window.appState.listings.unshift({
-                        id: 'list-' + Date.now(),
-                        producerSid: member.sid,
-                        producerName: member.name,
-                        commodity: member.producerCommodity,
-                        category: 'Sayur Pekarangan',
-                        unit: 'Kg',
-                        initialHarvestKg: member.capacityKg || 30,
-                        availableStockKg: member.capacityKg || 30,
-                        localAbsorbedKg: 0,
-                        unabsorbedSurplusKg: 0,
-                        fairPrice: 6000,
-                        marketPrice: 9000,
-                        tengkulakPrice: 4500,
-                        harvestDate: 'Hari Ini',
-                        freshnessWindow: 'Segar Panen Pagi',
-                        freshnessDaysRemaining: 4,
-                        location: member.address || 'RT 13 Yosomulyo',
-                        distanceKm: member.distanceKm || 0.15,
-                        icon: 'fa-seedling',
-                        description: `Hasil panen segar pekarangan keluarga ${member.name}.`
-                    });
-                }
             }
 
             window.appState.activeRole = targetRole;

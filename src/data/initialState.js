@@ -1421,6 +1421,18 @@ export function initAppStateData() {
             ]
         };
 
+        // Helper global validasi produsen yang sah
+        window.isProducerMember = function(sidOrMember) {
+            if (!sidOrMember) return false;
+            const m = typeof sidOrMember === 'object' ? sidOrMember : (window.appState?.members || []).find(x => x.sid === sidOrMember);
+            if (!m) return false;
+            const num = m.sid ? parseInt(m.sid.split('-')[2] || '0', 10) : 999;
+            if (num >= 11 && num <= 40 && !m.verifiedProducerByAdmin) {
+                return false; // Konsumen Murni Rumah Tangga RT 13
+            }
+            return m.role === 'PRODUSEN';
+        };
+
         // Pastikan 10 Produsen awal memiliki isDualRole: true, dan 30 Konsumen (SID-011 s.d. 040) terkunci sebagai Konsumen Murni
         if (Array.isArray(window.appState.members)) {
             window.appState.members.forEach((m, idx) => {
@@ -1434,11 +1446,18 @@ export function initAppStateData() {
                     m.isDualRole = false;
                     m.producerCommodity = '-';
                     m.capacityKg = 0;
+                    m.harvestCycleWeekly = '-';
+                    m.registeredCommodities = [];
                 }
                 if (!m.phone) {
                     m.phone = '08127123' + String(num).padStart(4, '0');
                 }
                 if (!m.pinCode) m.pinCode = '1234';
             });
+        }
+
+        // Sanitasi listing: hanya produsen sah yang boleh memiliki komoditas di pasar (hapus produk nyasar akun konsumen)
+        if (Array.isArray(window.appState.listings)) {
+            window.appState.listings = window.appState.listings.filter(l => window.isProducerMember(l.producerSid));
         }
 }

@@ -202,6 +202,22 @@ export function initAuthAndRoleController() {
                 window.appState.isAdminLoggedIn = false;
             }
 
+            // GUARD PERAN PRODUSEN: Konsumen Murni tidak boleh beralih ke Mode Produsen
+            if (role === 'PRODUSEN' && window.appState.activeUserSid && !window.appState.isAdminLoggedIn) {
+                const currentMember = (window.appState.members || []).find(x => x.sid === window.appState.activeUserSid);
+                const isProd = typeof window.isProducerMember === 'function' ? window.isProducerMember(currentMember) : (currentMember && currentMember.role === 'PRODUSEN');
+                if (!isProd) {
+                    if (typeof window.showToast === 'function') {
+                        window.showToast(
+                            "Peran Konsumen Murni",
+                            `Akun Anda (${currentMember ? currentMember.name : window.appState.activeUserSid}) adalah 100% Konsumen Rumah Tangga RT 13. Untuk menjual hasil pekarangan, daftarkan pekarangan Anda melalui formulir Pendaftaran Produsen KWT.`,
+                            "warning"
+                        );
+                    }
+                    return;
+                }
+            }
+
             window.appState.activeRole = role;
 
             const headerLabel = document.getElementById('headerActiveUserLabel');

@@ -970,6 +970,8 @@ export function initCoreAppController() {
             const isProdMode = (window.appState.activeRole === 'PRODUSEN' && window.appState.activeUserSid && !window.appState.isAdminLoggedIn);
             const filtered = window.appState.listings.filter(l => {
                 if (!isDemoSession && l.isDemoListing) return false;
+                // Pastikan produsen listing valid (bukan akun konsumen murni yang tersangkut)
+                if (typeof window.isProducerMember === 'function' && !window.isProducerMember(l.producerSid)) return false;
                 if (isProdMode && l.producerSid !== window.appState.activeUserSid) return false;
                 if (window.currentMarketCategory === 'ALL') return true;
                 return l.category === window.currentMarketCategory;
@@ -986,6 +988,16 @@ export function initCoreAppController() {
                 const totalHarvest = l.initialHarvestKg || (l.localAbsorbedKg + l.availableStockKg);
                 const absorbed = l.localAbsorbedKg || 0;
                 const pctAbsorbed = Math.min(100, Math.round((absorbed / totalHarvest) * 100));
+
+                // Hak kelola listing (HANYA Admin atau Produsen sah pemilik komoditas yang sedang di Mode Produsen)
+                const canManageThisListing = Boolean(
+                    window.appState.isAdminLoggedIn || (
+                        window.appState.activeRole === 'PRODUSEN' && 
+                        window.appState.activeUserSid && 
+                        window.appState.activeUserSid === l.producerSid && 
+                        (typeof window.isProducerMember === 'function' ? window.isProducerMember(window.appState.activeUserSid) : true)
+                    )
+                );
 
                 // 1. Hitung Jarak Fisik Produsen ke Konsumen (Food Miles Rendah / Rantai Pasok Pendek)
                 let distanceText = "50 Meter";
@@ -1130,7 +1142,7 @@ export function initCoreAppController() {
                                         <i class="fa-solid fa-truck-ramp-box text-rose-700"></i>
                                         <span>Dialihkan ke Surplus MBG / Koperasi</span>
                                     </button>
-                                    ${(window.appState.isAdminLoggedIn || (window.appState.activeUserSid && window.appState.activeUserSid === l.producerSid)) ? `
+                                    ${canManageThisListing ? `
                                         <div class="grid grid-cols-2 gap-2">
                                             <button onclick="switchTab('tab-dampak')" class="py-2 px-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
                                                 <i class="fa-solid fa-boxes-packing"></i>
@@ -1143,7 +1155,7 @@ export function initCoreAppController() {
                                         </div>
                                     ` : ''}
                                 </div>
-                            ` : (window.appState.isAdminLoggedIn || (window.appState.activeUserSid && window.appState.activeUserSid === l.producerSid)) ? `
+                            ` : canManageThisListing ? `
                                 <div class="grid grid-cols-12 gap-1.5">
                                     ${l.availableStockKg > 0 ? `
                                         <button onclick="openBuyModal('${l.id}')" class="col-span-5 py-2.5 px-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-1 shadow-xs cursor-pointer">
@@ -1298,6 +1310,17 @@ export function initCoreAppController() {
             const l = listings.find(item => item.id === listingId);
             if (!l) return;
 
+            const canEdit = window.appState.isAdminLoggedIn || (
+                window.appState.activeRole === 'PRODUSEN' && 
+                window.appState.activeUserSid && 
+                window.appState.activeUserSid === l.producerSid && 
+                (typeof window.isProducerMember === 'function' ? window.isProducerMember(window.appState.activeUserSid) : true)
+            );
+            if (!canEdit) {
+                showToast('Akses Terbatas', 'Hanya produsen terdaftar pemilik komoditas atau Admin yang berhak mengedit produk ini.', 'warning');
+                return;
+            }
+
             const idEl = document.getElementById('editListingId');
             const nameEl = document.getElementById('editListingCommodityName');
             const stockEl = document.getElementById('editListingStock');
@@ -1330,6 +1353,17 @@ export function initCoreAppController() {
             const listings = window.appState.listings || [];
             const l = listings.find(item => item.id === listingId);
             if (!l) return;
+
+            const canEdit = window.appState.isAdminLoggedIn || (
+                window.appState.activeRole === 'PRODUSEN' && 
+                window.appState.activeUserSid && 
+                window.appState.activeUserSid === l.producerSid && 
+                (typeof window.isProducerMember === 'function' ? window.isProducerMember(window.appState.activeUserSid) : true)
+            );
+            if (!canEdit) {
+                showToast('Akses Ditolak', 'Anda tidak memiliki izin mengubah komoditas ini.', 'error');
+                return;
+            }
 
             const oldStock = l.availableStockKg;
             const oldPrice = l.fairPrice;
@@ -1391,9 +1425,14 @@ export function initCoreAppController() {
             const l = listings.find(item => item.id === listingId);
             if (!l) return;
 
-            const isAllowed = window.appState.isAdminLoggedIn || (window.appState.activeUserSid && window.appState.activeUserSid === l.producerSid);
+            const isAllowed = window.appState.isAdminLoggedIn || (
+                window.appState.activeRole === 'PRODUSEN' && 
+                window.appState.activeUserSid && 
+                window.appState.activeUserSid === l.producerSid && 
+                (typeof window.isProducerMember === 'function' ? window.isProducerMember(window.appState.activeUserSid) : true)
+            );
             if (!isAllowed) {
-                showToast('Akses Ditolak', 'Hanya produsen pemilik komoditas atau Admin yang dapat menghapus komoditas ini.', 'error');
+                showToast('Akses Ditolak', 'Hanya produsen sah pemilik komoditas atau Admin yang dapat menghapus komoditas ini.', 'error');
                 return;
             }
 
@@ -1917,11 +1956,11 @@ export function initCoreAppController() {
 
             // Jika role adalah ADMIN yang sedang mengelola, assign ke produsen aktif
             if (!member && (window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN')) {
-                member = (window.appState.members || []).find(m => m.role === 'PRODUSEN') || window.appState.members[0];
+                member = (window.appState.members || []).find(m => typeof window.isProducerMember === 'function' ? window.isProducerMember(m) : m.role === 'PRODUSEN') || window.appState.members[0];
             }
 
-            if (!member) {
-                showToast("Peran Produsen Diperlukan", "Silakan login sebagai akun Produsen untuk menarik sinyal produksi ke kebun Anda.", "warning");
+            if (!member || (typeof window.isProducerMember === 'function' && !window.isProducerMember(member))) {
+                showToast("Peran Produsen Diperlukan", "Hanya akun Produsen KWT / Ternak terdaftar yang dapat menarik sinyal produksi ke etalase kebun.", "warning");
                 return;
             }
 
