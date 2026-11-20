@@ -1060,7 +1060,7 @@ export function initSupabaseAndStorageService() {
 
             // Hanya akun Produsen (dual-role) yang memiliki izin berganti mode antara Produsen dan Konsumen
             if (!member.isDualRole && member.role !== 'PRODUSEN') {
-                showToast("Akun Konsumen", "Akun Anda adalah Konsumen Rumah Tangga. Anda dapat berbelanja di Pasar Warga dan menggunakan hak suara di Musyawarah Pangan.", "info");
+                showToast("Akun Konsumen", "Akun Anda terdaftar sebagai Konsumen. Jika mulai memanen hasil pekarangan, ajukan peran Produsen melalui tombol 'Ubah Data Keluarga & Pangan'.", "info");
                 return;
             }
 
