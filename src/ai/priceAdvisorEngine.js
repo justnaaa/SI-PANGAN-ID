@@ -268,44 +268,24 @@ export function initPriceAdvisorEngine() {
             }
         };
 
-        // Aliases for compatibility & Sinyal Pangan
+        // Aliases for compatibility & Sinyal Pangan (Single Clean Commodities Only)
         LAMPUNG_MARKET_INTELLIGENCE["Minyak Goreng Sawit"] = LAMPUNG_MARKET_INTELLIGENCE["Minyak Goreng Sawit Kemasan"];
         LAMPUNG_MARKET_INTELLIGENCE["Minyak Goreng"] = LAMPUNG_MARKET_INTELLIGENCE["Minyak Goreng Sawit Kemasan"];
         LAMPUNG_MARKET_INTELLIGENCE["Gula Pasir"] = LAMPUNG_MARKET_INTELLIGENCE["Gula Pasir Konsumsi"];
         LAMPUNG_MARKET_INTELLIGENCE["Bawang Merah"] = LAMPUNG_MARKET_INTELLIGENCE["Bawang Merah (Lokal)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Bawang Merah Brebes & Bawang Putih"] = LAMPUNG_MARKET_INTELLIGENCE["Bawang Merah (Lokal)"];
         LAMPUNG_MARKET_INTELLIGENCE["Bawang Putih"] = LAMPUNG_MARKET_INTELLIGENCE["Bawang Putih Bonggol"];
         LAMPUNG_MARKET_INTELLIGENCE["Daging Sapi"] = LAMPUNG_MARKET_INTELLIGENCE["Daging Sapi Murni"];
         LAMPUNG_MARKET_INTELLIGENCE["Daging Ayam"] = LAMPUNG_MARKET_INTELLIGENCE["Daging Ayam Ras"];
         LAMPUNG_MARKET_INTELLIGENCE["Beras IR 64 / Medium"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Ciherang (Poktan RT 13)"];
-
-        // Aliases for compatibility
-        LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Lokal (Ciherang/IR64)"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Ciherang (Poktan RT 13)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Beras Putih Pulen Panen Lokal (1 Ton)"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Ciherang (Poktan RT 13)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Beras Premium (Lumbung RT 13)"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Ciherang (Poktan RT 13)"];
         LAMPUNG_MARKET_INTELLIGENCE["Beras Premium"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Ciherang (Poktan RT 13)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam & Sayuran Hijau"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Hijau (KWT Pekarangan)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Sayur Mayur (Bayam/Kangkung Hidroponik)"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Kangkung (KWT Pekarangan)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Sayur Mayur"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Kangkung (KWT Pekarangan)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Cabut & Tahu"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Hijau (KWT Pekarangan)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Cabut Segar"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Hijau (KWT Pekarangan)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Cabai Rawit & Tomat Pekarangan"] = LAMPUNG_MARKET_INTELLIGENCE["Cabai Rawit Merah (Pekarangan KWT)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Cabai Merah Keriting (Pekarangan)"] = LAMPUNG_MARKET_INTELLIGENCE["Cabai Rawit Merah (Pekarangan KWT)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Ikan Lele Segar & Kangkung Air Bioflok"] = LAMPUNG_MARKET_INTELLIGENCE["Ikan Lele Segar (Bioflok Kolam RT 13)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Ikan Lele Segar Kolam Bioflok"] = LAMPUNG_MARKET_INTELLIGENCE["Ikan Lele Segar (Bioflok Kolam RT 13)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Ikan Gurame Segar (Kolam Bioflok)"] = LAMPUNG_MARKET_INTELLIGENCE["Ikan Nila Air Tawar (Kolam Pekarangan RT 13)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Telur Asin & Unggas Pekarangan"] = LAMPUNG_MARKET_INTELLIGENCE["Telur Bebek Segar (Ternak Pekarangan RT 13)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Telur Ayam Ras Segar (Kandang RT 13)"] = LAMPUNG_MARKET_INTELLIGENCE["Telur Ayam Pekarangan (Ternak Warga RT 13)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Tempe Daun & Katering Gizi Balita"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Hijau (KWT Pekarangan)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Tempe Daun & Tahu Segar Tanpa Pengawet"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Hijau (KWT Pekarangan)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Singkong / Ubi Kayu (Panen Lokal)"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Ciherang (Poktan RT 13)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Singkong / Ubi Kayu"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Ciherang (Poktan RT 13)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Keripik Pisang & Olahan Singkong"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Ciherang (Poktan RT 13)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis (Pekarangan)"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Kangkung (KWT Pekarangan)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Kangkung (KWT Pekarangan)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Jagung Manis & Kacang Panjang"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Kangkung (KWT Pekarangan)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Jamur Tiram Putih Segar Kumbung"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Hijau (KWT Pekarangan)"];
-        LAMPUNG_MARKET_INTELLIGENCE["Jamu Tradisional & Rimpang Toga"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Hijau (KWT Pekarangan)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Beras Medium"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Ciherang (Poktan RT 13)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Sayur Kangkung"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Kangkung (KWT Pekarangan)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam"] = LAMPUNG_MARKET_INTELLIGENCE["Sayur Bayam Hijau (KWT Pekarangan)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Cabai Rawit"] = LAMPUNG_MARKET_INTELLIGENCE["Cabai Rawit Merah (Pekarangan KWT)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Ikan Lele"] = LAMPUNG_MARKET_INTELLIGENCE["Ikan Lele Segar (Bioflok Kolam RT 13)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Ikan Nila"] = LAMPUNG_MARKET_INTELLIGENCE["Ikan Nila Air Tawar (Kolam Pekarangan RT 13)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Telur Ayam"] = LAMPUNG_MARKET_INTELLIGENCE["Telur Ayam Pekarangan (Ternak Warga RT 13)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Telur Bebek"] = LAMPUNG_MARKET_INTELLIGENCE["Telur Bebek Segar (Ternak Pekarangan RT 13)"];
 
         // =========================================================================
         // DATA HISTORIS & PREDIKSI HARGA (AI FLUCTUATION & FORECASTER)
@@ -703,6 +683,44 @@ export function initPriceAdvisorEngine() {
             return Object.values(LAMPUNG_MARKET_INTELLIGENCE)[0];
         };
 
+        // === KATALOG RESMI STANDAR KOMODITAS BAPANAS / PIHPS KOTA METRO (SINGLE COMMODITIES) ===
+        const CANONICAL_BAPANAS_CATALOG = [
+            { id: "beras-premium", name: "Beras Premium", category: "Beras & Biji", unit: "Kg", pMetro: 15500, defaultFairPrice: 13500, keywords: ["beras premium", "ciherang", "beras putih pulen", "beras lokal"] },
+            { id: "beras-medium", name: "Beras Medium", category: "Beras & Biji", unit: "Kg", pMetro: 13500, defaultFairPrice: 12000, keywords: ["beras medium", "beras ir 64", "beras ir64"] },
+            { id: "bawang-merah", name: "Bawang Merah", category: "Bumbu Dapur", unit: "Kg", pMetro: 32000, defaultFairPrice: 26000, keywords: ["bawang merah"] },
+            { id: "bawang-putih", name: "Bawang Putih", category: "Bumbu Dapur", unit: "Kg", pMetro: 38000, defaultFairPrice: 32000, keywords: ["bawang putih"] },
+            { id: "cabai-rawit-merah", name: "Cabai Rawit Merah", category: "Bumbu Dapur", unit: "Kg", pMetro: 55000, defaultFairPrice: 45000, keywords: ["cabai rawit", "cabe rawit"] },
+            { id: "cabai-merah-keriting", name: "Cabai Merah Keriting", category: "Bumbu Dapur", unit: "Kg", pMetro: 45000, defaultFairPrice: 38000, keywords: ["cabai merah keriting", "cabe merah keriting", "cabai merah", "cabe merah"] },
+            { id: "daging-sapi-murni", name: "Daging Sapi Murni", category: "Lauk & Protein", unit: "Kg", pMetro: 130000, defaultFairPrice: 115000, keywords: ["daging sapi", "sapi murni"] },
+            { id: "daging-ayam-ras", name: "Daging Ayam Ras", category: "Lauk & Protein", unit: "Kg", pMetro: 36000, defaultFairPrice: 30000, keywords: ["daging ayam", "ayam ras", "ayam karkas", "ayam pekarangan"] },
+            { id: "telur-ayam-ras", name: "Telur Ayam Ras", category: "Lauk & Protein", unit: "Kg", pMetro: 28000, defaultFairPrice: 25000, keywords: ["telur ayam"] },
+            { id: "telur-bebek-segar", name: "Telur Bebek Segar", category: "Lauk & Protein", unit: "Kg", pMetro: 35000, defaultFairPrice: 28000, keywords: ["telur bebek", "telur asin"] },
+            { id: "gula-pasir-konsumsi", name: "Gula Pasir Konsumsi", category: "Olahan Pangan", unit: "Kg", pMetro: 17500, defaultFairPrice: 15500, keywords: ["gula pasir"] },
+            { id: "minyak-goreng-kemasan", name: "Minyak Goreng Kemasan", category: "Olahan Pangan", unit: "Liter", pMetro: 18000, defaultFairPrice: 16000, keywords: ["minyak goreng kemasan", "minyak kemasan", "minyak sawit kemasan"] },
+            { id: "minyak-goreng-curah", name: "Minyak Goreng Curah", category: "Olahan Pangan", unit: "Liter", pMetro: 16000, defaultFairPrice: 14500, keywords: ["minyak goreng curah", "minyak curah"] },
+            { id: "tepung-terigu", name: "Tepung Terigu", category: "Olahan Pangan", unit: "Kg", pMetro: 12000, defaultFairPrice: 10500, keywords: ["tepung terigu", "terigu"] },
+            { id: "sayur-kangkung", name: "Sayur Kangkung", category: "Sayur Pekarangan", unit: "Kg", pMetro: 6000, defaultFairPrice: 4500, keywords: ["kangkung"] },
+            { id: "sayur-bayam-hijau", name: "Sayur Bayam Hijau", category: "Sayur Pekarangan", unit: "Kg", pMetro: 7000, defaultFairPrice: 5000, keywords: ["bayam"] },
+            { id: "sawi-hijau-caisim", name: "Sawi Hijau / Caisim", category: "Sayur Pekarangan", unit: "Kg", pMetro: 7000, defaultFairPrice: 5000, keywords: ["sawi", "caisim"] },
+            { id: "daun-bawang", name: "Daun Bawang", category: "Sayur Pekarangan", unit: "Kg", pMetro: 16000, defaultFairPrice: 12000, keywords: ["daun bawang"] },
+            { id: "tomat-sayur", name: "Tomat Sayur", category: "Sayur Pekarangan", unit: "Kg", pMetro: 14000, defaultFairPrice: 11000, keywords: ["tomat"] },
+            { id: "ikan-lele-segar", name: "Ikan Lele Segar", category: "Lauk & Protein", unit: "Kg", pMetro: 26000, defaultFairPrice: 22000, keywords: ["lele"] },
+            { id: "ikan-nila-air-tawar", name: "Ikan Nila Air Tawar", category: "Lauk & Protein", unit: "Kg", pMetro: 35000, defaultFairPrice: 29000, keywords: ["nila"] },
+            { id: "tempe-kedelai", name: "Tempe Kedelai", category: "Olahan Pangan", unit: "Kg", pMetro: 14000, defaultFairPrice: 10000, keywords: ["tempe"] },
+            { id: "tahu-segar", name: "Tahu Segar", category: "Olahan Pangan", unit: "Kg", pMetro: 12000, defaultFairPrice: 9000, keywords: ["tahu"] },
+            { id: "jagung-manis", name: "Jagung Manis", category: "Hasil Kebun", unit: "Kg", pMetro: 8000, defaultFairPrice: 6000, keywords: ["jagung"] },
+            { id: "singkong-ubi-kayu", name: "Singkong / Ubi Kayu", category: "Hasil Kebun", unit: "Kg", pMetro: 5000, defaultFairPrice: 3500, keywords: ["singkong", "ubi kayu"] }
+        ];
+
+        // Helper pembersih label produsen / kebun agar nama komoditas tampil bersih & elegan
+        function cleanCommodityTitle(rawName) {
+            if (!rawName) return '';
+            return String(rawName)
+                .replace(/\s*\([^)]*(?:kwt|pekarangan|poktan|bioflok|kolam|rt\s*13|ternak|unggas|rakyat|sentra|lumbung|ciherang|brebes|lokal)[^)]*\)/gi, '')
+                .replace(/\s*\([^)]*\)/g, '')
+                .trim();
+        }
+
         // === TABEL DINAMIS PATOKAN HARGA PASAR INDUK BAPANAS (SEMUA ROLE) ===
         window.renderPasarIndukBapanasTable = function renderPasarIndukBapanasTable(filterQuery = '') {
             const tbody = document.getElementById('pasarIndukBapanasTableBody');
@@ -710,69 +728,99 @@ export function initPriceAdvisorEngine() {
 
             const q = String(filterQuery || '').toLowerCase().trim();
             const rows = [];
-            const seen = new Set();
+            const activeListings = window.appState?.listings || [];
+            const matchedListingIds = new Set();
+            let totalAvailableInMarket = 0;
 
-            // 1. Dari Standar Bapanas LAMPUNG_MARKET_INTELLIGENCE
-            for (const [name, info] of Object.entries(window.LAMPUNG_MARKET_INTELLIGENCE || {})) {
-                if (seen.has(name.toLowerCase())) continue;
-                seen.add(name.toLowerCase());
+            // 1. Iterasi Katalog Kanonikal Standar Bapanas (Single Commodity, No Combined Items, No Producer Names)
+            CANONICAL_BAPANAS_CATALOG.forEach(cat => {
+                // Cari apakah ada listing produsen yang aktif di database RT 13
+                let matchedListing = null;
+                for (const l of activeListings) {
+                    const lComm = (l.commodity || '').toLowerCase();
+                    const lClean = cleanCommodityTitle(l.commodity).toLowerCase();
+                    const isMatch = cat.keywords.some(kw => lComm.includes(kw) || lClean.includes(kw));
+                    if (isMatch) {
+                        // Prioritaskan listing yang memiliki sisa stok tersedia
+                        if (!matchedListing || (Number(l.availableStockKg || 0) > 0 && Number(matchedListing.availableStockKg || 0) <= 0)) {
+                            matchedListing = l;
+                        }
+                    }
+                }
 
-                const activeList = (window.appState?.listings || []).find(l => l.commodity.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(l.commodity.toLowerCase()));
-                const pMetro = info.marketLampungPrice || 10000;
-                const pPetani = activeList ? activeList.fairPrice : (info.recommendedPrice || Math.round(pMetro * 0.75 / 500) * 500);
-                const hematPct = Math.max(5, Math.round(((pMetro - pPetani) / pMetro) * 100));
-                const statusPasokan = activeList 
-                    ? `Tersedia (${activeList.availableStockKg} Kg di Lapak)` 
-                    : `Patokan Resmi Bapanas`;
+                const hasStock = Boolean(matchedListing && Number(matchedListing.availableStockKg || 0) > 0);
+                if (hasStock) {
+                    matchedListingIds.add(matchedListing.id);
+                    totalAvailableInMarket++;
+                }
+
+                // Jika ada di listing produsen: gunakan harga riil database. Jika belum ada: gunakan estimasi harga wajar
+                const pHargaMarket = matchedListing ? Number(matchedListing.fairPrice || cat.defaultFairPrice) : cat.defaultFairPrice;
+                const pMetro = cat.pMetro;
+                const hematNominal = Math.max(0, pMetro - pHargaMarket);
+                const hematPct = Math.max(5, Math.round((hematNominal / pMetro) * 100));
+                const stockKg = matchedListing ? Number(matchedListing.availableStockKg || 0) : 0;
 
                 rows.push({
-                    name,
-                    category: info.category || 'Pangan Pokok',
+                    name: cat.name,
+                    category: cat.category,
+                    unit: cat.unit,
                     pMetro,
-                    pPetani,
-                    hematPct,
-                    statusPasokan,
-                    isLocal: Boolean(activeList)
+                    pHargaMarket,
+                    isAvailableInMarket: hasStock,
+                    stockKg,
+                    hematNominal,
+                    hematPct
                 });
+            });
+
+            // 2. Tambahkan komoditas tambahan dari database produsen (jika ada komoditas baru di luar 25 katalog standar)
+            const addedExtraNames = new Set();
+            activeListings.forEach(l => {
+                if (matchedListingIds.has(l.id)) return;
+                const clean = cleanCommodityTitle(l.commodity);
+                if (!clean) return;
+
+                // Hindari jika nama sudah ada di katalog standar
+                const alreadyInCatalog = CANONICAL_BAPANAS_CATALOG.some(c => c.name.toLowerCase() === clean.toLowerCase());
+                if (alreadyInCatalog) return;
+                if (addedExtraNames.has(clean.toLowerCase())) return;
+                addedExtraNames.add(clean.toLowerCase());
+
+                const stock = Number(l.availableStockKg || 0);
+                const pMarket = Number(l.fairPrice || 10000);
+                const pMetro = Number(l.marketPrice || Math.round(pMarket * 1.25 / 500) * 500);
+                const hematNominal = Math.max(0, pMetro - pMarket);
+                const hematPct = Math.max(5, Math.round((hematNominal / pMetro) * 100));
+
+                if (stock > 0) totalAvailableInMarket++;
+
+                rows.push({
+                    name: clean,
+                    category: l.category || 'Hasil Panen',
+                    unit: l.unit || 'Kg',
+                    pMetro,
+                    pHargaMarket: pMarket,
+                    isAvailableInMarket: stock > 0,
+                    stockKg: stock,
+                    hematNominal,
+                    hematPct
+                });
+            });
+
+            // Update badge ringkasan jika elemen ada
+            const summaryBadge = document.getElementById('bapanasSummaryBadge');
+            if (summaryBadge) {
+                summaryBadge.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 text-[11px] font-bold border border-emerald-200">
+                            <i class="fa-solid fa-circle-check text-emerald-600"></i> ${totalAvailableInMarket} Komoditas Siap di Market RT 13
+                        </span>
+                        <span class="text-stone-400 text-xs">•</span>
+                        <span class="text-stone-500 text-[11px]">Total ${rows.length} Komoditas Pantauan Resmi Bapanas</span>
+                    </div>
+                `;
             }
-
-            // 2. Tambahkan komoditas dari listing aktif yang belum tercakup
-            (window.appState?.listings || []).forEach(l => {
-                if (!seen.has(l.commodity.toLowerCase())) {
-                    seen.add(l.commodity.toLowerCase());
-                    const pMetro = l.marketPrice || Math.round(l.fairPrice * 1.25 / 500) * 500;
-                    const pPetani = l.fairPrice;
-                    const hematPct = Math.max(5, Math.round(((pMetro - pPetani) / pMetro) * 100));
-                    rows.push({
-                        name: l.commodity,
-                        category: l.category || 'Hasil Kebun',
-                        pMetro,
-                        pPetani,
-                        hematPct,
-                        statusPasokan: `Tersedia (${l.availableStockKg} Kg)`,
-                        isLocal: true
-                    });
-                }
-            });
-
-            // 3. Tambahkan komoditas dari usulan warga (demands)
-            (window.appState?.demands || []).forEach(d => {
-                if (!seen.has(d.name.toLowerCase())) {
-                    seen.add(d.name.toLowerCase());
-                    const pPetani = Number(d.targetPriceMax) || 15000;
-                    const pMetro = Math.round(pPetani * 1.22 / 500) * 500;
-                    const hematPct = Math.round(((pMetro - pPetani) / pMetro) * 100);
-                    rows.push({
-                        name: d.name,
-                        category: d.category || 'Usulan Warga',
-                        pMetro,
-                        pPetani,
-                        hematPct,
-                        statusPasokan: d.status === 'TERPENUHI_LOKAL' ? 'Disuplai Produsen RT 13' : 'Diusulkan Warga',
-                        isLocal: d.status === 'TERPENUHI_LOKAL'
-                    });
-                }
-            });
 
             // Filter pencarian
             const filtered = rows.filter(r => !q || r.name.toLowerCase().includes(q) || r.category.toLowerCase().includes(q));
@@ -780,8 +828,9 @@ export function initPriceAdvisorEngine() {
             if (filtered.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" class="py-6 text-center text-stone-500 text-xs">
-                            Komoditas "${filterQuery}" tidak ditemukan dalam data patokan Bapanas.
+                        <td colspan="5" class="py-8 text-center text-stone-500 text-xs">
+                            <i class="fa-solid fa-magnifying-glass text-stone-300 text-2xl block mb-2"></i>
+                            Komoditas "<strong>${filterQuery}</strong>" tidak ditemukan dalam data patokan Bapanas.
                         </td>
                     </tr>
                 `;
@@ -789,20 +838,48 @@ export function initPriceAdvisorEngine() {
             }
 
             tbody.innerHTML = filtered.map(r => `
-                <tr class="hover:bg-stone-50 transition-colors">
-                    <td class="px-3.5 py-2.5">
-                        <strong class="text-stone-900 block text-xs">${r.name}</strong>
-                        <span class="text-[10px] text-stone-500 font-mono">${r.category}</span>
+                <tr class="hover:bg-stone-50/80 transition-colors">
+                    <td class="px-3 sm:px-4 py-3 align-middle">
+                        <span class="text-stone-900 font-bold block text-xs leading-snug">${r.name}</span>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span class="text-[9.5px] text-stone-600 font-medium bg-stone-100 px-1.5 py-0.5 rounded">${r.category}</span>
+                            <span class="text-[9.5px] text-stone-400">/ ${r.unit}</span>
+                        </div>
                     </td>
-                    <td class="px-3 py-2.5 text-right font-mono text-stone-600 text-xs">${formatRupiah(r.pMetro)}</td>
-                    <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800 text-xs">${formatRupiah(r.pPetani)}</td>
-                    <td class="px-3 py-2.5 text-center">
-                        <span class="px-2 py-0.5 rounded-full ${r.hematPct >= 20 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'} font-bold text-[10px]">
+                    <td class="px-2.5 sm:px-3 py-3 text-right align-middle whitespace-nowrap">
+                        <span class="font-mono text-stone-700 font-semibold text-xs">${formatRupiah(r.pMetro)}</span>
+                        <span class="block text-[9.5px] text-stone-400">PIHPS Metro</span>
+                    </td>
+                    <td class="px-2.5 sm:px-3 py-3 text-right align-middle whitespace-nowrap">
+                        <span class="font-mono font-bold ${r.isAvailableInMarket ? 'text-emerald-700 text-xs' : 'text-stone-700 text-xs'}">${formatRupiah(r.pHargaMarket)}</span>
+                        <div class="mt-0.5">
+                            ${r.isAvailableInMarket ? `
+                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                    <i class="fa-solid fa-circle-check text-[8px] text-emerald-600"></i> Riil di Market
+                                </span>
+                            ` : `
+                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium bg-stone-100 text-stone-600 border border-stone-200">
+                                    <i class="fa-solid fa-calculator text-[8px] text-stone-400"></i> Estimasi Wajar
+                                </span>
+                            `}
+                        </div>
+                    </td>
+                    <td class="px-2.5 sm:px-3 py-3 text-center align-middle whitespace-nowrap">
+                        ${r.isAvailableInMarket ? `
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                <i class="fa-solid fa-seedling text-emerald-600 text-[9px]"></i> Tersedia (${r.stockKg} ${r.unit})
+                            </span>
+                        ` : `
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium bg-stone-100 text-stone-500 border border-stone-200">
+                                <i class="fa-solid fa-truck text-stone-400 text-[9px]"></i> Pasokan Luar
+                            </span>
+                        `}
+                    </td>
+                    <td class="px-2.5 sm:px-3 py-3 text-center align-middle whitespace-nowrap">
+                        <span class="inline-block px-2.5 py-0.5 rounded-full font-bold text-[10px] ${r.hematPct >= 15 ? 'bg-emerald-100 text-emerald-900 border border-emerald-200' : 'bg-amber-100 text-amber-900 border border-amber-200'}">
                             Hemat ${r.hematPct}%
                         </span>
-                    </td>
-                    <td class="px-3 py-2.5 text-center text-[10px] ${r.isLocal ? 'text-emerald-700 font-bold' : 'text-stone-500'}">
-                        ${r.statusPasokan}
+                        <span class="block text-[9px] text-stone-400 mt-0.5 font-mono">-${formatRupiah(r.hematNominal)}</span>
                     </td>
                 </tr>
             `).join('');

@@ -4359,69 +4359,79 @@
     </div>
 
     <!-- MODAL PATOKAN HARGA PASAR INDUK & BAPANAS NASIONAL (UNTUK SEMUA ROLE) -->
-    <div id="modalPasarIndukBapanas" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-stone-200 space-y-4 animate-in fade-in duration-150 my-auto max-h-[90vh] overflow-y-auto">
+    <div id="modalPasarIndukBapanas" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-3xl w-full p-4 sm:p-6 shadow-2xl border border-stone-200 space-y-4 animate-in fade-in duration-150 my-auto max-h-[92vh] overflow-y-auto phone-scroll flex flex-col">
             <div class="flex items-center justify-between border-b border-stone-100 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center text-lg font-bold shadow-xs">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-lg font-bold shadow-xs">
                         <i class="fa-solid fa-scale-balanced"></i>
                     </div>
                     <div>
-                        <h3 class="serif-heading text-base sm:text-lg font-bold text-stone-900">Daftar Patokan Harga Pangan Pasar Induk &amp; Bapanas</h3>
-                        <p class="text-xs text-stone-500">Sumber: PIHPS Nasional &amp; Badan Pangan Nasional (Bapanas) Wilayah Lampung / Kota Metro</p>
+                        <h3 class="serif-heading text-base sm:text-lg font-bold text-stone-900">Patokan Harga Pangan Bapanas &amp; Pasar Induk</h3>
+                        <p class="text-xs text-stone-500">Benchmark Resmi Badan Pangan Nasional (Bapanas) &amp; PIHPS Kota Metro vs Database Market RT 13</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeModal('modalPasarIndukBapanas')" class="p-1 rounded-lg text-stone-400 hover:text-stone-700">
+                <button type="button" onclick="closeModal('modalPasarIndukBapanas')" class="w-8 h-8 rounded-xl flex items-center justify-center text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition cursor-pointer">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 flex items-start gap-2.5">
-                <i class="fa-solid fa-circle-info text-emerald-700 text-sm mt-0.5 shrink-0"></i>
-                <div class="space-y-0.5">
-                    <strong class="font-bold">Keunggulan Berbelanja Langsung di Petani &amp; Pekarangan RT 13:</strong>
+            <div class="p-3.5 rounded-2xl bg-emerald-50/80 border border-emerald-200/90 text-xs text-emerald-950 flex items-start gap-3">
+                <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 text-sm shadow-2xs mt-0.5">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div class="space-y-1">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <strong class="font-bold text-emerald-950 text-xs">Perbandingan Realtime (Pasar Induk vs Lumbung RT 13):</strong>
+                    </div>
                     <p class="text-emerald-900 text-[11px] leading-relaxed">
-                        Seluruh harga pangan di SI-PANGAN ID dipatok di bawah harga pasar induk tanpa perantara tengkulak. Rata-rata warga menghemat <strong>15% hingga 45%</strong> per komoditas pangan segar harian.
+                        Jika komoditas tersedia di pekarangan warga, tabel menampilkan <strong>Harga Riil dari Produsen</strong> beserta sisa stok siap panen. Jika belum diproduksi mandiri, tabel menampilkan <strong>Estimasi Harga Wajar</strong> dengan efisiensi pemangkasan rantai tengkulak.
                     </p>
                 </div>
             </div>
 
-            <!-- Input Filter Pencarian Komoditas -->
-            <div class="flex items-center gap-2">
-                <div class="relative flex-1">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs"></i>
-                    <input type="text" id="pasarIndukSearchInput" oninput="renderPasarIndukBapanasTable(this.value)"
-                        placeholder="Cari komoditas (misal: Minyak Goreng, Bawang, Beras, Cabai)..."
-                        class="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-stone-200 focus:outline-hidden focus:ring-2 focus:ring-forest-500 bg-stone-50/50">
+            <!-- Input Filter Pencarian Komoditas & Counter -->
+            <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs"></i>
+                        <input type="text" id="pasarIndukSearchInput" oninput="renderPasarIndukBapanasTable(this.value)"
+                            placeholder="Cari komoditas (misal: Beras, Cabai, Bawang, Telur, Kangkung, Lele)..."
+                            class="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-stone-200 focus:outline-hidden focus:ring-2 focus:ring-forest-500 bg-stone-50/50">
+                    </div>
+                    <button type="button" onclick="document.getElementById('pasarIndukSearchInput').value=''; renderPasarIndukBapanasTable('')"
+                        class="px-3 py-2 text-xs font-semibold rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 transition cursor-pointer shrink-0">
+                        <i class="fa-solid fa-rotate-right mr-1"></i>Reset
+                    </button>
                 </div>
-                <button type="button" onclick="renderPasarIndukBapanasTable('')"
-                    class="px-3 py-2 text-xs font-semibold rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 transition cursor-pointer shrink-0">
-                    <i class="fa-solid fa-rotate-right mr-1"></i>Reset
-                </button>
+                <div id="bapanasSummaryBadge" class="min-h-[22px]"></div>
             </div>
 
-            <!-- Tabel Komparasi Harga -->
-            <div class="overflow-x-auto rounded-xl border border-stone-200 max-h-[380px] overflow-y-auto">
-                <table class="w-full text-xs text-left">
-                    <thead class="bg-stone-100 text-stone-700 font-bold border-b border-stone-200 text-[11px] uppercase tracking-wider sticky top-0 z-10">
+            <!-- Tabel Komparasi Harga Bapanas vs Market RT 13 -->
+            <div class="overflow-x-auto rounded-2xl border border-stone-200 shadow-2xs max-h-[380px] overflow-y-auto phone-scroll">
+                <table class="w-full text-xs text-left border-collapse">
+                    <thead class="bg-stone-100 text-stone-700 font-bold border-b border-stone-200 text-[10px] sm:text-[11px] uppercase tracking-wider sticky top-0 z-10">
                         <tr>
-                            <th class="px-3.5 py-2.5">Komoditas</th>
-                            <th class="px-3 py-2.5 text-right">Pasar Induk Metro</th>
-                            <th class="px-3 py-2.5 text-right text-emerald-900">Petani RT 13</th>
-                            <th class="px-3 py-2.5 text-center">Hemat</th>
-                            <th class="px-3 py-2.5 text-center">Status Pasokan</th>
+                            <th class="px-3 sm:px-4 py-2.5 text-left">Komoditas</th>
+                            <th class="px-2.5 sm:px-3 py-2.5 text-right whitespace-nowrap">Pasar Induk (Bapanas)</th>
+                            <th class="px-2.5 sm:px-3 py-2.5 text-right text-emerald-900 whitespace-nowrap">Harga di Market RT 13</th>
+                            <th class="px-2.5 sm:px-3 py-2.5 text-center whitespace-nowrap">Status Pasokan</th>
+                            <th class="px-2.5 sm:px-3 py-2.5 text-center whitespace-nowrap">Selisih Hemat</th>
                         </tr>
                     </thead>
-                    <tbody id="pasarIndukBapanasTableBody" class="divide-y divide-stone-100 font-medium">
+                    <tbody id="pasarIndukBapanasTableBody" class="divide-y divide-stone-100 font-medium bg-white">
                         <!-- Diisi secara dinamis oleh renderPasarIndukBapanasTable() -->
                     </tbody>
                 </table>
             </div>
 
-            <div class="flex items-center justify-between pt-2 border-t border-stone-100 text-stone-500 text-[11px]">
-                <span>Data diperbarui harian dari Bapanas &amp; PIHPS Kota Metro.</span>
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-stone-100 text-stone-500 text-[11px]">
+                <div class="flex items-center gap-1.5 text-stone-500 text-[11px]">
+                    <i class="fa-solid fa-arrows-rotate text-emerald-600"></i>
+                    <span>Tersinkronisasi otomatis dengan database listing produsen RT 13 &amp; patokan Bapanas Metro.</span>
+                </div>
                 <button type="button" onclick="closeModal('modalPasarIndukBapanas')"
-                    class="px-4 py-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs transition cursor-pointer">
+                    class="w-full sm:w-auto px-5 py-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs transition cursor-pointer shadow-xs">
                     Tutup
                 </button>
             </div>
