@@ -1403,7 +1403,7 @@ export function initAuthAndRoleController() {
                 const pendingCount = (window.appState.transactions || []).filter(t => t.producerSid === window.appState.activeUserSid && t.orderStatus === 'MENUNGGU_KONFIRMASI').length;
                 items = [
                     { id: 'tab-market', icon: 'fa-seedling', label: 'Lapak' },
-                    { id: 'tab-orders', icon: 'fa-clipboard-check', label: pendingCount > 0 ? `Pesanan (${pendingCount})` : 'Pesanan' },
+                    { id: 'tab-orders', icon: 'fa-clipboard-check', label: pendingCount > 0 ? `Pesanan Masuk (${pendingCount})` : 'Pesanan Masuk' },
                     { id: 'tab-matching', icon: 'fa-microchip', label: 'Analisis AI' },
                     { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Sinyal' },
                     { id: 'tab-sid', icon: 'fa-user', label: 'Profile' }
@@ -1414,7 +1414,7 @@ export function initAuthAndRoleController() {
                 const readyCount = (window.appState.transactions || []).filter(t => t.consumerSid === activeSid && t.orderStatus === 'SIAP_DIAMBIL').length;
                 items = [
                     { id: 'tab-market', icon: 'fa-store', label: 'Pasar' },
-                    { id: 'tab-orders', icon: 'fa-bag-shopping', label: readyCount > 0 ? `Pesanan (${readyCount})` : 'Pesanan' },
+                    { id: 'tab-orders', icon: 'fa-bag-shopping', label: readyCount > 0 ? `Pesanan Saya (${readyCount})` : 'Pesanan Saya' },
                     { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Usulan' },
                     { id: 'tab-sid', icon: 'fa-user', label: 'Profile' }
                 ];

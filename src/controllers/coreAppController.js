@@ -206,7 +206,8 @@ export function initCoreAppController() {
         }
 
         window.enforceSidebarTabVisibility = function enforceSidebarTabVisibility(role) {
-            const allowed = getAllowedTabsForRole(role || window.appState?.activeRole || 'KONSUMEN');
+            const currentRole = role || window.appState?.activeRole || 'KONSUMEN';
+            const allowed = getAllowedTabsForRole(currentRole);
             const allTabs = ['tab-konsep', 'tab-sid', 'tab-market', 'tab-orders', 'tab-matching', 'tab-musyawarah', 'tab-dampak'];
             allTabs.forEach(tId => {
                 const btn = document.getElementById(`nav-${tId}`);
@@ -219,6 +220,22 @@ export function initCoreAppController() {
                     btn.style.display = 'none';
                 }
             });
+
+            // Sinkronisasi teks Tab Orders: "Pesanan Masuk" untuk Produsen & "Pesanan Saya" untuk Konsumen
+            const navOrdersTitle = document.getElementById('navOrdersTitle');
+            const navOrdersSub = document.getElementById('navOrdersSubtitle');
+            if (navOrdersTitle) {
+                if (currentRole === 'PRODUSEN') {
+                    navOrdersTitle.textContent = 'Pesanan Masuk';
+                    if (navOrdersSub) navOrdersSub.textContent = 'Proses & Siapkan Panen';
+                } else if (currentRole === 'ADMIN') {
+                    navOrdersTitle.textContent = 'Rekap Pesanan';
+                    if (navOrdersSub) navOrdersSub.textContent = 'Pantau Transaksi RT 13';
+                } else {
+                    navOrdersTitle.textContent = 'Pesanan Saya';
+                    if (navOrdersSub) navOrdersSub.textContent = 'Riwayat Belanja & Chat WA';
+                }
+            }
         }
         window.getAllowedTabsForRole = getAllowedTabsForRole;
         window.enforceSidebarTabVisibility = enforceSidebarTabVisibility;
