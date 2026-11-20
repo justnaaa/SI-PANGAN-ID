@@ -349,7 +349,7 @@ export function initAuthAndRoleController() {
                 window.appState.privacyMode = 'PUBLIC';
 
                 const activePane = document.querySelector('.tab-pane:not(.hidden)');
-                if (!activePane || ['tab-orders', 'tab-matching', 'tab-dampak'].includes(activePane.id)) {
+                if (!activePane || ['tab-matching', 'tab-dampak'].includes(activePane.id)) {
                     switchTab('tab-market');
                 }
 
@@ -1433,73 +1433,34 @@ export function initAuthAndRoleController() {
             }).join('');
         };
 
-        // --- A.4: RENDER SEGMENTED TOP TAB NAVIGATION BAR (Mobile & Desktop) ---
-        window.renderTopTabBar = function() {
-            const container = document.getElementById('mainTopTabItems');
-            if (!container) return;
-
-            const role = window.appState.activeRole || 'KONSUMEN';
-            const activePane = document.querySelector('.tab-pane:not(.hidden)');
-            const activeTabId = activePane ? activePane.id : (role === 'ADMIN' ? 'tab-dampak' : 'tab-market');
-
-            const activeSid = window.appState.activeUserSid;
-            const myOrders = (window.appState.transactions || []).filter(t => t.consumerSid === activeSid);
-            const readyOrdersCount = myOrders.filter(t => t.orderStatus === 'SIAP_DIAMBIL').length;
-
-            const producerOrders = (window.appState.transactions || []).filter(t => t.producerSid === activeSid);
-            const pendingProducerOrdersCount = producerOrders.filter(t => t.orderStatus === 'MENUNGGU_KONFIRMASI').length;
-
-            let tabs = [];
+        // --- A.4: UPDATE BADGE JUMLAH PESANAN DI SIDEBAR ---
+        window.updateSidebarOrdersBadge = function() {
+            const badge = document.getElementById('sidebarOrdersBadge');
+            if (!badge) return;
+            const role = window.appState?.activeRole || 'KONSUMEN';
+            const activeSid = window.appState?.activeUserSid;
             if (role === 'KONSUMEN') {
-                tabs = [
-                    { id: 'tab-market', icon: 'fa-store', label: 'Pasar Warga' },
-                    { id: 'tab-orders', icon: 'fa-bag-shopping', label: 'Pesanan Saya', count: myOrders.length, highlight: readyOrdersCount > 0 },
-                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Usulan Warga' },
-                    { id: 'tab-sid', icon: 'fa-user', label: 'Profil KK' }
-                ];
-            } else if (role === 'PRODUSEN') {
-                tabs = [
-                    { id: 'tab-market', icon: 'fa-seedling', label: 'Lapak Kebun' },
-                    { id: 'tab-orders', icon: 'fa-clipboard-check', label: 'Pesanan Masuk', count: producerOrders.length, highlight: pendingProducerOrdersCount > 0 },
-                    { id: 'tab-matching', icon: 'fa-microchip', label: 'Analisis AI' },
-                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Sinyal Warga' },
-                    { id: 'tab-sid', icon: 'fa-user', label: 'Profil Kebun' }
-                ];
-            } else {
-                tabs = [
-                    { id: 'tab-dampak', icon: 'fa-chart-pie', label: 'Monev & Surplus' },
-                    { id: 'tab-matching', icon: 'fa-microchip', label: 'Analisis AI' },
-                    { id: 'tab-sid', icon: 'fa-users', label: 'Data 40 KK' },
-                    { id: 'tab-orders', icon: 'fa-clipboard-list', label: 'Rekap Pesanan' },
-                    { id: 'tab-market', icon: 'fa-store', label: 'Pasar Warga' }
-                ];
-            }
-
-            const activeThemeClass = role === 'PRODUSEN' 
-                ? 'bg-[#9A3412] text-white shadow-xs' 
-                : role === 'ADMIN' 
-                ? 'bg-slate-900 text-white shadow-xs' 
-                : 'bg-[#0F5132] text-white shadow-xs';
-
-            container.innerHTML = tabs.map(tab => {
-                const isActive = activeTabId === tab.id;
-                let countBadge = '';
-                if (tab.count !== undefined) {
-                    const badgeBg = isActive 
-                        ? 'bg-white/25 text-white' 
-                        : (tab.highlight ? 'bg-amber-500 text-white animate-pulse' : 'bg-slate-200 text-slate-700');
-                    countBadge = `<span class="text-[10px] px-1.5 py-0.2 rounded-full font-bold ml-1 ${badgeBg}">${tab.count}</span>`;
+                const myOrders = (window.appState?.transactions || []).filter(t => t.consumerSid === activeSid);
+                if (myOrders.length > 0) {
+                    badge.textContent = myOrders.length;
+                    badge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#E8F5E9] text-[#0F5132] font-mono';
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
                 }
-
-                return `
-                    <button type="button" onclick="switchTab('${tab.id}')"
-                        class="py-2 px-3 rounded-xl text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer shrink-0 ${isActive ? activeThemeClass : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'}">
-                        <i class="fa-solid ${tab.icon} text-xs"></i>
-                        <span>${tab.label}</span>
-                        ${countBadge}
-                    </button>
-                `;
-            }).join('');
+            } else if (role === 'PRODUSEN') {
+                const prodOrders = (window.appState?.transactions || []).filter(t => t.producerSid === activeSid);
+                const pendingCount = prodOrders.filter(t => t.orderStatus === 'MENUNGGU_KONFIRMASI').length;
+                if (prodOrders.length > 0) {
+                    badge.textContent = prodOrders.length;
+                    badge.className = `px-2 py-0.5 rounded-full text-[10px] font-bold font-mono ${pendingCount > 0 ? 'bg-amber-100 text-amber-800 animate-pulse' : 'bg-stone-200 text-stone-700'}`;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            } else {
+                badge.classList.add('hidden');
+            }
         };
 
         // Hook ke switchTab, setActiveRole, dan renderAll agar semua komponen baru ter-update otomatis
@@ -1514,7 +1475,7 @@ export function initAuthAndRoleController() {
                     if (typeof renderProducerOrders === 'function') renderProducerOrders();
                 }
             }
-            if (typeof renderTopTabBar === 'function') renderTopTabBar();
+            if (typeof updateSidebarOrdersBadge === 'function') updateSidebarOrdersBadge();
             if (typeof renderMobileBottomNav === 'function') renderMobileBottomNav();
             if (typeof renderProducerWorkspaceAndAutoAi === 'function') renderProducerWorkspaceAndAutoAi();
             if (typeof renderAdminMonevSummary === 'function') renderAdminMonevSummary();
@@ -1627,7 +1588,7 @@ export function initAuthAndRoleController() {
                 if (typeof renderProducerOrders === 'function') renderProducerOrders();
             }
 
-            if (typeof renderTopTabBar === 'function') renderTopTabBar();
+            if (typeof updateSidebarOrdersBadge === 'function') updateSidebarOrdersBadge();
             if (typeof renderProducerWorkspaceAndAutoAi === 'function') renderProducerWorkspaceAndAutoAi();
             if (typeof renderAdminMonevSummary === 'function') renderAdminMonevSummary();
             if (typeof renderMobileBottomNav === 'function') renderMobileBottomNav();
@@ -1649,7 +1610,7 @@ export function initAuthAndRoleController() {
                     if (m) headerLabel.textContent = `${m.name} (${roleText})`;
                 }
             }
-            if (typeof renderTopTabBar === 'function') renderTopTabBar();
+            if (typeof updateSidebarOrdersBadge === 'function') updateSidebarOrdersBadge();
             if (typeof renderProducerWorkspaceAndAutoAi === 'function') renderProducerWorkspaceAndAutoAi();
             if (typeof renderAdminMonevSummary === 'function') renderAdminMonevSummary();
             if (typeof renderMobileBottomNav === 'function') renderMobileBottomNav();

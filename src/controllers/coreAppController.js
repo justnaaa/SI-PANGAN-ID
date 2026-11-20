@@ -201,8 +201,8 @@ export function initCoreAppController() {
             if (role === 'PRODUSEN') {
                 return ['tab-sid', 'tab-market', 'tab-orders', 'tab-matching', 'tab-musyawarah'];
             }
-            // Default KONSUMEN: Profile (tab-sid), Pilih Komoditas (tab-market), Usulan Pangan (tab-musyawarah)
-            return ['tab-sid', 'tab-market', 'tab-musyawarah'];
+            // Default KONSUMEN: Profile (tab-sid), Pilih Komoditas (tab-market), Pesanan Saya (tab-orders), Usulan Pangan (tab-musyawarah)
+            return ['tab-sid', 'tab-market', 'tab-orders', 'tab-musyawarah'];
         }
 
         window.enforceSidebarTabVisibility = function enforceSidebarTabVisibility(role) {
