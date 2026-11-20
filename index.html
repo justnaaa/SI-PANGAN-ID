@@ -1137,6 +1137,11 @@
                             </h2>
                         </div>
                         <div id="marketProducerActions" class="flex flex-wrap items-center gap-2 shrink-0">
+                            <button type="button" onclick="openModal('modalPasarIndukBapanas')"
+                                class="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs">
+                                <i class="fa-solid fa-chart-line text-amber-700"></i>
+                                <span>Cek Patokan Harga Bapanas</span>
+                            </button>
                             <button type="button" onclick="openModal('modalNewListing')"
                                 class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
                                 <i class="fa-solid fa-circle-plus text-emerald-300"></i>
@@ -1470,6 +1475,8 @@
                             0 Pesanan Saya
                         </span>
                     </div>
+                    <!-- Notifikasi Pesanan Sedang / Selesai Diproses Produsen -->
+                    <div id="consumerOrderProcessedAlertBox" class="hidden"></div>
                     <div id="personalConsumerOrdersList" class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <!-- Populated dynamically with ONLY the logged-in consumer's orders -->
                     </div>
@@ -4343,10 +4350,24 @@
                 </div>
             </div>
 
+            <!-- Input Filter Pencarian Komoditas -->
+            <div class="flex items-center gap-2">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs"></i>
+                    <input type="text" id="pasarIndukSearchInput" oninput="renderPasarIndukBapanasTable(this.value)"
+                        placeholder="Cari komoditas (misal: Minyak Goreng, Bawang, Beras, Cabai)..."
+                        class="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-stone-200 focus:outline-hidden focus:ring-2 focus:ring-forest-500 bg-stone-50/50">
+                </div>
+                <button type="button" onclick="renderPasarIndukBapanasTable('')"
+                    class="px-3 py-2 text-xs font-semibold rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 transition cursor-pointer shrink-0">
+                    <i class="fa-solid fa-rotate-right mr-1"></i>Reset
+                </button>
+            </div>
+
             <!-- Tabel Komparasi Harga -->
-            <div class="overflow-x-auto rounded-xl border border-stone-200">
+            <div class="overflow-x-auto rounded-xl border border-stone-200 max-h-[380px] overflow-y-auto">
                 <table class="w-full text-xs text-left">
-                    <thead class="bg-stone-100 text-stone-700 font-bold border-b border-stone-200 text-[11px] uppercase tracking-wider">
+                    <thead class="bg-stone-100 text-stone-700 font-bold border-b border-stone-200 text-[11px] uppercase tracking-wider sticky top-0 z-10">
                         <tr>
                             <th class="px-3.5 py-2.5">Komoditas</th>
                             <th class="px-3 py-2.5 text-right">Pasar Induk Metro</th>
@@ -4355,70 +4376,8 @@
                             <th class="px-3 py-2.5 text-center">Status Pasokan</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-stone-100 font-medium">
-                        <tr class="hover:bg-stone-50">
-                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🍚 Beras IR 64 / Medium</td>
-                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 14.500 / Kg</td>
-                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 12.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 17%</span></td>
-                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Tersedia Melimpah</td>
-                        </tr>
-                        <tr class="hover:bg-stone-50">
-                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🥬 Sayur Bayam Cabut</td>
-                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 8.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 4.500 / Kg</td>
-                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 44%</span></td>
-                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Panen Hari Ini</td>
-                        </tr>
-                        <tr class="hover:bg-stone-50">
-                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🥬 Kangkung Air Segar</td>
-                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 7.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 4.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 43%</span></td>
-                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Panen Hari Ini</td>
-                        </tr>
-                        <tr class="hover:bg-stone-50">
-                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🌶️ Cabai Rawit Merah</td>
-                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 48.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 36.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 25%</span></td>
-                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Tersedia</td>
-                        </tr>
-                        <tr class="hover:bg-stone-50">
-                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🌶️ Cabai Merah Keriting</td>
-                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 42.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 32.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 24%</span></td>
-                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Tersedia</td>
-                        </tr>
-                        <tr class="hover:bg-stone-50">
-                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🧅 Bawang Merah</td>
-                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 34.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 26.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 24%</span></td>
-                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Tersedia</td>
-                        </tr>
-                        <tr class="hover:bg-stone-50">
-                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🥚 Telur Ayam Ras</td>
-                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 28.500 / Kg</td>
-                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 25.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 12%</span></td>
-                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Stok Terjaga</td>
-                        </tr>
-                        <tr class="hover:bg-stone-50">
-                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🐟 Ikan Lele Bioflok</td>
-                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 26.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 21.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 19%</span></td>
-                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Segar Kolam</td>
-                        </tr>
-                        <tr class="hover:bg-stone-50">
-                            <td class="px-3.5 py-2.5 font-bold text-stone-900">🐟 Ikan Nila Segar</td>
-                            <td class="px-3 py-2.5 text-right font-mono text-stone-600">Rp 35.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800">Rp 28.000 / Kg</td>
-                            <td class="px-3 py-2.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">Hemat 20%</span></td>
-                            <td class="px-3 py-2.5 text-center text-[10px] text-emerald-700 font-semibold">Segar Kolam</td>
-                        </tr>
+                    <tbody id="pasarIndukBapanasTableBody" class="divide-y divide-stone-100 font-medium">
+                        <!-- Diisi secara dinamis oleh renderPasarIndukBapanasTable() -->
                     </tbody>
                 </table>
             </div>

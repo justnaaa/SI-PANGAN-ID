@@ -148,8 +148,136 @@ export function initPriceAdvisorEngine() {
                 freshnessDays: 90,
                 dataSource: "PIHPS & Lumbung Poktan Metro",
                 description: "Beras pulen Ciherang panen lumbung mandiri RT 13, kadar air 14% standar lumbung pangan."
+            },
+            "Minyak Goreng Sawit Kemasan": {
+                category: "Olahan Pangan",
+                unit: "Kg",
+                pengepulPrice: 14000,
+                tengkulakPrice: 14000,
+                marketLampungPrice: 19500,
+                safeMin: 15500,
+                safeMax: 17500,
+                recommendedPrice: 16500,
+                freshnessDays: 180,
+                dataSource: "Bapanas & Pasar Induk Kota Metro",
+                description: "Minyak goreng sawit kemasan SNI higienis standar stabilitas harga Bapanas."
+            },
+            "Minyak Goreng Curah": {
+                category: "Olahan Pangan",
+                unit: "Kg",
+                pengepulPrice: 13000,
+                tengkulakPrice: 13000,
+                marketLampungPrice: 16500,
+                safeMin: 14000,
+                safeMax: 15500,
+                recommendedPrice: 15000,
+                freshnessDays: 90,
+                dataSource: "Bapanas & Pasar Kopindo Metro",
+                description: "Minyak goreng curah tersaring bersih untuk kebutuhan harian rumah tangga."
+            },
+            "Gula Pasir Konsumsi": {
+                category: "Olahan Pangan",
+                unit: "Kg",
+                pengepulPrice: 14500,
+                tengkulakPrice: 14500,
+                marketLampungPrice: 18500,
+                safeMin: 15500,
+                safeMax: 17500,
+                recommendedPrice: 16500,
+                freshnessDays: 360,
+                dataSource: "Bapanas & Sentra Distribusi Metro",
+                description: "Gula pasir kristal putih higienis standar ketahanan pangan nasional."
+            },
+            "Tepung Terigu": {
+                category: "Olahan Pangan",
+                unit: "Kg",
+                pengepulPrice: 9000,
+                tengkulakPrice: 9000,
+                marketLampungPrice: 13500,
+                safeMin: 10500,
+                safeMax: 12500,
+                recommendedPrice: 11500,
+                freshnessDays: 180,
+                dataSource: "Bapanas & Pasar Tradisional Metro",
+                description: "Tepung terigu protein sedang untuk olahan pangan dan kue warga."
+            },
+            "Bawang Merah (Lokal)": {
+                category: "Sayur Pekarangan",
+                unit: "Kg",
+                pengepulPrice: 20000,
+                tengkulakPrice: 20000,
+                marketLampungPrice: 34000,
+                safeMin: 23000,
+                safeMax: 29000,
+                recommendedPrice: 26000,
+                freshnessDays: 21,
+                dataSource: "Bapanas & Pasar Cendrawasih Metro",
+                description: "Bawang merah segar panen petani lokal, aroma kuat dan umbi padat."
+            },
+            "Bawang Putih Bonggol": {
+                category: "Sayur Pekarangan",
+                unit: "Kg",
+                pengepulPrice: 28000,
+                tengkulakPrice: 28000,
+                marketLampungPrice: 42000,
+                safeMin: 32000,
+                safeMax: 38000,
+                recommendedPrice: 35000,
+                freshnessDays: 30,
+                dataSource: "Bapanas & Pasar Induk Metro",
+                description: "Bawang putih kering bersih standar pasokan Bapanas."
+            },
+            "Daging Sapi Murni": {
+                category: "Lauk & Protein",
+                unit: "Kg",
+                pengepulPrice: 110000,
+                tengkulakPrice: 110000,
+                marketLampungPrice: 140000,
+                safeMin: 120000,
+                safeMax: 135000,
+                recommendedPrice: 128000,
+                freshnessDays: 2,
+                dataSource: "Bapanas & RPH Metro",
+                description: "Daging sapi segar potongan paha/has dalam bebas lemak berlebih."
+            },
+            "Daging Ayam Ras": {
+                category: "Lauk & Protein",
+                unit: "Kg",
+                pengepulPrice: 26000,
+                tengkulakPrice: 26000,
+                marketLampungPrice: 38000,
+                safeMin: 29000,
+                safeMax: 35000,
+                recommendedPrice: 32000,
+                freshnessDays: 2,
+                dataSource: "Bapanas & Pasar Ayam Metro",
+                description: "Daging ayam karkas segar higienis pasokan peternak rakyat."
+            },
+            "Tempe & Tahu Segar": {
+                category: "Olahan Pangan",
+                unit: "Kg",
+                pengepulPrice: 7000,
+                tengkulakPrice: 7000,
+                marketLampungPrice: 12000,
+                safeMin: 8500,
+                safeMax: 11000,
+                recommendedPrice: 10000,
+                freshnessDays: 3,
+                dataSource: "Sentra Kedelai & Pengrajin RT 13",
+                description: "Tempe kedelai bungkus daun & tahu lembut segar non-pengawet."
             }
         };
+
+        // Aliases for compatibility & Sinyal Pangan
+        LAMPUNG_MARKET_INTELLIGENCE["Minyak Goreng Sawit"] = LAMPUNG_MARKET_INTELLIGENCE["Minyak Goreng Sawit Kemasan"];
+        LAMPUNG_MARKET_INTELLIGENCE["Minyak Goreng"] = LAMPUNG_MARKET_INTELLIGENCE["Minyak Goreng Sawit Kemasan"];
+        LAMPUNG_MARKET_INTELLIGENCE["Gula Pasir"] = LAMPUNG_MARKET_INTELLIGENCE["Gula Pasir Konsumsi"];
+        LAMPUNG_MARKET_INTELLIGENCE["Bawang Merah"] = LAMPUNG_MARKET_INTELLIGENCE["Bawang Merah (Lokal)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Bawang Merah Brebes & Bawang Putih"] = LAMPUNG_MARKET_INTELLIGENCE["Bawang Merah (Lokal)"];
+        LAMPUNG_MARKET_INTELLIGENCE["Bawang Putih"] = LAMPUNG_MARKET_INTELLIGENCE["Bawang Putih Bonggol"];
+        LAMPUNG_MARKET_INTELLIGENCE["Daging Sapi"] = LAMPUNG_MARKET_INTELLIGENCE["Daging Sapi Murni"];
+        LAMPUNG_MARKET_INTELLIGENCE["Daging Ayam"] = LAMPUNG_MARKET_INTELLIGENCE["Daging Ayam Ras"];
+        LAMPUNG_MARKET_INTELLIGENCE["Beras IR 64 / Medium"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Ciherang (Poktan RT 13)"];
 
         // Aliases for compatibility
         LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Lokal (Ciherang/IR64)"] = LAMPUNG_MARKET_INTELLIGENCE["Beras Premium Ciherang (Poktan RT 13)"];
@@ -529,13 +657,156 @@ export function initPriceAdvisorEngine() {
             for (const [key, val] of Object.entries(LAMPUNG_MARKET_INTELLIGENCE)) {
                 const keyClean = key.toLowerCase();
                 if (keyClean.includes(clean) || clean.includes(keyClean)) return val;
-                const words = clean.split(/[\s,()/-]+/).filter(w => w.length >= 4);
+                const words = clean.split(/[\s,()/-]+/).filter(w => w.length >= 3);
                 for (const w of words) {
                     if (keyClean.includes(w)) return val;
                 }
             }
+
+            // Fallback Cerdas: Jika komoditas baru (misal ditarik dari Sinyal Pangan atau usulan warga)
+            const listing = (window.appState?.listings || []).find(l => l.commodity.toLowerCase().includes(clean) || clean.includes(l.commodity.toLowerCase()));
+            if (listing) {
+                const fPrice = Number(listing.fairPrice) || 15000;
+                return {
+                    category: listing.category || "Olahan Pangan",
+                    unit: listing.unit || "Kg",
+                    pengepulPrice: listing.tengkulakPrice || Math.round(fPrice * 0.75 / 500) * 500,
+                    tengkulakPrice: listing.tengkulakPrice || Math.round(fPrice * 0.75 / 500) * 500,
+                    marketLampungPrice: listing.marketPrice || Math.round(fPrice * 1.25 / 500) * 500,
+                    safeMin: Math.round(fPrice * 0.85 / 500) * 500,
+                    safeMax: Math.round(fPrice * 1.15 / 500) * 500,
+                    recommendedPrice: fPrice,
+                    freshnessDays: listing.freshnessDaysRemaining || 7,
+                    dataSource: "Bapanas & Sinyal Pangan RT 13",
+                    description: listing.description || `Patokan resmi Bapanas untuk ${listing.commodity}.`
+                };
+            }
+
+            const demand = (window.appState?.demands || []).find(d => d.name.toLowerCase().includes(clean) || clean.includes(d.name.toLowerCase()));
+            if (demand) {
+                const targetP = Number(demand.targetPriceMax) || 16500;
+                return {
+                    category: demand.category || "Sembako Pokok",
+                    unit: "Kg",
+                    pengepulPrice: Math.round(targetP * 0.8 / 500) * 500,
+                    tengkulakPrice: Math.round(targetP * 0.8 / 500) * 500,
+                    marketLampungPrice: Math.round(targetP * 1.25 / 500) * 500,
+                    safeMin: Math.round(targetP * 0.9 / 500) * 500,
+                    safeMax: Math.round(targetP * 1.15 / 500) * 500,
+                    recommendedPrice: targetP,
+                    freshnessDays: 14,
+                    dataSource: "Bapanas & Usulan Warga RT 13",
+                    description: `Patokan resmi Bapanas untuk kebutuhan ${demand.name}.`
+                };
+            }
+
             return Object.values(LAMPUNG_MARKET_INTELLIGENCE)[0];
-        }
+        };
+
+        // === TABEL DINAMIS PATOKAN HARGA PASAR INDUK BAPANAS (SEMUA ROLE) ===
+        window.renderPasarIndukBapanasTable = function renderPasarIndukBapanasTable(filterQuery = '') {
+            const tbody = document.getElementById('pasarIndukBapanasTableBody');
+            if (!tbody) return;
+
+            const q = String(filterQuery || '').toLowerCase().trim();
+            const rows = [];
+            const seen = new Set();
+
+            // 1. Dari Standar Bapanas LAMPUNG_MARKET_INTELLIGENCE
+            for (const [name, info] of Object.entries(window.LAMPUNG_MARKET_INTELLIGENCE || {})) {
+                if (seen.has(name.toLowerCase())) continue;
+                seen.add(name.toLowerCase());
+
+                const activeList = (window.appState?.listings || []).find(l => l.commodity.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(l.commodity.toLowerCase()));
+                const pMetro = info.marketLampungPrice || 10000;
+                const pPetani = activeList ? activeList.fairPrice : (info.recommendedPrice || Math.round(pMetro * 0.75 / 500) * 500);
+                const hematPct = Math.max(5, Math.round(((pMetro - pPetani) / pMetro) * 100));
+                const statusPasokan = activeList 
+                    ? `Tersedia (${activeList.availableStockKg} Kg di Lapak)` 
+                    : `Patokan Resmi Bapanas`;
+
+                rows.push({
+                    name,
+                    category: info.category || 'Pangan Pokok',
+                    pMetro,
+                    pPetani,
+                    hematPct,
+                    statusPasokan,
+                    isLocal: Boolean(activeList)
+                });
+            }
+
+            // 2. Tambahkan komoditas dari listing aktif yang belum tercakup
+            (window.appState?.listings || []).forEach(l => {
+                if (!seen.has(l.commodity.toLowerCase())) {
+                    seen.add(l.commodity.toLowerCase());
+                    const pMetro = l.marketPrice || Math.round(l.fairPrice * 1.25 / 500) * 500;
+                    const pPetani = l.fairPrice;
+                    const hematPct = Math.max(5, Math.round(((pMetro - pPetani) / pMetro) * 100));
+                    rows.push({
+                        name: l.commodity,
+                        category: l.category || 'Hasil Kebun',
+                        pMetro,
+                        pPetani,
+                        hematPct,
+                        statusPasokan: `Tersedia (${l.availableStockKg} Kg)`,
+                        isLocal: true
+                    });
+                }
+            });
+
+            // 3. Tambahkan komoditas dari usulan warga (demands)
+            (window.appState?.demands || []).forEach(d => {
+                if (!seen.has(d.name.toLowerCase())) {
+                    seen.add(d.name.toLowerCase());
+                    const pPetani = Number(d.targetPriceMax) || 15000;
+                    const pMetro = Math.round(pPetani * 1.22 / 500) * 500;
+                    const hematPct = Math.round(((pMetro - pPetani) / pMetro) * 100);
+                    rows.push({
+                        name: d.name,
+                        category: d.category || 'Usulan Warga',
+                        pMetro,
+                        pPetani,
+                        hematPct,
+                        statusPasokan: d.status === 'TERPENUHI_LOKAL' ? 'Disuplai Produsen RT 13' : 'Diusulkan Warga',
+                        isLocal: d.status === 'TERPENUHI_LOKAL'
+                    });
+                }
+            });
+
+            // Filter pencarian
+            const filtered = rows.filter(r => !q || r.name.toLowerCase().includes(q) || r.category.toLowerCase().includes(q));
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="py-6 text-center text-stone-500 text-xs">
+                            Komoditas "${filterQuery}" tidak ditemukan dalam data patokan Bapanas.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(r => `
+                <tr class="hover:bg-stone-50 transition-colors">
+                    <td class="px-3.5 py-2.5">
+                        <strong class="text-stone-900 block text-xs">${r.name}</strong>
+                        <span class="text-[10px] text-stone-500 font-mono">${r.category}</span>
+                    </td>
+                    <td class="px-3 py-2.5 text-right font-mono text-stone-600 text-xs">${formatRupiah(r.pMetro)}</td>
+                    <td class="px-3 py-2.5 text-right font-mono font-bold text-emerald-800 text-xs">${formatRupiah(r.pPetani)}</td>
+                    <td class="px-3 py-2.5 text-center">
+                        <span class="px-2 py-0.5 rounded-full ${r.hematPct >= 20 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'} font-bold text-[10px]">
+                            Hemat ${r.hematPct}%
+                        </span>
+                    </td>
+                    <td class="px-3 py-2.5 text-center text-[10px] ${r.isLocal ? 'text-emerald-700 font-bold' : 'text-stone-500'}">
+                        ${r.statusPasokan}
+                    </td>
+                </tr>
+            `).join('');
+        };
 
         window.handleCommodityChange = function handleCommodityChange() {
             const selectEl = document.getElementById('newListingName');

@@ -446,15 +446,23 @@ export function initAiForecastAndSurplusEngine() {
 
                 itemsToProcess.forEach((lItem) => {
                     const commodityName = lItem.commodity || 'Sayur Bayam Hijau (KWT Pekarangan)';
-                    const activeStock = (Number(lItem.availableStockKg) || 0) + (Number(lItem.unabsorbedSurplusKg) || 0);
-                    const weeklyCap = Math.max(15, Math.round((Number(p.capacityKg) || 40) / (4 * itemsToProcess.length)) + activeStock);
+                    // Stok riil 1:1 dari lapak kebun aktif produsen (tanpa penambahan formula sintetis)
+                    const realStock = Number(lItem.availableStockKg) || 0;
+                    const weeklyCap = realStock;
+
+                    // Ambil kebutuhan riil warga dari usulan pangan warga (Papan Musyawarah)
+                    const demandMatch = (window.appState?.demands || []).find(d => 
+                        d.name && (d.name.toLowerCase().includes(commodityName.toLowerCase()) || commodityName.toLowerCase().includes(d.name.toLowerCase()))
+                    );
+                    const demandKg = demandMatch ? (Number(demandMatch.totalQuantityKg) || Number(demandMatch.targetQtyKg) || 0) : 0;
 
                     const prodTxKg = transactions
                         .filter(t => t.producerSid === p.sid && (!lItem.commodity || !t.commodity || t.commodity.toLowerCase().includes(commodityName.split(' ')[0].toLowerCase())))
                         .reduce((s, t) => s + (Number(t.quantityKg) || 0), 0);
 
-                    const predictedDemandWeekly = Math.max(12, Math.round((prodTxKg * 0.35) + 16));
-                    const diff = weeklyCap - predictedDemandWeekly;
+                    // Estimasi kebutuhan warga mingguan (berdasarkan usulan warga & volume belanja riil)
+                    const predictedDemandWeekly = demandKg > 0 ? demandKg : Math.max(4, Math.round((prodTxKg * 0.4) + 5));
+                    const diff = realStock - predictedDemandWeekly;
 
                     const isNotified = Boolean(lItem.surplusNotified || p.surplusNotified);
                     const isConfirmed = Boolean(lItem.surplusConfirmedByProducer || p.surplusConfirmedByProducer);
@@ -464,21 +472,21 @@ export function initAiForecastAndSurplusEngine() {
                     let cardBorder = 'border-emerald-200 bg-white';
                     let recommendation = '';
 
-                    if (diff > 5) {
+                    if (diff > 4) {
                         statusType = 'SURPLUS';
-                        statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🔴 SURPLUS +${diff} Kg</span>`;
+                        statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🔴 LEBIH / SURPLUS +${diff} Kg</span>`;
                         cardBorder = 'border-amber-300 bg-amber-50/40';
-                        recommendation = `Surplus +${diff} Kg ${commodityName} melebihi daya serap lokal RT 13. Siap ditarik ke Paket Koperasi / Dapur MBG.`;
+                        recommendation = `Stok lapak (${realStock} Kg) melebihi kebutuhan warga (${predictedDemandWeekly} Kg). Kelebihan +${diff} Kg siap ditarik Admin ke Koperasi / Dapur MBG agar tidak terbuang.`;
                     } else if (diff < -3) {
                         statusType = 'DEFISIT';
                         statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">🟡 KURANG STOK ${diff} Kg</span>`;
                         cardBorder = 'border-rose-200 bg-rose-50/30';
-                        recommendation = `Permintaan warga tinggi! Kurang ${Math.abs(diff)} Kg ${commodityName}. Silakan tambah panen/stok.`;
+                        recommendation = `Permintaan warga tinggi (${predictedDemandWeekly} Kg), sedangkan stok lapak Anda ${realStock} Kg. Disarankan menambah pasokan panen.`;
                     } else {
                         statusType = 'SEIMBANG';
                         statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 PAS / SEIMBANG (${diff >= 0 ? '+' + diff : diff} Kg)</span>`;
                         cardBorder = 'border-emerald-200 bg-emerald-50/20';
-                        recommendation = `Panen ${commodityName} pas dengan daya serap warga RT 13 minggu ini. Pertahankan jadwal tanam.`;
+                        recommendation = `Stok lapak (${realStock} Kg) pas memenuhi kebutuhan belanja warga RT 13 (${predictedDemandWeekly} Kg). Pertahankan jadwal panen Anda.`;
                     }
 
                     forecastList.push({
@@ -489,6 +497,7 @@ export function initAiForecastAndSurplusEngine() {
                         address: p.address || 'RT 13 Yosomulyo',
                         commodity: commodityName,
                         cycle: p.harvestCycleWeekly || 'Panen Setiap Minggu',
+                        realStock,
                         weeklyCap,
                         predictedDemandWeekly,
                         diff,
@@ -513,22 +522,37 @@ export function initAiForecastAndSurplusEngine() {
                 const comm = (activeMember.producerCommodity && activeMember.producerCommodity !== '-')
                     ? activeMember.producerCommodity
                     : (activeMember.registeredCommodities?.[0]?.name || 'Sayur Bayam Hijau (KWT Pekarangan)');
-                const cap = Number(activeMember.capacityKg) || 35;
+                const myListing = listings.find(l => l.producerSid === activeMember.sid && l.commodity.toLowerCase().includes(comm.toLowerCase())) || listings.find(l => l.producerSid === activeMember.sid);
+                const realStock = myListing ? (Number(myListing.availableStockKg) || 0) : 0;
+                const demandMatch = (window.appState?.demands || []).find(d => 
+                    d.name && (d.name.toLowerCase().includes(comm.toLowerCase()) || comm.toLowerCase().includes(d.name.toLowerCase()))
+                );
+                const predDemand = demandMatch ? (Number(demandMatch.totalQuantityKg) || Number(demandMatch.targetQtyKg) || 0) : 7;
+                const diff = realStock - predDemand;
                 myForecast = {
                     producer: activeMember,
-                    listingId: '',
+                    listingId: myListing ? myListing.id : '',
                     sid: activeMember.sid,
                     name: activeMember.name,
                     address: activeMember.address || 'RT 13 Yosomulyo',
                     commodity: comm,
                     cycle: activeMember.harvestCycleWeekly || 'Panen Rutin Setiap Minggu',
-                    weeklyCap: cap,
-                    predictedDemandWeekly: Math.round(cap * 0.75),
-                    diff: Math.round(cap * 0.25),
-                    statusType: 'SURPLUS',
-                    statusBadge: '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🔴 SURPLUS +' + Math.round(cap * 0.25) + ' Kg</span>',
-                    cardBorder: 'border-amber-300 bg-amber-50/40',
-                    recommendation: 'Hasil panen ' + comm + ' siap diserap warga RT 13 dan sebagian disalurkan kolektif ke mitra kelurahan.',
+                    realStock: realStock,
+                    weeklyCap: realStock,
+                    predictedDemandWeekly: predDemand,
+                    diff: diff,
+                    statusType: diff > 4 ? 'SURPLUS' : diff < -3 ? 'DEFISIT' : 'SEIMBANG',
+                    statusBadge: diff > 4
+                        ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🔴 LEBIH / SURPLUS +${diff} Kg</span>`
+                        : diff < -3
+                        ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">🟡 KURANG STOK ${diff} Kg</span>`
+                        : `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 PAS / SEIMBANG (${diff >= 0 ? '+' + diff : diff} Kg)</span>`,
+                    cardBorder: diff > 4 ? 'border-amber-300 bg-amber-50/40' : diff < -3 ? 'border-rose-200 bg-rose-50/30' : 'border-emerald-200 bg-emerald-50/20',
+                    recommendation: diff > 4
+                        ? `Stok ${comm} (${realStock} Kg) melebihi serapan warga (${predDemand} Kg). Siap disalurkan ke Lumbung/Koperasi.`
+                        : diff < -3
+                        ? `Permintaan warga ${comm} tinggi (${predDemand} Kg). Silakan tambah stok lapak.`
+                        : `Stok ${comm} (${realStock} Kg) pas memenuhi kebutuhan belanja warga RT 13.`,
                     surplusNotified: Boolean(activeMember.surplusNotified),
                     surplusConfirmedByProducer: Boolean(activeMember.surplusConfirmedByProducer)
                 };
@@ -623,15 +647,15 @@ export function initAiForecastAndSurplusEngine() {
 
                                 <div class="grid grid-cols-3 gap-2.5 shrink-0 text-center">
                                     <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                                        <span class="text-[10px] text-stone-500 font-semibold block">Panen Anda</span>
+                                        <span class="text-[10px] text-stone-500 font-semibold block">Stok Lapak Riil</span>
                                         <strong class="font-mono text-base font-extrabold text-stone-900">${myTotalCap} Kg</strong>
                                     </div>
                                     <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                                        <span class="text-[10px] text-stone-500 font-semibold block">Dibeli Warga</span>
+                                        <span class="text-[10px] text-stone-500 font-semibold block">Kebutuhan Warga</span>
                                         <strong class="font-mono text-base font-extrabold text-emerald-800">${myTotalDemand} Kg</strong>
                                     </div>
                                     <div class="p-3 rounded-xl ${isSurplus ? 'bg-amber-100 border-amber-300 text-amber-950' : isDefisit ? 'bg-rose-100 border-rose-300 text-rose-950' : 'bg-emerald-100 border-emerald-300 text-emerald-950'} border shadow-2xs">
-                                        <span class="text-[10px] font-bold block">${isSurplus ? 'Surplus Produk' : isDefisit ? 'Kurang Stok' : 'Status Pas'}</span>
+                                        <span class="text-[10px] font-bold block">${isSurplus ? 'Kelebihan / Surplus' : isDefisit ? 'Kurang Stok' : 'Status Pas'}</span>
                                         <strong class="font-mono text-base font-extrabold">${myTotalDiff >= 0 ? '+' + myTotalDiff : myTotalDiff} Kg</strong>
                                     </div>
                                 </div>
@@ -766,11 +790,11 @@ export function initAiForecastAndSurplusEngine() {
                                     </div>
                                     <div class="grid grid-cols-2 gap-2 pt-1 text-[11px] font-mono">
                                         <div class="p-2 rounded-lg bg-white/90 border border-stone-200/80">
-                                            <span class="text-[10px] text-stone-500 block">Stok/Panen:</span>
-                                            <strong class="text-stone-900">${item.weeklyCap} Kg</strong>
+                                            <span class="text-[10px] text-stone-500 block">Stok Lapak Riil:</span>
+                                            <strong class="text-stone-900">${item.realStock ?? item.weeklyCap} Kg</strong>
                                         </div>
                                         <div class="p-2 rounded-lg bg-white/90 border border-stone-200/80">
-                                            <span class="text-[10px] text-stone-500 block">Serapan Warga:</span>
+                                            <span class="text-[10px] text-stone-500 block">Kebutuhan Warga:</span>
                                             <strong class="text-emerald-800">${item.predictedDemandWeekly} Kg</strong>
                                         </div>
                                     </div>

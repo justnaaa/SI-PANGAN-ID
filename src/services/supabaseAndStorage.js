@@ -1784,6 +1784,7 @@ export function initSupabaseAndStorageService() {
         window.renderPersonalConsumerOrders = function renderPersonalConsumerOrders() {
             const card = document.getElementById('personalConsumerOrdersCard');
             const listEl = document.getElementById('personalConsumerOrdersList');
+            const alertBox = document.getElementById('consumerOrderProcessedAlertBox');
             const nameEl = document.getElementById('personalConsumerNameLabel');
             const badgeEl = document.getElementById('personalConsumerOrderCountBadge');
             if (!card || !listEl) return;
@@ -1795,6 +1796,42 @@ export function initSupabaseAndStorageService() {
             const myOrders = (window.appState?.transactions || []).filter(t => t.consumerSid === activeSid);
             if (badgeEl) badgeEl.textContent = `${myOrders.length} Pesanan Saya`;
 
+            // Cek apakah ada pesanan yang sedang/telah diproses oleh produsen (SIAP_DIAMBIL)
+            const readyOrders = myOrders.filter(t => t.orderStatus === 'SIAP_DIAMBIL');
+            if (alertBox) {
+                if (readyOrders.length > 0) {
+                    alertBox.classList.remove('hidden');
+                    alertBox.innerHTML = `
+                        <div class="p-4 rounded-2xl bg-blue-50 border-2 border-blue-400 text-blue-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                            <div class="flex items-start gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shrink-0 text-base font-bold shadow-2xs mt-0.5">
+                                    <i class="fa-solid fa-box-open"></i>
+                                </div>
+                                <div class="text-xs leading-snug space-y-0.5">
+                                    <div class="flex items-center gap-2">
+                                        <strong class="text-sm font-bold text-blue-950">Pesanan Anda Telah Diproses Produsen!</strong>
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-200 text-blue-900 border border-blue-300">
+                                            ${readyOrders.length} Pesanan Siap
+                                        </span>
+                                    </div>
+                                    <p class="text-blue-800">
+                                        Pesanan <strong>${readyOrders.map(o => `${o.commodity} (${o.quantityKg} Kg)`).join(', ')}</strong> telah disiapkan oleh produsen kebun dan <strong>siap diambil atau diantar</strong> ke alamat rumah Anda.
+                                    </p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="viewTransactionReceipt('${readyOrders[0].id}')"
+                                class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shrink-0 transition cursor-pointer shadow-xs flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-receipt"></i>
+                                <span>Lihat Struk Pengambilan</span>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    alertBox.classList.add('hidden');
+                    alertBox.innerHTML = '';
+                }
+            }
+
             if (myOrders.length === 0) {
                 listEl.innerHTML = `
                     <div class="col-span-full p-4 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-500 text-center">
@@ -1805,7 +1842,7 @@ export function initSupabaseAndStorageService() {
             }
 
             listEl.innerHTML = myOrders.slice(0, 6).map(t => `
-                <div class="p-3.5 rounded-xl bg-stone-50/90 border border-stone-200 flex items-center justify-between gap-3">
+                <div class="p-3.5 rounded-xl ${t.orderStatus === 'SIAP_DIAMBIL' ? 'bg-blue-50/70 border-2 border-blue-300 shadow-2xs' : 'bg-stone-50/90 border border-stone-200'} flex items-center justify-between gap-3">
                     <div class="space-y-0.5 min-w-0">
                         <div class="flex items-center gap-1.5 flex-wrap">
                             <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">${t.id}</span>
@@ -1815,8 +1852,8 @@ export function initSupabaseAndStorageService() {
                                     <i class="fa-solid fa-hourglass-start text-amber-600 mr-0.5"></i>Disiapkan
                                 </span>
                             ` : t.orderStatus === 'SIAP_DIAMBIL' ? `
-                                <span class="px-2 py-0.2 rounded text-[9px] font-bold bg-blue-100 text-blue-900 border border-blue-300">
-                                    <i class="fa-solid fa-box-open text-blue-600 mr-0.5"></i>Siap Diambil/Diantar
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-600 text-white border border-blue-700 shadow-2xs">
+                                    <i class="fa-solid fa-circle-check text-blue-200 mr-1"></i>Telah Diproses Produsen (Siap Diambil)
                                 </span>
                             ` : `
                                 <span class="px-2 py-0.2 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800">
@@ -1825,7 +1862,7 @@ export function initSupabaseAndStorageService() {
                             `}
                         </div>
                         <p class="text-[11px] text-stone-500 truncate">
-                            Dari Kebun: <strong>${t.producerName}</strong> • ${t.timestamp}
+                            Dari Kebun: <strong>${t.producerName}</strong> • ${t.processedAt ? `Diproses: ${t.processedAt}` : t.timestamp}
                         </p>
                     </div>
                     <div class="text-right shrink-0 space-y-1">

@@ -363,6 +363,10 @@ export function initCoreAppController() {
                         handleProducerSelectionChange();
                         initAiMarketIntelligence();
                     }, 30);
+                } else if (modalId === 'modalPasarIndukBapanas') {
+                    if (typeof window.renderPasarIndukBapanasTable === 'function') {
+                        window.renderPasarIndukBapanasTable('');
+                    }
                 }
             }
         }

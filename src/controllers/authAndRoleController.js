@@ -477,6 +477,8 @@ export function initAuthAndRoleController() {
 
             if (nextStatus === 'SIAP_DIAMBIL') {
                 tx.orderStatus = 'SIAP_DIAMBIL';
+                tx.processedAt = new Date().toLocaleString('id-ID');
+                tx.processedBy = tx.producerName || 'Produsen Kebun RT 13';
 
                 // Otomatis kurangi stok produk produsen saat pesanan diproses (jika belum dikurangi)
                 if (!tx.stockDeducted && listing) {
@@ -518,6 +520,8 @@ export function initAuthAndRoleController() {
                 if (typeof window.renderHeaderProducerOrderAlert === 'function') window.renderHeaderProducerOrderAlert();
                 if (typeof window.renderProducerWorkspaceAndAutoAi === 'function') window.renderProducerWorkspaceAndAutoAi();
                 if (typeof window.renderProducerOrders === 'function') window.renderProducerOrders();
+                if (typeof window.renderPersonalConsumerOrders === 'function') window.renderPersonalConsumerOrders();
+                if (typeof window.renderPerProducerAiForecast === 'function') window.renderPerProducerAiForecast();
                 // Tampilkan Detail Pesanan secara otomatis sesuai permintaan A.1
                 viewTransactionReceipt(tx.id);
                 return;
@@ -525,11 +529,14 @@ export function initAuthAndRoleController() {
 
             if (nextStatus === 'SELESAI_LUNAS') {
                 tx.orderStatus = 'SELESAI_LUNAS';
+                tx.completedAt = new Date().toLocaleString('id-ID');
                 saveStateToLocal();
                 renderAll();
                 if (typeof window.renderHeaderProducerOrderAlert === 'function') window.renderHeaderProducerOrderAlert();
                 if (typeof window.renderProducerWorkspaceAndAutoAi === 'function') window.renderProducerWorkspaceAndAutoAi();
                 if (typeof window.renderProducerOrders === 'function') window.renderProducerOrders();
+                if (typeof window.renderPersonalConsumerOrders === 'function') window.renderPersonalConsumerOrders();
+                if (typeof window.renderPerProducerAiForecast === 'function') window.renderPerProducerAiForecast();
                 showToast('Pesanan Selesai', `Pesanan ${tx.id} telah selesai dan diterima oleh pembeli.`, 'success');
                 viewTransactionReceipt(tx.id);
                 return;
@@ -1138,8 +1145,9 @@ export function initAuthAndRoleController() {
             const myOrders = transactions.filter(t => t.producerSid === activeSid);
             const pendingOrders = myOrders.filter(t => t.orderStatus === 'MENUNGGU_KONFIRMASI');
 
+            // Badge hanya menampilkan jumlah pesanan yang perlu tindakan (pending), jika 0 maka bersih
             const countBadge = document.getElementById('marketOrdersCountBadge');
-            if (countBadge) countBadge.textContent = myOrders.length;
+            if (countBadge) countBadge.textContent = pendingOrders.length;
 
             if (notifBox) {
                 if (pendingOrders.length > 0) {
@@ -1194,33 +1202,37 @@ export function initAuthAndRoleController() {
                 }
             }
 
-            // 2. Panel "Ramalan AI Khusus Kebun Saya" (Otomatis Tampil Tanpa Klik Tombol!)
+            // 2. Panel "Ramalan AI Khusus Kebun Saya" (Sederhana, Bahasa Warga, Tanpa Inflasi Sintetis)
             if (aiPanel && me) {
                 const myListings = listings.filter(l => l.producerSid === activeSid);
                 const primaryListing = myListings[0];
                 const commName = primaryListing ? primaryListing.commodity : (me.producerCommodity || 'Sayur Pekarangan KWT');
-                const currentStock = myListings.reduce((s, l) => s + (Number(l.availableStockKg) || 0), 0);
-                const weeklyCap = Math.max(15, Math.round((Number(me.capacityKg) || 40) / 4) + currentStock);
+                // Stok riil 1:1 dari lapak kebun aktif produsen (tanpa tambahan rumus buatan)
+                const realStock = myListings.reduce((s, l) => s + (Number(l.availableStockKg) || 0), 0);
 
+                // Kebutuhan riil warga dari usulan pangan warga (Papan Musyawarah) & riwayat belanja
+                const demandMatch = (window.appState?.demands || []).find(d => 
+                    d.name && (d.name.toLowerCase().includes(commName.toLowerCase()) || commName.toLowerCase().includes(d.name.toLowerCase()))
+                );
+                const demandKg = demandMatch ? (Number(demandMatch.totalQuantityKg) || Number(demandMatch.targetQtyKg) || 0) : 0;
                 const soldKg = myOrders.reduce((s, t) => s + (Number(t.quantityKg) || 0), 0);
-                const marketDemandEst = Math.max(14, Math.round((soldKg * 0.4) + 18));
-                const absorptionPotential = Math.min(weeklyCap, marketDemandEst);
-                const surplusDiff = weeklyCap - marketDemandEst;
+                const marketDemandEst = demandKg > 0 ? demandKg : Math.max(4, Math.round((soldKg * 0.4) + 5));
+                const surplusDiff = realStock - marketDemandEst;
 
-                const isSurplusRisk = surplusDiff > 5 || Boolean(me.surplusNotified);
+                const isSurplusRisk = surplusDiff > 4 || Boolean(me.surplusNotified);
                 const isDeficitRisk = surplusDiff < -3;
 
                 let riskBadge = '';
                 let prodRec = '';
                 if (isSurplusRisk) {
-                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">Risiko Surplus +${Math.max(surplusDiff, 10)} Kg</span>`;
-                    prodRec = `Stok & estimasi panen ${commName} (${weeklyCap} Kg) melampaui perkiraan permintaan pasar lokal (${marketDemandEst} Kg). Tahan penambahan tanam baru minggu ini dan siapkan kelebihan panen untuk disalurkan Admin ke Koperasi / Program MBG.`;
+                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">Surplus +${Math.max(surplusDiff, 5)} Kg</span>`;
+                    prodRec = `Stok lapak kebun Anda untuk ${commName} (${realStock} Kg) melebihi kebutuhan warga RT 13 (${marketDemandEst} Kg). Disarankan tahan penambahan panen baru dan siapkan kelebihan panen untuk disalurkan Admin ke Lumbung / Koperasi.`;
                 } else if (isDeficitRisk) {
-                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">Kurang Pasokan ${surplusDiff} Kg</span>`;
-                    prodRec = `Permintaan warga untuk ${commName} tinggi (${marketDemandEst} Kg/minggu), sedangkan ketersediaan kebun Anda ${weeklyCap} Kg. Disarankan menambah jadwal panen atau stok.`;
+                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">Kurang Stok ${Math.abs(surplusDiff)} Kg</span>`;
+                    prodRec = `Permintaan warga untuk ${commName} tinggi (${marketDemandEst} Kg), sedangkan stok lapak Anda ${realStock} Kg. Disarankan menambah pasokan panen atau menambah stok di lapak.`;
                 } else {
-                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">Pasokan Seimbang</span>`;
-                    prodRec = `Kapasitas panen ${commName} (${weeklyCap} Kg) terserap optimal oleh permintaan warga RT 13 (${marketDemandEst} Kg). Pertahankan jadwal panen rutin Anda.`;
+                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">Pasokan Pas &amp; Aman</span>`;
+                    prodRec = `Stok ${commName} (${realStock} Kg) pas memenuhi kebutuhan belanja warga RT 13 (${marketDemandEst} Kg). Pertahankan jadwal panen dan ketersediaan stok Anda.`;
                 }
 
                 const showSurplusNotifInWorkspace = !me.surplusConfirmedByProducer && Boolean(me.surplusNotified);
@@ -1230,7 +1242,7 @@ export function initAuthAndRoleController() {
                             <i class="fa-solid fa-triangle-exclamation text-lg mt-0.5 shrink-0"></i>
                             <div class="text-xs leading-snug">
                                 <strong class="block text-sm">Peringatan Resmi Admin: Permintaan Penarikan Surplus (${commName})</strong>
-                                <span>${me.surplusNotifiedMsg || `Admin RT 13 meminta konfirmasi kesiapan surplus +${Math.max(surplusDiff, 10)} Kg dari kebun Anda untuk disalurkan ke Koperasi / Program MBG.`}</span>
+                                <span>${me.surplusNotifiedMsg || `Admin RT 13 meminta konfirmasi kesiapan surplus +${Math.max(surplusDiff, 5)} Kg dari kebun Anda untuk disalurkan ke Koperasi / Program MBG.`}</span>
                             </div>
                         </div>
                         <button type="button" onclick="acknowledgeProducerSurplusAlert()"
@@ -1253,36 +1265,38 @@ export function initAuthAndRoleController() {
                                 Analisis otomatis potensi serapan pasar, permintaan warga, dan risiko surplus untuk kebun <strong>${me.name}</strong>.
                             </p>
                         </div>
-                        <div>${riskBadge}</div>
+                        <div class="flex items-center gap-2">
+                            ${riskBadge}
+                            <button type="button" onclick="openModal('modalPasarIndukBapanas')"
+                                class="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer">
+                                <i class="fa-solid fa-chart-line text-amber-700"></i>
+                                <span>Cek Patokan Bapanas</span>
+                            </button>
+                        </div>
                     </div>
 
                     ${adminSurplusWarningHtml}
 
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 text-center">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
                         <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                            <span class="text-[11px] text-stone-500 font-semibold block">Potensi Serapan Pasar</span>
-                            <strong class="font-mono text-lg font-extrabold text-emerald-800">${absorptionPotential} Kg/mgg</strong>
-                            <span class="text-[10px] text-stone-400 block">Daya Beli Warga RT 13</span>
+                            <span class="text-[11px] text-stone-500 font-semibold block">📦 Stok di Lapak Kebun Anda</span>
+                            <strong class="font-mono text-xl font-extrabold text-stone-900">${realStock} Kg</strong>
+                            <span class="text-[10px] text-stone-400 block">Stok Riil Siap Dijual</span>
                         </div>
                         <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                            <span class="text-[11px] text-stone-500 font-semibold block">Perkiraan Permintaan</span>
-                            <strong class="font-mono text-lg font-extrabold text-forest-900">${marketDemandEst} Kg/mgg</strong>
-                            <span class="text-[10px] text-stone-400 block">Kebutuhan Konsumen</span>
-                        </div>
-                        <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                            <span class="text-[11px] text-stone-500 font-semibold block">Stok &amp; Panen Kebun</span>
-                            <strong class="font-mono text-lg font-extrabold text-stone-900">${weeklyCap} Kg</strong>
-                            <span class="text-[10px] text-stone-400 block">Stok Aktif: ${currentStock} Kg</span>
+                            <span class="text-[11px] text-stone-500 font-semibold block">👥 Kebutuhan Warga RT 13</span>
+                            <strong class="font-mono text-xl font-extrabold text-emerald-800">${marketDemandEst} Kg</strong>
+                            <span class="text-[10px] text-stone-400 block">Permintaan Belanja Tetangga</span>
                         </div>
                         <div class="p-3.5 rounded-xl ${isSurplusRisk ? 'bg-amber-50 border-amber-300 text-amber-950' : isDeficitRisk ? 'bg-rose-50 border-rose-300 text-rose-950' : 'bg-emerald-50 border-emerald-300 text-emerald-950'} border shadow-2xs">
-                            <span class="text-[11px] font-bold block">Prediksi Risiko Surplus</span>
-                            <strong class="font-mono text-lg font-extrabold">${surplusDiff >= 0 ? '+' + surplusDiff : surplusDiff} Kg</strong>
-                            <span class="text-[10px] block">${isSurplusRisk ? 'Siap Salurkan ke Koperasi' : isDeficitRisk ? 'Perlu Tambah Stok' : 'Aman Terkendali'}</span>
+                            <span class="text-[11px] font-bold block">⚖️ Kondisi Pasokan Pangan</span>
+                            <strong class="font-mono text-xl font-extrabold">${surplusDiff >= 0 ? '+' + surplusDiff : surplusDiff} Kg</strong>
+                            <span class="text-[10px] font-semibold block">${isSurplusRisk ? 'Siap Disalurkan ke Lumbung' : isDeficitRisk ? 'Perlu Tambah Stok' : 'Pas &amp; Seimbang'}</span>
                         </div>
                     </div>
 
                     <div class="p-3.5 rounded-xl bg-white border border-emerald-200 text-xs text-stone-700 leading-relaxed">
-                        <strong class="text-forest-900"><i class="fa-solid fa-lightbulb text-amber-500 mr-1.5"></i>Rekomendasi Produksi AI:</strong>
+                        <strong class="text-forest-900"><i class="fa-solid fa-lightbulb text-amber-500 mr-1.5"></i>Saran Tindakan Panen:</strong>
                         ${prodRec}
                     </div>
                 `;
