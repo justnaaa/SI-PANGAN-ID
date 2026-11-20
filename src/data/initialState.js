@@ -1435,6 +1435,9 @@ export function initAppStateData() {
                     m.producerCommodity = '-';
                     m.capacityKg = 0;
                 }
+                if (!m.phone) {
+                    m.phone = '08127123' + String(num).padStart(4, '0');
+                }
                 if (!m.pinCode) m.pinCode = '1234';
             });
         }

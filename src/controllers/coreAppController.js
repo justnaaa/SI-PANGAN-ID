@@ -936,15 +936,15 @@ export function initCoreAppController() {
                 }
 
                 return `
-                    <div class="bg-white rounded-2xl border border-stone-200/90 p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-4 relative group">
+                    <div class="bg-white rounded-3xl border border-emerald-900/10 p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3.5 relative group">
 
                         <div class="space-y-3 pt-1">
                             <!-- Category & Icon -->
                             <div class="flex items-start justify-between gap-2">
-                                <span class="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-forest-50 text-forest-700 border border-forest-200">
+                                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider bg-[#E8F5E9] text-[#0F5132] border border-emerald-200">
                                     ${l.category}
                                 </span>
-                                <div class="w-8 h-8 rounded-lg bg-stone-100 text-forest-800 flex items-center justify-center text-sm shrink-0">
+                                <div class="w-8 h-8 rounded-xl bg-stone-100 text-forest-800 flex items-center justify-center text-sm shrink-0">
                                     <i class="fa-solid ${l.icon || 'fa-seedling'}"></i>
                                 </div>
                             </div>
@@ -994,10 +994,6 @@ export function initCoreAppController() {
                                     `}
                                 </div>
                             </div>
-
-                            <p class="text-xs text-stone-600 leading-snug line-clamp-2">
-                                ${l.description}
-                            </p>
 
                             <!-- Kotak Harga Bersih & Mudah Dibaca Warga -->
                             <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/90 space-y-1.5">

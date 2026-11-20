@@ -254,15 +254,21 @@ export function initAuthAndRoleController() {
             const navDampak = document.getElementById('nav-tab-dampak');
 
             Object.keys(topBtns).forEach(r => {
+                const activeColorClass = r === 'PRODUSEN' 
+                    ? 'bg-[#9A3412] text-white shadow-2xs' 
+                    : r === 'ADMIN' 
+                    ? 'bg-slate-800 text-white shadow-2xs' 
+                    : 'bg-[#0F5132] text-white shadow-2xs';
+
                 if (topBtns[r]) {
                     topBtns[r].className = (r === role)
-                        ? 'role-switch-btn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all shadow-xs bg-emerald-600 text-white'
+                        ? `role-switch-btn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all shadow-xs ${activeColorClass}`
                         : 'role-switch-btn flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-bold transition-all text-stone-600 hover:text-stone-900';
                 }
                 if (sideBtns[r]) {
                     sideBtns[r].className = (r === role)
-                        ? 'py-1 px-1 rounded-lg font-bold text-center transition bg-emerald-600 text-white shadow-2xs'
-                        : 'py-1 px-1 rounded-lg font-bold text-center transition bg-white text-stone-600 hover:bg-stone-100 border border-stone-200';
+                        ? `py-1.5 px-2 rounded-xl font-bold text-center transition ${activeColorClass}`
+                        : 'py-1.5 px-2 rounded-xl font-bold text-center transition bg-white text-stone-600 hover:bg-stone-100 border border-stone-200';
                 }
             });
 
@@ -1380,26 +1386,28 @@ export function initAuthAndRoleController() {
                 grid.className = 'grid grid-cols-5 gap-1 max-w-md mx-auto';
                 const pendingCount = (window.appState.transactions || []).filter(t => t.producerSid === window.appState.activeUserSid && t.orderStatus === 'MENUNGGU_KONFIRMASI').length;
                 items = [
-                    { id: 'tab-sid', icon: 'fa-user', label: 'Profile' },
-                    { id: 'tab-market', icon: 'fa-seedling', label: 'Lapak Kebun' },
+                    { id: 'tab-market', icon: 'fa-seedling', label: 'Lapak' },
                     { id: 'tab-orders', icon: 'fa-clipboard-check', label: pendingCount > 0 ? `Pesanan (${pendingCount})` : 'Pesanan' },
-                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Usulan Pangan' },
-                    { id: 'tab-matching', icon: 'fa-microchip', label: 'Analisis AI' }
+                    { id: 'tab-matching', icon: 'fa-microchip', label: 'Analisis AI' },
+                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Sinyal' },
+                    { id: 'tab-sid', icon: 'fa-user', label: 'Profile' }
                 ];
             } else {
-                grid.className = 'grid grid-cols-3 gap-1 max-w-md mx-auto';
+                grid.className = 'grid grid-cols-4 gap-1 max-w-md mx-auto';
                 items = [
-                    { id: 'tab-market', icon: 'fa-store', label: 'Pasar Warga' },
-                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Usulan Pangan' },
+                    { id: 'tab-market', icon: 'fa-store', label: 'Pasar' },
+                    { id: 'tab-orders', icon: 'fa-bag-shopping', label: 'Pesanan' },
+                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Usulan' },
                     { id: 'tab-sid', icon: 'fa-user', label: 'Profile' }
                 ];
             }
 
+            const activeBg = role === 'PRODUSEN' ? 'bg-[#9A3412]' : 'bg-[#0F5132]';
             grid.innerHTML = items.map(item => {
                 const isActive = activeTabId === item.id;
                 return `
                     <button type="button" onclick="switchTab('${item.id}')"
-                        class="py-2 px-1 rounded-xl flex flex-col items-center justify-center gap-1 transition cursor-pointer ${isActive ? 'bg-forest-800 text-white font-bold shadow-xs' : 'text-stone-600 hover:bg-stone-100 font-semibold'}">
+                        class="py-2 px-1 rounded-xl flex flex-col items-center justify-center gap-1 transition cursor-pointer ${isActive ? `${activeBg} text-white font-bold shadow-xs` : 'text-stone-600 hover:bg-stone-100 font-semibold'}">
                         <i class="fa-solid ${item.icon} text-sm"></i>
                         <span class="text-[10px] leading-none truncate max-w-full">${item.label}</span>
                     </button>
@@ -1411,6 +1419,14 @@ export function initAuthAndRoleController() {
         const _prevSwitchTab = window.switchTab;
         window.switchTab = function(tabId) {
             _prevSwitchTab(tabId);
+            const role = window.appState.activeRole || 'KONSUMEN';
+            if (tabId === 'tab-orders') {
+                if (role === 'KONSUMEN') {
+                    if (typeof renderPersonalConsumerOrders === 'function') renderPersonalConsumerOrders();
+                } else {
+                    if (typeof renderProducerOrders === 'function') renderProducerOrders();
+                }
+            }
             if (typeof renderMobileBottomNav === 'function') renderMobileBottomNav();
             if (typeof renderProducerWorkspaceAndAutoAi === 'function') renderProducerWorkspaceAndAutoAi();
             if (typeof renderAdminMonevSummary === 'function') renderAdminMonevSummary();
@@ -1423,6 +1439,9 @@ export function initAuthAndRoleController() {
             const roleBadge = document.getElementById('headerRolePillBadge');
             const navMarketTitle = document.getElementById('navMarketTitle');
             const navMarketSub = document.getElementById('navMarketSubtitle');
+            const navOrders = document.getElementById('nav-tab-orders');
+            const navOrdersTitle = document.getElementById('navOrdersTitle');
+            const navOrdersSub = document.getElementById('navOrdersSubtitle');
             const navSidTitle = document.getElementById('navSidTitle');
             const navSidSub = document.getElementById('navSidSubtitle');
             const sidTopAdminCard = document.getElementById('sidTopAdminCard');
@@ -1433,6 +1452,10 @@ export function initAuthAndRoleController() {
             const consumerBanner = document.getElementById('consumerBecomeProducerBanner');
             const aiFluctPanel = document.getElementById('aiMarketFluctuationPanel');
             const catFilterBar = document.getElementById('marketCategoryFilterBar');
+            const consumerOrdersView = document.getElementById('consumerOrdersView');
+            const producerOrdersView = document.getElementById('producerOrdersView');
+
+            if (navOrders) navOrders.classList.remove('hidden');
 
             // Sembunyikan banner ajakan, pastikan grafik fluktuasi & proyeksi 3 hari tampil untuk Produsen & Admin
             if (consumerBanner) consumerBanner.classList.add('hidden');
@@ -1455,37 +1478,49 @@ export function initAuthAndRoleController() {
             if (role === 'KONSUMEN') {
                 if (navMarketTitle) navMarketTitle.textContent = 'Pasar Warga';
                 if (navMarketSub) navMarketSub.textContent = 'Belanja Pangan Segar';
+                if (navOrdersTitle) navOrdersTitle.textContent = 'Pesanan Saya';
+                if (navOrdersSub) navOrdersSub.textContent = 'Riwayat Belanja & Chat WA';
                 if (navSidTitle) navSidTitle.textContent = 'Profile';
                 if (navSidSub) navSidSub.textContent = 'Data KK & Kebutuhan Pangan';
                 if (sidTopAdminCard) sidTopAdminCard.classList.add('hidden');
                 if (sidRegCard) sidRegCard.classList.add('hidden');
                 if (sidDirCard) sidDirCard.classList.add('hidden');
                 if (myOwnKkCard) myOwnKkCard.classList.remove('hidden');
-                if (consumerOrdersCard) consumerOrdersCard.classList.remove('hidden');
                 if (catFilterBar) catFilterBar.classList.remove('hidden');
+                if (consumerOrdersView) consumerOrdersView.classList.remove('hidden');
+                if (producerOrdersView) producerOrdersView.classList.add('hidden');
+                if (typeof renderPersonalConsumerOrders === 'function') renderPersonalConsumerOrders();
             } else if (role === 'PRODUSEN') {
                 if (navMarketTitle) navMarketTitle.textContent = 'Lapak Kebun';
                 if (navMarketSub) navMarketSub.textContent = 'Stok Panen & Ramalan AI';
+                if (navOrdersTitle) navOrdersTitle.textContent = 'Pesanan Masuk';
+                if (navOrdersSub) navOrdersSub.textContent = 'Proses & Siapkan Panen';
                 if (navSidTitle) navSidTitle.textContent = 'Profile';
                 if (navSidSub) navSidSub.textContent = 'Data Kebun & Komoditas';
                 if (sidTopAdminCard) sidTopAdminCard.classList.add('hidden');
                 if (sidRegCard) sidRegCard.classList.add('hidden');
                 if (sidDirCard) sidDirCard.classList.add('hidden');
                 if (myOwnKkCard) myOwnKkCard.classList.remove('hidden');
-                if (consumerOrdersCard) consumerOrdersCard.classList.add('hidden');
                 if (catFilterBar) catFilterBar.classList.add('hidden');
+                if (consumerOrdersView) consumerOrdersView.classList.add('hidden');
+                if (producerOrdersView) producerOrdersView.classList.remove('hidden');
+                if (typeof renderProducerOrders === 'function') renderProducerOrders();
             } else if (role === 'ADMIN') {
                 if (navMarketTitle) navMarketTitle.textContent = 'Pasar Warga';
                 if (navMarketSub) navMarketSub.textContent = 'Pantau Stok Komoditas';
+                if (navOrdersTitle) navOrdersTitle.textContent = 'Rekap Pesanan';
+                if (navOrdersSub) navOrdersSub.textContent = 'Pantau Transaksi RT 13';
                 if (navSidTitle) navSidTitle.textContent = 'Data 40 KK & PIN';
                 if (navSidSub) navSidSub.textContent = 'Direktori Warga & Validasi';
                 if (sidTopAdminCard) sidTopAdminCard.classList.remove('hidden');
                 if (sidRegCard) sidRegCard.classList.add('hidden');
                 if (sidDirCard) sidDirCard.classList.remove('hidden');
                 if (myOwnKkCard) myOwnKkCard.classList.remove('hidden');
-                if (consumerOrdersCard) consumerOrdersCard.classList.add('hidden');
                 if (catFilterBar) catFilterBar.classList.remove('hidden');
+                if (consumerOrdersView) consumerOrdersView.classList.add('hidden');
+                if (producerOrdersView) producerOrdersView.classList.remove('hidden');
                 if (typeof renderMembersTable === 'function') renderMembersTable();
+                if (typeof renderProducerOrders === 'function') renderProducerOrders();
             }
 
             if (typeof renderProducerWorkspaceAndAutoAi === 'function') renderProducerWorkspaceAndAutoAi();

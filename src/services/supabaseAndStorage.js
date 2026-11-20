@@ -78,6 +78,9 @@ export function initSupabaseAndStorageService() {
                     m.capacityKg = 0;
                     m.harvestCycleWeekly = '-';
                 }
+                if (!m.phone) {
+                    m.phone = '08127123' + String(num).padStart(4, '0');
+                }
                 if (!m.pinCode) m.pinCode = '1234';
                 if (m.surplusNotified === undefined) m.surplusNotified = false;
                 if (m.surplusConfirmedByProducer === undefined) m.surplusConfirmedByProducer = false;
@@ -242,6 +245,9 @@ export function initSupabaseAndStorageService() {
                             m.producerCommodity = '-';
                             m.capacityKg = 0;
                             m.harvestCycleWeekly = '-';
+                        }
+                        if (!m.phone) {
+                            m.phone = '08127123' + String(num).padStart(4, '0');
                         }
                         if (!m.pinCode) m.pinCode = '1234';
                     });
@@ -419,6 +425,9 @@ export function initSupabaseAndStorageService() {
                                 m.producerCommodity = '-';
                                 m.capacityKg = 0;
                                 m.harvestCycleWeekly = '-';
+                            }
+                            if (!m.phone) {
+                                m.phone = '08127123' + String(num).padStart(4, '0');
                             }
                         });
                         window.appState.members = p.members;
@@ -1192,7 +1201,29 @@ export function initSupabaseAndStorageService() {
             showToast('Komoditas Ditambahkan', `${commName} (${commStock} Kg) berhasil didaftarkan ke kebun Anda. Harga adil dihitung otomatis dari data Bapanas saat dipasarkan.`, 'success');
         };
 
+        window.isMyNikRevealed = false;
+        window.toggleMyNik = function() {
+            window.isMyNikRevealed = !window.isMyNikRevealed;
+            const el = document.getElementById('myMaskedNikDisplay');
+            const eye = document.getElementById('myMaskedNikEyeIcon');
+            const activeSid = window.appState?.activeUserSid;
+            const member = (window.appState?.members || []).find(m => m.sid === activeSid);
+            if (!el || !member) return;
+
+            const raw = member.rawNik || member.nik || '1872011509850011';
+            const masked = member.maskedNik || (String(raw).substring(0, 6) + '******' + String(raw).slice(-4));
+
+            if (window.isMyNikRevealed) {
+                el.textContent = raw;
+                if (eye) eye.className = 'fa-solid fa-eye-slash text-emerald-700';
+            } else {
+                el.textContent = masked;
+                if (eye) eye.className = 'fa-solid fa-eye text-slate-500';
+            }
+        };
+
         window.renderMyOwnKkSummaryCard = function renderMyOwnKkSummaryCard() {
+            window.isMyNikRevealed = false;
             const card = document.getElementById('myOwnKkSummaryCard');
             if (!card) return;
 
@@ -1328,38 +1359,69 @@ export function initSupabaseAndStorageService() {
                 </div>
             ` : '';
 
+            const rawNikVal = member.rawNik || member.nik || '1872011509850011';
+            const maskedNikVal = member.maskedNik || (String(rawNikVal).substring(0, 6) + '******' + String(rawNikVal).slice(-4));
+            const phoneVal = member.phone || ('08127123' + String(member.sid.replace(/[^0-9]/g, '')).padStart(4, '0'));
+
             card.innerHTML = `
                 <div class="space-y-4">
-                    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-emerald-200/70 pb-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-200/70 pb-4">
                         <div class="space-y-1">
                             <div class="flex flex-wrap items-center gap-2">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-forest-800 text-white flex items-center gap-1">
-                                    <i class="fa-solid fa-user"></i> Profile Saya
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${isProducerUser ? 'bg-[#9A3412] text-white' : 'bg-forest-800 text-white'} flex items-center gap-1">
+                                    <i class="fa-solid fa-user"></i> ${isProducerUser ? 'Profil Produsen KWT' : 'Profile Saya'}
                                 </span>
                                 ${pendingUpd ? `
                                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
                                         <i class="fa-solid fa-clock mr-1"></i> Menunggu Validasi Admin (${pendingUpd.newFamilySize} Jiwa • ${pendingUpd.newFoodNeedKg} Kg/bln)
                                     </span>
                                 ` : `
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                                        <i class="fa-solid fa-circle-check mr-1"></i> Akun Aktif
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#E8F5E9] text-[#0F5132] border border-emerald-200">
+                                        <i class="fa-solid fa-circle-check mr-1"></i> Akun Terverifikasi
                                     </span>
                                 `}
                             </div>
                             <h3 class="serif-heading text-xl font-bold text-stone-900">
                                 ${member.name}
                             </h3>
-                            <p class="text-xs font-mono text-stone-600">
-                                NIK/ID: <strong>${member.rawNik || member.sid}</strong> • Alamat: <strong>${member.address || 'RT 13 Yosomulyo'}</strong>
-                            </p>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-2 shrink-0">
                             <button type="button" onclick="openCitizenSelfUpdateModal()"
-                                class="w-full sm:w-auto px-4 py-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
+                                class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
                                 <i class="fa-solid fa-pen-to-square text-emerald-300"></i>
                                 <span>Ubah Data Keluarga &amp; Pangan</span>
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- KOTAK IDENTITAS KEAMANAN TINGGI (SID -> NIK MASKED DENGAN TOGGLE MATA -> ALAMAT -> NOMOR WHATSAPP) -->
+                    <div class="space-y-2 bg-[#F7FAF8] p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500 font-semibold">ID Keluarga (SID):</span>
+                            <span class="font-mono font-extrabold text-[#0F5132] bg-[#E8F5E9] px-2.5 py-0.5 rounded-lg border border-emerald-200">
+                                ${member.sid}
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500 font-semibold">NIK Kepala Keluarga:</span>
+                            <div class="flex items-center gap-2">
+                                <span id="myMaskedNikDisplay" class="font-mono font-bold text-slate-800 text-xs tracking-wider">
+                                    ${maskedNikVal}
+                                </span>
+                                <button type="button" onclick="toggleMyNik()" title="Tampilkan / Sembunyikan NIK Lengkap"
+                                    class="p-1 px-2 rounded-lg bg-white border border-slate-200 hover:bg-slate-100 text-slate-600 text-xs transition cursor-pointer shadow-2xs flex items-center gap-1">
+                                    <i id="myMaskedNikEyeIcon" class="fa-solid fa-eye text-slate-500"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="pt-1.5 border-t border-slate-200/60 flex justify-between items-center flex-wrap gap-1 text-slate-700">
+                            <span class="text-slate-500 font-semibold">Alamat Domisili:</span>
+                            <span class="font-bold text-slate-800">📍 ${member.address || 'RT 13 Yosomulyo, Kota Metro'}</span>
+                        </div>
+                        <div class="pt-1 border-t border-slate-200/60 flex justify-between items-center flex-wrap gap-1 text-slate-700">
+                            <span class="text-slate-500 font-semibold">Nomor WhatsApp:</span>
+                            <span class="font-mono font-bold text-emerald-800">📱 ${phoneVal}</span>
                         </div>
                     </div>
 
@@ -1373,7 +1435,7 @@ export function initSupabaseAndStorageService() {
                                     <span>Mode Konsumen (Belanja Pasar) ${!isCurrentlyProducer ? '• AKTIF' : ''}</span>
                                 </button>
                                 <button type="button" onclick="switchProfileRoleMode('PRODUSEN')"
-                                    class="py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer ${isCurrentlyProducer ? 'bg-amber-600 text-white shadow-sm ring-2 ring-amber-300' : 'bg-white hover:bg-amber-50 text-stone-700 border border-stone-300'}">
+                                    class="py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition cursor-pointer ${isCurrentlyProducer ? 'bg-[#9A3412] text-white shadow-sm ring-2 ring-amber-400' : 'bg-white hover:bg-amber-50 text-stone-700 border border-stone-300'}">
                                     <i class="fa-solid fa-seedling"></i>
                                     <span>Mode Produsen (Kelola Kebun &amp; AI) ${isCurrentlyProducer ? '• AKTIF' : ''}</span>
                                 </button>
@@ -1457,6 +1519,7 @@ export function initSupabaseAndStorageService() {
             setVal('selfUpdateRole', roleVal);
             setVal('selfUpdateCommodity', member.producerCommodity && member.producerCommodity !== '-' ? member.producerCommodity : 'Sayur Pekarangan KWT');
             setVal('selfUpdateCapacityKg', member.capacityKg || 30);
+            setVal('selfUpdatePhone', member.phone || ('08127123' + String(member.sid.replace(/[^0-9]/g, '')).padStart(4, '0')));
             setVal('selfUpdateReason', 'Pembaruan jumlah anggota keluarga & kebutuhan konsumsi pangan bulanan');
 
             const prodBox = document.getElementById('selfUpdateProdBox');
@@ -1530,6 +1593,7 @@ export function initSupabaseAndStorageService() {
                 newRole: document.getElementById('selfUpdateRole')?.value || member.role,
                 newCommodity: (document.getElementById('selfUpdateCommodity')?.value || member.producerCommodity || 'Sayur Pekarangan').trim(),
                 newCapacityKg: Math.max(0, Number(document.getElementById('selfUpdateCapacityKg')?.value || member.capacityKg || 30)),
+                newPhone: (document.getElementById('selfUpdatePhone')?.value || member.phone || '').trim(),
                 newNeeds: newNeeds,
                 reason: (document.getElementById('selfUpdateReason')?.value || 'Pembaruan data keluarga').trim(),
                 requestedAt: 'Baru saja'
@@ -1608,6 +1672,7 @@ export function initSupabaseAndStorageService() {
                 m.address = item.newAddress || m.address;
                 m.familySize = Number(item.newFamilySize || m.familySize);
                 m.monthlyFoodNeedKg = Number(item.newFoodNeedKg || m.monthlyFoodNeedKg);
+                if (item.newPhone) m.phone = item.newPhone;
                 if (item.newNeeds) {
                     m.needs = item.newNeeds;
                 }
@@ -1870,50 +1935,74 @@ export function initSupabaseAndStorageService() {
 
             if (myOrders.length === 0) {
                 listEl.innerHTML = `
-                    <div class="col-span-full p-4 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-500 text-center">
-                        Belum ada pesanan pada akun keluarga Anda (${member ? member.name : activeSid}). Silakan pilih komoditas segar di atas untuk memesan.
+                    <div class="col-span-full p-6 rounded-3xl bg-stone-50 border border-stone-200 text-xs text-stone-500 text-center space-y-2">
+                        <div class="w-10 h-10 rounded-2xl bg-stone-200 text-stone-600 flex items-center justify-center mx-auto text-base">
+                            <i class="fa-solid fa-basket-shopping"></i>
+                        </div>
+                        <p class="font-bold text-stone-700">Belum Ada Pesanan Aktif</p>
+                        <p>Akun keluarga Anda (${member ? member.name : activeSid}) belum memesan bahan pangan. Silakan buka menu Pasar Warga untuk belanja kebutuhan keluarga.</p>
+                        <button type="button" onclick="switchTab('tab-market')" class="mt-2 px-4 py-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs shadow-2xs transition inline-flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-store"></i>
+                            <span>Buka Pasar Warga</span>
+                        </button>
                     </div>
                 `;
                 return;
             }
 
-            listEl.innerHTML = myOrders.slice(0, 6).map(t => `
-                <div class="p-3.5 rounded-xl ${t.orderStatus === 'SIAP_DIAMBIL' ? 'bg-blue-50/70 border-2 border-blue-300 shadow-2xs' : 'bg-stone-50/90 border border-stone-200'} flex items-center justify-between gap-3">
-                    <div class="space-y-0.5 min-w-0">
-                        <div class="flex items-center gap-1.5 flex-wrap">
-                            <span class="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">${t.id}</span>
-                            <strong class="text-xs text-stone-900 truncate">${t.commodity} (${t.quantityKg} Kg)</strong>
-                            ${t.orderStatus === 'MENUNGGU_KONFIRMASI' ? `
-                                <span class="px-2 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
-                                    <i class="fa-solid fa-hourglass-start text-amber-600 mr-0.5"></i>Disiapkan
-                                </span>
-                            ` : t.orderStatus === 'SIAP_DIAMBIL' ? `
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-600 text-white border border-blue-700 shadow-2xs">
-                                    <i class="fa-solid fa-circle-check text-blue-200 mr-1"></i>Telah Diproses Produsen (Siap Diambil)
-                                </span>
-                            ` : `
-                                <span class="px-2 py-0.2 rounded text-[9px] font-bold bg-emerald-100 text-emerald-800">
-                                    <i class="fa-solid fa-circle-check text-emerald-600 mr-0.5"></i>Selesai
-                                </span>
-                            `}
+            listEl.innerHTML = myOrders.map(t => {
+                const producer = (window.appState?.members || []).find(m => m.sid === t.producerSid || m.name === t.producerName);
+                const producerPhone = producer?.phone || '081271230001';
+                const cleanPhone = String(producerPhone).replace(/[^0-9]/g, '').replace(/^0/, '62');
+                const activeMember = (window.appState?.members || []).find(m => m.sid === activeSid);
+                const buyerName = activeMember ? activeMember.name : activeSid;
+                const waMsg = `Halo ${t.producerName}, saya ${buyerName} (${activeSid}). Ingin konfirmasi pesanan saya ${t.id} di SI-PANGAN ID untuk komoditas ${t.commodity} (${t.quantityKg} Kg). Mohon informasi penyiapannya. Terima kasih!`;
+                const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMsg)}`;
+                const isReady = t.orderStatus === 'SIAP_DIAMBIL';
+                const isDone = t.orderStatus === 'SELESAI';
+                const statusBadge = isDone 
+                    ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Selesai</span>`
+                    : isReady
+                    ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-900 border border-blue-300">📦 Siap Diambil / Diantar</span>`
+                    : `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">⏳ Sedang Disiapkan</span>`;
+
+                return `
+                    <div class="bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-sm transition space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[11px] font-extrabold text-[#0F5132] bg-[#E8F5E9] px-2.5 py-1 rounded-xl font-mono">${t.id}</span>
+                            <span class="font-extrabold text-sm sm:text-base text-slate-900">${formatRupiah(t.totalPaid || t.subtotal)}</span>
                         </div>
-                        <p class="text-[11px] text-stone-500 truncate">
-                            Dari Kebun: <strong>${t.producerName}</strong> • ${t.processedAt ? `Diproses: ${t.processedAt}` : t.timestamp}
-                        </p>
-                    </div>
-                    <div class="text-right shrink-0 space-y-1">
-                        <strong class="block font-mono text-xs font-bold text-forest-800">${formatRupiah(t.totalPaid || t.subtotal)}</strong>
-                        <div class="flex items-center justify-end gap-2">
-                            <button type="button" onclick="viewTransactionReceipt('${t.id}')" class="text-[10px] font-bold text-emerald-700 hover:underline cursor-pointer">
-                                <i class="fa-solid fa-receipt mr-0.5"></i> Lihat Struk
+                        <div>
+                            <h4 class="font-extrabold text-sm sm:text-base text-slate-900 leading-snug">${t.commodity} (${t.quantityKg} Kg)</h4>
+                            <p class="text-xs text-slate-500 mt-0.5">
+                                Kebun: <b class="text-slate-800">${t.producerName}</b> • ${t.deliveryMethod || 'Ambil di Kebun'}
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs">
+                            ${statusBadge}
+                            <span class="text-slate-400 text-[11px]">• ${t.processedAt ? `Diproses: ${t.processedAt}` : (t.timestamp || 'Hari Ini')}</span>
+                        </div>
+                        <div class="pt-2.5 border-t border-slate-100 flex flex-wrap gap-2">
+                            <a href="${waUrl}" target="_blank" rel="noopener noreferrer"
+                               class="flex-1 bg-[#E8F5E9] hover:bg-emerald-100 text-[#0F5132] font-bold text-xs py-2.5 px-3 rounded-2xl transition flex items-center justify-center gap-1.5 shadow-2xs">
+                                <i class="fa-brands fa-whatsapp text-emerald-600 text-sm"></i>
+                                <span>Chat WA Produsen</span>
+                            </a>
+                            <button type="button" onclick="viewTransactionReceipt('${t.id}')"
+                                    class="bg-[#F7FAF8] hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs py-2 px-3 rounded-2xl transition flex items-center gap-1 cursor-pointer">
+                                <i class="fa-solid fa-receipt text-slate-500"></i>
+                                <span>Lihat Struk</span>
                             </button>
-                            <button type="button" onclick="downloadOrderReceiptPdf('${t.id}')" class="text-[10px] font-bold text-forest-800 hover:underline cursor-pointer" title="Unduh langsung PDF struk ini">
-                                <i class="fa-solid fa-file-arrow-down mr-0.5"></i> PDF
+                            <button type="button" onclick="downloadOrderReceiptPdf('${t.id}')"
+                                    class="bg-[#F7FAF8] hover:bg-slate-100 border border-slate-200 text-forest-800 font-bold text-xs py-2 px-2.5 rounded-2xl transition flex items-center gap-1 cursor-pointer"
+                                    title="Unduh PDF Struk">
+                                <i class="fa-solid fa-file-arrow-down text-forest-700"></i>
+                                <span>PDF</span>
                             </button>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
 
