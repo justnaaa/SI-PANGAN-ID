@@ -480,7 +480,7 @@
                                 <span class="block leading-snug">Dashboard Monev &amp; Surplus</span>
                                 <span id="adminSurplusNavBadge" class="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-500 text-white">Admin</span>
                             </div>
-                            <span class="text-[10px] text-stone-400 block font-normal leading-tight">Operasional, 40 KK &amp; Distribusi MBG</span>
+                            <span class="text-[10px] text-stone-400 block font-normal leading-tight">Operasional, <span class="dynamic-kk-count">40</span> KK &amp; Distribusi MBG</span>
                         </div>
                     </button>
 
@@ -1078,7 +1078,7 @@
                             </div>
                             <select id="memberFilterRole" onchange="renderMembersTable()"
                                 class="px-3 py-1.5 rounded-lg border border-stone-200 text-xs bg-white focus:outline-none focus:border-forest-600">
-                                <option value="ALL">Semua Peran & Kategori (40 KK)</option>
+                                <option value="ALL" id="optAllMemberFilter">Semua Peran & Kategori (40 KK)</option>
                                 <option value="PRODUSEN">Produsen UMKM Pangan (10 KK)</option>
                                 <option value="KONSUMEN">Konsumen Rumah Tangga (30 KK)</option>
                                 <option value="RENTAN_PRIORITAS">Rentan Prioritas Bantuan (5 KK)</option>

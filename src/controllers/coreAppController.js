@@ -438,6 +438,11 @@ export function initCoreAppController() {
             document.querySelectorAll('.dynamic-kk-count').forEach(el => {
                 el.textContent = String(kkCount);
             });
+            // Update dinamis tab nav admin agar fleksibel mengikuti pertambahan KK
+            const navSidTitle = document.getElementById('navSidTitle');
+            if (navSidTitle && (window.appState?.isAdminLoggedIn || window.appState?.activeRole === 'ADMIN')) {
+                navSidTitle.textContent = `Data ${kkCount} KK & PIN`;
+            }
             if (baseline) {
                 setT('dailyNeedAggLabel', `Agregasi Data Riil ${kkCount} KK (${jiwa} Jiwa)`);
                 setT('dailyNeedSayurVal', String(baseline.daily.sayurKg).replace('.', ','));
@@ -542,6 +547,15 @@ export function initCoreAppController() {
 
             const countEl = document.getElementById('membersFilteredCount');
             if (countEl) countEl.textContent = filtered.length;
+
+            // Perbarui label filter dropdown & judul tab Admin secara fleksibel
+            const allMembersCount = window.appState.members.filter(m => !m.isDemoAccount).length;
+            const optAll = document.getElementById('optAllMemberFilter');
+            if (optAll) optAll.textContent = `Semua Peran & Kategori (${allMembersCount} KK)`;
+            const navSidTitle = document.getElementById('navSidTitle');
+            if (navSidTitle && isTableAdmin) {
+                navSidTitle.textContent = `Data ${allMembersCount} KK & PIN`;
+            }
 
             tbody.innerHTML = filtered.map(m => {
                 const n = m.needs || {

@@ -1638,7 +1638,10 @@ export function initAuthAndRoleController() {
                 if (navMarketSub) navMarketSub.textContent = 'Pantau Stok Komoditas';
                 if (navOrdersTitle) navOrdersTitle.textContent = 'Rekap Pesanan';
                 if (navOrdersSub) navOrdersSub.textContent = 'Pantau Transaksi RT 13';
-                if (navSidTitle) navSidTitle.textContent = 'Data 40 KK & PIN';
+                const currentKkCount = Array.isArray(window.appState?.members)
+                    ? window.appState.members.filter(m => !m.isDemoAccount).length
+                    : 40;
+                if (navSidTitle) navSidTitle.textContent = `Data ${currentKkCount} KK & PIN`;
                 if (navSidSub) navSidSub.textContent = 'Direktori Warga & Validasi';
                 if (sidTopAdminCard) sidTopAdminCard.classList.remove('hidden');
                 if (sidRegCard) sidRegCard.classList.add('hidden');
