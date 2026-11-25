@@ -133,25 +133,14 @@ export function initCoreAppController() {
             return member.rawNik || member.maskedNik;
         }
 
-        window.getMemberTierBadge = function getMemberTierBadge(tier, aidReceived = false) {
-            // Jika bukan Admin, sembunyikan status kerentanan sosial warga
-            if (!window.appState.isAdminLoggedIn && window.appState.activeRole !== 'ADMIN') {
-                return '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Terverifikasi RT 13</span>';
+        window.getMemberTierBadge = function getMemberTierBadge(tier, aidReceived = false, member = null) {
+            if (member && member.role === 'PRODUSEN') {
+                return '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-900 border border-emerald-300"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>Produsen Pangan KWT</span>';
             }
-            if (tier === 'RENTAN_PRIORITAS') {
-                if (aidReceived) {
-                    return `
-                        <div class="flex flex-col gap-1 items-start">
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Prioritas Bantuan</span>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-medium bg-slate-100 text-slate-700 border border-slate-200">Kebutuhan Bulan Ini: Terpenuhi</span>
-                        </div>
-                    `;
-                }
-                return '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Prioritas Bantuan</span>';
-            } else if (tier === 'WASPADA') {
-                return '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Waspada Pangan</span>';
+            if (member && member.role === 'ADMIN') {
+                return '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300"><span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>Pengurus RT (Admin)</span>';
             }
-            return '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Mandiri Pangan</span>';
+            return '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-800 border border-slate-300"><span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>Konsumen Terverifikasi</span>';
         }
 
         window.showToast = function showToast(title, message, type = 'success') {
@@ -498,23 +487,11 @@ export function initCoreAppController() {
 
             const isTableAdmin = Boolean(window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN');
 
-            // Perbarui header kolom status sesuai role
+            // Perbarui header kolom status
             const thStatus = document.getElementById('thMemberStatus');
-            if (thStatus) thStatus.textContent = isTableAdmin ? 'Status Kerentanan' : 'Status SID';
+            if (thStatus) thStatus.textContent = 'Status Warga';
 
-            // Sembunyikan filter status kerentanan dari non-admin
             const filterSelect = document.getElementById('memberFilterRole');
-            if (filterSelect) {
-                ['RENTAN_PRIORITAS','WASPADA','MANDIRI'].forEach(val => {
-                    const opt = filterSelect.querySelector(`option[value="${val}"]`);
-                    if (opt) opt.style.display = isTableAdmin ? '' : 'none';
-                });
-                // Reset filter jika nilai tidak valid untuk role saat ini
-                if (!isTableAdmin && ['RENTAN_PRIORITAS','WASPADA','MANDIRI'].includes(filterSelect.value)) {
-                    filterSelect.value = 'ALL';
-                }
-            }
-
             const search = (document.getElementById('memberSearchInput')?.value || '').toLowerCase();
             const roleFilter = filterSelect?.value || 'ALL';
 
@@ -529,21 +506,9 @@ export function initCoreAppController() {
                 let matchFilter = true;
                 if (roleFilter === 'PRODUSEN') matchFilter = m.role === 'PRODUSEN';
                 else if (roleFilter === 'KONSUMEN') matchFilter = m.role === 'KONSUMEN';
-                else if (roleFilter === 'RENTAN_PRIORITAS') matchFilter = m.socialTier === 'RENTAN_PRIORITAS';
-                else if (roleFilter === 'WASPADA') matchFilter = m.socialTier === 'WASPADA';
-                else if (roleFilter === 'MANDIRI') matchFilter = m.socialTier === 'MANDIRI';
 
                 return matchSearch && matchFilter;
             });
-
-            // Rotasi Pemerataan: Jika memfilter RENTAN_PRIORITAS, prioritaskan aidReceivedThisMonth === false
-            if (roleFilter === 'RENTAN_PRIORITAS') {
-                filtered.sort((a, b) => {
-                    if (!a.aidReceivedThisMonth && b.aidReceivedThisMonth) return -1;
-                    if (a.aidReceivedThisMonth && !b.aidReceivedThisMonth) return 1;
-                    return (b.aiScore || 0) - (a.aiScore || 0);
-                });
-            }
 
             const countEl = document.getElementById('membersFilteredCount');
             if (countEl) countEl.textContent = filtered.length;
@@ -581,11 +546,11 @@ export function initCoreAppController() {
                         <div class="text-[11px] font-mono text-slate-500 mt-0.5 flex flex-wrap items-center gap-2">
                             <span>NIK: ${getMemberDisplayNik(m)}</span>
                             ${isTableAdmin && !window.SiPanganDomain?.isValidNik16(m.rawNik) ? `<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-300 font-bold text-[10px]"><i class="fa-solid fa-triangle-exclamation mr-1 text-rose-600"></i>NIK belum valid</span>` : ''}
-                            ${isTableAdmin ? `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 font-bold text-[10px]"><i class="fa-solid fa-key mr-1 text-amber-700"></i>PIN: ${m.pinCode || (m.rawNik ? m.rawNik.slice(-4) : '1234')}</span>` : ''}
+                            ${isTableAdmin ? `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 font-bold text-[10px]"><i class="fa-solid fa-key mr-1 text-amber-700"></i>PIN: ${m.pinCode || '1234'}</span>` : ''}
                         </div>
                     </td>
                     <td class="py-3.5 px-4">
-                        ${getMemberTierBadge(m.socialTier, m.aidReceivedThisMonth)}
+                        ${getMemberTierBadge(m.socialTier, m.aidReceivedThisMonth, m)}
                     </td>
                     <td class="py-3.5 px-4 text-right whitespace-nowrap">
                         <div class="inline-flex items-center gap-1.5">
@@ -664,15 +629,9 @@ export function initCoreAppController() {
             document.getElementById('modalDetailHash').textContent = 'Terlindungi';
             document.getElementById('modalDetailRole').textContent = m.role === 'PRODUSEN' ? `Produsen (${m.producerCommodity})` : 'Konsumen Rumah Tangga';
             const detailTierEl = document.getElementById('modalDetailTier');
-            const isDetailAdmin = Boolean(window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN');
             if (detailTierEl) {
-                if (isDetailAdmin) {
-                    detailTierEl.textContent = m.socialTier === 'RENTAN_PRIORITAS' ? 'Prioritas Bantuan (Hak Subsidi)' : m.socialTier === 'WASPADA' ? 'Waspada Pangan' : 'Mandiri Pangan';
-                    detailTierEl.className = m.socialTier === 'RENTAN_PRIORITAS' ? 'font-bold text-rose-700' : m.socialTier === 'WASPADA' ? 'font-bold text-amber-700' : 'font-bold text-emerald-700';
-                } else {
-                    detailTierEl.textContent = 'Terverifikasi (Warga Aktif RT 13)';
-                    detailTierEl.className = 'font-semibold text-emerald-800';
-                }
+                detailTierEl.textContent = m.role === 'PRODUSEN' ? 'Produsen Pangan KWT Terverifikasi' : 'Konsumen Rumah Tangga Terverifikasi';
+                detailTierEl.className = 'font-semibold text-emerald-800';
             }
             document.getElementById('modalDetailAddress').textContent = m.address;
             document.getElementById('modalDetailDist').textContent = m.distanceKm + ' km dari Hub RT 13';
