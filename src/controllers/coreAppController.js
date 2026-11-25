@@ -182,6 +182,8 @@ export function initCoreAppController() {
                 </button>
             `;
 
+            // Maksimal 2 toast tampil agar tidak menumpuk
+            while (container.children.length >= 2) container.removeChild(container.firstChild);
             container.appendChild(toast);
             setTimeout(() => {
                 toast.classList.remove('translate-y-2', 'opacity-0');
@@ -286,7 +288,6 @@ export function initCoreAppController() {
                 if (typeof renderMembersTable === 'function') renderMembersTable();
             }
             if (tabId === 'tab-matching') {
-                if (typeof syncLiveSurplusData === 'function') syncLiveSurplusData();
                 if (typeof renderPerProducerAiForecast === 'function') renderPerProducerAiForecast();
             }
             if (tabId === 'tab-dampak') {
@@ -395,8 +396,11 @@ export function initCoreAppController() {
 
         // --- 4. RENDERERS ---
         window.renderHeaderStats = function renderHeaderStats() {
-            const totalKg = window.appState.transactions.reduce((acc, t) => acc + (t.quantityKg || 0), 0) + 400; // include absorbed external
-            const totalTransaksi = window.appState.transactions.reduce((acc, t) => acc + (t.subtotal || 0), 0) + 5000000; // include external spillover
+            const D = window.SiPanganDomain;
+            const inv = D ? D.getInventorySummary(window.appState) : { totalStokPanenTersediaKg: 0, totalPanganBeredarKg: 0 };
+            const recon = D ? D.getFinancialReconciliation(window.appState) : { totalPerputaran: 0 };
+            const totalKg = inv.totalPanganBeredarKg;
+            const totalTransaksi = recon.totalPerputaran;
             const danaKas = window.appState.danaSosialInklusi;
 
             const elTotalTab1 = document.getElementById('tab1TotalTransaksi');
@@ -420,7 +424,49 @@ export function initCoreAppController() {
             if (elPangan) elPangan.textContent = totalKg + ' Kg';
 
             const elKpiPangan = document.getElementById('kpiTotalPanganKg');
-            if (elKpiPangan) elKpiPangan.textContent = totalKg + ' Kg';
+            if (elKpiPangan) elKpiPangan.textContent = inv.totalStokPanenTersediaKg.toLocaleString('id-ID') + ' Kg';
+            const elKpiPanganSub = document.getElementById('kpiTotalPanganSub');
+            if (elKpiPanganSub) elKpiPanganSub.textContent = `Siap serap: ${inv.stokSiapSerapKg} Kg • Tersalurkan: ${inv.totalPanganBeredarKg} Kg`;
+
+            // Rekonsiliasi, baseline konsumsi harian, & laporan dinas: semua dari satu selector bersama (Task 2.11, 2.12, 5.2)
+            const setT = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+            const members = (window.appState.members || []).filter(m => !m.isDemoAccount);
+            const baseline = D ? D.computeCommunityBaselineNeeds(members) : null;
+            const kkCount = baseline ? baseline.kkCount : members.length;
+            const jiwa = baseline ? baseline.totalJiwa : members.reduce((s, m) => s + (Number(m.familySize) || 4), 0);
+
+            document.querySelectorAll('.dynamic-kk-count').forEach(el => {
+                el.textContent = String(kkCount);
+            });
+            if (baseline) {
+                setT('dailyNeedAggLabel', `Agregasi Data Riil ${kkCount} KK (${jiwa} Jiwa)`);
+                setT('dailyNeedSayurVal', String(baseline.daily.sayurKg).replace('.', ','));
+                setT('dailyNeedTelurVal', String(baseline.daily.telurButir));
+                setT('dailyNeedAyamVal', String(baseline.daily.ayamKg).replace('.', ','));
+                setT('dailyNeedIkanVal', String(baseline.daily.ikanKg).replace('.', ','));
+            }
+
+            setT('govReportPopulationText', `${kkCount} KK / ${jiwa} Jiwa`);
+            setT('govReportCirculatingKgText', `${inv.totalPanganBeredarKg} Kg`);
+            setT('govReportAvailStockSubText', `Stok Tersedia: ${inv.totalStokPanenTersediaKg} Kg`);
+            setT('govReportAbsorptionPctText', `${String(inv.serapanPersen).replace('.', ',')}%`);
+            setT('govReportTurnoverRpText', formatRupiah(totalTransaksi));
+            setT('reconVerifiedTotalRp', formatRupiah(totalTransaksi));
+            setT('reconVerifiedBreakdown', `Omzet P2P ${formatRupiah(recon.omzetWargaTerverifikasi || 0)} + B2B/Koperasi ${formatRupiah(recon.penyaluranB2bKoperasi || 0)} • Biaya antar ${formatRupiah(recon.biayaJasaAntar || 0)} dicatat terpisah`);
+            const reconBadge = document.getElementById('reconStatusBadge');
+            if (reconBadge && D) {
+                reconBadge.innerHTML = recon.isMatched
+                    ? '<i class="fa-solid fa-circle-check text-emerald-600"></i> 100% MATCHED (Nol Selisih)'
+                    : `<i class="fa-solid fa-triangle-exclamation text-rose-600"></i> SELISIH ${formatRupiah(Math.abs(recon.selisihKas))}`;
+            }
+            setT('reconStatusSub', `Selisih buku besar vs komponen: ${formatRupiah(recon.selisihKas || 0)}`);
+            setT('govReportReconStatusText', recon.isMatched ? 'Status Rekonsiliasi Kas: 100% MATCHED (Nol Selisih)' : `Status Rekonsiliasi Kas: SELISIH ${formatRupiah(Math.abs(recon.selisihKas))}`);
+            setT('govReportReconSummaryLine', `Total Kas Terverifikasi: ${formatRupiah(totalTransaksi)},- • Potongan Komisi Warga: 0%.`);
+            if (D) {
+                const per = D.getCurrentOpenPeriod(window.appState);
+                const closed = D.isPeriodClosed(D.getNextMonthPeriod(per) && window.appState.lastClosedPeriod, window.appState);
+                setT('govReportPeriodStatusText', closed ? `PERIODE ${D.formatPeriodLabel(window.appState.lastClosedPeriod).toUpperCase()} DITUTUP` : 'PERIODE AKTIF');
+            }
 
             const elKpiProdTurnover = document.getElementById('kpiProdusenTurnover');
             if (elKpiProdTurnover) elKpiProdTurnover.textContent = formatRupiah(totalTransaksi);
@@ -520,6 +566,7 @@ export function initCoreAppController() {
                         </div>
                         <div class="text-[11px] font-mono text-slate-500 mt-0.5 flex flex-wrap items-center gap-2">
                             <span>NIK: ${getMemberDisplayNik(m)}</span>
+                            ${isTableAdmin && !window.SiPanganDomain?.isValidNik16(m.rawNik) ? `<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-300 font-bold text-[10px]"><i class="fa-solid fa-triangle-exclamation mr-1 text-rose-600"></i>NIK belum valid</span>` : ''}
                             ${isTableAdmin ? `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 font-bold text-[10px]"><i class="fa-solid fa-key mr-1 text-amber-700"></i>PIN: ${m.pinCode || (m.rawNik ? m.rawNik.slice(-4) : '1234')}</span>` : ''}
                         </div>
                     </td>
@@ -600,7 +647,7 @@ export function initCoreAppController() {
             document.getElementById('modalDetailName').textContent = getMemberDisplayName(m);
             document.getElementById('modalDetailSid').textContent = m.sid;
             document.getElementById('modalDetailNik').textContent = getMemberDisplayNik(m);
-            document.getElementById('modalDetailHash').textContent = m.nikHash || 'a8f5c9e2';
+            document.getElementById('modalDetailHash').textContent = 'Terlindungi';
             document.getElementById('modalDetailRole').textContent = m.role === 'PRODUSEN' ? `Produsen (${m.producerCommodity})` : 'Konsumen Rumah Tangga';
             const detailTierEl = document.getElementById('modalDetailTier');
             const isDetailAdmin = Boolean(window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN');
@@ -644,22 +691,83 @@ export function initCoreAppController() {
             autoDetectVulnerabilityTier();
         }
 
-        window.checkNikDeduplicationLive = function checkNikDeduplicationLive(rawNik) {
+        window.checkNikDeduplicationLive = function checkNikDeduplicationLive(rawNik, inputEl = null) {
+            const D = window.SiPanganDomain;
+            const targetInput = inputEl || document.getElementById('regNik');
+            const sanitized = D ? D.sanitizeNikDigits(rawNik) : String(rawNik || '').replace(/[^0-9]/g, '').slice(0, 16);
+            if (targetInput && targetInput.value !== sanitized) {
+                targetInput.value = sanitized;
+            }
+
+            const regErr = document.getElementById('regNikError');
+            if (regErr) {
+                if (sanitized.length > 0 && sanitized.length !== 16) {
+                    regErr.classList.remove('hidden');
+                    regErr.textContent = `NIK baru terisi ${sanitized.length}/16 digit angka. Wajib tepat 16 digit.`;
+                } else {
+                    regErr.classList.add('hidden');
+                }
+            }
+
             const banner = document.getElementById('dedupAlertBanner');
             const msg = document.getElementById('dedupAlertMessage');
-            if (!banner || !msg) return;
+            if (!banner || !msg) return sanitized.length === 16;
 
-            if (rawNik.length >= 16) {
-                const existing = window.appState.members.find(m => m.rawNik === rawNik || m.maskedNik === rawNik);
+            if (sanitized.length === 16) {
+                const existing = window.appState.members.find(m => m.rawNik === sanitized || m.maskedNik === sanitized);
                 if (existing) {
                     banner.classList.remove('hidden');
-                    msg.innerHTML = `Validasi Gagal: NIK <strong>${rawNik.substring(0, 6)}******${rawNik.slice(-2)}</strong> sudah terdaftar pada <strong>${existing.sid} (${existing.name})</strong>! Sistem Single Identity menolak duplikasi pendaftaran bantuan ganda.`;
+                    msg.innerHTML = `Validasi Gagal: NIK <strong>${sanitized.substring(0, 6)}******${sanitized.slice(-2)}</strong> sudah terdaftar pada <strong>${existing.sid} (${existing.name})</strong>! Sistem Single Identity menolak duplikasi pendaftaran bantuan ganda.`;
                     return false;
                 }
             }
             banner.classList.add('hidden');
-            return true;
+            return sanitized.length === 16;
         }
+
+        window.handleSelfRegNikInput = function handleSelfRegNikInput(inputEl) {
+            const D = window.SiPanganDomain;
+            if (!inputEl) return false;
+            const clean = D ? D.sanitizeNikDigits(inputEl.value) : String(inputEl.value || '').replace(/[^0-9]/g, '').slice(0, 16);
+            if (inputEl.value !== clean) inputEl.value = clean;
+            const errEl = document.getElementById('selfRegNikError');
+            if (errEl) {
+                errEl.classList.toggle('hidden', clean.length === 0 || clean.length === 16);
+                if (clean.length > 0 && clean.length !== 16) {
+                    errEl.textContent = `NIK wajib tepat 16 digit angka (saat ini ${clean.length}/16 digit).`;
+                }
+            }
+            return clean.length === 16;
+        };
+
+        window.validateEditMemberNikLive = function validateEditMemberNikLive(inputEl = null) {
+            const D = window.SiPanganDomain;
+            const el = inputEl || document.getElementById('editMemberNik');
+            const errEl = document.getElementById('editMemberNikError');
+            const btnSubmit = document.getElementById('btnSubmitEditMember');
+            if (!el) return false;
+
+            // Hanya sanitasi saat user sedang mengetik (inputEl dikirim); saat modal baru dibuka, tampilkan apa adanya bila NIK lama tidak valid
+            if (inputEl) {
+                const clean = D ? D.sanitizeNikDigits(el.value) : String(el.value || '').replace(/[^0-9]/g, '').slice(0, 16);
+                if (el.value !== clean) el.value = clean;
+            }
+
+            const currentVal = String(el.value || '').trim();
+            const valid = D ? D.isValidNik16(currentVal) : /^[0-9]{16}$/.test(currentVal);
+            if (errEl) {
+                if (!valid) {
+                    errEl.classList.remove('hidden');
+                    errEl.textContent = `NIK belum valid ("${currentVal || 'kosong'}"). Wajib tepat 16 digit angka sesuai KTP/KK.`;
+                } else {
+                    errEl.classList.add('hidden');
+                }
+            }
+            if (btnSubmit) {
+                btnSubmit.disabled = !valid;
+            }
+            return valid;
+        };
 
         window.fillDuplicateNikTest = function fillDuplicateNikTest() {
             // Preset with Ibu Sri Wahyuni's NIK
@@ -668,7 +776,7 @@ export function initCoreAppController() {
             const inputAddress = document.getElementById('regAddress');
             if (inputNik) {
                 inputNik.value = "1872012403850002";
-                checkNikDeduplicationLive(inputNik.value);
+                checkNikDeduplicationLive(inputNik.value, inputNik);
             }
             if (inputName) inputName.value = "Ibu Sri Wahyuni (Uji Duplikasi)";
             if (inputAddress) inputAddress.value = "Blok B RT 13";
@@ -680,10 +788,10 @@ export function initCoreAppController() {
             const inputNik = document.getElementById('regNik');
             const inputName = document.getElementById('regName');
             const inputAddress = document.getElementById('regAddress');
-            if (inputNik) inputNik.value = `18720112059${randNum}`;
+            if (inputNik) inputNik.value = `187201120590${randNum}`;
             if (inputName) inputName.value = `Ibu Warga Baru RT 13 (${randNum})`;
             if (inputAddress) inputAddress.value = `Blok C No. ${Math.floor(1 + Math.random() * 30)} RT 13`;
-            checkNikDeduplicationLive(inputNik.value);
+            checkNikDeduplicationLive(inputNik.value, inputNik);
             showToast("Data Acak Dimuat", "Silakan klik Daftarkan Single Identity untuk menguji registrasi sukses.", "info");
         }
 
@@ -888,10 +996,13 @@ export function initCoreAppController() {
             if (!container) return;
 
             const isDemoSession = String(window.appState?.activeUserSid || '').startsWith('DEMO-');
-            const isProdMode = (window.appState?.activeRole === 'PRODUSEN' && window.appState?.activeUserSid && !window.appState?.isAdminLoggedIn);
+            const effectiveRole = window.SiPanganDomain ? window.SiPanganDomain.resolveEffectiveRole(window.appState) : (window.appState?.activeRole || 'KONSUMEN');
+            const isProdMode = effectiveRole === 'PRODUSEN' && Boolean(window.appState?.activeUserSid);
+            const isConsMode = effectiveRole === 'KONSUMEN';
 
             const visibleListings = (window.appState?.listings || []).filter(l => {
                 if (!isDemoSession && l.isDemoListing) return false;
+                if (isConsMode && l.isModerated) return false;
                 if (isProdMode && l.producerSid !== window.appState?.activeUserSid) return false;
                 return true;
             });
@@ -976,6 +1087,35 @@ export function initCoreAppController() {
             renderMarketListings(true);
         };
 
+        window.renderAdminModerationLog = function renderAdminModerationLog() {
+            const logBox = document.getElementById('adminModerationLogContainer');
+            if (!logBox) return;
+            const logs = Array.isArray(window.appState?.moderationLogs) ? window.appState.moderationLogs : [];
+            if (logs.length === 0) {
+                logBox.classList.add('hidden');
+                logBox.innerHTML = '';
+                return;
+            }
+            logBox.classList.remove('hidden');
+            logBox.innerHTML = `
+                <div class="space-y-1.5 text-[11px]">
+                    <span class="font-bold text-stone-700 block"><i class="fa-solid fa-clipboard-list text-amber-700 mr-1"></i>Riwayat Moderasi Produk oleh Pengurus (${logs.length}):</span>
+                    <div class="space-y-1 max-h-28 overflow-y-auto">
+                        ${logs.slice(0, 5).map(lg => `
+                            <div class="p-2 rounded-lg bg-stone-50 border border-stone-200 flex flex-wrap items-center justify-between gap-2">
+                                <div>
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${lg.action === 'NONAKTIFKAN' ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-800'}">${lg.action === 'NONAKTIFKAN' ? 'Nonaktif Sementara' : 'Diaktifkan Kembali'}</span>
+                                    <strong class="text-stone-900 ml-1">${lg.commodity}</strong>
+                                    <span class="text-stone-500">(${lg.producerName}) — Alasan: ${lg.reason}</span>
+                                </div>
+                                <span class="font-mono text-[10px] text-stone-400">${lg.actor} • ${lg.timestamp}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        };
+
         window.renderMarketListings = function renderMarketListings(skipFilterButtons = false) {
             if (!skipFilterButtons && typeof window.renderMarketCategoryFilterButtons === 'function') {
                 window.renderMarketCategoryFilterButtons();
@@ -983,40 +1123,70 @@ export function initCoreAppController() {
             const grid = document.getElementById('marketListingsGrid');
             if (!grid) return;
 
+            const D = window.SiPanganDomain;
+            const effectiveRole = D ? D.resolveEffectiveRole(window.appState) : (window.appState.isAdminLoggedIn ? 'ADMIN' : (window.appState.activeRole || 'KONSUMEN'));
+            const isAdminMode = effectiveRole === 'ADMIN';
+            const isProdMode = effectiveRole === 'PRODUSEN' && Boolean(window.appState.activeUserSid);
+            const isConsMode = effectiveRole === 'KONSUMEN';
+
+            // Sinkronkan visibilitas bar Admin vs Konsumen/Produsen di Pasar Warga (Task 1.2)
+            const adminMonitorBar = document.getElementById('adminMarketMonitorBar');
+            const catFilterBar = document.getElementById('marketCategoryFilterBar');
+            const aiFluctPanel = document.getElementById('aiMarketFluctuationPanel');
+            if (adminMonitorBar) adminMonitorBar.classList.toggle('hidden', !isAdminMode);
+            if (catFilterBar) catFilterBar.classList.toggle('hidden', !isConsMode);
+            if (aiFluctPanel) aiFluctPanel.classList.toggle('hidden', !isProdMode);
+            if (isAdminMode) window.renderAdminModerationLog();
+
+            const adminSearch = isAdminMode
+                ? String(document.getElementById('adminMarketSearchInput')?.value || '').trim().toLowerCase()
+                : '';
+
             const isDemoSession = String(window.appState.activeUserSid || '').startsWith('DEMO-');
-            const isProdMode = (window.appState.activeRole === 'PRODUSEN' && window.appState.activeUserSid && !window.appState.isAdminLoggedIn);
             const filtered = window.appState.listings.filter(l => {
                 if (!isDemoSession && l.isDemoListing) return false;
-                // Pastikan produsen listing valid (bukan akun konsumen murni yang tersangkut)
-                if (typeof window.isProducerMember === 'function' && !window.isProducerMember(l.producerSid)) return false;
+                if (typeof window.isProducerMember === 'function' && !window.isProducerMember(l)) {
+                    if (!window.isProducerMember(l.producerSid)) return false;
+                }
+                // Produk yang dimoderasi disembunyikan dari etalase Konsumen (tetap tampil bagi Produsen pemilik & Admin)
+                if (isConsMode && l.isModerated) return false;
                 if (isProdMode && l.producerSid !== window.appState.activeUserSid) return false;
+                if (isAdminMode) {
+                    if (!adminSearch) return true;
+                    return (
+                        String(l.commodity || '').toLowerCase().includes(adminSearch) ||
+                        String(l.producerName || '').toLowerCase().includes(adminSearch) ||
+                        String(l.producerSid || '').toLowerCase().includes(adminSearch)
+                    );
+                }
                 if (window.currentMarketCategory === 'ALL') return true;
                 return l.category === window.currentMarketCategory;
             });
 
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full p-8 rounded-2xl bg-white border border-stone-200 text-center space-y-2">
+                        <i class="fa-solid fa-seedling text-stone-400 text-2xl"></i>
+                        <p class="text-sm font-bold text-stone-700">Belum ada komoditas yang sesuai</p>
+                        <p class="text-xs text-stone-500">${isAdminMode && adminSearch ? 'Coba kata kunci komoditas lain.' : 'Silakan pilih kategori lain atau cek kembali jadwal panen warga.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
             grid.innerHTML = filtered.map(l => {
-                // Show real producer name in Community Market
                 const producer = window.appState.members.find(m => m.sid === l.producerSid);
                 const producerName = producer ? producer.name : l.producerName;
-                const isRiceCaseB = l.id === 'list-002' || (l.unabsorbedSurplusKg && l.unabsorbedSurplusKg > 0);
                 const unitStr = l.unit || 'Kg';
 
-                // Percentage absorbed
-                const totalHarvest = l.initialHarvestKg || (l.localAbsorbedKg + l.availableStockKg);
+                const totalHarvest = Math.max(1, l.initialHarvestKg || (l.localAbsorbedKg + l.availableStockKg) || 1);
                 const absorbed = l.localAbsorbedKg || 0;
                 const pctAbsorbed = Math.min(100, Math.round((absorbed / totalHarvest) * 100));
 
-                // Hak kelola listing (HANYA Admin atau Produsen sah pemilik komoditas yang sedang di Mode Produsen)
-                const canManageThisListing = Boolean(
-                    window.appState.isAdminLoggedIn || (
-                        window.appState.activeRole === 'PRODUSEN' && 
-                        window.appState.activeUserSid && 
-                        window.appState.activeUserSid === l.producerSid && 
-                        (typeof window.isProducerMember === 'function' ? window.isProducerMember(window.appState.activeUserSid) : true)
-                    )
-                );
+                const canEditThisListing = D ? D.can(window.appState, 'EDIT_PRODUCT', l, window.appState) : false;
+                const canModerateThisListing = D ? D.can(window.appState, 'MODERATE_PRODUCT', l, window.appState) : false;
+                const isOwnProductInConsumerMode = isConsMode && Boolean(window.appState.activeUserSid && l.producerSid === window.appState.activeUserSid);
 
-                // 1. Hitung Jarak Fisik Produsen ke Konsumen (Food Miles Rendah / Rantai Pasok Pendek)
                 let distanceText = "50 Meter";
                 if (l.distanceKm !== undefined && l.distanceKm !== null) {
                     if (l.distanceKm < 1) {
@@ -1028,7 +1198,6 @@ export function initCoreAppController() {
                     distanceText = l.location;
                 }
 
-                // 2. Hitung Harga Pasar Luar untuk Komparasi Harga
                 let marketPriceVal = l.marketPrice || l.marketLampungPrice;
                 if (!marketPriceVal) {
                     const intel = LAMPUNG_MARKET_INTELLIGENCE[l.commodity] || Object.values(LAMPUNG_MARKET_INTELLIGENCE).find(item => l.commodity.toLowerCase().includes(item.category.toLowerCase()));
@@ -1039,15 +1208,125 @@ export function initCoreAppController() {
                 }
                 const savingsVal = marketPriceVal - l.fairPrice;
 
-                // 3. Hitung Harga Pengepul/Tengkulak untuk Koridor Harga Adil
                 let tengkulakPriceVal = l.tengkulakPrice || l.pengepulPrice;
                 if (!tengkulakPriceVal) {
                     const intel = LAMPUNG_MARKET_INTELLIGENCE[l.commodity] || Object.values(LAMPUNG_MARKET_INTELLIGENCE).find(item => l.commodity.toLowerCase().includes(item.category.toLowerCase()));
                     tengkulakPriceVal = intel ? intel.tengkulakLampungPrice : Math.round((l.fairPrice * 0.75) / 500) * 500;
                 }
 
+                const moderationBannerHtml = l.isModerated ? `
+                    <div class="p-2.5 rounded-xl bg-amber-50 border-2 border-amber-300 text-amber-950 text-[11px] space-y-0.5">
+                        <div class="font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-eye-slash text-amber-700"></i>
+                            <span>Dinonaktifkan Sementara (Moderasi Pengurus RT)</span>
+                        </div>
+                        <p class="text-[10px] text-amber-900"><strong>Alasan:</strong> ${l.moderationReason || 'Sedang ditinjau pengurus RT'} • <span class="font-mono">${l.moderatedAt || ''}</span></p>
+                    </div>
+                ` : '';
+
+                // Action footer strictly separated per Role Matrix (Tasks 1.2, 1.3, 1.4)
+                let actionButtonsHtml = '';
+                const isExpiredItem = Number(l.freshnessDaysRemaining != null ? l.freshnessDaysRemaining : 3) <= 0;
+
+                if (isAdminMode) {
+                    if (canModerateThisListing) {
+                        actionButtonsHtml = l.isModerated ? `
+                            <button type="button" onclick="reactivateModeratedListing('${l.id}')"
+                                class="w-full py-2.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
+                                <i class="fa-solid fa-rotate-left"></i>
+                                <span>Aktifkan Kembali ke Etalase</span>
+                            </button>
+                        ` : `
+                            <button type="button" onclick="openModerateListingModal('${l.id}')"
+                                class="w-full py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i class="fa-solid fa-eye-slash text-amber-700"></i>
+                                <span>Nonaktifkan Sementara (Moderasi)</span>
+                            </button>
+                        `;
+                    } else if (canEditThisListing) {
+                        actionButtonsHtml = `
+                            <div class="grid grid-cols-12 gap-1.5">
+                                <button type="button" onclick="openEditListingModal('${l.id}')" class="col-span-9 py-2.5 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+                                    <i class="fa-solid fa-pen-to-square text-amber-600"></i>
+                                    <span>Edit Produk Koperasi</span>
+                                </button>
+                                <button type="button" onclick="deleteListing('${l.id}')" class="col-span-3 py-2.5 px-1 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 text-xs font-bold transition flex items-center justify-center cursor-pointer" title="Hapus Komoditas">
+                                    <i class="fa-solid fa-trash-can text-rose-600"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        actionButtonsHtml = `
+                            <div class="w-full py-2 rounded-xl bg-stone-100 text-stone-600 border border-stone-200 text-[11px] font-bold text-center">
+                                Mode Pantau Pengurus RT
+                            </div>
+                        `;
+                    }
+                } else if (isProdMode) {
+                    // Mode Produsen: Tidak ada tombol Beli pada produk kebun sendiri (Task 1.4)
+                    if (isExpiredItem) {
+                        actionButtonsHtml = `
+                            <div class="space-y-2">
+                                <button disabled class="w-full py-2.5 rounded-xl bg-rose-100 border border-rose-300 text-rose-950 text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-truck-ramp-box text-rose-700"></i>
+                                    <span>Dialihkan ke Surplus MBG / Koperasi</span>
+                                </button>
+                                ${canEditThisListing ? `
+                                    <button type="button" onclick="openEditListingModal('${l.id}')" class="w-full py-2 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                        <i class="fa-solid fa-pen-to-square text-amber-600"></i>
+                                        <span>Edit Stok &amp; Masa Segar</span>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        `;
+                    } else if (canEditThisListing) {
+                        actionButtonsHtml = `
+                            <div class="grid grid-cols-12 gap-2">
+                                <button type="button" onclick="openEditListingModal('${l.id}')" class="col-span-9 py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
+                                    <i class="fa-solid fa-pen-to-square text-amber-600"></i>
+                                    <span>Edit Harga &amp; Stok</span>
+                                </button>
+                                <button type="button" onclick="deleteListing('${l.id}')" class="col-span-3 py-2.5 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 text-xs font-bold transition flex items-center justify-center cursor-pointer" title="Hapus Komoditas">
+                                    <i class="fa-solid fa-trash-can text-rose-600"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    // Mode Konsumen: Cegah self-buying (Task 1.4)
+                    if (isOwnProductInConsumerMode) {
+                        actionButtonsHtml = `
+                            <button disabled class="w-full py-2.5 rounded-xl bg-stone-200 text-stone-600 border border-stone-300 text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-seedling text-stone-500"></i>
+                                <span>Produk Kebun Anda</span>
+                            </button>
+                        `;
+                    } else if (isExpiredItem) {
+                        actionButtonsHtml = `
+                            <button disabled class="w-full py-2.5 rounded-xl bg-rose-100 border border-rose-300 text-rose-950 text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-truck-ramp-box text-rose-700"></i>
+                                <span>Dialihkan ke Surplus MBG / Koperasi</span>
+                            </button>
+                        `;
+                    } else if (l.availableStockKg > 0) {
+                        actionButtonsHtml = `
+                            <button type="button" onclick="openBuyModal('${l.id}')" class="w-full py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-98 text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                                <span>Beli Langsung</span>
+                            </button>
+                        `;
+                    } else {
+                        actionButtonsHtml = `
+                            <button disabled class="w-full py-2.5 rounded-xl bg-stone-200 text-stone-500 text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-box-open"></i>
+                                <span>Stok Habis</span>
+                            </button>
+                        `;
+                    }
+                }
+
                 return `
-                    <div class="bg-white rounded-3xl border border-emerald-900/10 p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3.5 relative group">
+                    <div class="bg-white rounded-3xl border ${l.isModerated ? 'border-amber-300 bg-amber-50/10' : 'border-emerald-900/10'} p-4 sm:p-5 shadow-xs hover:shadow-md transition-shadow flex flex-col justify-between space-y-3.5 relative group">
 
                         <div class="space-y-3 pt-1">
                             <!-- Category & Icon -->
@@ -1060,32 +1339,36 @@ export function initCoreAppController() {
                                 </div>
                             </div>
 
+                            ${moderationBannerHtml}
+
                             <!-- Title & Producer Info -->
                             <div>
                                 <h4 class="serif-heading text-lg font-bold text-stone-900 group-hover:text-forest-800 transition line-clamp-1">${l.commodity}</h4>
                                 <div class="flex items-center justify-between flex-wrap gap-1 text-xs text-stone-700 mt-1">
                                     <div class="flex items-center gap-1.5">
                                         <i class="fa-solid fa-circle-user text-emerald-700"></i>
-                                        <span class="font-bold text-stone-900">${l.isFromQuotaTakeover ? 'Disuplai oleh ' + producerName : producerName}</span>
-                                        <span class="mono-num text-[11px] text-stone-400">(${l.producerSid})</span>
+                                        <span class="font-bold text-stone-900">${l.isFromQuotaTakeover ? 'Disediakan oleh: ' + producerName : producerName}</span>
+                                        ${isAdminMode ? `<span class="mono-num text-[11px] text-stone-400">(${l.producerSid})</span>` : ''}
                                     </div>
-                                    <div class="flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50/80 px-2 py-0.5 rounded border border-emerald-200/60">
-                                        <i class="fa-solid fa-location-dot text-emerald-600"></i> Jarak: ${distanceText}
-                                    </div>
+                                    ${isConsMode ? `
+                                        <div class="flex items-center gap-1 text-[11px] font-semibold text-emerald-800 bg-emerald-50/80 px-2 py-0.5 rounded border border-emerald-200/60">
+                                            <i class="fa-solid fa-location-dot text-emerald-600"></i> Jarak: ${distanceText}
+                                        </div>
+                                    ` : ''}
                                 </div>
                             </div>
 
-                            <!-- Jadwal Panen & Batas Kesegaran (Penegasan Masa Segar & Kadaluarsa) -->
+                            <!-- Jadwal Panen & Batas Kesegaran -->
                             <div class="flex flex-col gap-1.5 pt-0.5">
                                 <div class="flex items-center justify-between text-xs text-stone-500">
                                     <span class="inline-flex items-center gap-1 text-[11px]">
                                         <i class="fa-regular fa-calendar-check text-stone-400"></i> Panen: <strong class="text-stone-700">${l.harvestDate || '27 Okt 2026'}</strong>
                                     </span>
-                                    <span class="text-[10px] text-stone-400 font-mono">Batas Panen Lokal</span>
+                                    <span class="text-[10px] text-stone-400 font-mono">Kebun RT 13</span>
                                 </div>
                                 <div>
-                                    ${Number(l.freshnessDaysRemaining != null ? l.freshnessDaysRemaining : 3) <= 0 ? `
-                                        <div class="p-2 rounded-xl bg-rose-50 border-2 border-rose-400 text-rose-950 flex items-center gap-2 text-[11px] font-extrabold animate-pulse">
+                                    ${isExpiredItem ? `
+                                        <div class="p-2 rounded-xl bg-rose-50 border-2 border-rose-400 text-rose-950 flex items-center gap-2 text-[11px] font-extrabold">
                                             <i class="fa-solid fa-triangle-exclamation text-rose-700 text-sm shrink-0"></i>
                                             <div class="leading-tight">
                                                 <span>LEWAT MASA SEGAR (0 Hari)</span>
@@ -1122,87 +1405,39 @@ export function initCoreAppController() {
                                         <span class="text-2xl font-extrabold text-forest-800 mono-num tracking-tight">${formatRupiah(l.fairPrice)}</span>
                                         <span class="text-xs font-semibold text-forest-700"> / ${unitStr}</span>
                                     </div>
-                                    ${(window.appState.activeRole !== 'KONSUMEN') ? `
+                                    ${isProdMode ? `
                                         <div class="text-right">
                                             <span class="text-[10px] text-stone-500 block">Harga Pengepul:</span>
                                             <span class="text-xs font-mono text-stone-600">${formatRupiah(tengkulakPriceVal)}</span>
                                         </div>
                                     ` : `
-                                        <span class="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200">Stok: ${l.availableStockKg} ${unitStr}</span>
+                                        <span class="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">Stok: ${l.availableStockKg} ${unitStr}</span>
                                     `}
                                 </div>
                             </div>
 
-                            <!-- Absorption Progress Bar -->
-                            <div class="space-y-1.5">
-                                <div class="flex justify-between text-xs font-semibold">
-                                    <span class="text-stone-600 text-[11px]">Daya Serap Panen:</span>
-                                    <span class="mono-num font-bold text-forest-800">${absorbed} ${unitStr} / ${totalHarvest} ${unitStr} (${pctAbsorbed}%)</span>
+                            <!-- Absorption Progress Bar: Hanya tampil di Mode Produsen (Task 1.2 & 4.4) -->
+                            ${isProdMode ? `
+                                <div class="space-y-1.5">
+                                    <div class="flex justify-between text-xs font-semibold">
+                                        <span class="text-stone-600 text-[11px]">Daya Serap Panen:</span>
+                                        <span class="mono-num font-bold text-forest-800">${absorbed} ${unitStr} / ${totalHarvest} ${unitStr} (${pctAbsorbed}%)</span>
+                                    </div>
+                                    <div class="w-full h-2.5 bg-stone-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-forest-700 rounded-full transition-all duration-300" style="width: ${pctAbsorbed}%"></div>
+                                    </div>
+                                    <div class="flex justify-between text-[10px] text-stone-500">
+                                        <span>Terserap: ${absorbed} ${unitStr}</span>
+                                        <span class="font-bold text-stone-700">Stok: ${l.availableStockKg} ${unitStr}</span>
+                                    </div>
                                 </div>
-                                <div class="w-full h-2.5 bg-stone-200 rounded-full overflow-hidden">
-                                    <div class="h-full bg-forest-700 rounded-full transition-all duration-300" style="width: ${pctAbsorbed}%"></div>
-                                </div>
-                                <div class="flex justify-between text-[10px] text-stone-500">
-                                    <span>Terserap: ${absorbed} ${unitStr}</span>
-                                    <span class="font-bold text-stone-700">Tersedia Siap Beli: ${l.availableStockKg} ${unitStr}</span>
-                                </div>
-                            </div>
+                            ` : ''}
 
                         </div>
 
                         <!-- Action Buttons -->
                         <div class="pt-3 border-t border-stone-100 flex flex-col gap-2">
-                            ${Number(l.freshnessDaysRemaining != null ? l.freshnessDaysRemaining : 3) <= 0 ? `
-                                <!-- Produk Lewat Masa Segar: Dialihkan Otomatis ke Surplus MBG/Koperasi -->
-                                <div class="space-y-2">
-                                    <button disabled class="w-full py-2.5 rounded-xl bg-rose-100 border border-rose-300 text-rose-950 text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2">
-                                        <i class="fa-solid fa-truck-ramp-box text-rose-700"></i>
-                                        <span>Dialihkan ke Surplus MBG / Koperasi</span>
-                                    </button>
-                                    ${canManageThisListing ? `
-                                        <div class="grid grid-cols-2 gap-2">
-                                            <button onclick="switchTab('tab-dampak')" class="py-2 px-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs">
-                                                <i class="fa-solid fa-boxes-packing"></i>
-                                                <span>Pusat Surplus &rarr;</span>
-                                            </button>
-                                            <button onclick="openEditListingModal('${l.id}')" class="py-2 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
-                                                <i class="fa-solid fa-pen-to-square text-amber-600"></i>
-                                                <span>Edit Produk</span>
-                                            </button>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            ` : canManageThisListing ? `
-                                <div class="grid grid-cols-12 gap-1.5">
-                                    ${l.availableStockKg > 0 ? `
-                                        <button onclick="openBuyModal('${l.id}')" class="col-span-5 py-2.5 px-2 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-1 shadow-xs cursor-pointer">
-                                            <i class="fa-solid fa-cart-shopping"></i>
-                                            <span>Beli</span>
-                                        </button>
-                                    ` : `
-                                        <button disabled class="col-span-5 py-2.5 px-2 rounded-xl bg-stone-200 text-stone-500 text-xs font-bold cursor-not-allowed">Habis</button>
-                                    `}
-                                    <button onclick="openEditListingModal('${l.id}')" class="col-span-5 py-2.5 px-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1 cursor-pointer">
-                                        <i class="fa-solid fa-pen-to-square text-amber-600"></i>
-                                        <span>Edit</span>
-                                    </button>
-                                    <button onclick="deleteListing('${l.id}')" class="col-span-2 py-2.5 px-1 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-700 text-xs font-bold transition flex items-center justify-center cursor-pointer" title="Hapus Komoditas">
-                                        <i class="fa-solid fa-trash-can text-rose-600"></i>
-                                    </button>
-                                </div>
-                            ` : `
-                                ${l.availableStockKg > 0 ? `
-                                    <button onclick="openBuyModal('${l.id}')" class="w-full py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 active:scale-98 text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-xs cursor-pointer">
-                                        <i class="fa-solid fa-cart-shopping"></i>
-                                        <span>Beli Langsung</span>
-                                    </button>
-                                ` : `
-                                    <button disabled class="w-full py-2.5 rounded-xl bg-stone-200 text-stone-500 text-xs font-bold cursor-not-allowed flex items-center justify-center gap-2">
-                                        <i class="fa-solid fa-box-open"></i>
-                                        <span>Stok Habis</span>
-                                    </button>
-                                `}
-                            `}
+                            ${actionButtonsHtml}
                         </div>
                     </div>
                 `;
@@ -1210,29 +1445,23 @@ export function initCoreAppController() {
         }
 
         window.populateBuyerDropdown = function populateBuyerDropdown() {
-            const select = document.getElementById('buyConsumerSidSelect');
-            if (!select) return;
+            const displayEl = document.getElementById('buyLockedConsumerText');
+            const D = window.SiPanganDomain;
+            const role = D ? D.resolveEffectiveRole(window.appState) : (window.appState?.activeRole || 'KONSUMEN');
             const activeSid = window.appState?.activeUserSid;
-            const isAdmin = Boolean(window.appState?.isAdminLoggedIn || window.appState?.activeRole === 'ADMIN');
-            const members = window.appState?.members || [];
 
-            if (!activeSid && !isAdmin) {
-                select.innerHTML = '<option value="" disabled selected>-- Anda Belum Masuk Akun --</option>';
-                select.value = '';
+            // Daftar warga TIDAK BOLEH dimuat untuk Admin maupun akun lain; tidak ada input/select di DOM (Task 1.2 & 1.5)
+            if (role !== 'KONSUMEN' || !activeSid || activeSid === 'ADMIN-RT13') {
+                if (displayEl) displayEl.textContent = 'Identitas pembeli terkunci (khusus warga Konsumen)';
                 return;
             }
 
-            if (!isAdmin) {
-                const me = members.find(m => m.sid === activeSid);
-                if (me) {
-                    select.innerHTML = `<option value="${me.sid}" selected>${me.name} (${me.sid} • ${me.address || 'RT 13'})</option>`;
-                    select.value = me.sid;
-                    return;
-                }
+            const me = (window.appState?.members || []).find(m => m.sid === activeSid);
+            if (me) {
+                if (displayEl) displayEl.textContent = `${me.name} (${me.sid} • ${me.address || 'RT 13'})`;
+            } else {
+                if (displayEl) displayEl.textContent = 'Akun belum terverifikasi';
             }
-            select.innerHTML = members.map(m => `
-                <option value="${m.sid}" ${m.sid === activeSid ? 'selected' : ''}>${m.name} (${m.sid})</option>
-            `).join('');
         }
 
         window.handleProducerSelectionChange = function handleProducerSelectionChange() {
@@ -1321,20 +1550,132 @@ export function initCoreAppController() {
         }
 
         
-        // === EDIT STOK & HARGA PRODUK OLEH PRODUSEN (DENGAN BUKU BESAR AUDIT) ===
+        // === MODERASI PRODUK OLEH PENGURUS RT (NONAKTIFKAN SEMENTARA DENGAN ALASAN TERCATAT - TASK 1.3) ===
+        window.openModerateListingModal = function(listingId) {
+            const D = window.SiPanganDomain;
+            const l = (window.appState.listings || []).find(item => item.id === listingId);
+            if (!l) return;
+            if (!D || !D.can(window.appState, 'MODERATE_PRODUCT', l, window.appState)) {
+                showToast('Akses Ditolak', 'Hanya Pengurus RT (Admin) yang dapat memoderasi etalase warga.', 'error');
+                return;
+            }
+            const idEl = document.getElementById('moderateListingId');
+            const titleEl = document.getElementById('moderateListingTitle');
+            const metaEl = document.getElementById('moderateListingMeta');
+            const reasonEl = document.getElementById('moderateListingReason');
+            const checkEl = document.getElementById('moderateConfirmCheck');
+            const errEl = document.getElementById('moderateReasonError');
+
+            if (idEl) idEl.value = l.id;
+            if (titleEl) titleEl.textContent = `${l.commodity} — ${l.producerName} (${l.producerSid})`;
+            if (metaEl) metaEl.textContent = `Stok tetap: ${l.availableStockKg} ${l.unit || 'Kg'} • Harga tetap: ${formatRupiah(l.fairPrice)}/${l.unit || 'Kg'}`;
+            if (reasonEl) reasonEl.value = '';
+            if (checkEl) checkEl.checked = false;
+            if (errEl) errEl.classList.add('hidden');
+
+            openModal('modalModerateListing');
+        };
+
+        window.handleSubmitModerateListing = function(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const D = window.SiPanganDomain;
+            const listingId = document.getElementById('moderateListingId')?.value;
+            const reason = String(document.getElementById('moderateListingReason')?.value || '').trim();
+            const confirmed = Boolean(document.getElementById('moderateConfirmCheck')?.checked);
+            const errEl = document.getElementById('moderateReasonError');
+
+            const l = (window.appState.listings || []).find(item => item.id === listingId);
+            if (!l) return;
+
+            if (!D || !D.can(window.appState, 'MODERATE_PRODUCT', l, window.appState)) {
+                showToast('Akses Ditolak', 'Hanya Pengurus RT (Admin) yang berhak menonaktifkan sementara produk warga.', 'error');
+                return;
+            }
+            if (reason.length < 5) {
+                if (errEl) errEl.classList.remove('hidden');
+                showToast('Alasan Wajib Diisi', 'Mohon tuliskan alasan penonaktifan sementara minimal 5 karakter.', 'warning');
+                return;
+            }
+            if (!confirmed) {
+                showToast('Konfirmasi Diperlukan', 'Centang kotak konfirmasi sebelum menonaktifkan sementara produk.', 'warning');
+                return;
+            }
+
+            const ts = D.getJakartaTimestampLabel();
+            l.isModerated = true;
+            l.moderationReason = reason;
+            l.moderatedBy = 'Pengurus RT 13 (Admin)';
+            l.moderatedAt = ts;
+
+            if (!Array.isArray(window.appState.moderationLogs)) window.appState.moderationLogs = [];
+            window.appState.moderationLogs.unshift({
+                id: `MOD-${Date.now()}`,
+                timestamp: ts,
+                actor: 'Pengurus RT 13 (Admin)',
+                listingId: l.id,
+                commodity: l.commodity,
+                producerSid: l.producerSid,
+                producerName: l.producerName,
+                action: 'NONAKTIFKAN',
+                reason
+            });
+
+            saveStateToLocal();
+            if (typeof window.syncAllDataToSupabaseNow === 'function') window.syncAllDataToSupabaseNow(false);
+            closeModal('modalModerateListing');
+            renderMarketListings();
+            if (typeof window.renderMyOwnKkSummaryCard === 'function') window.renderMyOwnKkSummaryCard();
+            showToast('Produk Dinonaktifkan Sementara', `"${l.commodity}" disembunyikan dari etalase Konsumen. Harga, stok, dan pesanan berjalan tetap utuh.`, 'warning');
+        };
+
+        window.reactivateModeratedListing = function(listingId) {
+            const D = window.SiPanganDomain;
+            const l = (window.appState.listings || []).find(item => item.id === listingId);
+            if (!l) return;
+            if (!D || !D.can(window.appState, 'MODERATE_PRODUCT', l, window.appState)) {
+                showToast('Akses Ditolak', 'Hanya Pengurus RT (Admin) yang dapat mengaktifkan kembali produk ini.', 'error');
+                return;
+            }
+            const ts = D.getJakartaTimestampLabel();
+            const prevReason = l.moderationReason || '-';
+            l.isModerated = false;
+            l.moderationReason = '';
+            l.moderatedAt = '';
+
+            if (!Array.isArray(window.appState.moderationLogs)) window.appState.moderationLogs = [];
+            window.appState.moderationLogs.unshift({
+                id: `MOD-${Date.now()}`,
+                timestamp: ts,
+                actor: 'Pengurus RT 13 (Admin)',
+                listingId: l.id,
+                commodity: l.commodity,
+                producerSid: l.producerSid,
+                producerName: l.producerName,
+                action: 'AKTIFKAN_KEMBALI',
+                reason: `Diaktifkan kembali (catatan sebelumnya: ${prevReason})`
+            });
+
+            saveStateToLocal();
+            if (typeof window.syncAllDataToSupabaseNow === 'function') window.syncAllDataToSupabaseNow(false);
+            renderMarketListings();
+            if (typeof window.renderMyOwnKkSummaryCard === 'function') window.renderMyOwnKkSummaryCard();
+            showToast('Produk Diaktifkan Kembali', `"${l.commodity}" kini kembali tampil di etalase Pasar Warga.`, 'success');
+        };
+
+        // === EDIT STOK & HARGA PRODUK OLEH PRODUSEN PEMILIK ===
         window.openEditListingModal = function(listingId) {
+            const D = window.SiPanganDomain;
             const listings = window.appState.listings || [];
             const l = listings.find(item => item.id === listingId);
             if (!l) return;
 
-            const canEdit = window.appState.isAdminLoggedIn || (
-                window.appState.activeRole === 'PRODUSEN' && 
-                window.appState.activeUserSid && 
-                window.appState.activeUserSid === l.producerSid && 
-                (typeof window.isProducerMember === 'function' ? window.isProducerMember(window.appState.activeUserSid) : true)
+            const canEdit = D ? D.can(window.appState, 'EDIT_PRODUCT', l, window.appState) : (
+                window.appState.activeRole === 'PRODUSEN' &&
+                window.appState.activeUserSid &&
+                window.appState.activeUserSid === l.producerSid
             );
             if (!canEdit) {
-                showToast('Akses Terbatas', 'Hanya produsen terdaftar pemilik komoditas atau Admin yang berhak mengedit produk ini.', 'warning');
+                showToast('Akses Ditolak', 'Hanya produsen pemilik kebun yang berhak mengubah harga dan stok produknya.', 'error');
                 return;
             }
 
@@ -1371,14 +1712,14 @@ export function initCoreAppController() {
             const l = listings.find(item => item.id === listingId);
             if (!l) return;
 
-            const canEdit = window.appState.isAdminLoggedIn || (
-                window.appState.activeRole === 'PRODUSEN' && 
-                window.appState.activeUserSid && 
-                window.appState.activeUserSid === l.producerSid && 
-                (typeof window.isProducerMember === 'function' ? window.isProducerMember(window.appState.activeUserSid) : true)
+            const D = window.SiPanganDomain;
+            const canEdit = D ? D.can(window.appState, 'EDIT_PRODUCT', l, window.appState) : (
+                window.appState.activeRole === 'PRODUSEN' &&
+                window.appState.activeUserSid &&
+                window.appState.activeUserSid === l.producerSid
             );
             if (!canEdit) {
-                showToast('Akses Ditolak', 'Anda tidak memiliki izin mengubah komoditas ini.', 'error');
+                showToast('Akses Ditolak', 'Hanya produsen pemilik kebun yang berhak mengubah harga dan stok komoditas ini.', 'error');
                 return;
             }
 
@@ -1406,7 +1747,7 @@ export function initCoreAppController() {
                 }
             }
 
-            // Catat di Buku Besar Audit Log
+            // Catat di Riwayat Perubahan Stok
             if (!window.appState.inventoryAuditLogs) window.appState.inventoryAuditLogs = [];
             const now = new Date();
             const logEntry = {
@@ -1424,40 +1765,42 @@ export function initCoreAppController() {
             };
             window.appState.inventoryAuditLogs.unshift(logEntry);
 
-            // Simpan ke storage dan render ulang seluruh komponen terkait
+            // Simpan ke storage dan render ulang seluruh komponen terkait secara real-time (Task 2.4)
             saveStateToLocal();
             closeModal('modalEditListing');
-            renderMarketListings();
-            renderPerProducerAiForecast();
-            if (typeof window.renderActiveUserProfileCard === 'function') window.renderActiveUserProfileCard();
-            if (typeof window.renderAdminSurplusCenter === 'function') window.renderAdminSurplusCenter();
-            if (typeof window.renderProducerWorkspaceAndAutoAi === 'function') window.renderProducerWorkspaceAndAutoAi();
+            if (typeof window.renderAll === 'function') {
+                window.renderAll();
+            } else {
+                renderMarketListings();
+                renderPerProducerAiForecast();
+            }
+            if (typeof window.renderMyOwnKkSummaryCard === 'function') window.renderMyOwnKkSummaryCard();
 
-            showToast('Stok & Harga Diperbarui', `${l.commodity} berhasil diperbarui: Stok ${newStock} Kg, Harga ${formatRupiah(newPrice)}. Tercatat di Buku Besar Audit.`, 'success');
+            showToast('Stok & Harga Diperbarui', `${l.commodity} berhasil diperbarui: Stok ${newStock} Kg, Harga ${formatRupiah(newPrice)}. Tercatat di Riwayat Perubahan Stok.`, 'success');
         };
 
-        // === CRUD: HAPUS (DELETE) KOMODITAS DARI LAPAK OLEH PRODUSEN / ADMIN ===
+        // === CRUD: HAPUS (DELETE) KOMODITAS DARI LAPAK OLEH PRODUSEN PEMILIK ===
         window.deleteListing = function(listingId) {
+            const D = window.SiPanganDomain;
             const listings = window.appState.listings || [];
             const l = listings.find(item => item.id === listingId);
             if (!l) return;
 
-            const isAllowed = window.appState.isAdminLoggedIn || (
-                window.appState.activeRole === 'PRODUSEN' && 
-                window.appState.activeUserSid && 
-                window.appState.activeUserSid === l.producerSid && 
-                (typeof window.isProducerMember === 'function' ? window.isProducerMember(window.appState.activeUserSid) : true)
+            const isAllowed = D ? D.can(window.appState, 'DELETE_PRODUCT', l, window.appState) : (
+                window.appState.activeRole === 'PRODUSEN' &&
+                window.appState.activeUserSid &&
+                window.appState.activeUserSid === l.producerSid
             );
             if (!isAllowed) {
-                showToast('Akses Ditolak', 'Hanya produsen sah pemilik komoditas atau Admin yang dapat menghapus komoditas ini.', 'error');
+                showToast('Akses Ditolak', 'Hanya produsen pemilik kebun yang dapat menghapus komoditas ini.', 'error');
                 return;
             }
 
-            if (!confirm(`Hapus Komoditas dari Lapak Kebun?\n\nApakah Anda yakin ingin menghapus "${l.commodity}" (Stok: ${l.availableStockKg} ${l.unit || 'Kg'}) dari lapak pasar? Tindakan ini akan dicatat di Buku Besar Audit Inventaris.`)) {
+            if (!confirm(`Hapus Komoditas dari Lapak Kebun?\n\nApakah Anda yakin ingin menghapus "${l.commodity}" (Stok: ${l.availableStockKg} ${l.unit || 'Kg'}) dari lapak pasar? Tindakan ini akan dicatat di Riwayat Perubahan Stok.`)) {
                 return;
             }
 
-            // Catat di Buku Besar Audit Log
+            // Catat di Riwayat Perubahan Stok
             if (!window.appState.inventoryAuditLogs) window.appState.inventoryAuditLogs = [];
             const now = new Date();
             const logEntry = {
@@ -1529,20 +1872,40 @@ export function initCoreAppController() {
         };
 
         window.openBuyModal = function openBuyModal(listingId) {
-            if (!window.appState.activeUserSid && !window.appState.isAdminLoggedIn) {
-                showToast('Belum Masuk Akun', 'Silakan masuk ke akun keluarga Anda terlebih dahulu di Tab Masuk Akun untuk berbelanja.', 'warning');
+            const D = window.SiPanganDomain;
+            const role = D ? D.resolveEffectiveRole(window.appState) : (window.appState.activeRole || 'KONSUMEN');
+
+            if (role === 'ADMIN') {
+                showToast('Mode Pantau Pengurus', 'Akun Admin hanya memantau pasar dan tidak dapat melakukan pembelian.', 'warning');
+                return;
+            }
+            if (role !== 'KONSUMEN') {
+                showToast('Khusus Mode Konsumen', 'Silakan beralih ke Mode Konsumen terlebih dahulu untuk berbelanja.', 'warning');
+                return;
+            }
+            if (!window.appState.activeUserSid) {
+                showToast('Belum Masuk Akun', 'Silakan masuk ke akun keluarga Anda terlebih dahulu untuk berbelanja.', 'warning');
                 switchTab('tab-konsep');
-                const identInput = document.getElementById('loginCitizenIdentifier');
-                if (identInput) {
-                    identInput.focus();
-                    identInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
                 return;
             }
 
             const listing = window.appState.listings.find(l => l.id === listingId);
             if (!listing) return;
 
+            if (listing.isModerated) {
+                showToast('Produk Tidak Tersedia', 'Produk ini sedang dinonaktifkan sementara oleh Pengurus RT.', 'warning');
+                return;
+            }
+            if (listing.producerSid === window.appState.activeUserSid) {
+                showToast('Produk Kebun Anda', 'Anda tidak dapat membeli produk dari kebun milik Anda sendiri.', 'warning');
+                return;
+            }
+            if (D && !D.can(window.appState, 'BUY_PRODUCT', listing, window.appState)) {
+                showToast('Akses Ditolak', 'Pembelian produk ini tidak diizinkan untuk peran akun saat ini.', 'error');
+                return;
+            }
+
+            populateBuyerDropdown();
             document.getElementById('buyListingId').value = listing.id;
             document.getElementById('buyModalProductTitle').textContent = listing.commodity;
             document.getElementById('buyModalProducerName').textContent = `${listing.producerName} (${listing.producerSid})`;
@@ -1598,17 +1961,35 @@ export function initCoreAppController() {
 
         window.handleExecuteBuy = function handleExecuteBuy(e) {
             e.preventDefault();
+            const D = window.SiPanganDomain;
             const listingId = document.getElementById('buyListingId').value;
             const listing = window.appState.listings.find(l => l.id === listingId);
             if (!listing) return;
 
-            const qty = Number(document.getElementById('buyQtyKg').value);
-            if (qty > listing.availableStockKg) {
+            // Guard lapis data/handler: tolak Admin, Produsen, self-buying, dan produk termoderasi (Task 1.2, 1.4, 1.5)
+            if (D && !D.can(window.appState, 'BUY_PRODUCT', listing, window.appState)) {
+                showToast("Transaksi Ditolak", listing.producerSid === window.appState.activeUserSid
+                    ? "Anda tidak dapat membeli produk dari kebun Anda sendiri."
+                    : "Akun saat ini tidak memiliki hak akses untuk membuat pesanan belanja.", "error");
+                return;
+            }
+
+            const consumerSid = window.appState.activeUserSid;
+            if (!consumerSid || consumerSid === 'ADMIN-RT13') {
+                showToast("Identitas Tidak Valid", "Silakan masuk menggunakan akun warga Konsumen untuk berbelanja.", "error");
+                return;
+            }
+            if (consumerSid === listing.producerSid) {
+                showToast("Produk Kebun Anda", "Pembelian komoditas milik sendiri (self-buying) tidak diizinkan.", "error");
+                return;
+            }
+
+            const qty = Math.max(1, Number(document.getElementById('buyQtyKg').value) || 0);
+            if (qty <= 0 || qty > listing.availableStockKg) {
                 showToast("Stok Tidak Cukup", `Stok tersisa hanya ${listing.availableStockKg} Kg.`, "error");
                 return;
             }
 
-            const consumerSid = document.getElementById('buyConsumerSidSelect').value;
             const consumer = window.appState.members.find(m => m.sid === consumerSid);
             const producer = window.appState.members.find(m => m.sid === listing.producerSid);
 
@@ -1617,36 +1998,46 @@ export function initCoreAppController() {
             let deliveryText = "Ambil Sendiri (Rp 0)";
             if (deliveryOpt === 'PRODUCER_DELIVERY') {
                 deliveryFee = 2000;
-                deliveryText = "Diantar Produsen (+Rp 2.000)";
+                deliveryText = "COD / Diantar (+Rp 2.000)";
             } else if (deliveryOpt === 'COOP_COURIER') {
                 deliveryFee = 5000;
                 deliveryText = "Kurir Komunitas RT (+Rp 5.000)";
             }
 
-            const subtotal = qty * listing.fairPrice;
-            const producerTotal = subtotal + (deliveryOpt === 'PRODUCER_DELIVERY' ? deliveryFee : 0);
+            const amounts = D
+                ? D.calcTransactionAmounts({ quantityKg: qty, unitPrice: listing.fairPrice, subtotal: qty * listing.fairPrice, deliveryFee, type: 'JUAL_BELI_PASAR' })
+                : { subtotalProduk: qty * listing.fairPrice, biayaAntar: deliveryFee, total: (qty * listing.fairPrice) + deliveryFee, omzetBersihProdusen: qty * listing.fairPrice };
 
-            if (deliveryOpt === 'PRODUCER_DELIVERY') {
-                deliveryText = "COD / Diantar (+Rp 2.000)";
-            } else {
-                deliveryText = "Ambil Sendiri (Rp 0)";
+            // Reservasi / kurangi stok tepat satu kali saat pesanan dibuat (Task 2.4 & 3.1)
+            const stockBefore = Number(listing.availableStockKg) || 0;
+            const stockRes = D ? D.kurangiStok(listing, qty) : { ok: true, before: stockBefore, after: Math.max(0, stockBefore - qty) };
+            if (!stockRes.ok) {
+                showToast("Stok Tidak Cukup", `Stok tersisa hanya ${listing.availableStockKg} Kg.`, "error");
+                return;
+            }
+            if (!D) {
+                listing.availableStockKg = Math.max(0, stockBefore - qty);
+                listing.localAbsorbedKg = (Number(listing.localAbsorbedKg) || 0) + qty;
             }
 
-            // Update producer wallet
             if (producer) {
-                producer.walletEarned = (producer.walletEarned || 0) + producerTotal;
+                // Keputusan User 2.1: Ongkir Rp 2.000 diterima produsen pengantar; laporan Admin tetap memisahkan Omzet Produk Bersih vs Biaya Antar
+                const producerTotalReceived = amounts.omzetBersihProdusen + (deliveryOpt === 'PRODUCER_DELIVERY' ? amounts.biayaAntar : 0);
+                producer.walletEarned = (producer.walletEarned || 0) + producerTotalReceived;
             }
 
-            // Catat pesanan baru dengan status MENUNGGU_KONFIRMASI & stockDeducted: false
-            // Stok produsen akan otomatis berkurang saat produsen mengklik "Siapkan Pesanan" (sesuai A.1 & C.1)
-            const txId = `TX-RT13-${Math.floor(100 + Math.random() * 900)}`;
+            const txId = D ? D.generateUniqueTxId(window.appState.transactions) : `TX-RT13-${Date.now().toString().slice(-4)}`;
+            const openPeriod = D ? D.getCurrentOpenPeriod(window.appState) : '2026-10';
+            const periodLabelShort = openPeriod === '2026-11' ? 'Nov 2026' : (D ? D.formatPeriodLabel(openPeriod) : 'Okt 2026');
             const now = new Date();
-            const dateStr = `${now.getDate()} Nov 2026, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const dateStr = `${String(now.getDate()).padStart(2, '0')} ${periodLabelShort}, ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
             window.appState.transactions.unshift({
                 id: txId,
                 listingId: listing.id,
                 timestamp: dateStr,
+                period: openPeriod,
+                channel: 'eceran_warga',
                 type: "JUAL_BELI_PASAR",
                 producerSid: listing.producerSid,
                 producerName: listing.producerName,
@@ -1655,26 +2046,29 @@ export function initCoreAppController() {
                 commodity: listing.commodity,
                 quantityKg: qty,
                 unitPrice: listing.fairPrice,
-                subtotal: subtotal,
-                producerNet: subtotal,
+                subtotal: amounts.subtotalProduk,
+                producerNet: amounts.omzetBersihProdusen,
                 deliveryMethod: deliveryText,
-                deliveryFee: deliveryFee,
-                totalPaid: subtotal + deliveryFee,
+                deliveryFee: amounts.biayaAntar,
+                totalPaid: amounts.total,
                 orderStatus: "MENUNGGU_KONFIRMASI",
-                stockDeducted: false,
+                stockDeducted: true,
+                stockRestored: false,
+                stockBefore: stockRes.before,
+                stockAfter: stockRes.after,
                 status: "TERVERIFIKASI_SINGLE_ID"
             });
             saveStateToLocal();
+            if (typeof window.syncAllDataToSupabaseNow === 'function') window.syncAllDataToSupabaseNow(false);
 
-            // 4. Catat transaksi pembelian warga dari Market ke Timeline Tab Musyawarah
             if (typeof musyawarahTransparencyState !== 'undefined' && Array.isArray(musyawarahTransparencyState.activities)) {
                 const buyerLabel = consumer ? getMemberDisplayName(consumer) : 'Warga Konsumen';
                 musyawarahTransparencyState.activities.forEach(a => { a.isNew = false; });
                 musyawarahTransparencyState.activities.unshift({
                     id: `act-buy-${Date.now()}`,
                     time: 'Baru saja',
-                    category: 'Transaksi Market (0% Fee)',
-                    description: `${buyerLabel} (${consumerSid}) membeli ${qty} ${listing.unit || 'Kg'} ${listing.commodity} dari ${listing.producerName} (${listing.producerSid}) senilai ${formatRupiah(subtotal)}`,
+                    category: 'Transaksi Pasar Warga',
+                    description: `${buyerLabel} membeli ${qty} ${listing.unit || 'Kg'} ${listing.commodity} dari ${listing.producerName} senilai ${formatRupiah(amounts.total)}`,
                     isNew: true
                 });
                 musyawarahTransparencyState.distributionProgress = Math.min(100, musyawarahTransparencyState.distributionProgress + 1);
@@ -1682,7 +2076,9 @@ export function initCoreAppController() {
 
             closeModal('modalBuyDirect');
             renderAll();
-            showToast("Transaksi Berhasil!", `Pembelian ${qty} ${listing.unit || 'Kg'} ${listing.commodity} sukses. 100% pembayaran (${formatRupiah(producerTotal)}) langsung masuk ke dompet produsen.`, "success");
+            if (typeof window.renderMyOwnKkSummaryCard === 'function') window.renderMyOwnKkSummaryCard();
+            if (typeof window.renderPersonalConsumerOrders === 'function') window.renderPersonalConsumerOrders();
+            showToast("Pesanan Berhasil Dibuat!", `Pesanan ${txId} (${qty} ${listing.unit || 'Kg'} ${listing.commodity}) menunggu konfirmasi produsen.`, "success");
         }
 
         window.handleExecuteSurplusSpillover = function handleExecuteSurplusSpillover(e) {
@@ -1738,23 +2134,57 @@ export function initCoreAppController() {
         // Fokus Komoditas: Sayuran KWT, Perikanan Bioflok, Unggas Rakyat & Beras Poktan
         // =========================================================================
 
-        window.VOTE_THRESHOLD = 10;
+        window.VOTE_THRESHOLD = window.SiPanganDomain?.VOTE_THRESHOLD || 10;
+
+        window.formatCleanProducerNoteForDemand = function formatCleanProducerNoteForDemand(d) {
+            const D = window.SiPanganDomain;
+            const supplier = D ? D.getExistingSupplierForDemand(d, window.appState) : null;
+            if (d.status === 'TERPENUHI_LOKAL' && supplier) {
+                return `Disediakan oleh: ${supplier.name}`;
+            }
+            const raw = String(d.producerNotes || 'Belum ada catatan pemasok')
+                .replace(/\(SID-[^)]+\)/gi, '')
+                .replace(/\s*-\s*SID-RT13-\d+/gi, '')
+                .replace(/\(Tab\s*\d+\)/gi, '')
+                .replace(/Sinyal ditarik oleh\s+([^•(]+).*$/i, 'Disediakan oleh: $1')
+                .replace(/Tersedia di RT 13\s*\(([^)]+)\)/i, 'Disediakan oleh: $1')
+                .trim();
+            return raw || 'Belum ada catatan pemasok';
+        };
 
         window.renderDemandsBoard = function renderDemandsBoard() {
             const container = document.getElementById('demandVotingCardsContainer');
             if (!container) return;
 
-            const activeRole = window.appState.activeRole || 'KONSUMEN';
+            const D = window.SiPanganDomain;
+            const effectiveRole = D ? D.resolveEffectiveRole(window.appState) : (window.appState.activeRole || 'KONSUMEN');
             const activeSid = window.appState.activeUserSid;
             const currentProducer = (window.appState.members || []).find(m => m.sid === activeSid);
 
-            container.innerHTML = window.appState.demands.map(d => {
-                // Inisialisasi votedSids array jika belum ada
-                d.votedSids = Array.isArray(d.votedSids) ? d.votedSids : (Array.isArray(d.voters) ? [...d.voters] : []);
+            // Perbarui subjudul instruksi di atas kartu sesuai role aktif (Task 4.5)
+            const hintSpan = document.getElementById('musyawarahActionRoleHint');
+            if (hintSpan) {
+                if (effectiveRole === 'KONSUMEN') {
+                    hintSpan.textContent = 'Klik "Beri Suara" untuk mewakili keluarga Anda (1 SID = 1 Suara)';
+                } else if (effectiveRole === 'PRODUSEN') {
+                    hintSpan.textContent = 'Tarik usulan komoditas kebun yang telah memenuhi minimal 10 suara warga';
+                } else {
+                    hintSpan.textContent = 'Kelola penerbitan usulan voting warga dan pasokan sembako Koperasi RT';
+                }
+            }
 
-                // Sinkronisasi status threshold voting otomatis
+            container.innerHTML = window.appState.demands.map(d => {
+                const demandName = d.name || d.commodity || 'Komoditas Usulan';
+                d.name = demandName;
+                const threshold = D ? D.getDemandThreshold(d) : VOTE_THRESHOLD;
+
+                // Sinkronisasi dua array voters & votedSids agar 100% konsisten
+                const mergedVoters = Array.from(new Set([...(d.voters || []), ...(d.votedSids || [])]));
+                d.voters = mergedVoters;
+                d.votedSids = [...mergedVoters];
+
                 if (d.status !== 'TERPENUHI_LOKAL') {
-                    d.status = (d.votes || 0) >= VOTE_THRESHOLD ? 'MENUNGGU_PEMASOK' : 'VOTING';
+                    d.status = (d.votes || 0) >= threshold ? 'MENUNGGU_PEMASOK' : 'VOTING';
                 }
 
                 const badgeClass = d.status === 'TERPENUHI_LOKAL'
@@ -1764,100 +2194,99 @@ export function initCoreAppController() {
                         : 'bg-paddy-100 text-paddy-900 border border-paddy-300';
 
                 const badgeLabel = d.status === 'TERPENUHI_LOKAL'
-                    ? 'Tersedia di Kebun / Lapak'
+                    ? 'Tersedia di Pasar'
                     : d.status === 'MENUNGGU_PEMASOK'
                         ? 'Menunggu Pemasok'
                         : 'Tahap Voting';
 
-                // Cek apakah warga ini (SID) sudah memberikan suara (1 SID = 1 Suara)
-                const hasVoted = Boolean(activeSid && d.votedSids.includes(activeSid));
+                const hasVoted = D ? D.hasUserVotedDemand(d, activeSid) : Boolean(activeSid && d.votedSids.includes(activeSid));
 
-                // Cek apakah produsen aktif sudah menarik komoditas ini ke kebunnya
                 let myListing = null;
                 let hasInGarden = false;
-                if (activeSid) {
-                    myListing = (window.appState.listings || []).find(l => 
-                        l.producerSid === activeSid && 
-                        (l.commodity.toLowerCase().includes(d.name.toLowerCase()) || d.name.toLowerCase().includes(l.commodity.toLowerCase()))
+                if (activeSid && effectiveRole === 'PRODUSEN') {
+                    myListing = (window.appState.listings || []).find(l =>
+                        l.producerSid === activeSid &&
+                        (l.commodity.toLowerCase().includes(demandName.toLowerCase()) || demandName.toLowerCase().includes(l.commodity.toLowerCase()))
                     );
                     if (myListing) {
                         hasInGarden = true;
                     } else if (currentProducer && Array.isArray(currentProducer.registeredCommodities)) {
                         hasInGarden = currentProducer.registeredCommodities.some(c => {
                             const name = typeof c === 'string' ? c : c.name;
-                            return name.toLowerCase().includes(d.name.toLowerCase()) || d.name.toLowerCase().includes(name.toLowerCase());
+                            return name.toLowerCase().includes(demandName.toLowerCase()) || demandName.toLowerCase().includes(name.toLowerCase());
                         });
                     }
                 }
 
-                // Render tombol aksi spesifik role (Konsumen memberi suara, Produsen menarik sinyal produksi)
+                const pullCheck = D ? D.checkPullSignalEligibility(window.appState, d, window.appState) : { allowed: false, label: 'Tidak tersedia' };
+                const cleanNote = window.formatCleanProducerNoteForDemand(d);
+
                 let actionHtml = '';
-                if (activeRole === 'KONSUMEN') {
-                    // ROLE KONSUMEN: HANYA MEMBERI SUARA (1 SID = 1 SUARA ANTI DOUBLE-INPUT)
+                if (effectiveRole === 'KONSUMEN') {
                     if (hasVoted) {
                         actionHtml = `
-                            <button disabled class="w-full py-2.5 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 cursor-not-allowed">
-                                <i class="fa-solid fa-circle-check text-emerald-600"></i>
-                                <span>Sudah Memilih (1 Suara Tercatat)</span>
+                            <button type="button" disabled class="w-full py-2.5 rounded-xl bg-stone-200 text-stone-600 border border-stone-300 text-xs font-bold flex items-center justify-center gap-1.5 cursor-not-allowed">
+                                <span>✓ Sudah Memberi Suara</span>
                             </button>
                         `;
                     } else {
                         actionHtml = `
-                            <button onclick="handleVoteDemand('${d.id}')" class="w-full py-2.5 rounded-xl bg-forest-50 hover:bg-forest-800 hover:text-white text-forest-800 border border-forest-300 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <button type="button" onclick="handleVoteDemand('${d.id}')" class="w-full py-2.5 rounded-xl bg-forest-50 hover:bg-forest-800 hover:text-white text-forest-800 border border-forest-300 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
                                 <i class="fa-solid fa-check-to-slot"></i>
                                 <span>Beri Suara Permintaan (1 SID = 1 Suara)</span>
                             </button>
                         `;
                     }
-                } else if (activeRole === 'PRODUSEN') {
-                    // ROLE PRODUSEN: MENARIK SINYAL PRODUKSI KE KEBUN
-                    if (hasInGarden) {
+                } else if (effectiveRole === 'PRODUSEN') {
+                    if (hasInGarden && pullCheck.code !== 'ALREADY_SUPPLIED_BY_OTHER') {
                         actionHtml = `
                             <div class="space-y-1.5">
                                 <div class="w-full py-2 px-3 rounded-xl bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bold flex items-center justify-between">
-                                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-seedling text-emerald-700"></i> Sinyal Aktif di Kebun Anda</span>
+                                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-seedling text-emerald-700"></i> Aktif di Kebun Anda</span>
                                     ${myListing ? `
                                         <button type="button" onclick="openEditListingModal('${myListing.id}')" class="px-2.5 py-1 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-bold cursor-pointer">
                                             <i class="fa-solid fa-pen mr-1"></i>Edit Stok
                                         </button>
                                     ` : ''}
                                 </div>
-                                <p class="text-[10px] text-emerald-800 text-center font-medium">Stok saat ini: ${myListing ? myListing.availableStockKg + ' ' + (myListing.unit || 'Kg') : 'Tercatat di Profil'} • Masuk Analisa AI Surplus &amp; Jadwal Tanam</p>
+                                <p class="text-[10px] text-emerald-800 text-center font-medium">Stok saat ini: ${myListing ? myListing.availableStockKg + ' ' + (myListing.unit || 'Kg') : 'Tercatat di Profil'}</p>
                             </div>
+                        `;
+                    } else if (pullCheck.allowed) {
+                        actionHtml = `
+                            <button type="button" onclick="handlePullProductionSignal('${d.id}')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs font-bold shadow-sm transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i class="fa-solid fa-hand-holding-hand"></i>
+                                <span>Tarik Sinyal Produksi ke Kebun</span>
+                            </button>
                         `;
                     } else {
                         actionHtml = `
-                            <button type="button" onclick="handlePullProductionSignal('${d.id}')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs font-bold shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer">
-                                <i class="fa-solid fa-hand-holding-hand"></i>
-                                <span>Tarik Sinyal Produksi &amp; Tambah ke Kebun</span>
+                            <button type="button" disabled class="w-full py-2.5 rounded-xl bg-stone-200 text-stone-500 border border-stone-300 text-xs font-bold flex items-center justify-center gap-1.5 cursor-not-allowed">
+                                <i class="fa-solid fa-lock text-[11px]"></i>
+                                <span>${pullCheck.label}</span>
                             </button>
                         `;
                     }
                 } else {
-                    // ROLE ADMIN: OTORITAS PENUH
-                    actionHtml = `
-                        <div class="space-y-2">
-                            ${hasVoted ? `
-                                <button disabled class="w-full py-2 rounded-xl bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 cursor-not-allowed">
-                                    <i class="fa-solid fa-circle-check text-emerald-600"></i>
-                                    <span>Sudah Memilih (1 Suara Tercatat)</span>
-                                </button>
-                            ` : `
-                                <button onclick="handleVoteDemand('${d.id}')" class="w-full py-2 rounded-xl bg-forest-50 hover:bg-forest-800 hover:text-white text-forest-800 border border-forest-300 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
-                                    <i class="fa-solid fa-check-to-slot"></i>
-                                    <span>Beri Suara Permintaan (1 SID = 1 Suara)</span>
-                                </button>
-                            `}
-                            ${(d.status === 'MENUNGGU_PEMASOK' || (d.votes || 0) >= VOTE_THRESHOLD) ? `
-                                <button type="button" onclick="handleClaimDemandFromVoting('${d.id}')" class="w-full py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-xs font-bold shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
-                                    <i class="fa-solid fa-truck-fast"></i>
-                                    <span>Sanggupi Pasokan ke Market (Admin/Pemasok)</span>
-                                </button>
-                            ` : ''}
-                        </div>
-                    `;
+                    // ROLE ADMIN: Hanya mengelola penerbitan voting & menyanggupi Sembako Pokok Koperasi RT (Task 1.7b & Section 3)
+                    if (pullCheck.allowed) {
+                        actionHtml = `
+                            <button type="button" onclick="handleClaimDemandFromVoting('${d.id}')" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white text-xs font-bold shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i class="fa-solid fa-truck-fast"></i>
+                                <span>Sanggupi Pasokan Koperasi RT</span>
+                            </button>
+                        `;
+                    } else {
+                        actionHtml = `
+                            <button type="button" disabled class="w-full py-2 rounded-xl bg-stone-100 text-stone-500 border border-stone-200 text-xs font-bold flex items-center justify-center gap-1.5 cursor-not-allowed">
+                                <i class="fa-solid fa-circle-info text-[11px]"></i>
+                                <span>${pullCheck.label}</span>
+                            </button>
+                        `;
+                    }
                 }
 
+                const neededVotes = Math.max(0, threshold - (d.votes || 0));
                 return `
                 <div class="bg-white rounded-2xl border border-stone-200 p-5 shadow-xs hover:shadow-md transition space-y-4 flex flex-col justify-between">
                     <div class="space-y-3">
@@ -1868,20 +2297,20 @@ export function initCoreAppController() {
                             <span class="font-mono text-xs font-semibold text-stone-500">${d.category}</span>
                         </div>
                         <div>
-                            <h4 class="font-bold text-stone-900 text-base leading-tight">${d.name}</h4>
-                            <p class="text-xs text-stone-500 mt-1">Target Maks: <strong class="text-stone-800">${formatRupiah(d.targetPriceMax)}</strong> / Kg</p>
+                            <h4 class="font-bold text-stone-900 text-base leading-tight">${demandName}</h4>
+                            <p class="text-xs text-stone-500 mt-1">Target Maks: <strong class="text-stone-800">${formatRupiah(d.targetPriceMax || 15000)}</strong> / ${d.unit || 'Kg'}</p>
                         </div>
                         <div class="bg-stone-50 p-3 rounded-xl border border-stone-150 space-y-1.5 text-xs">
                             <div class="flex justify-between items-center">
                                 <span class="text-stone-500">Estimasi Kebutuhan RT:</span>
-                                <strong class="font-mono text-forest-800 font-bold">${d.totalDemandKg || d.targetKg || 50} Kg</strong>
+                                <strong class="font-mono text-forest-800 font-bold">${d.totalDemandKg || d.targetKg || 50} ${d.unit || 'Kg'}</strong>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-stone-500">Dukungan Warga:</span>
-                                <strong class="font-mono text-forest-800">${d.votes || 0} Suara KK</strong>
+                                <strong class="font-mono text-forest-800">${d.votes || 0} / ${threshold} Suara KK</strong>
                             </div>
-                            <div class="pt-1 text-[10px] text-stone-600 border-t border-stone-200">
-                                <i class="fa-solid fa-circle-info text-forest-600 mr-1"></i>${d.producerNotes || 'Belum ada catatan produsen'}
+                            <div class="pt-1 text-[11px] text-stone-600 border-t border-stone-200">
+                                <i class="fa-solid fa-circle-info text-forest-600 mr-1"></i>${cleanNote}
                             </div>
                         </div>
                     </div>
@@ -1890,15 +2319,15 @@ export function initCoreAppController() {
                         ${actionHtml}
                         ${d.status === 'TERPENUHI_LOKAL' ? `
                             <div class="w-full py-1.5 px-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-semibold text-center">
-                                <i class="fa-solid fa-store mr-1"></i> Komoditas Terdaftar di Etalase Pasar (Tab 2)
+                                <i class="fa-solid fa-store mr-1"></i> Komoditas Terdaftar di Pasar
                             </div>
                         ` : d.status === 'MENUNGGU_PEMASOK' ? `
                             <div class="w-full py-1.5 px-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] font-semibold text-center">
-                                <i class="fa-solid fa-circle-check mr-1"></i> Target Terpenuhi (${d.votes} Suara) • Siap Ditarik Produsen
+                                <i class="fa-solid fa-circle-check mr-1"></i> Target Terpenuhi (${d.votes} Suara) • ${D && D.isSembakoDemand(d) ? 'Mandat Koperasi RT' : 'Siap Ditarik Produsen'}
                             </div>
                         ` : `
                             <div class="w-full py-1.5 px-3 rounded-xl bg-stone-100 text-stone-600 text-[11px] font-medium text-center">
-                                Butuh ${Math.max(0, VOTE_THRESHOLD - (d.votes || 0))} suara lagi untuk ambang batas KWT
+                                Butuh ${neededVotes} suara lagi untuk mencapai ambang batas (${threshold} suara)
                             </div>
                         `}
                     </div>
@@ -1908,84 +2337,93 @@ export function initCoreAppController() {
         };
 
         window.handleVoteDemand = function handleVoteDemand(demandId) {
+            const D = window.SiPanganDomain;
+            const effectiveRole = D ? D.resolveEffectiveRole(window.appState) : (window.appState.activeRole || 'KONSUMEN');
             const activeSid = window.appState.activeUserSid;
-            if (!activeSid) {
-                showToast("Belum Masuk Akun", "Silakan masuk ke akun keluarga Anda (SID) terlebih dahulu untuk memberi suara.", "warning");
-                switchTab('tab-sid');
+
+            if (effectiveRole !== 'KONSUMEN' || !activeSid || activeSid === 'ADMIN-RT13') {
+                showToast("Khusus Mode Konsumen", "Hak suara voting hanya dapat diberikan oleh warga pada Mode Konsumen (1 SID = 1 Suara).", "warning");
                 return;
             }
 
-            const list = window.appState.demands || window.votingPrograms || [];
+            const list = window.appState.demands || [];
             const demand = list.find(d => d.id === demandId);
             if (!demand) return;
 
-            demand.votedSids = Array.isArray(demand.votedSids) ? demand.votedSids : (Array.isArray(demand.voters) ? [...demand.voters] : []);
-            if (demand.votedSids.includes(activeSid)) {
-                showToast("Suara Sudah Tercatat", "Setiap KK (1 SID) hanya memiliki 1 hak suara per komoditas.", "warning");
+            if (D && !D.can(window.appState, 'VOTE_DEMAND', demand, window.appState)) {
+                showToast("Suara Sudah Tercatat", "Keluarga Anda (1 SID) sudah memberikan 1 suara untuk usulan ini.", "info");
                 return;
             }
 
-            demand.votedSids.push(activeSid);
-            if (!Array.isArray(demand.voters)) demand.voters = [];
-            if (!demand.voters.includes(activeSid)) demand.voters.push(activeSid);
+            const merged = Array.from(new Set([...(demand.voters || []), ...(demand.votedSids || [])]));
+            if (merged.includes(activeSid)) {
+                showToast("Suara Sudah Tercatat", "Keluarga Anda (1 SID) sudah memberikan 1 suara untuk usulan ini.", "info");
+                return;
+            }
+            merged.push(activeSid);
+            demand.voters = merged;
+            demand.votedSids = [...merged];
 
-            // Inisialisasi baseDemandKg jika belum ada
-            if (demand.baseDemandKg === undefined) {
-                demand.baseDemandKg = Math.max(10, (demand.totalDemandKg || 50) - ((demand.votes || 0) * 5));
+            const prevVotes = Number(demand.votes) || 0;
+            demand.votes = prevVotes + 1;
+            const threshold = D ? D.getDemandThreshold(demand) : VOTE_THRESHOLD;
+
+            const avgKgPerKk = String(demand.category || '').toLowerCase().includes('bumbu') ? 1.5 : 3;
+            demand.totalDemandKg = Math.max(15, Math.round(demand.votes * avgKgPerKk));
+
+            if (demand.votes >= threshold && demand.status !== 'TERPENUHI_LOKAL') {
+                demand.status = 'MENUNGGU_PEMASOK';
+                demand.producerNotes = D && D.isSembakoDemand(demand)
+                    ? `Target ${demand.votes}/${threshold} suara tercapai • Menunggu pasokan Koperasi RT`
+                    : `Target ${demand.votes}/${threshold} suara tercapai • Siap ditarik Produsen Kebun`;
             }
 
-            const prevVotes = demand.votes || 0;
-            demand.votes = prevVotes + 1;
-            // Formula rasional: Kebutuhan (Kg) = Base Needs + (Jumlah Vote * 5)
-            demand.totalDemandKg = demand.baseDemandKg + (demand.votes * 5);
-
-            // Cek Ambang Batas Voting (Threshold):
-            if (demand.votes >= VOTE_THRESHOLD && demand.status !== 'TERPENUHI_LOKAL') {
-                demand.status = 'MENUNGGU_PEMASOK';
-                demand.producerNotes = `Lolos ambang batas voting (${demand.votes}/${VOTE_THRESHOLD} suara) • Siap Ditarik Produsen KWT`;
-                if (typeof generateAiDemands === 'function') generateAiDemands();
-                if (typeof renderSupplierDistributionPanel === 'function') renderSupplierDistributionPanel();
+            if (typeof musyawarahTransparencyState !== 'undefined' && Array.isArray(musyawarahTransparencyState.activities)) {
+                const voterMember = (window.appState.members || []).find(m => m.sid === activeSid);
+                musyawarahTransparencyState.activities.unshift({
+                    id: `act-vote-${Date.now()}`,
+                    time: 'Baru saja',
+                    category: 'Usulan Pangan Warga',
+                    description: `${voterMember ? voterMember.name : activeSid} memberi dukungan suara untuk ${demand.name} (${demand.votes}/${threshold} Suara KK).`,
+                    isNew: true
+                });
             }
 
             saveStateToLocal();
-            if (typeof syncAllDataToSupabaseNow === 'function') syncAllDataToSupabaseNow(false);
-            renderDemandsBoard();
+            if (typeof window.syncAllDataToSupabaseNow === 'function') window.syncAllDataToSupabaseNow(false);
+            renderAll();
 
-            if (prevVotes < VOTE_THRESHOLD && demand.votes >= VOTE_THRESHOLD && demand.status === 'MENUNGGU_PEMASOK') {
-                showToast(
-                    "🔥 Lolos Threshold Voting!",
-                    `${demand.name} mencapai ${demand.votes} suara (>= ${VOTE_THRESHOLD})! Status berubah menjadi "Menunggu Pemasok" & siap ditarik Produsen.`,
-                    "success"
-                );
-            } else {
-                showToast("Suara Warga Tercatat!", `1 suara dari ${activeSid} tercatat untuk ${demand.name}. Estimasi kebutuhan kini ${demand.totalDemandKg} Kg (${demand.votes} KK mendukung).`, "success");
-            }
+            showToast(
+                "Suara Berhasil Dicatat!",
+                `Dukungan keluarga Anda tercatat untuk ${demand.name} (${demand.votes}/${threshold} suara).`,
+                "success"
+            );
         };
 
-        // === FITUR PRODUSEN: TARIK SINYAL PRODUKSI KE KEBUN & EDIT STOK ===
+        // === FITUR PRODUSEN: TARIK SINYAL PRODUKSI KE KEBUN (DENGAN 3 GUARD KETAT TASK 1.7) ===
         window.handlePullProductionSignal = function handlePullProductionSignal(demandId) {
-            const list = window.appState.demands || window.votingPrograms || [];
+            const D = window.SiPanganDomain;
+            const list = window.appState.demands || [];
             const d = list.find(x => x.id === demandId);
             if (!d) return;
 
-            const activeSid = window.appState.activeUserSid;
-            let member = (window.appState.members || []).find(m => m.sid === activeSid);
-
-            // Jika role adalah ADMIN yang sedang mengelola, assign ke produsen aktif
-            if (!member && (window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN')) {
-                member = (window.appState.members || []).find(m => typeof window.isProducerMember === 'function' ? window.isProducerMember(m) : m.role === 'PRODUSEN') || window.appState.members[0];
-            }
-
-            if (!member || (typeof window.isProducerMember === 'function' && !window.isProducerMember(member))) {
-                showToast("Peran Produsen Diperlukan", "Hanya akun Produsen KWT / Ternak terdaftar yang dapat menarik sinyal produksi ke etalase kebun.", "warning");
+            const eligibility = D ? D.checkPullSignalEligibility(window.appState, d, window.appState) : { allowed: false, label: 'Akses ditolak' };
+            if (!eligibility.allowed) {
+                showToast("Tidak Dapat Menarik Sinyal", eligibility.label || "Syarat penarikan sinyal belum terpenuhi.", "warning");
                 return;
             }
 
-            const commName = d.name.trim();
+            const activeSid = window.appState.activeUserSid;
+            const member = (window.appState.members || []).find(m => m.sid === activeSid);
+            if (!member || (typeof window.isProducerMember === 'function' && !window.isProducerMember(member))) {
+                showToast("Peran Produsen Diperlukan", "Hanya akun Produsen terdaftar yang dapat menarik sinyal produksi ke kebun.", "warning");
+                return;
+            }
+
+            const commName = (d.name || d.commodity || '').trim();
             const commCategory = d.category || 'Sayur Pekarangan';
             const commStock = Math.max(15, Number(d.totalDemandKg) || 20);
 
-            // 1. Masukkan ke Komoditas Pekarangan yang Dihasilkan (registeredCommodities)
             member.isDualRole = true;
             member.registeredCommodities = Array.isArray(member.registeredCommodities) ? member.registeredCommodities : [];
             const existsReg = member.registeredCommodities.some(c => (typeof c === 'string' ? c : c.name).toLowerCase() === commName.toLowerCase());
@@ -1997,7 +2435,6 @@ export function initCoreAppController() {
                 });
             }
 
-            // 2. Sinkronkan ke producerCommodity string
             if (!member.producerCommodity || member.producerCommodity === '-') {
                 member.producerCommodity = commName;
             } else if (!member.producerCommodity.toLowerCase().includes(commName.toLowerCase())) {
@@ -2005,7 +2442,6 @@ export function initCoreAppController() {
             }
             member.capacityKg = (Number(member.capacityKg) || 0) + commStock;
 
-            // 3. Patokan harga adil Bapanas
             let fairPrice = Number(d.targetPriceMax) || 6000;
             const intelKeys = Object.keys(window.LAMPUNG_MARKET_INTELLIGENCE || {});
             const matchedKey = intelKeys.find(k => k.toLowerCase().includes(commName.toLowerCase()) || commName.toLowerCase().includes(k.toLowerCase()));
@@ -2014,15 +2450,14 @@ export function initCoreAppController() {
                 fairPrice = info.recommendedPrice || info.fairPrice || fairPrice;
             }
 
-            // 4. Tambahkan atau update listing kebun produsen
-            let existingListing = (window.appState.listings || []).find(l => 
-                l.producerSid === member.sid && 
+            let existingListing = (window.appState.listings || []).find(l =>
+                l.producerSid === member.sid &&
                 l.commodity.toLowerCase().trim() === commName.toLowerCase().trim()
             );
 
             if (!existingListing) {
                 existingListing = {
-                    id: 'list-' + Date.now(),
+                    id: D ? D.generateUniqueListingId(window.appState.listings) : ('list-' + Date.now()),
                     producerSid: member.sid,
                     producerName: member.name,
                     commodity: commName,
@@ -2042,7 +2477,7 @@ export function initCoreAppController() {
                     location: member.address || 'RT 13 Yosomulyo',
                     distanceKm: member.distanceKm || 0.15,
                     icon: commCategory.includes('Lauk') ? 'fa-fish' : commCategory.includes('Beras') ? 'fa-wheat-awn' : 'fa-seedling',
-                    description: `Hasil penarikan sinyal produksi usulan warga (${d.votes} suara KK) oleh ${member.name}. Siap panen & dipasarkan.`
+                    description: `Hasil penarikan sinyal produksi usulan warga (${d.votes} suara KK) oleh ${member.name}.`
                 };
                 window.appState.listings.unshift(existingListing);
             } else {
@@ -2050,11 +2485,11 @@ export function initCoreAppController() {
                 existingListing.initialHarvestKg = (Number(existingListing.initialHarvestKg) || 0) + commStock;
             }
 
-            // 5. Update status demand
             d.status = 'TERPENUHI_LOKAL';
-            d.producerNotes = `Sinyal ditarik oleh ${member.name} (${member.sid}) • Siap Panen di Kebun`;
+            d.suppliedBySid = member.sid;
+            d.suppliedByName = member.name;
+            d.producerNotes = `Disediakan oleh: ${member.name}`;
 
-            // 6. Simpan State & Sinkronkan
             saveStateToLocal();
             if (typeof syncAllDataToSupabaseNow === 'function') syncAllDataToSupabaseNow(false);
 
@@ -2545,15 +2980,15 @@ export function initCoreAppController() {
 
             const allDemands = generateAiDemands();
             // Syarat Filter Panel Permintaan AI:
-            // 1. Total kebutuhan > 0 (SID Tab 2 atau Hasil Voting >= Threshold)
-            // 2. Belum ada atau stoknya kosong (<= 0) di Market / Etalase (Tab 3)
+            // 1. Total kebutuhan > 0 (data KK warga atau Hasil Voting >= Threshold)
+            // 2. Belum ada atau stoknya kosong (<= 0) di Komoditas Terdaftar di Pasar
             const openDemands = allDemands.filter(d => d.totalKg > 0 && d.marketStockKg <= 0);
             const totalMemberCount = (window.appState.members || []).length;
 
             if (pillEl) {
                 pillEl.textContent = openDemands.length > 0
-                    ? `${openDemands.length} Komoditas Butuh Pasokan • ${totalMemberCount} SID`
-                    : `Semua Komoditas Tersedia di Market • ${totalMemberCount} SID`;
+                    ? `${openDemands.length} Komoditas Butuh Pasokan • ${totalMemberCount} KK`
+                    : `Semua Komoditas Tersedia di Pasar • ${totalMemberCount} KK`;
             }
 
             if (openDemands.length === 0) {
@@ -2563,10 +2998,10 @@ export function initCoreAppController() {
                             <div class="inline-flex flex-col items-center gap-2 max-w-lg mx-auto">
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
                                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                    Seluruh Komoditas AI &amp; Voting Sudah Tersedia di Market (Tab 3)
+                                    Seluruh Komoditas Terdaftar di Pasar Memiliki Stok Tersedia
                                 </span>
                                 <p class="text-xs text-slate-500 leading-relaxed">
-                                    Saat ini seluruh kebutuhan komoditas dari 40 SID warga maupun hasil E-Voting masih memiliki stok tersedia di Etalase Pasar Tab 3. Komoditas akan otomatis muncul kembali di antrean ini untuk diambil alih pemasok apabila stoknya di Market habis (0 Kg) atau ada voting baru mencapai ${VOTE_THRESHOLD} suara.
+                                    Saat ini seluruh kebutuhan komoditas dari data KK warga maupun hasil E-Voting masih memiliki stok tersedia di Komoditas Terdaftar di Pasar. Komoditas akan otomatis muncul kembali di antrean ini apabila stoknya habis (0 Kg) atau ada voting baru mencapai ${VOTE_THRESHOLD} suara.
                                 </p>
                             </div>
                         </td>
@@ -2683,7 +3118,7 @@ export function initCoreAppController() {
                 const hay = (dem.name || '').toLowerCase();
                 if (hay.includes(item.key)) {
                     dem.status = 'TERPENUHI_LOKAL';
-                    dem.producerNotes = `Tersedia di Market (Tab 3) — Disuplai oleh ${producer.name} (${producer.sid})`;
+                    dem.producerNotes = `Disediakan oleh: ${producer.name}`;
                 }
             });
 
@@ -2691,89 +3126,177 @@ export function initCoreAppController() {
             musyawarahTransparencyState.activities.unshift({
                 id: `act-claim-${Date.now()}`,
                 time: 'Baru saja',
-                category: 'Kuota Masuk Market',
-                description: `${producer.name} (${producer.sid}) mengambil alih kuota ${item.label} (${item.totalKg} ${item.unit}). Produk kini berstatus Tersedia di Market (Tab 3) untuk dibeli warga.`,
+                category: 'Kuota Masuk Pasar',
+                description: `${producer.name} (${producer.sid}) mengambil alih kuota ${item.label} (${item.totalKg} ${item.unit}). Produk kini berstatus Komoditas Terdaftar di Pasar untuk dibeli warga.`,
                 isNew: true
             });
 
             renderAll();
             showToast(
-                "Masuk ke Market (Tab 3)!",
-                `${item.label} (${item.totalKg} ${item.unit}) disuplai oleh ${producer.name} kini berstatus Tersedia di Market.`,
+                "Komoditas Terdaftar di Pasar!",
+                `${item.label} (${item.totalKg} ${item.unit}) disediakan oleh ${producer.name} dan kini tersedia di Pasar Warga.`,
                 "success"
             );
         }
 
         window.handleClaimDemandFromVoting = function handleClaimDemandFromVoting(demandId) {
-            const list = window.appState.demands || window.votingPrograms || [];
+            const D = window.SiPanganDomain;
+            const list = window.appState.demands || [];
             const d = list.find(x => x.id === demandId);
-            if (!d || d.status === 'TERPENUHI_LOKAL') return;
+            if (!d) return;
 
-            const producer = musyawarahTransparencyState.currentProducer;
-            const qtyKg = Math.max(10, Number(d.totalDemandKg) || 40);
+            const eligibility = D ? D.checkPullSignalEligibility(window.appState, d, window.appState) : { allowed: false, label: 'Akses ditolak' };
+            if (!eligibility.allowed) {
+                showToast("Tidak Dapat Menyanggupi Pasokan", eligibility.label || "Syarat pemenuhan sinyal belum terpenuhi.", "warning");
+                return;
+            }
+
+            const demandName = d.name || d.commodity || 'Komoditas Usulan';
+            const isAdmin = D ? D.resolveEffectiveRole(window.appState) === 'ADMIN' : Boolean(window.appState.isAdminLoggedIn);
+            const supplierSid = isAdmin ? 'KOPERASI-RT13' : musyawarahTransparencyState.currentProducer.sid;
+            const supplierName = isAdmin ? 'Koperasi RT 13' : musyawarahTransparencyState.currentProducer.name;
+
+            const qtyKg = Math.max(10, Number(d.totalDemandKg || d.targetKg) || 40);
             const fairPrice = Number(d.targetPriceMax) || 15000;
             const pengepulPrice = Math.round((fairPrice * 0.8) / 500) * 500;
             const marketPrice = Math.round((fairPrice * 1.2) / 500) * 500;
 
             d.status = 'TERPENUHI_LOKAL';
-            d.producerNotes = `Tersedia di Market (Tab 3) — Disuplai oleh ${producer.name} (${producer.sid})`;
+            d.suppliedBySid = supplierSid;
+            d.suppliedByName = supplierName;
+            d.producerNotes = `Disediakan oleh: ${supplierName}`;
 
-            addMarketItemFromQuotaTakeover({
-                commodity: d.name,
+            const newListingId = D ? D.generateUniqueListingId(window.appState.listings) : `list-${Date.now()}`;
+            window.appState.listings.unshift({
+                id: newListingId,
+                producerSid: supplierSid,
+                producerName: supplierName,
+                managedByCoop: isAdmin,
+                commodity: demandName,
                 category: d.category || 'Sembako Pokok',
-                qtyKg: qtyKg,
-                unit: 'Kg',
-                fairPrice: fairPrice,
-                pengepulPrice: pengepulPrice,
-                marketPrice: marketPrice,
+                unit: d.unit || 'Kg',
+                harvestDate: 'Tersedia Hari Ini',
+                plantDate: 'Terjadwal',
+                initialHarvestKg: qtyKg,
+                localAbsorbedKg: 0,
+                availableStockKg: qtyKg,
+                pengepulPrice,
+                tengkulakPrice: pengepulPrice,
+                marketPrice,
+                marketLampungPrice: marketPrice,
+                fairPrice,
                 freshnessWindow: '14 Hari',
-                freshnessDays: 14,
-                icon: 'fa-basket-shopping',
-                description: `Realisasi permintaan E-Voting warga (${d.votes} suara KK). Disuplai oleh ${producer.name} (${producer.sid}).`
+                freshnessDaysRemaining: 14,
+                location: 'Lumbung Koperasi RT 13 Yosomulyo',
+                distanceKm: 0.1,
+                isSpecialCase: false,
+                isFromQuotaTakeover: true,
+                caseTag: `Disediakan oleh: ${supplierName}`,
+                description: `Realisasi usulan warga (${d.votes} suara KK). Disediakan oleh: ${supplierName}.`,
+                icon: 'fa-basket-shopping'
             });
 
             musyawarahTransparencyState.activities.forEach(a => { a.isNew = false; });
             musyawarahTransparencyState.activities.unshift({
                 id: `act-evote-${Date.now()}`,
                 time: 'Baru saja',
-                category: 'Realisasi E-Voting',
-                description: `${producer.name} (${producer.sid}) menyanggupi permintaan E-Voting ${d.name} (${qtyKg} Kg) — kini Tersedia di Market (Tab 3).`,
+                category: 'Realisasi Usulan Pangan',
+                description: `${supplierName} menyanggupi permintaan ${demandName} (${qtyKg} ${d.unit || 'Kg'}) — kini Tersedia di Pasar.`,
                 isNew: true
             });
 
+            saveStateToLocal();
+            if (typeof window.syncAllDataToSupabaseNow === 'function') window.syncAllDataToSupabaseNow(false);
             renderAll();
             showToast(
-                "Permintaan E-Voting Tersedia!",
-                `${d.name} (${qtyKg} Kg) disuplai oleh ${producer.name} kini Tersedia di Market (Tab 3).`,
+                "Pasokan Koperasi Diterbitkan!",
+                `${demandName} (${qtyKg} ${d.unit || 'Kg'}) disediakan oleh ${supplierName} dan kini Tersedia di Pasar.`,
                 "success"
             );
         }
 
-        // TAB 6: IMPACT EVALUATION & TRANSACTIONS LEDGER
+        // TAB 6: IMPACT EVALUATION & TRANSACTIONS LEDGER (9 Kolom Resmi + Flag Data Tidak Valid - Keputusan 2.1 & Uji 5.1)
         window.renderTransactionsLedger = function renderTransactionsLedger() {
             const tbody = document.getElementById('ledgerTableBody');
             if (!tbody) return;
 
+            const D = window.SiPanganDomain;
+            if (D) D.auditAndFlagAppState(window.appState);
+
+            const auditBanner = document.getElementById('adminInvalidDataAuditBanner');
+            if (auditBanner && D) {
+                const recap = D.getBeforeAfterSelfBuyingRecap(window.appState.transactions || []);
+                const invalidNiks = D.getInvalidNikMembers(window.appState.members || []);
+                if (recap.excludedSelfBuying.length > 0 || invalidNiks.length > 0) {
+                    auditBanner.classList.remove('hidden');
+                    const sbIds = recap.excludedSelfBuying.map(x => `${x.id} (${x.producerSid}, ${x.quantityKg} Kg, ${formatRupiah(x.subtotalProduk)})`).join('; ');
+                    const nikText = invalidNiks.map(x => `${x.sid} (${x.name}, NIK: "${x.rawNik}")`).join('; ');
+                    auditBanner.innerHTML = `
+                        <div class="font-bold flex items-center gap-1.5 text-rose-900">
+                            <i class="fa-solid fa-shield-exclamation text-rose-700"></i>
+                            <span>Audit Integritas Data (Data Tidak Dihapus — Diberi Flag &amp; Dikecualikan dari Rekap/AI)</span>
+                        </div>
+                        ${recap.excludedSelfBuying.length > 0 ? `
+                            <p class="text-[11px] text-rose-800">
+                                <strong>Self-Buying Tidak Valid:</strong> ${sbIds} — Rekap sebelum pengecualian: <span class="font-mono font-bold">${recap.before.count} pesanan / ${recap.before.totalKg} Kg (${formatRupiah(recap.before.omzetProduk)})</span> &rarr; Sesudah pengecualian: <span class="font-mono font-bold text-emerald-800">${recap.after.count} pesanan / ${recap.after.totalKg} Kg (${formatRupiah(recap.after.omzetProduk)})</span>.
+                            </p>
+                        ` : ''}
+                        ${invalidNiks.length > 0 ? `
+                            <p class="text-[11px] text-rose-800">
+                                <strong>NIK Belum Valid (Wajib 16 Digit Angka):</strong> ${nikText}.
+                            </p>
+                        ` : ''}
+                    `;
+                } else {
+                    auditBanner.classList.add('hidden');
+                    auditBanner.innerHTML = '';
+                }
+            }
+
             const filterType = document.getElementById('ledgerTypeFilter')?.value || 'ALL';
-            const filtered = window.appState.transactions.filter(t => {
+            const deduped = D ? D.dedupeTransactionsById(window.appState.transactions || []) : (window.appState.transactions || []);
+            const filtered = deduped.filter(t => {
                 if (filterType === 'ALL') return true;
                 return t.type === filterType;
             });
 
             tbody.innerHTML = filtered.map(t => {
-                const prod = window.appState.members.find(m => m.sid === t.producerSid);
-                const cons = window.appState.members.find(m => m.sid === t.consumerSid);
+                const prod = (window.appState.members || []).find(m => m.sid === t.producerSid);
+                const cons = (window.appState.members || []).find(m => m.sid === t.consumerSid);
+                const amt = D ? D.calcTransactionAmounts(t) : {
+                    omzetBersihProdusen: Number(t.subtotal) || 0,
+                    biayaAntar: Number(t.deliveryFee) || 0,
+                    total: Number(t.totalPaid ?? t.subtotal) || 0
+                };
+                const periodYm = D ? D.inferTransactionPeriod(t, window.appState) : (t.period || '2026-10');
+                const normSt = D ? D.getNormalizedOrderStatus(t) : (t.orderStatus || 'SELESAI_LUNAS');
+                const isSelfBuy = Boolean(t.isInvalidSelfBuying || (D && D.isSelfBuyingTransaction(t)));
+                const isCancelled = normSt === 'DIBATALKAN';
 
-                const prodText = prod ? `${getMemberDisplayName(prod)} (${t.producerSid})` : `${t.producerName} (${t.producerSid})`;
-                const consText = cons ? `${getMemberDisplayName(cons)} (${t.consumerSid})` : (t.consumerName || t.consumerSid);
+                const prodText = prod ? `${getMemberDisplayName(prod)} (${t.producerSid})` : `${t.producerName} (${t.producerSid || '-'})`;
+                const consText = cons ? `${getMemberDisplayName(cons)} (${t.consumerSid})` : `${t.consumerName || t.consumerSid || '-'}`;
+
+                let statusPill = '';
+                if (isSelfBuy) {
+                    statusPill = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">TIDAK VALID (Self-Buying)</span>';
+                } else if (isCancelled) {
+                    statusPill = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-stone-200 text-stone-600">DIBATALKAN</span>';
+                } else if (t.type === 'BANTUAN_INKLUSI_PANGAN') {
+                    statusPill = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-terracotta-100 text-terracotta-900">BANTUAN INKLUSI</span>';
+                } else if (t.type === 'EKSPANSI_PASAR_LUAR' || t.status === 'TERVERIFIKASI_MBG_KOPERASI') {
+                    statusPill = '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-paddy-100 text-paddy-900">TERVERIFIKASI MBG/KOPERASI</span>';
+                } else {
+                    statusPill = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-forest-100 text-forest-800">${normSt === 'SELESAI_LUNAS' ? 'TERVERIFIKASI LUNAS' : normSt}</span>`;
+                }
 
                 return `
-                    <tr class="hover:bg-stone-50 transition border-b border-stone-100">
+                    <tr class="${isSelfBuy ? 'bg-rose-50/70' : isCancelled ? 'bg-stone-50/70 opacity-60' : 'hover:bg-stone-50'} transition border-b border-stone-100">
                         <td class="py-3 px-3.5 font-mono font-bold text-stone-900">
-                            <span class="px-2 py-0.5 rounded bg-stone-100 text-stone-800 border border-stone-200">${t.id}</span>
+                            <span class="px-2 py-0.5 rounded ${isSelfBuy ? 'bg-rose-100 text-rose-900 border-rose-300' : 'bg-stone-100 text-stone-800 border-stone-200'} border">${t.id}</span>
                         </td>
                         <td class="py-3 px-3.5 text-stone-600 text-[11px] whitespace-nowrap">
-                            ${t.timestamp}
+                            <div>${t.timestamp || '-'}</div>
+                            <span class="font-mono text-[10px] text-stone-400">Periode: ${periodYm}</span>
                         </td>
                         <td class="py-3 px-3.5 font-medium text-stone-800">
                             ${prodText}
@@ -2784,18 +3307,18 @@ export function initCoreAppController() {
                         <td class="py-3 px-3.5 font-semibold text-stone-900">
                             ${t.commodity} (${t.quantityKg} Kg)
                         </td>
-                        <td class="py-3 px-3.5 text-right font-mono font-bold text-stone-900">
-                            ${formatRupiah(t.subtotal)}
+                        <td class="py-3 px-3.5 text-right font-mono font-bold ${isSelfBuy || isCancelled ? 'line-through text-stone-400' : 'text-forest-900'}">
+                            ${formatRupiah(amt.omzetBersihProdusen)}
                         </td>
-                        <td class="py-3 px-3.5 text-stone-600 text-[11px]">
-                            ${t.deliveryMethod}
+                        <td class="py-3 px-3.5 text-right font-mono text-[11px] text-stone-700">
+                            ${formatRupiah(amt.biayaAntar)}
+                            <span class="block text-[10px] font-sans text-stone-400">${t.deliveryMethod || 'Ambil Sendiri'}</span>
+                        </td>
+                        <td class="py-3 px-3.5 text-right font-mono font-bold ${isSelfBuy || isCancelled ? 'line-through text-stone-400' : 'text-stone-900'}">
+                            ${formatRupiah(amt.total)}
                         </td>
                         <td class="py-3 px-3.5 text-center">
-                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${t.type === 'BANTUAN_INKLUSI_PANGAN' ? 'bg-terracotta-100 text-terracotta-900' :
-                        t.type === 'EKSPANSI_PASAR_LUAR' ? 'bg-paddy-100 text-paddy-900' : 'bg-forest-100 text-forest-800'
-                    }">
-                                ${t.status}
-                            </span>
+                            ${statusPill}
                         </td>
                     </tr>
                 `;
@@ -2812,26 +3335,28 @@ export function initCoreAppController() {
             if (ctx1) {
                 if (chart1Instance) chart1Instance.destroy();
 
+                const liveListings = (window.appState.listings || []).filter(l => l && !l.isDemoListing);
+                const cleanName = n => String(n || '').replace(/\(.*?\)/g, '').trim();
                 chart1Instance = new Chart(ctx1, {
                     type: 'bar',
                     data: {
-                        labels: ['Bayam (50kg)', 'Beras Ciherang (1 Ton)', 'Tempe & Tahu (30kg)', 'Cabai & Tomat (25kg)', 'Lele Bioflok (40kg)'],
+                        labels: liveListings.length ? liveListings.map(l => cleanName(l.commodity)) : ['Belum ada data'],
                         datasets: [
                             {
                                 label: 'Serapan Konsumsi RT 13 (Kg)',
-                                data: [29, 420, 18, 15, 22],
+                                data: liveListings.length ? liveListings.map(l => Number(l.localAbsorbedKg) || 0) : [0],
                                 backgroundColor: '#1B4332',
                                 borderRadius: 6
                             },
                             {
-                                label: 'Alokasi Surplus Pasar Luar (Kg)',
-                                data: [0, 400, 0, 0, 0],
+                                label: 'Disalurkan ke MBG/Koperasi (Kg)',
+                                data: liveListings.length ? liveListings.map(l => Number(l.b2bDispatchedKg) || 0) : [0],
                                 backgroundColor: '#B45309',
                                 borderRadius: 6
                             },
                             {
                                 label: 'Sisa Stok Tersedia (Kg)',
-                                data: [21, 180, 12, 10, 18],
+                                data: liveListings.length ? liveListings.map(l => (Number(l.availableStockKg) || 0) + (Number(l.unabsorbedSurplusKg) || 0)) : [0],
                                 backgroundColor: '#D6D3D1',
                                 borderRadius: 6
                             }
@@ -2859,8 +3384,9 @@ export function initCoreAppController() {
             if (ctx2) {
                 if (chart2Instance) chart2Instance.destroy();
 
-                const turnoverP2P = window.appState.transactions.filter(t => t.type !== 'BANTUAN_INKLUSI_PANGAN' && t.type !== 'DISTRIBUSI_BANTUAN_PANGAN').reduce((acc, t) => acc + (t.subtotal || 0), 0) + 5000000;
-                const aidTotal = window.appState.transactions.filter(t => t.type === 'BANTUAN_INKLUSI_PANGAN' || t.type === 'DISTRIBUSI_BANTUAN_PANGAN').reduce((acc, t) => acc + (t.subtotal || 0), 0) + 390000;
+                const reconChart = window.SiPanganDomain ? window.SiPanganDomain.getFinancialReconciliation(window.appState) : { omzetP2pProduk: 0, penyaluranB2bKoperasi: 0, penyaluranBantuanInklusi: 0 };
+                const turnoverP2P = reconChart.omzetP2pProduk + reconChart.penyaluranB2bKoperasi;
+                const aidTotal = reconChart.penyaluranBantuanInklusi;
                 const reserveKas = window.appState.danaSosialInklusi;
 
                 chart2Instance = new Chart(ctx2, {
@@ -3393,7 +3919,7 @@ export function initCoreAppController() {
                 if (sideDesc) {
                     sideDesc.innerHTML = 'Akses Penuh Pengurus: Verifikasi KK/KWT, Atur Voting, Rekonsiliasi Kas, &amp; Laporan Dinas. <a href="javascript:void(0)" onclick="logoutAdminRole()" class="text-red-600 font-bold hover:underline ml-1">[Keluar]</a>';
                 }
-                if (marketProducerActions) marketProducerActions.classList.remove('hidden');
+                if (marketProducerActions) marketProducerActions.classList.add('hidden');
                 if (adminVerificationPanel) adminVerificationPanel.classList.remove('hidden');
                 if (adminReconciliationPanel) adminReconciliationPanel.classList.remove('hidden');
                 if (consumerBecomeProducerBanner) consumerBecomeProducerBanner.classList.add('hidden');
@@ -3449,27 +3975,45 @@ export function initCoreAppController() {
         }
 
         window.handleCloseMonthPeriod = function handleCloseMonthPeriod() {
+            const D = window.SiPanganDomain;
+            if (D && !D.can(window.appState, 'CLOSE_PERIOD', null, window.appState)) {
+                showToast("Akses Ditolak", "Hanya Pengurus RT (Admin) yang dapat menutup buku periode.", "error");
+                return;
+            }
+            const res = D ? D.closeMonthlyPeriod(window.appState) : { ok: false };
+            if (!res.ok) {
+                showToast("Tutup Buku Ditolak", "Periode ini sudah ditutup sebelumnya dan tidak dapat ditutup dua kali.", "warning");
+                window.renderPeriodStatus();
+                return;
+            }
+            if (typeof window.saveStateToLocal === 'function') window.saveStateToLocal();
+            if (typeof window.syncAllDataToSupabaseNow === 'function') window.syncAllDataToSupabaseNow(false);
+            renderAll();
+            window.renderPeriodStatus();
+            showToast("Penutupan Buku Berhasil", `Buku besar ${res.closedLabel} dikunci. Periode ${res.nextLabel} kini terbuka untuk transaksi baru.`, "success");
+        }
+
+        window.renderPeriodStatus = function renderPeriodStatus() {
+            const D = window.SiPanganDomain;
+            if (!D) return;
             const badge = document.getElementById('periodStatusBadge');
             const seal = document.getElementById('periodAuditSeal');
             const btnText = document.getElementById('closePeriodBtnText');
             const btn = document.getElementById('closePeriodBtn');
-
+            const per = D.getCurrentOpenPeriod(window.appState);
+            const last = window.appState.lastClosedPeriod;
             if (badge) {
-                badge.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-600"></i> Periode Oktober 2026: DITUTUP & TERKUNCI (CLOSED)';
-                badge.className = 'text-sm font-bold text-emerald-800 flex items-center gap-1.5';
+                badge.innerHTML = `<i class="fa-solid fa-hourglass-half text-amber-600"></i> Periode Berjalan (${D.formatPeriodLabel(per)})`;
+                badge.className = 'text-sm font-bold text-amber-700 flex items-center gap-1.5';
             }
             if (seal) {
-                seal.innerHTML = 'Segel Audit: <span class="font-mono font-bold text-emerald-700">SEAL-PKK-YSM-202610-LOCKED-SHA256</span> (Resmi)';
+                seal.textContent = last
+                    ? `Periode ${D.formatPeriodLabel(last)} terkunci • Aktif: ${per}`
+                    : `Periode Aktif: ${per}`;
             }
-            if (btnText) {
-                btnText.textContent = 'Buku Besar Terkunci (Closed)';
-            }
-            if (btn) {
-                btn.disabled = true;
-                btn.className = 'px-4 py-2 rounded-xl bg-stone-300 text-stone-600 text-xs font-bold flex items-center gap-1.5 cursor-not-allowed shadow-none';
-            }
-            showToast("Penutupan Buku Berhasil", "Buku besar periode Oktober 2026 ditutup & disegel resmi untuk laporan dinas.", "success");
-        }
+            if (btnText) btnText.textContent = `Tutup Buku ${D.formatPeriodLabel(per)}`;
+            if (btn) btn.disabled = false;
+        };
 
         window.handleExportOfficialGovReport = function handleExportOfficialGovReport() {
             openModal('modalGovReport');
@@ -3477,16 +4021,24 @@ export function initCoreAppController() {
         }
 
         window.copyGovReportSummary = function copyGovReportSummary() {
+            const D = window.SiPanganDomain;
+            const members = (window.appState.members || []).filter(m => !m.isDemoAccount);
+            const baseline = D ? D.computeCommunityBaselineNeeds(members) : null;
+            const kkCount = baseline ? baseline.kkCount : members.length;
+            const jiwa = baseline ? baseline.totalJiwa : members.reduce((s, m) => s + (Number(m.familySize) || 4), 0);
+            const inv = D ? D.getInventorySummary(window.appState) : { totalPanganBeredarKg: 0, totalStokPanenTersediaKg: 0, serapanPersen: 0 };
+            const recon = D ? D.getFinancialReconciliation(window.appState) : { totalPerputaran: 0, selisihKas: 0, isMatched: true };
+            const activePer = D ? D.formatPeriodLabel(D.getCurrentOpenPeriod(window.appState)) : 'Oktober 2026';
             const summaryText = `*NOTA LAPORAN MONITORING INFLASI MIKRO & KETAHANAN PANGAN RT 13 YOSOMULYO*\n` +
-                `Periode: Oktober 2026\n` +
+                `Periode: ${activePer}\n` +
                 `Nomor: 045.2/PKK-RT13/YSM/X/2026\n\n` +
-                `1. Cakupan Populasi: 40 KK (160 Jiwa)\n` +
-                `2. Total Pangan Beredar: 624 Kg (Serapan Panen Lokal KWT: 89,2%)\n` +
-                `3. Omzet Produsen Lokal: Rp 8.064.000,- (0% komisi fee)\n` +
+                `1. Cakupan Populasi: ${kkCount} KK (${jiwa} Jiwa)\n` +
+                `2. Total Pangan Tersalurkan: ${inv.totalPanganBeredarKg} Kg • Stok Tersedia: ${inv.totalStokPanenTersediaKg} Kg (Serapan Lokal: ${String(inv.serapanPersen).replace('.', ',')}%)\n` +
+                `3. Total Perputaran Pangan Terverifikasi: ${formatRupiah(recon.totalPerputaran)},- (0% komisi fee)\n` +
                 `4. Indeks Inflasi Mikro: -8,4% (lebih terkendali dibanding harga PIHPS)\n` +
-                `5. Intervensi Kerentanan Pangan: 5 KK prioritas stunting tertangani 100%\n` +
-                `6. Rekonsiliasi Kas: 100% MATCHED (Selisih Kas Rp 0,-)\n` +
-                `7. Segel Audit: SEAL-PKK-YSM-202610-LOCKED-SHA256\n\n` +
+                `5. Intervensi Kerentanan Pangan: Klaster rentan prioritas tertangani 100%\n` +
+                `6. Rekonsiliasi Kas: ${recon.isMatched ? '100% MATCHED' : 'PERLU REKONSILIASI'} (Selisih Kas ${formatRupiah(recon.selisihKas || 0)})\n` +
+                `7. Status Keamanan Data: Terlindungi (SEAL-PKK-YSM-RESMI)\n\n` +
                 `Tertanda,\nKetua RT 13 Yosomulyo & TP PKK Kelurahan Yosomulyo, Kota Metro.`;
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -3508,40 +4060,84 @@ export function initCoreAppController() {
         window.pendingMemberEditData = null;
 
         window.openEditMemberModal = function openEditMemberModal(sid) {
+            const D = window.SiPanganDomain;
+            if (D && !D.can(window.appState, 'EDIT_KK_DATA', null, window.appState)) {
+                showToast('Akses Ditolak', 'Hanya Pengurus RT (Admin) yang dapat mengubah data kependudukan SID.', 'error');
+                return;
+            }
             const m = (window.appState.members || []).find(x => x.sid === sid);
             if (!m) return;
 
             currentEditingMemberSid = sid;
             document.getElementById('editMemberSid').value = m.sid;
             document.getElementById('editMemberSidDisplay').value = m.sid;
-            document.getElementById('editMemberNik').value = m.rawNik || (m.nik || '1872010000000000');
-            document.getElementById('editMemberName').value = m.name;
+            // State binding murni milik SID ini tanpa fallback palsu (Task 1.6)
+            document.getElementById('editMemberNik').value = m.rawNik !== undefined && m.rawNik !== null ? String(m.rawNik) : '';
+            document.getElementById('editMemberName').value = m.name || '';
             document.getElementById('editMemberAddress').value = m.address || 'RT 13 Yosomulyo';
             document.getElementById('editMemberFamilySize').value = m.familySize || 4;
             document.getElementById('editMemberIncome').value = m.monthlyIncome || 2000000;
             document.getElementById('editMemberTier').value = m.socialTier || 'WASPADA';
             document.getElementById('editMemberRole').value = m.role || 'KONSUMEN';
-            document.getElementById('editMemberCommodity').value = m.producerCommodity || '';
+            document.getElementById('editMemberCommodity').value = (m.producerCommodity && m.producerCommodity !== '-') ? m.producerCommodity : '';
+            
+            // Hak Akses PIN: Hanya Admin yang dapat melihat & mengubah PIN warga via #editMemberPin
+            const isAdmin = Boolean(window.appState?.isAdminLoggedIn || window.appState?.activeRole === 'ADMIN');
+            const pinSection = document.getElementById('editMemberPinSection');
+            if (pinSection) {
+                pinSection.classList.toggle('hidden', !isAdmin);
+            }
+            const pinEl = document.getElementById('editMemberPin');
+            if (pinEl) pinEl.value = isAdmin ? (m.pinCode || '1234') : '';
 
+            validateEditMemberNikLive(null);
             openModal('modalEditMember');
         }
 
         window.handlePromptConfirmMemberEdit = function handlePromptConfirmMemberEdit(e) {
             if (e && e.preventDefault) e.preventDefault();
+            const D = window.SiPanganDomain;
+            if (D && !D.can(window.appState, 'EDIT_KK_DATA', null, window.appState)) {
+                showToast('Akses Ditolak', 'Hanya Pengurus RT (Admin) yang dapat menyimpan perubahan data SID.', 'error');
+                return;
+            }
+            const isAdmin = Boolean(window.appState?.isAdminLoggedIn || window.appState?.activeRole === 'ADMIN');
+            if (!isAdmin) {
+                showToast('Akses Ditolak', 'Hanya Pengurus RT (Admin) yang berhak mengubah data SID dan PIN warga.', 'error');
+                return;
+            }
+
+            const rawNikInput = document.getElementById('editMemberNik').value.trim();
+            const currentSid = document.getElementById('editMemberSid').value;
+            const pinVal = (document.getElementById('editMemberPin')?.value || '').trim();
+            if (pinVal && !(D ? D.isValidPin(pinVal) : /^[0-9]{4,6}$/.test(pinVal))) {
+                showToast('PIN Tidak Valid', 'PIN wajib terdiri dari 4 sampai 6 digit angka numerik.', 'error');
+                return;
+            }
+            if (!(D ? D.isValidNik16(rawNikInput) : /^[0-9]{16}$/.test(rawNikInput))) {
+                validateEditMemberNikLive(null);
+                showToast('NIK Tidak Valid', 'NIK wajib tepat 16 digit angka numerik (tanpa huruf atau karakter lain).', 'error');
+                return;
+            }
+            const duplicateNikOwner = (window.appState.members || []).find(x => x.sid !== currentSid && x.rawNik === rawNikInput);
+            if (duplicateNikOwner) {
+                showToast('NIK Ganda Ditolak', `NIK sudah terdaftar atas nama ${duplicateNikOwner.name} (${duplicateNikOwner.sid}).`, 'error');
+                return;
+            }
 
             pendingMemberEditData = {
-                sid: document.getElementById('editMemberSid').value,
-                nik: document.getElementById('editMemberNik').value.trim(),
+                sid: currentSid,
+                nik: rawNikInput,
                 name: document.getElementById('editMemberName').value.trim(),
                 address: document.getElementById('editMemberAddress').value.trim(),
-                familySize: parseInt(document.getElementById('editMemberFamilySize').value) || 4,
-                monthlyIncome: parseInt(document.getElementById('editMemberIncome').value) || 2000000,
+                familySize: Math.max(1, parseInt(document.getElementById('editMemberFamilySize').value, 10) || 4),
+                monthlyIncome: parseInt(document.getElementById('editMemberIncome').value, 10) || 2000000,
                 socialTier: document.getElementById('editMemberTier').value,
                 role: document.getElementById('editMemberRole').value,
-                producerCommodity: document.getElementById('editMemberCommodity').value.trim()
+                producerCommodity: document.getElementById('editMemberCommodity').value.trim(),
+                pinCode: pinVal || '1234'
             };
 
-            // Isi data di modal konfirmasi ganda
             document.getElementById('confirmEditMemberName').textContent = pendingMemberEditData.name;
             document.getElementById('confirmEditMemberSid').textContent = pendingMemberEditData.sid;
             document.getElementById('confirmEditMemberAddress').textContent = pendingMemberEditData.address;
@@ -3554,31 +4150,60 @@ export function initCoreAppController() {
 
         window.executeSaveMemberEdit = function executeSaveMemberEdit() {
             if (!pendingMemberEditData) return;
+            const D = window.SiPanganDomain;
+            if (D && !D.can(window.appState, 'EDIT_KK_DATA', null, window.appState)) {
+                showToast('Akses Ditolak', 'Hanya Admin yang dapat menyimpan perubahan data SID.', 'error');
+                return;
+            }
+            if (!(D ? D.isValidNik16(pendingMemberEditData.nik) : /^[0-9]{16}$/.test(pendingMemberEditData.nik))) {
+                showToast('NIK Tidak Valid', 'Penyimpanan dibatalkan karena NIK tidak berjumlah tepat 16 digit angka.', 'error');
+                return;
+            }
 
             const m = (window.appState.members || []).find(x => x.sid === pendingMemberEditData.sid);
             if (m) {
+                const prevFamilySize = Number(m.familySize) || 4;
                 m.name = pendingMemberEditData.name;
                 m.rawNik = pendingMemberEditData.nik;
+                m.maskedNik = D ? D.maskNikForPublic(pendingMemberEditData.nik) : (pendingMemberEditData.nik.slice(0, 6) + '********' + pendingMemberEditData.nik.slice(-2));
+                m.hasInvalidNik = false;
                 m.address = pendingMemberEditData.address;
                 m.familySize = pendingMemberEditData.familySize;
                 m.monthlyIncome = pendingMemberEditData.monthlyIncome;
                 m.socialTier = pendingMemberEditData.socialTier;
                 m.role = pendingMemberEditData.role;
-                m.producerCommodity = pendingMemberEditData.producerCommodity;
+                if (pendingMemberEditData.pinCode) {
+                    m.pinCode = String(pendingMemberEditData.pinCode);
+                }
+                if (m.role === 'PRODUSEN') {
+                    m.isDualRole = true;
+                    m.verifiedProducerByAdmin = true;
+                    m.producerCommodity = pendingMemberEditData.producerCommodity || m.producerCommodity || 'Sayur Pekarangan KWT';
+                } else {
+                    m.producerCommodity = pendingMemberEditData.producerCommodity || '-';
+                }
 
-                // Hitung ulang kebutuhan konsumsi pangan bulanan
-                m.monthlyFoodNeedKg = Math.round(m.familySize * 8.5);
-                if (m.needs) {
-                    m.needs.beras = Math.round(m.familySize * 4);
-                    m.needs.sayur = Math.round(m.familySize * 2.5);
-                    m.needs.telur = Math.round(m.familySize * 1.5);
-                    m.needs.ikan = Math.round(m.familySize * 1.5);
+                // Hitung ulang kebutuhan konsumsi pangan bulanan secara konsisten dari 6 komponen (Task 2.1 & 5.2)
+                if (prevFamilySize !== m.familySize || !m.needs) {
+                    const est = D ? D.estimateDefaultNeedsByFamilySize(m.familySize) : {
+                        beras: Math.round(m.familySize * 7.5),
+                        sayur: Math.round(m.familySize * 3.0),
+                        telur: Math.round(m.familySize * 1.5),
+                        ikan: Math.round(m.familySize * 1.5),
+                        ayam: Math.round(m.familySize * 1.0),
+                        tempe: Math.round(m.familySize * 1.5),
+                        total: Math.round(m.familySize * 16)
+                    };
+                    m.needs = { beras: est.beras, sayur: est.sayur, telur: est.telur, ikan: est.ikan, ayam: est.ayam, tempe: est.tempe };
+                    m.monthlyFoodNeedKg = est.total;
+                } else {
+                    m.monthlyFoodNeedKg = D ? D.calcFamilyNeedsTotal(m.needs) : m.monthlyFoodNeedKg;
                 }
 
                 closeModal('modalConfirmMemberEdit');
-                renderMembersTable();
-                renderHeaderStats();
-                calculateSurplusPrediction();
+                saveStateToLocal();
+                if (typeof window.syncAllDataToSupabaseNow === 'function') window.syncAllDataToSupabaseNow(false);
+                renderAll();
 
                 showToast("Pembaruan Data Berhasil", `Data ${m.name} (${m.sid}) telah diverifikasi & disimpan oleh Admin.`, "success");
             }

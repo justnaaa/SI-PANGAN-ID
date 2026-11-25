@@ -4,6 +4,8 @@
  *              Inisialisasi 40 KK Dual-Role, & Profil Warga.
  */
 
+import { toWargaRow, toTransaksiRows, buildStatePayload, applyCloudStateExtras, CLOUD_STATE_KEY } from './cloudMapping.js';
+
 export function initSupabaseAndStorageService() {
         const SUPABASE_URL = 'https://kspiocqtljlsdrxkxbtt.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_UGIrOb7sBe9lW4EakOm7ew_w-FtoA8g';
@@ -121,6 +123,68 @@ export function initSupabaseAndStorageService() {
             }
 
             const preConfirmedListingIds = ['list-001', 'list-002', 'list-003'];
+            // Pastikan 10 produsen awal termasuk Ibu Nurhayati (SID-RT13-005, Sawi Hijau 12 Kg) & Ibu Endang (SID-RT13-007, Daun Bawang 8 Kg) memiliki listing riil di etalase
+            const ensureBaseProducerListings = [
+                {
+                    id: 'list-009',
+                    producerSid: 'SID-RT13-005',
+                    producerName: 'Ibu Nurhayati',
+                    commodity: 'Sawi Hijau / Caisim (KWT Pekarangan)',
+                    category: 'Sayur Pekarangan',
+                    unit: 'Kg',
+                    harvestDate: '27 Okt 2026',
+                    plantDate: '06 Okt 2026',
+                    initialHarvestKg: 35,
+                    localAbsorbedKg: 23,
+                    availableStockKg: 12,
+                    pengepulPrice: 4000,
+                    tengkulakPrice: 4000,
+                    marketPrice: 8000,
+                    marketLampungPrice: 8000,
+                    fairPrice: 6000,
+                    freshnessWindow: '2 Hari',
+                    freshnessDaysRemaining: 2,
+                    location: 'Pekarangan KWT Blok B No. 08 RT 13',
+                    distanceKm: 0.18,
+                    isSpecialCase: false,
+                    caseTag: 'Sawi Hijau KWT (Ibu Nurhayati)',
+                    description: 'Sawi hijau caisim segar pekarangan KWT, daun renyah bebas pestisida kimia.',
+                    icon: 'fa-seedling'
+                },
+                {
+                    id: 'list-010',
+                    producerSid: 'SID-RT13-007',
+                    producerName: 'Ibu Endang Sulastri',
+                    commodity: 'Daun Bawang Segar (KWT Pekarangan)',
+                    category: 'Sayur Pekarangan',
+                    unit: 'Kg',
+                    harvestDate: '27 Okt 2026',
+                    plantDate: '05 Okt 2026',
+                    initialHarvestKg: 25,
+                    localAbsorbedKg: 17,
+                    availableStockKg: 8,
+                    pengepulPrice: 9000,
+                    tengkulakPrice: 9000,
+                    marketPrice: 15000,
+                    marketLampungPrice: 15000,
+                    fairPrice: 12000,
+                    freshnessWindow: '3 Hari',
+                    freshnessDaysRemaining: 3,
+                    location: 'Kebun KWT Blok B No. 15 RT 13',
+                    distanceKm: 0.22,
+                    isSpecialCase: false,
+                    caseTag: 'Daun Bawang (Ibu Endang)',
+                    description: 'Daun bawang segar aromatik hasil budidaya polibag pekarangan warga RT 13.',
+                    icon: 'fa-leaf'
+                }
+            ];
+            window.appState.listings = window.appState.listings || [];
+            ensureBaseProducerListings.forEach(defItem => {
+                if (!window.appState.listings.some(l => l.producerSid === defItem.producerSid)) {
+                    window.appState.listings.push(defItem);
+                }
+            });
+
             (window.appState.listings || []).forEach(l => {
                 l.isSpecialCase = false;
                 if (l.caseTag && (l.caseTag.includes('Surplus') || l.caseTag.includes('Kasus Bapak A') || l.caseTag.includes('Defisit'))) {
@@ -132,8 +196,9 @@ export function initSupabaseAndStorageService() {
                 }
             });
 
-            // Buat genap 50 Transaksi Terverifikasi jika jumlah transaksi masih < 50
+            // Buat genap 50 Transaksi Terverifikasi jika jumlah transaksi masih < 50 (ID unik terjamin tanpa duplikasi)
             const txs = window.appState.transactions || [];
+            const D = window.SiPanganDomain;
             if (txs.length < 50) {
                 const sampleItems = [
                     { prodSid: 'SID-RT13-001', prodName: 'Ibu Sartika Sari Dewi', comm: 'Sayur Kangkung (KWT Pekarangan)', price: 4500, qtyList: [2, 3, 4, 2, 5] },
@@ -150,6 +215,7 @@ export function initSupabaseAndStorageService() {
                     { label: 'Diantar Produsen (+Rp 2.000)', fee: 2000 },
                     { label: 'Kurir Komunitas RT (+Rp 5.000)', fee: 5000 }
                 ];
+                const usedIds = new Set(txs.map(x => x && x.id).filter(Boolean));
 
                 for (let i = txs.length + 1; i <= 50; i++) {
                     const item = sampleItems[i % sampleItems.length];
@@ -161,11 +227,19 @@ export function initSupabaseAndStorageService() {
                     const dayNum = Math.max(1, 27 - Math.floor(i / 3));
                     const hourNum = String(7 + (i % 10)).padStart(2, '0');
                     const minNum = String((i * 7) % 60).padStart(2, '0');
+                    let candidateId = `TX-RT13-${String(900 + i).padStart(3, '0')}`;
+                    if (usedIds.has(candidateId)) {
+                        candidateId = D ? D.generateUniqueTxId(txs) : `TX-RT13-${950 + i}`;
+                    }
+                    usedIds.add(candidateId);
 
                     txs.push({
-                        id: `TX-RT13-${String(900 + i).padStart(3, '0')}`,
+                        id: candidateId,
                         timestamp: `${dayNum} Okt 2026, ${hourNum}:${minNum}`,
+                        period: '2026-10',
+                        channel: 'eceran_warga',
                         type: 'JUAL_BELI_PASAR',
+                        orderStatus: 'SELESAI_LUNAS',
                         producerSid: item.prodSid,
                         producerName: item.prodName,
                         consumerSid: consMember ? consMember.sid : 'SID-RT13-020',
@@ -183,6 +257,7 @@ export function initSupabaseAndStorageService() {
                 }
                 window.appState.transactions = txs;
             }
+            if (D) D.auditAndFlagAppState(window.appState);
 
             if (!window.appState.pendingNewKks) {
                 window.appState.pendingNewKks = [
@@ -276,6 +351,31 @@ export function initSupabaseAndStorageService() {
                 } else {
                     window.appState.activeUserSid = null;
                 }
+                if (parsed && typeof parsed.activePeriod === 'string') {
+                    window.appState.activePeriod = parsed.activePeriod;
+                }
+                if (parsed && Array.isArray(parsed.closedPeriods)) {
+                    window.appState.closedPeriods = parsed.closedPeriods;
+                }
+                if (parsed && parsed.lastClosedPeriod) {
+                    window.appState.lastClosedPeriod = parsed.lastClosedPeriod;
+                    window.appState.lastClosedAt = parsed.lastClosedAt || '';
+                }
+                if (parsed && Array.isArray(parsed.moderationLogs)) {
+                    window.appState.moderationLogs = parsed.moderationLogs;
+                }
+                if (parsed && Array.isArray(parsed.b2bSurplusHistory)) {
+                    window.appState.b2bSurplusHistory = parsed.b2bSurplusHistory;
+                }
+                if (parsed && Array.isArray(parsed.inventoryAuditLogs)) {
+                    window.appState.inventoryAuditLogs = parsed.inventoryAuditLogs;
+                }
+                if (parsed && Number.isFinite(Number(parsed.danaSosialInklusi)) && parsed.danaSosialInklusi !== null) {
+                    window.appState.danaSosialInklusi = Number(parsed.danaSosialInklusi);
+                }
+                if (window.SiPanganDomain) {
+                    window.SiPanganDomain.auditAndFlagAppState(window.appState);
+                }
             } catch (err) {
                 console.warn('[Storage] Gagal memuat cache lokal:', err);
             }
@@ -298,6 +398,13 @@ export function initSupabaseAndStorageService() {
                     pendingKkUpdates: window.appState.pendingKkUpdates,
                     activeUserSid: window.appState.activeUserSid,
                     danaSosialInklusi: window.appState.danaSosialInklusi,
+                    activePeriod: window.appState.activePeriod || '2026-10',
+                    closedPeriods: window.appState.closedPeriods || [],
+                    lastClosedPeriod: window.appState.lastClosedPeriod || null,
+                    lastClosedAt: window.appState.lastClosedAt || '',
+                    moderationLogs: window.appState.moderationLogs || [],
+                    b2bSurplusHistory: window.appState.b2bSurplusHistory || [],
+                    inventoryAuditLogs: window.appState.inventoryAuditLogs || [],
                     updatedAt: new Date().toISOString()
                 };
                 localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload));
@@ -307,6 +414,18 @@ export function initSupabaseAndStorageService() {
         }
 
         window.initSupabaseConnection = async function initSupabaseConnection() {
+            // Mode tes tanpa cloud: hanya aktif pada environment dev/test lokal (import.meta.env.DEV, localhost, 127.0.0.1, atau window.SIPANGAN_OFFLINE_MODE)
+            // Di lingkungan produksi publik, parameter URL ?nocloud=1 diabaikan.
+            const isDevOrTest = Boolean(
+                (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.DEV) ||
+                (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) ||
+                window.SIPANGAN_OFFLINE_MODE
+            );
+            if (window.SIPANGAN_OFFLINE_MODE || (isDevOrTest && typeof location !== 'undefined' && new URLSearchParams(location.search).get('nocloud') === '1')) {
+                window.SIPANGAN_OFFLINE_MODE = true;
+                console.info('[Supabase] Mode tanpa cloud aktif (pengembangan/uji, penyimpanan lokal saja).');
+                return;
+            }
             try {
                 if (window.supabase && typeof window.supabase.createClient === 'function') {
                     supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -326,72 +445,25 @@ export function initSupabaseAndStorageService() {
             const modalConnText = document.getElementById('modalSupabaseConnText');
 
             try {
-                const statePayload = {
-                    members: window.appState.members,
-                    listings: window.appState.listings,
-                    transactions: window.appState.transactions,
-                    demands: window.appState.demands,
-                    pendingNewKks: window.appState.pendingNewKks,
-                    danaSosialInklusi: window.appState.danaSosialInklusi
-                };
+                const statePayload = buildStatePayload(window.appState);
 
                 const { error: stateErr } = await supabaseClient
                     .from('sipangan_cloud_state')
                     .upsert({
-                        state_key: 'RT13_YOSOMULYO_MAIN',
+                        state_key: CLOUD_STATE_KEY,
                         payload: statePayload,
                         updated_at: new Date().toISOString()
                     }, { onConflict: 'state_key' });
 
-                const wargaRows = (window.appState.members || []).map(m => ({
-                    sid: m.sid,
-                    name: m.name,
-                    public_name: m.publicName || m.name,
-                    nik_hash: m.nikHash || '',
-                    masked_nik: m.maskedNik || '',
-                    raw_nik: m.rawNik || '',
-                    role: m.role || 'KONSUMEN',
-                    is_dual_role: Boolean(m.isDualRole || m.role === 'PRODUSEN'),
-                    producer_commodity: m.producerCommodity || '-',
-                    capacity_kg: Number(m.capacityKg || 0),
-                    harvest_cycle_weekly: m.harvestCycleWeekly || '-',
-                    family_size: Number(m.familySize || 4),
-                    monthly_income: Number(m.monthlyIncome || 2500000),
-                    monthly_food_need_kg: Number(m.monthlyFoodNeedKg || 35),
-                    needs: m.needs || {},
-                    social_tier: m.socialTier || 'MANDIRI',
-                    ai_score: Number(m.aiScore || 30),
-                    aid_received_this_month: Boolean(m.aidReceivedThisMonth),
-                    distance_km: Number(m.distanceKm || 0.2),
-                    wallet_earned: Number(m.walletEarned || 0),
-                    subsidy_received_kg: Number(m.subsidyReceivedKg || 0),
-                    address: m.address || 'RT 13 Yosomulyo',
-                    surplus_notified: Boolean(m.surplusNotified),
-                    surplus_notified_msg: m.surplusNotifiedMsg || ''
-                }));
-                await supabaseClient.from('warga_kk').upsert(wargaRows, { onConflict: 'sid' });
+                const wargaRows = (window.appState.members || []).map(toWargaRow);
+                const { error: wargaErr } = await supabaseClient.from('warga_kk').upsert(wargaRows, { onConflict: 'sid' });
+                const txRows = toTransaksiRows(window.appState.transactions);
+                const { error: txErr } = await supabaseClient.from('transaksi_pangan').upsert(txRows, { onConflict: 'id' });
+                if (wargaErr || txErr) {
+                    console.warn('[Supabase] Sinkron tabel belum berhasil (data tetap aman di penyimpanan lokal):', (wargaErr || txErr).message);
+                }
 
-                const txRows = (window.appState.transactions || []).map(t => ({
-                    id: t.id,
-                    timestamp: t.timestamp,
-                    type: t.type || 'JUAL_BELI_PASAR',
-                    producer_sid: t.producerSid || '-',
-                    producer_name: t.producerName || '-',
-                    consumer_sid: t.consumerSid || '-',
-                    consumer_name: t.consumerName || '-',
-                    commodity: t.commodity || '-',
-                    quantity_kg: Number(t.quantityKg || 1),
-                    unit_price: Number(t.unitPrice || 0),
-                    subtotal: Number(t.subtotal || 0),
-                    producer_net: Number(t.producerNet || 0),
-                    delivery_method: t.deliveryMethod || 'Ambil Sendiri',
-                    delivery_fee: Number(t.deliveryFee || 0),
-                    total_paid: Number(t.totalPaid || 0),
-                    status: t.status || 'TERVERIFIKASI_SINGLE_ID'
-                }));
-                await supabaseClient.from('transaksi_pangan').upsert(txRows, { onConflict: 'id' });
-
-                if (!stateErr) {
+                if (!stateErr && !wargaErr && !txErr) {
                     if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
                     if (statusText) statusText.textContent = 'Supabase Tersinkron';
                     if (modalConnText) modalConnText.textContent = 'Tersinkron Cloud Supabase ✓';
@@ -401,7 +473,7 @@ export function initSupabaseAndStorageService() {
                 } else {
                     if (modalConnText) modalConnText.textContent = 'Aktif (Hybrid Local + Cloud Ready)';
                     if (showNotification) {
-                        showToast('Data Tersimpan Aman', `${wargaRows.length} KK & ${txRows.length} Transaksi tersimpan. Jalankan file supabase_schema.sql di SQL Editor Supabase jika tabel belum dibuat.`, 'info');
+                        showToast('Data Tersimpan Aman', `${wargaRows.length} KK & ${txRows.length} Transaksi tersimpan. Tabel cloud belum tersedia atau belum lengkap; data tetap aman di perangkat ini.`, 'info');
                     }
                 }
             } catch (e) {
@@ -417,7 +489,7 @@ export function initSupabaseAndStorageService() {
                 const { data, error } = await supabaseClient
                     .from('sipangan_cloud_state')
                     .select('payload')
-                    .eq('state_key', 'RT13_YOSOMULYO_MAIN')
+                    .eq('state_key', CLOUD_STATE_KEY)
                     .maybeSingle();
 
                 if (!error && data && data.payload) {
@@ -454,6 +526,10 @@ export function initSupabaseAndStorageService() {
                     }
                     if (Array.isArray(p.pendingNewKks)) {
                         window.appState.pendingNewKks = p.pendingNewKks;
+                    }
+                    applyCloudStateExtras(window.appState, p);
+                    if (window.SiPanganDomain) {
+                        window.SiPanganDomain.auditAndFlagAppState(window.appState);
                     }
                     saveStateToLocal();
                     renderAll();
@@ -509,14 +585,13 @@ export function initSupabaseAndStorageService() {
                 return;
             }
 
-            // Validasi PIN Pribadi Warga (Mencegah orang lain login sembarangan ke akun orang lain)
-            // Standar PIN keluarga: PIN kustom warga, atau 4 angka akhir NIK, atau default '1234'
-            const validPin1 = member.pin ? String(member.pin) : null;
-            const validPin2 = member.rawNik ? String(member.rawNik).slice(-4) : null;
-            const isPinValid = (validPin1 && pin === validPin1) || (validPin2 && pin === validPin2) || (pin === '1234');
+            // Validasi PIN Pribadi Warga: hanya PIN tersimpan yang berlaku (4-6 digit).
+            // NIK tidak boleh dipakai sebagai PIN. Warga lupa PIN → direset Admin via #editMemberPin.
+            const storedPin = member.pin ? String(member.pin).trim() : '1234';
+            const isPinValid = isValidPin(pin) && (pin === storedPin);
 
             if (!pin) {
-                showToast('PIN Belum Dimasukkan', `Masukkan 4 digit PIN keluarga untuk akun ${member.name}.`, 'warning');
+                showToast('PIN Belum Dimasukkan', `Masukkan 4-6 digit PIN keluarga untuk akun ${member.name}.`, 'warning');
                 pinInput?.focus();
                 return;
             }
@@ -631,7 +706,7 @@ export function initSupabaseAndStorageService() {
                 if (elFamily) elFamily.textContent = `${realCount} KK Warga`;
                 if (elNeed) elNeed.textContent = 'Monev Terpadu';
                 if (elTxCount) elTxCount.textContent = `${window.appState.transactions?.length || 50} Pesanan`;
-                if (elHeaderLabel) elHeaderLabel.textContent = 'Pengurus RT 13 (Admin)';
+                if (elHeaderLabel) elHeaderLabel.textContent = 'Admin RT 13';
                 return;
             }
 
@@ -676,7 +751,8 @@ export function initSupabaseAndStorageService() {
                 elHeaderLabel.textContent = `${member.name} (${modeRoleStr})`;
             }
             if (elFamily) elFamily.textContent = `${member.familySize || 4} Jiwa`;
-            if (elNeed) elNeed.textContent = `${member.monthlyFoodNeedKg || 35} Kg/bln`;
+            const consistentNeed = window.SiPanganDomain ? window.SiPanganDomain.getMemberConsistentMonthlyNeedKg(member) : (member.monthlyFoodNeedKg || 35);
+            if (elNeed) elNeed.textContent = `${consistentNeed} Kg/bln`;
 
             const myTxs = (window.appState.transactions || []).filter(
                 t => t.consumerSid === member.sid || t.producerSid === member.sid
@@ -781,47 +857,28 @@ export function initSupabaseAndStorageService() {
                 showToast("Bukan Produsen", "Warga yang dipilih adalah Konsumen Murni dan tidak memiliki izin/stok produsen.", "warning");
                 return;
             }
+            if (window.SiPanganDomain && !window.SiPanganDomain.can(window.appState, 'PULL_SURPLUS', null, window.appState)) {
+                showToast("Akses Ditolak", "Hanya Pengurus RT (Admin) yang dapat menarik data surplus.", "error");
+                return;
+            }
             let listing = listingId ? listings.find(l => l.id === listingId) : listings.find(l => l.producerSid === producerSid);
 
-            if (!listing && prod) {
-                listing = {
-                    id: 'list-surplus-' + producerSid,
-                    producerSid: prod.sid,
-                    producerName: prod.name,
-                    commodity: prod.producerCommodity || 'Sayur Pekarangan KWT',
-                    category: 'Sayur Pekarangan',
-                    unit: 'Kg',
-                    initialHarvestKg: Math.max(40, Number(prod.capacityKg) || 40),
-                    localAbsorbedKg: 25,
-                    availableStockKg: Math.max(15, Number(surplusKg) || 15),
-                    unabsorbedSurplusKg: Math.max(15, Number(surplusKg) || 15),
-                    fairPrice: 10000,
-                    marketPrice: 14000,
-                    tengkulakPrice: 7500,
-                    harvestDate: 'Hari Ini',
-                    freshnessWindow: '2 Hari',
-                    freshnessDaysRemaining: 2,
-                    location: prod.address || 'RT 13 Yosomulyo',
-                    distanceKm: prod.distanceKm || 0.2,
-                    icon: 'fa-seedling'
-                };
-                listings.push(listing);
+            if (!listing) {
+                showToast("Komoditas Belum Terdaftar", "Produsen belum memiliki produk di lapak, surplus tidak dapat ditarik.", "warning");
+                return;
             }
 
-            const commName = listing ? listing.commodity : (prod ? prod.producerCommodity : 'Komoditas Pangan');
-            const qty = Math.max(5, Number(surplusKg) || (listing ? ((listing.unabsorbedSurplusKg || 0) > 0 ? listing.unabsorbedSurplusKg : listing.availableStockKg) : 15));
+            const commName = listing.commodity;
+            // Snapshot jumlah saat klik; stok TIDAK diubah sampai produsen konfirmasi dan Admin menyalurkan (Task 2.5)
+            const qty = Math.max(1, Math.round(Number(surplusKg) || 0));
 
-            if (listing) {
-                listing.surplusNotified = true;
-                listing.surplusConfirmedByProducer = false;
-                if ((Number(listing.unabsorbedSurplusKg) || 0) <= 0 && (Number(listing.availableStockKg) || 0) <= 0) {
-                    listing.unabsorbedSurplusKg = qty;
-                    listing.availableStockKg = qty;
-                }
-            }
+            listing.surplusNotified = true;
+            listing.surplusConfirmedByProducer = false;
+            listing.pendingSurplusKg = qty;
             if (prod) {
                 prod.surplusNotified = true;
                 prod.surplusConfirmedByProducer = false;
+                prod.pendingSurplusKg = qty;
                 prod.surplusNotifiedMsg = `Pemberitahuan Admin RT 13: Komoditas ${commName} Anda terdeteksi mengalami Surplus +${qty} Kg di Analisis AI & Pasar. Mohon siapkan hasil panen tersebut dan klik "Konfirmasi Siap Salurkan" agar masuk ke Pusat Penarikan Resume Surplus (Koperasi / Program MBG).`;
             }
 
@@ -859,8 +916,21 @@ export function initSupabaseAndStorageService() {
 
         window.handleRegisterMember = function(e) {
             if (e && e.preventDefault) e.preventDefault();
-            const nik = (document.getElementById('regNik')?.value || '').trim();
-            if (!checkNikDeduplicationLive(nik)) {
+            const D = window.SiPanganDomain;
+            const nikEl = document.getElementById('regNik');
+            const nik = D ? D.sanitizeNikDigits(nikEl?.value) : String(nikEl?.value || '').replace(/[^0-9]/g, '').slice(0, 16);
+            if (nikEl) nikEl.value = nik;
+
+            if (!(D ? D.isValidNik16(nik) : /^[0-9]{16}$/.test(nik))) {
+                const errEl = document.getElementById('regNikError');
+                if (errEl) {
+                    errEl.classList.remove('hidden');
+                    errEl.textContent = 'NIK wajib tepat 16 digit angka sesuai KTP/KK.';
+                }
+                showToast('NIK Tidak Valid', 'Harap isi NIK tepat 16 digit angka sebelum mengirim pendaftaran.', 'error');
+                return;
+            }
+            if (!checkNikDeduplicationLive(nik, nikEl)) {
                 showToast('Registrasi Ditolak', 'NIK telah terdaftar di sistem Single Identity.', 'error');
                 return;
             }
@@ -920,8 +990,25 @@ export function initSupabaseAndStorageService() {
 
         window.handleSubmitSelfRegister = function(e) {
             if (e && e.preventDefault) e.preventDefault();
+            const D = window.SiPanganDomain;
             const name = (document.getElementById('selfRegName')?.value || '').trim();
-            const nik = (document.getElementById('selfRegNik')?.value || '').trim();
+            const nikEl = document.getElementById('selfRegNik');
+            const nik = D ? D.sanitizeNikDigits(nikEl?.value) : String(nikEl?.value || '').replace(/[^0-9]/g, '').slice(0, 16);
+            if (nikEl) nikEl.value = nik;
+
+            if (!(D ? D.isValidNik16(nik) : /^[0-9]{16}$/.test(nik))) {
+                const errEl = document.getElementById('selfRegNikError');
+                if (errEl) {
+                    errEl.classList.remove('hidden');
+                    errEl.textContent = 'NIK wajib tepat 16 digit angka.';
+                }
+                showToast('NIK Tidak Valid', 'Harap isi NIK tepat 16 digit angka.', 'error');
+                return;
+            }
+            if ((window.appState.members || []).some(m => m.rawNik === nik)) {
+                showToast('NIK Sudah Terdaftar', 'NIK ini sudah terdaftar pada buku warga RT 13.', 'error');
+                return;
+            }
             const address = (document.getElementById('selfRegAddress')?.value || '').trim();
             const familySize = Math.max(1, parseInt(document.getElementById('selfRegFamilySize')?.value) || 4);
             const totalFoodKg = Math.round(familySize * 16);
@@ -975,8 +1062,8 @@ export function initSupabaseAndStorageService() {
             }
 
             const item = queue[0];
-            const nextNum = (window.appState.members || []).length + 1;
-            const nextSid = `SID-RT13-${String(nextNum).padStart(3, '0')}`;
+            const D = window.SiPanganDomain;
+            const nextSid = D ? D.generateNextSid(window.appState.members) : `SID-RT13-${String((window.appState.members || []).length + 1).padStart(3, '0')}`;
 
             badge.textContent = `${queue.length} Menunggu Validasi`;
             badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200';
@@ -1017,10 +1104,11 @@ export function initSupabaseAndStorageService() {
                 distanceKm: 0.25
             };
 
-            const newIndex = (window.appState.members || []).length + 1;
-            const newSid = `SID-RT13-${String(newIndex).padStart(3, '0')}`;
-            const newSidShort = `SID-${1300 + newIndex}`;
-            const cleanNik = (item.nik && item.nik.length >= 10) ? item.nik : `187201150985${String(newIndex).padStart(4, '0')}`;
+            const D = window.SiPanganDomain;
+            const newSid = D ? D.generateNextSid(window.appState.members) : `SID-RT13-${String((window.appState.members || []).length + 1).padStart(3, '0')}`;
+            const parsedSidNum = parseInt(newSid.split('-')[2] || '41', 10);
+            const newSidShort = `SID-${1300 + parsedSidNum}`;
+            const cleanNik = (item.nik && item.nik.length >= 10) ? item.nik : `187201150985${String(parsedSidNum).padStart(4, '0')}`;
 
             const newMember = {
                 sid: newSid,
@@ -1030,8 +1118,10 @@ export function initSupabaseAndStorageService() {
                 nikHash: Math.random().toString(16).substring(2, 10),
                 maskedNik: cleanNik.substring(0, 6) + '********' + cleanNik.slice(-2),
                 rawNik: cleanNik,
+                pinCode: '1234',
                 role: item.role || 'KONSUMEN',
                 isDualRole: item.role === 'PRODUSEN',
+                verifiedProducerByAdmin: item.role === 'PRODUSEN',
                 producerCommodity: item.commodity || '-',
                 capacityKg: Number(item.capacityKg || 0),
                 harvestCycleWeekly: item.role === 'PRODUSEN' ? 'Panen Rutin Setiap Minggu' : '-',
@@ -1048,8 +1138,9 @@ export function initSupabaseAndStorageService() {
                 address: item.address || 'RT 13 Yosomulyo'
             };
 
-            window.appState.members.unshift(newMember);
+            window.appState.members.push(newMember);
             window.membersData = window.appState.members;
+            if (D) D.auditAndFlagAppState(window.appState);
 
             if (typeof musyawarahTransparencyState !== 'undefined' && Array.isArray(musyawarahTransparencyState.activities)) {
                 musyawarahTransparencyState.activities.unshift({
@@ -1249,18 +1340,24 @@ export function initSupabaseAndStorageService() {
                 ? 'Buka Pasar Warga (Mode Pembeli)'
                 : 'Buka Lapak Kebun (Mode Penjual)';
 
+            const D = window.SiPanganDomain;
             const pendingUpd = (window.appState?.pendingKkUpdates || []).find(u => u.sid === activeSid);
-            const n = member.needs || {
-                beras: Math.round((member.familySize || 4) * 7.5),
-                sayur: Math.round((member.familySize || 4) * 3.0),
-                telur: Math.round((member.familySize || 4) * 1.5),
-                ikan: Math.round((member.familySize || 4) * 3.0)
+            const n = D ? D.getEffectiveMemberNeeds(member) : {
+                beras: member.needs?.beras ?? 30,
+                sayur: member.needs?.sayur ?? 12,
+                telur: member.needs?.telur ?? 6,
+                ikan: member.needs?.ikan ?? 6,
+                ayam: member.needs?.ayam ?? 4,
+                tempe: member.needs?.tempe ?? 6,
+                total: member.monthlyFoodNeedKg || 64
             };
+            const calculatedTotalNeedKg = D ? D.getMemberConsistentMonthlyNeedKg(member) : n.total;
 
             const myGardenListings = (window.appState.listings || []).filter(l => l.producerSid === member.sid);
 
-            const producerGardenSectionHtml = isProducerUser ? `
-                <!-- KOMODITAS PEKARANGAN YANG DIHASILKAN (KHUSUS PRODUSEN - MOBILE FRIENDLY) -->
+            // Sembunyikan Komoditas Pekarangan & Form Tambah Komoditas saat Mode Konsumen aktif (Task 4.1)
+            const producerGardenSectionHtml = isCurrentlyProducer ? `
+                <!-- KOMODITAS PEKARANGAN YANG DIHASILKAN (KHUSUS MODE PRODUSEN - TASK 4.1) -->
                 <div class="bg-white p-4 sm:p-5 rounded-2xl border-2 border-emerald-200 space-y-4">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-100 pb-3">
                         <div>
@@ -1271,29 +1368,36 @@ export function initSupabaseAndStorageService() {
                             <p class="text-xs text-stone-500">Daftar tanaman/ternak pekarangan Anda yang tampil di Pasar Warga.</p>
                         </div>
                         <span class="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold self-start sm:self-center">
-                            ${myGardenListings.length} Komoditas Aktif
+                            ${myGardenListings.filter(x => !x.isModerated).length} Komoditas Aktif
                         </span>
                     </div>
 
                     <!-- Daftar Komoditas Kebun Saat Ini -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         ${myGardenListings.length > 0 ? myGardenListings.map(item => `
-                            <div class="p-3 rounded-xl bg-stone-50 border border-stone-200 flex items-center justify-between gap-2">
-                                <div class="min-w-0">
-                                    <strong class="text-xs sm:text-sm text-stone-900 block truncate">${item.commodity}</strong>
-                                    <span class="text-[11px] font-mono text-forest-800 font-semibold">Stok: ${item.availableStockKg} Kg • ${formatRupiah(item.fairPrice)}/Kg</span>
+                            <div class="p-3 rounded-xl ${item.isModerated ? 'bg-rose-50/70 border-rose-300' : 'bg-stone-50 border-stone-200'} border flex flex-col gap-2">
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <strong class="text-xs sm:text-sm text-stone-900 block truncate">${item.commodity}</strong>
+                                        <span class="text-[11px] font-mono text-forest-800 font-semibold">Stok: ${item.availableStockKg} Kg • ${formatRupiah(item.fairPrice)}/Kg</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        <button type="button" onclick="openEditListingModal('${item.id}')"
+                                            class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-amber-50 border border-stone-300 text-stone-700 font-bold text-xs cursor-pointer">
+                                            <i class="fa-solid fa-pen text-amber-600 mr-1"></i>Ubah
+                                        </button>
+                                        <button type="button" onclick="deleteListing('${item.id}')"
+                                            class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs cursor-pointer"
+                                            title="Hapus Komoditas">
+                                            <i class="fa-solid fa-trash-can text-rose-600"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-1.5 shrink-0">
-                                    <button type="button" onclick="openEditListingModal('${item.id}')"
-                                        class="px-2.5 py-1.5 rounded-lg bg-white hover:bg-amber-50 border border-stone-300 text-stone-700 font-bold text-xs cursor-pointer">
-                                        <i class="fa-solid fa-pen text-amber-600 mr-1"></i>Ubah
-                                    </button>
-                                    <button type="button" onclick="deleteListing('${item.id}')"
-                                        class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 font-bold text-xs cursor-pointer"
-                                        title="Hapus Komoditas">
-                                        <i class="fa-solid fa-trash-can text-rose-600"></i>
-                                    </button>
-                                </div>
+                                ${item.isModerated ? `
+                                    <div class="px-2.5 py-1.5 rounded-lg bg-rose-100 border border-rose-200 text-[11px] text-rose-900">
+                                        <strong class="font-bold"><i class="fa-solid fa-eye-slash mr-1"></i>Dinonaktifkan Sementara oleh Pengurus RT:</strong> ${item.moderationReason || 'Sedang ditinjau pengurus'}
+                                    </div>
+                                ` : ''}
                             </div>
                         `).join('') : `
                             <div class="col-span-full p-3 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-500 text-center">
@@ -1350,8 +1454,8 @@ export function initSupabaseAndStorageService() {
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-200/70 pb-4">
                         <div class="space-y-1">
                             <div class="flex flex-wrap items-center gap-2">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${isProducerUser ? 'bg-[#9A3412] text-white' : 'bg-forest-800 text-white'} flex items-center gap-1">
-                                    <i class="fa-solid fa-user"></i> ${isProducerUser ? 'Profil Produsen KWT' : 'Profile Saya'}
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${isCurrentlyProducer ? 'bg-[#9A3412] text-white' : 'bg-forest-800 text-white'} flex items-center gap-1">
+                                    <i class="fa-solid fa-user"></i> ${isCurrentlyProducer ? 'Profil Produsen KWT' : 'Profile Saya'}
                                 </span>
                                 ${pendingUpd ? `
                                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
@@ -1435,32 +1539,40 @@ export function initSupabaseAndStorageService() {
                             </div>
                             <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
                                 <span class="text-xs text-stone-500 block">Jumlah Anggota KK</span>
-                                <strong class="font-mono text-base font-extrabold text-stone-900">${member.familySize || 4} Jiwa</strong>
+                                <strong class="font-mono text-base font-extrabold text-stone-900">Jumlah Anggota KK: ${member.familySize || 4} Jiwa</strong>
                             </div>
                             <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
                                 <span class="text-xs text-stone-500 block">Kebutuhan Pangan Keluarga</span>
-                                <strong class="font-mono text-base font-extrabold text-forest-800">${member.monthlyFoodNeedKg || 60} Kg / Bulan</strong>
+                                <strong class="font-mono text-base font-extrabold text-forest-800">Kebutuhan Pangan: ${calculatedTotalNeedKg} Kg/Bulan</strong>
                             </div>
                         </div>
 
                         <div class="bg-white p-4 rounded-xl border border-stone-200 space-y-2.5">
-                            <span class="text-xs font-bold text-stone-800 block">Rincian Kebutuhan Pangan Keluarga (Per Bulan):</span>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center text-xs">
+                            <span class="text-xs font-bold text-stone-800 block">Rincian Kebutuhan Pangan Keluarga (Per Bulan — Total ${calculatedTotalNeedKg} Kg):</span>
+                            <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-center text-xs">
                                 <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
                                     <span class="text-stone-500 block">🍚 Beras</span>
-                                    <strong class="font-mono font-bold text-stone-900">${n.beras || 30} Kg</strong>
+                                    <strong class="font-mono font-bold text-stone-900">${n.beras} Kg</strong>
                                 </div>
                                 <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
                                     <span class="text-stone-500 block">🥬 Sayur</span>
-                                    <strong class="font-mono font-bold text-stone-900">${n.sayur || 12} Kg</strong>
+                                    <strong class="font-mono font-bold text-stone-900">${n.sayur} Kg</strong>
                                 </div>
                                 <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
                                     <span class="text-stone-500 block">🥚 Telur</span>
-                                    <strong class="font-mono font-bold text-stone-900">${n.telur || 6} Kg</strong>
+                                    <strong class="font-mono font-bold text-stone-900">${n.telur} Kg</strong>
                                 </div>
                                 <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
-                                    <span class="text-stone-500 block">🐟 Ikan &amp; Lauk</span>
-                                    <strong class="font-mono font-bold text-stone-900">${n.ikan || 12} Kg</strong>
+                                    <span class="text-stone-500 block">🐟 Ikan</span>
+                                    <strong class="font-mono font-bold text-stone-900">${n.ikan} Kg</strong>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
+                                    <span class="text-stone-500 block">🍗 Ayam</span>
+                                    <strong class="font-mono font-bold text-stone-900">${n.ayam} Kg</strong>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200">
+                                    <span class="text-stone-500 block">🫘 Tempe</span>
+                                    <strong class="font-mono font-bold text-stone-900">${n.tempe} Kg</strong>
                                 </div>
                             </div>
                         </div>
@@ -1473,11 +1585,12 @@ export function initSupabaseAndStorageService() {
             const activeSid = window.appState?.activeUserSid || 'SID-RT13-002';
             const member = (window.appState?.members || []).find(m => m.sid === activeSid);
             if (!member) {
-                showToast('Silakan Login Terlebih Dahulu', 'Pilih identitas keluarga Anda di Tab 1 untuk memperbarui data KK.', 'warning');
+                showToast('Silakan Login Terlebih Dahulu', 'Pilih identitas keluarga Anda untuk memperbarui data KK.', 'warning');
                 switchTab('tab-konsep');
                 return;
             }
 
+            const D = window.SiPanganDomain;
             const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
             const hdrSid = document.getElementById('selfUpdateLockedHeaderSid');
             if (hdrSid) hdrSid.textContent = `${member.name} (${member.sid})`;
@@ -1487,15 +1600,23 @@ export function initSupabaseAndStorageService() {
             setVal('selfUpdateName', member.name);
             setVal('selfUpdateAddress', member.address || 'RT 13 Yosomulyo');
             setVal('selfUpdateFamilySize', member.familySize || 4);
-            setVal('selfUpdateTotalNeedKg', member.monthlyFoodNeedKg || 64);
 
-            const n = member.needs || { beras: 30, sayur: 12, telur: 6, ikan: 6, ayam: 4, tempe: 6 };
-            setVal('selfUpdateNeedBeras', n.beras ?? 30);
-            setVal('selfUpdateNeedSayur', n.sayur ?? 12);
-            setVal('selfUpdateNeedTelur', n.telur ?? 6);
-            setVal('selfUpdateNeedIkan', n.ikan ?? 6);
-            setVal('selfUpdateNeedAyam', n.ayam ?? 4);
-            setVal('selfUpdateNeedTempe', n.tempe ?? 6);
+            // Hitung ulang total dari 6 rincian tanpa memutasi state tersimpan sampai klik Simpan (Task 2.1 / 3.2)
+            const eff = D ? D.getEffectiveMemberNeeds(member) : {
+                beras: member.needs?.beras ?? 30,
+                sayur: member.needs?.sayur ?? 12,
+                telur: member.needs?.telur ?? 6,
+                ikan: member.needs?.ikan ?? 6,
+                ayam: member.needs?.ayam ?? 4,
+                tempe: member.needs?.tempe ?? 6
+            };
+            setVal('selfUpdateNeedBeras', eff.beras);
+            setVal('selfUpdateNeedSayur', eff.sayur);
+            setVal('selfUpdateNeedTelur', eff.telur);
+            setVal('selfUpdateNeedIkan', eff.ikan);
+            setVal('selfUpdateNeedAyam', eff.ayam);
+            setVal('selfUpdateNeedTempe', eff.tempe);
+            window.syncSelfUpdateNeedsTotal();
 
             const roleVal = (member.role === 'PRODUSEN' && member.isDualRole) ? 'PRODUSEN' : 'KONSUMEN';
             setVal('selfUpdateRole', roleVal);
@@ -1518,7 +1639,6 @@ export function initSupabaseAndStorageService() {
             const ikan = Math.round(jiwa * BAPANAS_STANDARDS_PER_CAPITA_MONTH.ikan);
             const ayam = Math.round(jiwa * BAPANAS_STANDARDS_PER_CAPITA_MONTH.ayam);
             const tempe = Math.round(jiwa * BAPANAS_STANDARDS_PER_CAPITA_MONTH.tempe);
-            const total = beras + sayur + telur + ikan + ayam + tempe;
 
             const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
             setVal('selfUpdateNeedBeras', beras);
@@ -1527,14 +1647,25 @@ export function initSupabaseAndStorageService() {
             setVal('selfUpdateNeedIkan', ikan);
             setVal('selfUpdateNeedAyam', ayam);
             setVal('selfUpdateNeedTempe', tempe);
-            setVal('selfUpdateTotalNeedKg', total);
+            window.syncSelfUpdateNeedsTotal();
         };
 
         window.syncSelfUpdateNeedsTotal = function() {
-            const g = id => Math.max(0, Number(document.getElementById(id)?.value || 0));
-            const total = g('selfUpdateNeedBeras') + g('selfUpdateNeedSayur') + g('selfUpdateNeedTelur') + g('selfUpdateNeedIkan') + g('selfUpdateNeedAyam') + g('selfUpdateNeedTempe');
+            const D = window.SiPanganDomain;
+            const rawNeeds = {
+                beras: document.getElementById('selfUpdateNeedBeras')?.value,
+                sayur: document.getElementById('selfUpdateNeedSayur')?.value,
+                telur: document.getElementById('selfUpdateNeedTelur')?.value,
+                ikan: document.getElementById('selfUpdateNeedIkan')?.value,
+                ayam: document.getElementById('selfUpdateNeedAyam')?.value,
+                tempe: document.getElementById('selfUpdateNeedTempe')?.value
+            };
+            const total = D
+                ? D.calcFamilyNeedsTotal(rawNeeds)
+                : Object.values(rawNeeds).reduce((s, v) => { const num = Number(v); return s + (Number.isFinite(num) && num > 0 ? num : 0); }, 0);
             const totalEl = document.getElementById('selfUpdateTotalNeedKg');
             if (totalEl) totalEl.value = total;
+            return total;
         };
 
         window.handleSubmitCitizenSelfUpdate = function(e) {
@@ -1551,47 +1682,64 @@ export function initSupabaseAndStorageService() {
             const member = (window.appState?.members || []).find(m => m.sid === activeSid);
             if (!member) return;
 
-            const g = id => Math.max(0, Number(document.getElementById(id)?.value || 0));
-            const newNeeds = {
-                beras: g('selfUpdateNeedBeras'),
-                sayur: g('selfUpdateNeedSayur'),
-                telur: g('selfUpdateNeedTelur'),
-                ikan: g('selfUpdateNeedIkan'),
-                ayam: g('selfUpdateNeedAyam'),
-                tempe: g('selfUpdateNeedTempe')
+            const D = window.SiPanganDomain;
+            const parseZeroSafe = id => {
+                const v = Number(document.getElementById(id)?.value);
+                return Number.isFinite(v) && v > 0 ? Math.round(v * 10) / 10 : 0;
             };
-            const sumNeeds = newNeeds.beras + newNeeds.sayur + newNeeds.telur + newNeeds.ikan + newNeeds.ayam + newNeeds.tempe;
-            const newTotalKg = Math.max(5, Number(document.getElementById('selfUpdateTotalNeedKg')?.value || sumNeeds));
+            const newNeeds = {
+                beras: parseZeroSafe('selfUpdateNeedBeras'),
+                sayur: parseZeroSafe('selfUpdateNeedSayur'),
+                telur: parseZeroSafe('selfUpdateNeedTelur'),
+                ikan: parseZeroSafe('selfUpdateNeedIkan'),
+                ayam: parseZeroSafe('selfUpdateNeedAyam'),
+                tempe: parseZeroSafe('selfUpdateNeedTempe')
+            };
+            const newTotalKg = D ? D.calcFamilyNeedsTotal(newNeeds) : (newNeeds.beras + newNeeds.sayur + newNeeds.telur + newNeeds.ikan + newNeeds.ayam + newNeeds.tempe);
+            const newFamilySize = Math.max(1, Number(document.getElementById('selfUpdateFamilySize')?.value || 4));
+            const newName = (document.getElementById('selfUpdateName')?.value || member.name).trim();
+            const newAddress = (document.getElementById('selfUpdateAddress')?.value || member.address).trim();
+            const newPhone = (document.getElementById('selfUpdatePhone')?.value || member.phone || '').trim();
 
             const updateRequest = {
                 id: `upd-kk-${Date.now()}`,
                 sid: member.sid,
-                name: (document.getElementById('selfUpdateName')?.value || member.name).trim(),
+                name: newName,
                 oldFamilySize: member.familySize || 4,
-                newFamilySize: Math.max(1, Number(document.getElementById('selfUpdateFamilySize')?.value || 4)),
-                oldFoodNeedKg: member.monthlyFoodNeedKg || 64,
+                newFamilySize,
+                oldFoodNeedKg: D ? D.getMemberConsistentMonthlyNeedKg(member) : (member.monthlyFoodNeedKg || 64),
                 newFoodNeedKg: newTotalKg,
-                newAddress: (document.getElementById('selfUpdateAddress')?.value || member.address).trim(),
+                newAddress,
                 newRole: document.getElementById('selfUpdateRole')?.value || member.role,
                 newCommodity: (document.getElementById('selfUpdateCommodity')?.value || member.producerCommodity || 'Sayur Pekarangan').trim(),
                 newCapacityKg: Math.max(0, Number(document.getElementById('selfUpdateCapacityKg')?.value || member.capacityKg || 30)),
-                newPhone: (document.getElementById('selfUpdatePhone')?.value || member.phone || '').trim(),
-                newNeeds: newNeeds,
+                newPhone,
+                newNeeds,
                 reason: (document.getElementById('selfUpdateReason')?.value || 'Pembaruan data keluarga').trim(),
                 requestedAt: 'Baru saja'
             };
+
+            // Simpan perubahan kebutuhan pangan keluarga milik sendiri secara konsisten + catat antrean verifikasi Admin (Task 2.1 / 3.2)
+            member.name = newName;
+            member.address = newAddress;
+            member.familySize = newFamilySize;
+            member.needs = { ...newNeeds };
+            member.monthlyFoodNeedKg = newTotalKg;
+            if (newPhone) member.phone = newPhone;
 
             window.appState.pendingKkUpdates = (window.appState.pendingKkUpdates || []).filter(u => u.sid !== member.sid);
             window.appState.pendingKkUpdates.unshift(updateRequest);
 
             closeModal('modalCitizenSelfUpdateKk');
+            saveStateToLocal();
+            renderAll();
             renderMyOwnKkSummaryCard();
             renderPendingUpdateVerificationCards();
             syncAllDataToSupabaseNow(false);
 
             showToast(
-                'Pengajuan Pembaruan Dikirim ke Admin!',
-                `Perubahan data KK ${updateRequest.name} (${updateRequest.newFamilySize} Jiwa • ${updateRequest.newFoodNeedKg} Kg/bln) menunggu verifikasi Admin RT 13.`,
+                'Data Keluarga Tersimpan!',
+                `Rincian kebutuhan pangan ${updateRequest.name} (${newFamilySize} Jiwa • ${newTotalKg} Kg/Bulan) berhasil disimpan dan tercatat untuk verifikasi Pengurus RT 13.`,
                 'success'
             );
         };
@@ -1693,7 +1841,7 @@ export function initSupabaseAndStorageService() {
             document.getElementById('modalDetailName').textContent = isDetailAdmin ? m.name : getMemberDisplayName(m);
             document.getElementById('modalDetailSid').textContent = m.sid;
             document.getElementById('modalDetailNik').textContent = isDetailAdmin ? (m.rawNik || m.maskedNik) : (m.maskedNik || '187201********00');
-            document.getElementById('modalDetailHash').textContent = m.nikHash || 'a8f5c9e2';
+            document.getElementById('modalDetailHash').textContent = 'Terlindungi';
             document.getElementById('modalDetailRole').textContent = (m.isDualRole && m.role === 'PRODUSEN')
                 ? `1 SID 2 Peran: Produsen (${m.producerCommodity}) & Konsumen`
                 : 'Konsumen Rumah Tangga';
@@ -1890,6 +2038,49 @@ export function initSupabaseAndStorageService() {
             }
         };
 
+        window.openCancelOrderDialog = function(txId) {
+            const t = (window.appState.transactions || []).find(x => x.id === txId);
+            if (!t) return;
+            const el = document.getElementById('cancelOrderTargetTxId');
+            const sm = document.getElementById('cancelOrderSummaryText');
+            if (el) el.value = txId;
+            if (sm) sm.textContent = `${t.id} • ${t.commodity} (${t.quantityKg} Kg)`;
+            openModal('modalConfirmCancelOrder');
+        };
+
+        window.executeCancelConsumerOrder = function() {
+            const D = window.SiPanganDomain;
+            const txId = document.getElementById('cancelOrderTargetTxId')?.value;
+            const t = (window.appState.transactions || []).find(x => x.id === txId);
+            closeModal('modalConfirmCancelOrder');
+            if (!t) return;
+            // Guard race condition: status harus masih Menunggu Konfirmasi, periode terbuka, milik pembeli
+            if (!D || !D.can(window.appState, 'CANCEL_ORDER', t, window.appState)) {
+                showToast('Tidak Dapat Dibatalkan', D && D.isOrderPeriodClosed(t, window.appState)
+                    ? 'Periode sudah ditutup.'
+                    : 'Pesanan sudah diproses produsen atau bukan milik Anda.', 'error');
+                renderAll();
+                return;
+            }
+            const listing = (window.appState.listings || []).find(l => l.id === t.listingId)
+                || (window.appState.listings || []).find(l => l.producerSid === t.producerSid && l.commodity === t.commodity);
+            if (listing) D.kembalikanStok(listing, Number(t.quantityKg) || 0, t);
+            t.orderStatus = 'DIBATALKAN';
+            t.cancelledAt = D.getJakartaTimestampLabel();
+            const prod = (window.appState.members || []).find(m => m.sid === t.producerSid);
+            if (prod) {
+                const amtCancel = D.calcTransactionAmounts(t);
+                const isProdDeliv = String(t.deliveryMethod || '').toLowerCase().includes('cod') || String(t.deliveryMethod || '').toLowerCase().includes('diantar');
+                const prodReversal = amtCancel.omzetBersihProdusen + (isProdDeliv ? amtCancel.biayaAntar : 0);
+                prod.walletEarned = Math.max(0, (prod.walletEarned || 0) - prodReversal);
+            }
+            saveStateToLocal();
+            if (typeof window.syncAllDataToSupabaseNow === 'function') window.syncAllDataToSupabaseNow(false);
+            renderAll();
+            if (typeof window.renderPersonalConsumerOrders === 'function') window.renderPersonalConsumerOrders();
+            showToast('Pesanan Dibatalkan', `Pesanan ${t.id} dibatalkan dan stok dikembalikan.`, 'success');
+        };
+
         window.renderPersonalConsumerOrders = function renderPersonalConsumerOrders() {
             const card = document.getElementById('personalConsumerOrdersCard');
             const listEl = document.getElementById('personalConsumerOrdersList');
@@ -1899,17 +2090,22 @@ export function initSupabaseAndStorageService() {
             const badgeEl = document.getElementById('personalConsumerOrderCountBadge');
             if (!card || !listEl) return;
 
+            const D = window.SiPanganDomain;
             const activeSid = window.appState?.activeUserSid || 'SID-RT13-011';
             const member = (window.appState?.members || []).find(m => m.sid === activeSid);
             if (nameEl && member) nameEl.textContent = `${member.name} • ${member.sid}`;
 
-            const myOrders = (window.appState?.transactions || []).filter(t => t.consumerSid === activeSid);
-            if (badgeEl) badgeEl.textContent = `${myOrders.length} Pesanan Saya`;
+            const summary = D ? D.getConsumerOrderSummary(window.appState?.transactions || [], activeSid) : null;
+            const myOrders = summary ? summary.allOrders : (window.appState?.transactions || []).filter(t => t.consumerSid === activeSid);
+            const validCount = summary ? summary.validOrders.length : myOrders.filter(t => t.orderStatus !== 'DIBATALKAN').length;
+            if (badgeEl) badgeEl.textContent = `${validCount} Pesanan Saya`;
+            const shortcutCountEl = document.getElementById('consumerMarketOrdersCount');
+            if (shortcutCountEl) shortcutCountEl.textContent = summary ? summary.activeCount : validCount;
 
-            // Kelompokkan pesanan berdasarkan status transaksi
-            const readyOrders = myOrders.filter(t => t.orderStatus === 'SIAP_DIAMBIL');
-            const pendingOrders = myOrders.filter(t => t.orderStatus === 'MENUNGGU_KONFIRMASI');
-            const completedOrders = myOrders.filter(t => !t.orderStatus || t.orderStatus === 'SELESAI_LUNAS' || t.orderStatus === 'SELESAI');
+            // Kelompokkan pesanan berdasarkan status ternormalisasi (pesanan DIBATALKAN tidak masuk tab aktif/selesai)
+            const readyOrders = myOrders.filter(t => (D ? D.getNormalizedOrderStatus(t) : t.orderStatus) === 'SIAP_DIAMBIL');
+            const pendingOrders = myOrders.filter(t => (D ? D.getNormalizedOrderStatus(t) : t.orderStatus) === 'MENUNGGU_KONFIRMASI');
+            const completedOrders = myOrders.filter(t => (D ? D.getNormalizedOrderStatus(t) : (t.orderStatus || 'SELESAI_LUNAS')) === 'SELESAI_LUNAS');
 
             // Render Sub-Tab Filter Bar Status Pesanan Konsumen
             if (filterBar) {
@@ -2051,9 +2247,11 @@ export function initSupabaseAndStorageService() {
                 const producerAddress = producer?.address || 'Kebun RT 13 Yosomulyo';
                 const distanceText = producer?.distanceKm ? `${Math.round(producer.distanceKm * 1000)}m dari rumah` : 'Di lingkungan RT 13';
 
-                const isReady = t.orderStatus === 'SIAP_DIAMBIL';
-                const isDone = t.orderStatus === 'SELESAI_LUNAS' || t.orderStatus === 'SELESAI';
-                const isPending = !isReady && !isDone;
+                const normSt = D ? D.getNormalizedOrderStatus(t) : (t.orderStatus || 'SELESAI_LUNAS');
+                const isCancelled = normSt === 'DIBATALKAN';
+                const isReady = normSt === 'SIAP_DIAMBIL';
+                const isDone = normSt === 'SELESAI_LUNAS';
+                const amt = D ? D.calcTransactionAmounts(t) : { total: t.totalPaid || t.subtotal || 0 };
 
                 const waMsg = isReady
                     ? `Halo ${t.producerName}, saya ${buyerName} (${activeSid}). Pesanan saya ${t.id} (${t.commodity} - ${t.quantityKg} Kg) sudah tercatat Siap Diambil di SI-PANGAN ID. Saya ingin janjian waktu pengambilan ke ${producerAddress}. Terima kasih!`
@@ -2062,11 +2260,11 @@ export function initSupabaseAndStorageService() {
                 const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(waMsg)}`;
 
                 return `
-                    <div class="bg-white p-4 sm:p-5 rounded-3xl border ${isReady ? 'border-amber-300 ring-2 ring-amber-300/30 shadow-sm' : 'border-slate-200/90 shadow-xs'} hover:shadow-md transition space-y-3">
-                        <!-- 1. Header Pill & Harga (Sesuai Referensi Canvas Mobile Image 1) -->
+                    <div class="bg-white p-4 sm:p-5 rounded-3xl border ${isCancelled ? 'border-rose-200 opacity-75' : isReady ? 'border-amber-300 ring-2 ring-amber-300/30 shadow-sm' : 'border-slate-200/90 shadow-xs'} hover:shadow-md transition space-y-3">
+                        <!-- 1. Header Pill & Harga (Satu Fungsi Nominal - Task 2.10) -->
                         <div class="flex justify-between items-center">
                             <span class="text-xs font-extrabold text-[#0F5132] bg-[#E8F5E9] px-3 py-1 rounded-xl font-mono">${t.id}</span>
-                            <span class="font-extrabold text-base sm:text-lg text-slate-900 mono-num">${formatRupiah(t.totalPaid || t.subtotal)}</span>
+                            <span class="font-extrabold text-base sm:text-lg ${isCancelled ? 'line-through text-slate-400' : 'text-slate-900'} mono-num">${formatRupiah(amt.total)}</span>
                         </div>
 
                         <!-- 2. Komoditas & Kebun Produsen -->
@@ -2075,7 +2273,7 @@ export function initSupabaseAndStorageService() {
                                 ${t.commodity} (${t.quantityKg} Kg)
                             </h4>
                             <p class="text-xs text-slate-500 mt-1 flex items-center gap-1.5 flex-wrap">
-                                <span>Kebun: <b class="text-slate-700">${t.producerName}</b></span>
+                                <span>Kebun: <b class="text-slate-700">${producer ? producer.name : t.producerName}</b></span>
                                 <span>•</span>
                                 <span class="text-slate-600 font-medium">${t.deliveryMethod || 'Ambil di Kebun'}</span>
                             </p>
@@ -2085,9 +2283,15 @@ export function initSupabaseAndStorageService() {
                             </p>
                         </div>
 
-                        <!-- 3. Status Badge (⏳ Disiapkan • Waktu / ✅ Selesai • Sudah Diambil) -->
+                        <!-- 3. Status Badge -->
                         <div class="flex items-center gap-2 text-xs flex-wrap">
-                            ${isDone ? `
+                            ${isCancelled ? `
+                                <span class="px-2.5 py-1 rounded-xl text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300 flex items-center gap-1.5">
+                                    <span>✖</span>
+                                    <span>Dibatalkan</span>
+                                </span>
+                                <span class="text-slate-500 text-xs font-medium">• Stok telah dikembalikan</span>
+                            ` : isDone ? `
                                 <span class="px-2.5 py-1 rounded-xl text-xs font-bold bg-[#DCFCE7] text-[#15803D] border border-emerald-300 flex items-center gap-1.5">
                                     <span>✅</span>
                                     <span>Selesai</span>
@@ -2110,6 +2314,22 @@ export function initSupabaseAndStorageService() {
                                 <span>Konfirmasi Panen Sudah Diterima</span>
                             </button>
                         ` : ''}
+
+                        ${(() => {
+                            const D = window.SiPanganDomain;
+                            if (D && D.getNormalizedOrderStatus(t) === 'DIBATALKAN') {
+                                return '<div class="w-full py-2 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold text-center">✖ Pesanan Dibatalkan</div>';
+                            }
+                            if (D && D.getNormalizedOrderStatus(t) === 'MENUNGGU_KONFIRMASI') {
+                                if (D.isOrderPeriodClosed(t, window.appState)) {
+                                    return '<div class="w-full py-2 rounded-2xl bg-stone-100 text-stone-500 text-xs font-bold text-center"><i class="fa-solid fa-lock mr-1"></i>Periode sudah ditutup</div>';
+                                }
+                                if (D.can(window.appState, 'CANCEL_ORDER', t, window.appState)) {
+                                    return `<button type="button" onclick="openCancelOrderDialog('${t.id}')" class="w-full py-2.5 rounded-2xl bg-white border border-rose-300 text-rose-700 hover:bg-rose-50 text-xs font-bold transition cursor-pointer">Batalkan Pesanan</button>`;
+                                }
+                            }
+                            return '';
+                        })()}
 
                         <!-- 5. Dua Tombol Sejajar (💬 Chat WA Produsen & 📄 Lihat Struk) -->
                         <div class="grid grid-cols-2 gap-2.5 pt-1">

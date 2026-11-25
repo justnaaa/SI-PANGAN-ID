@@ -148,12 +148,12 @@
                             class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 font-medium focus:outline-none focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/15 transition">
                     </div>
 
-                    <!-- 2. PIN Rahasia (4 Angka) -->
+                    <!-- 2. PIN -->
                     <div>
                         <label for="gateLoginPin" class="block text-xs sm:text-sm font-bold text-slate-700 mb-1.5">
-                            PIN Rahasia (4 Angka)
+                            PIN
                         </label>
-                        <input type="password" id="gateLoginPin" maxlength="4" inputmode="numeric" required
+                        <input type="password" id="gateLoginPin" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="current-password" required
                             placeholder="••••"
                             oninput="document.getElementById('gateLoginErrorBox')?.classList.add('hidden')"
                             class="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 font-mono font-bold tracking-widest focus:outline-none focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/15 transition">
@@ -196,8 +196,10 @@
                 <form onsubmit="handleGateRegisterSubmit(event)" class="space-y-3.5">
                     <div>
                         <label class="block text-xs font-bold text-stone-700 mb-1">Nomor Induk Kependudukan (NIK 16 Digit) *</label>
-                        <input type="text" id="gateRegNik" maxlength="16" required placeholder="16 digit angka NIK KTP"
+                        <input type="text" id="gateRegNik" inputmode="numeric" maxlength="16" required placeholder="16 digit angka NIK KTP"
+                            oninput="handleGateNikInput(this)"
                             class="w-full h-11 px-3.5 rounded-xl border border-stone-300 font-mono font-bold text-stone-900 focus:outline-none focus:border-forest-700">
+                        <p id="gateRegNikError" class="hidden text-[11px] font-semibold text-rose-600 mt-1">NIK wajib tepat 16 digit angka.</p>
                     </div>
 
                     <div>
@@ -229,7 +231,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-stone-700 mb-1">Buat Password / PIN *</label>
-                            <input type="password" id="gateRegPin" maxlength="6" required placeholder="4-6 Digit PIN"
+                            <input type="password" id="gateRegPin" maxlength="6" inputmode="numeric" pattern="[0-9]{4,6}" minlength="4" required placeholder="PIN 4-6 angka"
                                 class="w-full h-11 px-3 rounded-xl border border-stone-300 font-mono font-bold text-stone-900 focus:outline-none focus:border-forest-700">
                         </div>
                     </div>
@@ -264,27 +266,35 @@
                                     class="w-full h-11 px-3 rounded-xl border border-emerald-400 bg-white font-mono font-extrabold text-stone-900">
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-stone-800 mb-1">Total Pangan (Kg/Bln) *</label>
-                                <input type="number" id="gateRegTotalNeedKg" min="5" max="300" value="60" required
-                                    class="w-full h-11 px-3 rounded-xl border border-stone-300 bg-white font-mono font-extrabold text-forest-900">
+                                <label class="block text-xs font-bold text-stone-800 mb-1">Total Pangan (Kg/Bln)</label>
+                                <input type="number" id="gateRegTotalNeedKg" readonly value="64"
+                                    class="w-full h-11 px-3 rounded-xl border border-stone-300 bg-stone-100 cursor-not-allowed font-mono font-extrabold text-forest-900 focus:outline-none">
                             </div>
                         </div>
-                        <div class="grid grid-cols-4 gap-2 text-center">
+                        <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center">
                             <div class="bg-white p-1.5 rounded-lg border border-stone-200">
                                 <span class="text-[10px] text-stone-500 block">Beras</span>
-                                <input type="number" id="gateRegBeras" value="30" oninput="syncGateRegSubNeeds()" class="w-full text-center font-mono font-bold text-xs text-stone-900 focus:outline-none">
+                                <input type="number" id="gateRegBeras" min="0" value="30" oninput="syncGateRegSubNeeds()" class="w-full text-center font-mono font-bold text-xs text-stone-900 focus:outline-none">
                             </div>
                             <div class="bg-white p-1.5 rounded-lg border border-stone-200">
                                 <span class="text-[10px] text-stone-500 block">Sayur</span>
-                                <input type="number" id="gateRegSayur" value="12" oninput="syncGateRegSubNeeds()" class="w-full text-center font-mono font-bold text-xs text-stone-900 focus:outline-none">
+                                <input type="number" id="gateRegSayur" min="0" value="12" oninput="syncGateRegSubNeeds()" class="w-full text-center font-mono font-bold text-xs text-stone-900 focus:outline-none">
                             </div>
                             <div class="bg-white p-1.5 rounded-lg border border-stone-200">
                                 <span class="text-[10px] text-stone-500 block">Telur</span>
-                                <input type="number" id="gateRegTelur" value="6" oninput="syncGateRegSubNeeds()" class="w-full text-center font-mono font-bold text-xs text-stone-900 focus:outline-none">
+                                <input type="number" id="gateRegTelur" min="0" value="6" oninput="syncGateRegSubNeeds()" class="w-full text-center font-mono font-bold text-xs text-stone-900 focus:outline-none">
                             </div>
                             <div class="bg-white p-1.5 rounded-lg border border-stone-200">
-                                <span class="text-[10px] text-stone-500 block">Ikan/Lauk</span>
-                                <input type="number" id="gateRegIkan" value="12" oninput="syncGateRegSubNeeds()" class="w-full text-center font-mono font-bold text-xs text-stone-900 focus:outline-none">
+                                <span class="text-[10px] text-stone-500 block">Ikan</span>
+                                <input type="number" id="gateRegIkan" min="0" value="6" oninput="syncGateRegSubNeeds()" class="w-full text-center font-mono font-bold text-xs text-stone-900 focus:outline-none">
+                            </div>
+                            <div class="bg-white p-1.5 rounded-lg border border-stone-200">
+                                <span class="text-[10px] text-stone-500 block">Ayam</span>
+                                <input type="number" id="gateRegAyam" min="0" value="4" oninput="syncGateRegSubNeeds()" class="w-full text-center font-mono font-bold text-xs text-stone-900 focus:outline-none">
+                            </div>
+                            <div class="bg-white p-1.5 rounded-lg border border-stone-200">
+                                <span class="text-[10px] text-stone-500 block">Tempe</span>
+                                <input type="number" id="gateRegTempe" min="0" value="6" oninput="syncGateRegSubNeeds()" class="w-full text-center font-mono font-bold text-xs text-stone-900 focus:outline-none">
                             </div>
                         </div>
                     </div>
@@ -338,8 +348,8 @@
                 <button onclick="switchTab('tab-sid')" id="headerActiveUserBtn"
                     class="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition-all bg-stone-50 border-stone-200 text-stone-800 hover:bg-stone-100 cursor-pointer"
                     title="Lihat Profile Saya">
-                    <i class="fa-solid fa-circle-user text-forest-700 text-xs"></i>
-                    <span id="headerActiveUserLabel" class="truncate max-w-[85px] xs:max-w-[125px] sm:max-w-[220px]">Pengguna (Konsumen)</span>
+                    <i class="fa-solid fa-circle-user text-forest-700 text-xs shrink-0"></i>
+                    <span id="headerActiveUserLabel" class="truncate max-w-[115px] xs:max-w-[145px] sm:max-w-[230px]">Pengguna (Konsumen)</span>
                 </button>
 
                 <button id="headerLogoutBtn" type="button" onclick="logoutCitizenAccount()"
@@ -444,7 +454,7 @@
                             <i class="fa-solid fa-check-to-slot"></i>
                         </div>
                         <div class="min-w-0 flex-1">
-                            <span class="block leading-snug" id="navMusyawarahTitle">Usulan Pangan</span>
+                            <span class="block leading-snug" id="navMusyawarahTitle">Usulan</span>
                             <span class="text-[10px] text-stone-400 block font-normal leading-tight" id="navMusyawarahSubtitle">Request Kebutuhan Warga</span>
                         </div>
                     </button>
@@ -579,7 +589,7 @@
                                 </h3>
                                 <p class="text-xs text-stone-600 mt-0.5">
                                     Sistem memetakan estimasi kebutuhan konsumsi pangan <span class="dynamic-kk-count">40</span>
-                                    KK RT 13 Kelurahan Yosomulyo secara terukur berdasarkan Standar Konsumsi Pangan Bapanas &amp; terenkripsi SHA-256.
+                                    KK RT 13 Kelurahan Yosomulyo secara terukur berdasarkan Standar Konsumsi Pangan Bapanas.
                                 </p>
                             </div>
                         </div>
@@ -703,14 +713,14 @@
                         </div>
                     </div>
 
-                    <!-- 4 Kelompok Pangan Kebutuhan Gizi Terukur 40 KK -->
+                    <!-- 4 Kelompok Pangan Kebutuhan Gizi Terukur KK Dinamis (Task 5.2) -->
                     <div>
-                        <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center justify-between mb-3 flex-wrap gap-1">
                             <span class="text-xs font-bold text-stone-800 flex items-center gap-1.5">
                                 <i class="fa-solid fa-chart-pie text-emerald-700"></i>
-                                Pemetaan Kebutuhan Konsumsi Pangan Harian 40 KK RT 13 (Terenkripsi):
+                                <span>Pemetaan Kebutuhan Konsumsi Pangan Harian <span class="dynamic-kk-count">40</span> KK RT 13:</span>
                             </span>
-                            <span class="text-[11px] text-stone-500 font-mono">Agregasi Data Riil 40 KK</span>
+                            <span id="dailyNeedAggLabel" class="text-[11px] text-stone-500 font-mono">Agregasi Data Riil 40 KK</span>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
                             <!-- Kelompok 1: Sayuran Segar -->
@@ -724,10 +734,10 @@
                                         class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800">KWT
                                         RT 13</span>
                                 </div>
-                                <div class="serif-heading text-xl font-bold text-stone-900 mono-num">24 Kg <span
+                                <div class="serif-heading text-xl font-bold text-stone-900 mono-num"><span id="dailyNeedSayurVal">24</span> Kg <span
                                         class="text-xs font-normal text-stone-500">/ hari</span></div>
                                 <p class="text-[11px] text-stone-600 leading-snug">
-                                    Kangkung, bayam, sawi hijau, daun bawang & cabai pekarangan.
+                                    Kangkung, bayam, sawi hijau, daun bawang &amp; cabai pekarangan.
                                 </p>
                             </div>
 
@@ -742,10 +752,10 @@
                                         class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">Ternak
                                         Warga</span>
                                 </div>
-                                <div class="serif-heading text-xl font-bold text-stone-900 mono-num">80 Butir <span
+                                <div class="serif-heading text-xl font-bold text-stone-900 mono-num"><span id="dailyNeedTelurVal">80</span> Butir <span
                                         class="text-xs font-normal text-stone-500">/ hari</span></div>
                                 <p class="text-[11px] text-stone-600 leading-snug">
-                                    Telur ayam pekarangan & telur bebek sumber protein keluarga.
+                                    Telur ayam pekarangan &amp; telur bebek sumber protein keluarga.
                                 </p>
                             </div>
 
@@ -760,10 +770,10 @@
                                         class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-terracotta-100 text-terracotta-800">Unggas
                                         Rakyat</span>
                                 </div>
-                                <div class="serif-heading text-xl font-bold text-stone-900 mono-num">12 Kg <span
+                                <div class="serif-heading text-xl font-bold text-stone-900 mono-num"><span id="dailyNeedAyamVal">12</span> Kg <span
                                         class="text-xs font-normal text-stone-500">/ hari</span></div>
                                 <p class="text-[11px] text-stone-600 leading-snug">
-                                    Ayam kampung & pedaging pekarangan sehat rendah lemak.
+                                    Ayam kampung &amp; pedaging pekarangan sehat rendah lemak.
                                 </p>
                             </div>
 
@@ -778,10 +788,10 @@
                                         class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">Bioflok
                                         RT 13</span>
                                 </div>
-                                <div class="serif-heading text-xl font-bold text-stone-900 mono-num">16 Kg <span
+                                <div class="serif-heading text-xl font-bold text-stone-900 mono-num"><span id="dailyNeedIkanVal">16</span> Kg <span
                                         class="text-xs font-normal text-stone-500">/ hari</span></div>
                                 <p class="text-[11px] text-stone-600 leading-snug">
-                                    Ikan lele & ikan nila segar budidaya kolam pekarangan.
+                                    Ikan lele &amp; ikan nila segar budidaya kolam pekarangan.
                                 </p>
                             </div>
                         </div>
@@ -888,9 +898,10 @@
 
                                 <div>
                                     <label class="block text-xs font-bold text-stone-700 mb-1.5">Nomor Induk Kependudukan (NIK 16 Digit) *</label>
-                                    <input type="text" id="regNik" maxlength="16" required placeholder="187201xxxxxxxxxx"
-                                        oninput="checkNikDeduplicationLive(this.value)"
+                                    <input type="text" id="regNik" inputmode="numeric" maxlength="16" required placeholder="187201xxxxxxxxxx"
+                                        oninput="checkNikDeduplicationLive(this.value, this)"
                                         class="w-full h-11 px-3.5 py-2 rounded-xl border border-stone-300 bg-white text-xs sm:text-sm mono-num font-bold text-stone-900 focus:outline-none focus:border-forest-600 focus:ring-2 focus:ring-forest-600/15">
+                                    <p id="regNikError" class="hidden text-[11px] font-semibold text-rose-600 mt-1">NIK wajib tepat 16 digit angka sesuai KTP/KK.</p>
                                 </div>
 
                                 <div>
@@ -967,12 +978,11 @@
 
                                 <div class="p-3.5 rounded-xl bg-white border border-stone-200 space-y-1.5">
                                     <label class="block text-xs font-bold text-stone-800">
-                                        Total Perkiraan Kebutuhan Pangan (Kg/Bulan) *
+                                        Total Perkiraan Kebutuhan Pangan (Kg/Bulan)
                                     </label>
-                                    <input type="number" id="regFoodNeedKg" min="5" max="300" value="64"
-                                        oninput="syncTotalToNeeds()"
-                                        class="w-full h-11 px-3.5 py-2 rounded-xl border border-stone-300 text-sm font-extrabold mono-num text-forest-900 focus:outline-none focus:border-forest-700 bg-stone-50/50">
-                                    <span class="text-[10px] text-emerald-700 font-semibold block">Total otomatis dari 6 komoditas pokok di bawah (dapat Anda koreksi).</span>
+                                    <input type="number" id="regFoodNeedKg" readonly value="64"
+                                        class="w-full h-11 px-3.5 py-2 rounded-xl border border-stone-300 text-sm font-extrabold mono-num text-forest-900 focus:outline-none bg-stone-100 cursor-not-allowed">
+                                    <span class="text-[10px] text-emerald-700 font-semibold block">Dijumlahkan otomatis secara real-time dari 6 komoditas di bawah.</span>
                                 </div>
                             </div>
 
@@ -1054,7 +1064,7 @@
                                     id="memberTableBadgeTotal"><span class="dynamic-kk-count">40</span> KK</span>
                             </div>
                             <p class="text-xs text-stone-500">Seluruh data tersinkronisasi 100% dengan pilar inklusi
-                                pasar dan donat status ketahanan pangan</p>
+                                pasar dan data status ketahanan pangan</p>
                         </div>
 
                         <!-- Search & Filter Controls -->
@@ -1085,7 +1095,7 @@
                                 <tr
                                     class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
                                     <th class="py-3.5 px-4">Kode SID</th>
-                                    <th class="py-3.5 px-4">Identitas (Masked)</th>
+                                    <th class="py-3.5 px-4">IDENTITAS WARGA (NIK)</th>
                                     <th class="py-3.5 px-4" id="thMemberStatus">Status Kerentanan</th>
                                     <th class="py-3.5 px-4 text-right">Aksi</th>
                                 </tr>
@@ -1096,21 +1106,20 @@
                         </table>
                     </div>
 
-                    <!-- Table Footer Summary -->
+                    <!-- Table Footer Summary (Dinamis sesuai jumlah KK riil - Task 2.12) -->
                     <div
                         class="flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500 pt-3 border-t border-stone-100 gap-2">
                         <div>
                             Menampilkan <span id="membersFilteredCount" class="font-bold text-stone-800">40</span> dari
-                            <span class="font-bold text-stone-800">40 Kepala Keluarga</span> terdaftar Single Identity.
+                            <span class="font-bold text-stone-800"><span class="dynamic-kk-count">40</span> Kepala Keluarga</span> terdaftar Single Identity.
                         </div>
-                        <div class="flex flex-wrap items-center gap-3 text-[11px]">
+                        <div id="membersTierBreakdownFooter" class="flex flex-wrap items-center gap-3 text-[11px]">
                             <span class="flex items-center gap-1 text-forest-800 font-medium"><span
-                                    class="w-2 h-2 rounded-full bg-forest-600"></span> 27 Mandiri Pangan (67.5%)</span>
+                                    class="w-2 h-2 rounded-full bg-forest-600"></span> <span id="footerMandiriText">27 Mandiri Pangan</span></span>
                             <span class="flex items-center gap-1 text-paddy-800 font-medium"><span
-                                    class="w-2 h-2 rounded-full bg-paddy-500"></span> 8 Waspada Pangan (20.0%)</span>
+                                    class="w-2 h-2 rounded-full bg-paddy-500"></span> <span id="footerWaspadaText">8 Waspada Pangan</span></span>
                             <span class="flex items-center gap-1 text-terracotta-800 font-medium"><span
-                                    class="w-2 h-2 rounded-full bg-terracotta-600"></span> 5 Rentan Prioritas
-                                (12.5%)</span>
+                                    class="w-2 h-2 rounded-full bg-terracotta-600"></span> <span id="footerRentanText">5 Rentan Prioritas</span></span>
                         </div>
                     </div>
                 </div>
@@ -1139,20 +1148,20 @@
                                 Manajemen Produk, Stok &amp; Panen Kebun Saya
                             </h2>
                         </div>
-                        <div id="marketProducerActions" class="flex flex-wrap items-center gap-2 shrink-0">
-                            <button type="button" onclick="openModal('modalPasarIndukBapanas')"
-                                class="flex-1 sm:flex-initial px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs">
-                                <i class="fa-solid fa-chart-line text-amber-700"></i>
-                                <span>Cek Patokan Harga Bapanas</span>
-                            </button>
+                        <div id="marketProducerActions" class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto shrink-0">
                             <button type="button" onclick="openModal('modalNewListing')"
-                                class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
-                                <i class="fa-solid fa-circle-plus text-emerald-300"></i>
+                                class="col-span-2 sm:col-span-1 w-full sm:w-auto px-4 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer">
+                                <i class="fa-solid fa-circle-plus text-emerald-300 shrink-0"></i>
                                 <span>Upload Produk / Hasil Panen</span>
                             </button>
+                            <button type="button" onclick="openModal('modalPasarIndukBapanas')"
+                                class="col-span-1 px-2.5 sm:px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1.5 text-center leading-tight cursor-pointer shadow-2xs">
+                                <i class="fa-solid fa-chart-line text-amber-700 shrink-0"></i>
+                                <span>Cek Patokan Harga Bapanas</span>
+                            </button>
                             <button type="button" onclick="switchTab('tab-orders')"
-                                class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-900 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
-                                <i class="fa-solid fa-clipboard-list text-emerald-700"></i>
+                                class="col-span-1 px-2.5 sm:px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-900 text-[11px] sm:text-xs font-bold transition flex items-center justify-center gap-1.5 text-center leading-tight cursor-pointer">
+                                <i class="fa-solid fa-clipboard-list text-emerald-700 shrink-0"></i>
                                 <span>Daftar Pesanan Masuk (<span id="marketOrdersCountBadge">0</span>)</span>
                             </button>
                         </div>
@@ -1162,6 +1171,30 @@
                     <div id="producerAutoAiPanel" class="bg-gradient-to-br from-forest-50 via-white to-amber-50/40 rounded-2xl p-5 border-2 border-emerald-300 shadow-xs space-y-4">
                         <!-- Diisi otomatis oleh renderProducerAutoAiPanel() begitu Produsen login -->
                     </div>
+                </div>
+
+                <!-- Header Mode Pantau Etalase Khusus Admin (Read-Only + Moderasi) -->
+                <div id="adminMarketMonitorBar" class="hidden bg-white rounded-2xl p-4 sm:p-5 border border-stone-200 shadow-2xs space-y-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <span class="px-2.5 py-0.5 rounded-full bg-forest-100 text-forest-800 text-[10px] font-bold uppercase tracking-wider">
+                                Mode Pantau Pengurus RT (Read-Only)
+                            </span>
+                            <h2 class="serif-heading text-lg sm:text-xl font-bold text-stone-900 mt-0.5">
+                                Etalase Komoditas Pasar Warga RT 13
+                            </h2>
+                            <p class="text-xs text-stone-500">
+                                Pengurus memantau kelayakan produk warga. Harga dan stok hanya dapat diubah oleh pemilik kebun; pengurus dapat menonaktifkan sementara produk dengan alasan tercatat.
+                            </p>
+                        </div>
+                        <div class="relative w-full sm:w-64 shrink-0">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-xs"></i>
+                            <input type="text" id="adminMarketSearchInput" oninput="renderMarketListings(true)"
+                                placeholder="Cari komoditas..."
+                                class="w-full h-10 pl-8 pr-3 rounded-xl border border-stone-200 bg-stone-50/70 focus:bg-white text-xs text-stone-800 focus:outline-none focus:border-forest-600">
+                        </div>
+                    </div>
+                    <div id="adminModerationLogContainer" class="hidden pt-2 border-t border-stone-100"></div>
                 </div>
 
                 <!-- Pilihan Kategori Komoditas (Tampil rapi tanpa perlu scroll kanan-kiri di HP) -->
@@ -1371,12 +1404,11 @@
                             </div>
 
                             <div
-                                class="flex items-center justify-between text-[11px] text-stone-500 px-1 pt-1 font-mono">
+                                class="flex items-center justify-between flex-wrap gap-1 text-[11px] text-stone-500 px-1 pt-1 font-mono">
                                 <span><i class="fa-solid fa-clock-rotate-left mr-1"></i> Data Historis: H-7 s.d. Hari
                                     Ini</span>
                                 <span class="text-amber-700 font-semibold"><i
-                                        class="fa-solid fa-wand-magic-sparkles mr-1"></i> Machine Learning Forecasting:
-                                    H+1 s.d. H+3</span>
+                                        class="fa-solid fa-chart-line mr-1"></i> Proyeksi harga 3 hari ke depan</span>
                             </div>
                         </div>
 
@@ -1415,12 +1447,12 @@
                                 </div>
                             </div>
 
-                            <!-- KOTAK REKOMENDASI KEPUTUSAN (AI ACTIONABLE ADVISORY) -->
+                            <!-- KOTAK REKOMENDASI KEPUTUSAN (AI ACTIONABLE ADVISORY - KHUSUS PRODUSEN, TASK 4.2) -->
                             <div
                                 class="p-4 rounded-xl bg-gradient-to-br from-stone-50 to-emerald-50/50 border border-stone-200/90 shadow-2xs space-y-3">
                                 <div class="flex items-center justify-between border-b border-stone-200/70 pb-2">
                                     <span class="text-xs font-bold text-stone-900 flex items-center gap-1.5">
-                                        <i class="fa-solid fa-lightbulb text-amber-500"></i> AI Actionable Advisory
+                                        <i class="fa-solid fa-lightbulb text-amber-500"></i> Saran Penjualan &amp; Panen
                                     </span>
                                     <span id="fluctVolatilityBadge"
                                         class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
@@ -1439,19 +1471,6 @@
                                         Prediksi AI: Permintaan beras pulen lumbung stabil menguat. Rekomendasi
                                         Produsen: Waktu ideal penyerapan gabah/beras dengan kepastian harga adil
                                         komunitas.
-                                    </p>
-                                </div>
-
-                                <!-- Rekomendasi Konsumen -->
-                                <div class="space-y-1">
-                                    <div class="flex items-center gap-1.5 text-xs font-bold text-terracotta-700">
-                                        <i class="fa-solid fa-cart-shopping text-terracotta-600"></i>
-                                        <span>Rekomendasi Konsumen (Warga RT 13):</span>
-                                    </div>
-                                    <p id="fluctConsumerAdvisory"
-                                        class="text-xs text-stone-700 leading-relaxed pl-5 bg-white/70 p-2.5 rounded-lg border border-stone-150">
-                                        Prediksi AI: Harga Beras berpotensi naik 2% minggu depan. Rekomendasi Konsumen:
-                                        Amankan stok kebutuhan pokok sekarang melalui Lumbung Mandiri RT 13.
                                     </p>
                                 </div>
                             </div>
@@ -1520,21 +1539,21 @@
                                 </p>
                             </div>
 
-                            <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 shrink-0">
+                            <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full md:w-auto">
                                 <div id="ordersPersonalProducerBadge" class="hidden"></div>
                                 <!-- Filter Produsen (Khusus Admin) -->
-                                <div id="ordersAdminFilterBox" class="hidden items-center gap-2 bg-stone-50 border border-stone-200 rounded-xl px-2.5 py-1.5 w-full sm:w-auto max-w-full sm:max-w-[260px]">
+                                <div id="ordersAdminFilterBox" class="hidden items-center gap-2 bg-stone-50 border border-stone-200 rounded-xl px-2.5 py-2 w-full sm:w-auto">
                                     <i class="fa-solid fa-filter text-forest-700 text-xs shrink-0"></i>
-                                    <select id="ordersProducerFilter" onchange="renderProducerOrders()" class="bg-transparent text-xs font-bold text-stone-800 focus:outline-none w-full truncate max-w-[210px]">
+                                    <select id="ordersProducerFilter" onchange="renderProducerOrders()" class="bg-transparent text-xs font-bold text-stone-800 focus:outline-none w-full sm:w-auto sm:max-w-[260px]">
                                         <option value="ALL">Semua Produsen (Rekap RT 13)</option>
                                     </select>
                                 </div>
-                                <button onclick="switchTab('tab-dampak')" class="px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold transition flex items-center gap-1.5 border border-amber-300 cursor-pointer shrink-0" title="Buka Pusat Penarikan Surplus ke Koperasi/MBG">
-                                    <i class="fa-solid fa-boxes-packing text-amber-700"></i>
-                                    <span>Pusat Surplus &rarr;</span>
+                                <button onclick="switchTab('tab-dampak')" class="flex-1 sm:flex-initial px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 text-xs font-bold transition flex items-center justify-center gap-1.5 border border-amber-300 cursor-pointer shrink-0" title="Lihat di Pusat Surplus">
+                                    <i class="fa-solid fa-boxes-packing text-amber-700 shrink-0"></i>
+                                    <span>Lihat di Pusat Surplus</span>
                                 </button>
-                                <button onclick="exportOrdersCsv()" class="px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition flex items-center gap-1.5 border border-stone-200 cursor-pointer shrink-0">
-                                    <i class="fa-solid fa-download text-forest-700"></i>
+                                <button onclick="exportOrdersCsv()" class="flex-1 sm:flex-initial px-3 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold transition flex items-center justify-center gap-1.5 border border-stone-200 cursor-pointer shrink-0">
+                                    <i class="fa-solid fa-download text-forest-700 shrink-0"></i>
                                     <span>Unduh CSV</span>
                                 </button>
                             </div>
@@ -1554,8 +1573,9 @@
                                 </div>
                             </div>
                             <div class="p-3 sm:p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs">
-                                <span class="text-[11px] font-semibold text-slate-500 block">Omzet</span>
+                                <span class="text-[11px] font-semibold text-slate-500 block">Omzet Produk</span>
                                 <strong id="ordersEarnedDisplay" class="text-sm sm:text-xl font-extrabold text-[#0F5132] mono-num">Rp 0</strong>
+                                <span id="ordersDeliveryFeeSubDisplay" class="hidden text-[10px] font-mono text-slate-500 mt-0.5 block">Jasa Antar: Rp 0</span>
                             </div>
                         </div>
 
@@ -1604,12 +1624,12 @@
                         <div>
                             <h3
                                 class="serif-heading text-lg sm:text-xl font-bold text-stone-900 flex items-center gap-2">
-                                <i class="fa-solid fa-chart-pie text-forest-700"></i> Asisten Peramal Kebutuhan & Panen
-                                Lingkungan (Proyeksi 3 Hari)
+                                <i class="fa-solid fa-chart-pie text-forest-700"></i> Asisten Peramal Kebutuhan &amp; Panen
+                                Lingkungan (Neraca Mingguan)
                             </h3>
                             <p class="text-xs text-stone-600 mt-0.5">
-                                Proyeksi Keseimbangan Pangan Komunitas: Perhitungan otomatis daya serap konsumsi warga RT 13 vs
-                                estimasi volume panen KWT, peternakan, perikanan & poktan untuk menjaga susut pangan
+                                Proyeksi Keseimbangan Pangan Komunitas (Satuan: Kg/mgg): Perhitungan otomatis daya serap konsumsi warga RT 13 vs
+                                stok lapak riil kebun warga untuk menjaga susut pangan
                                 &lt; 5% serta stabilitas harga.
                             </p>
                         </div>
@@ -1655,8 +1675,8 @@
                             <!-- Diisi otomatis oleh renderPerProducerAiForecast() -->
                         </div>
 
-                        <!-- Sumber Parameter Machine Learning & Standar Pangan Resmi -->
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3 border-t border-stone-200/70 text-[11px]">
+                        <!-- Sumber Parameter Machine Learning & Standar Pangan Resmi (Khusus Admin - Task 4.3) -->
+                        <div id="aiTechnicalMlMetricsBar" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3 border-t border-stone-200/70 text-[11px]">
                             <div class="p-2.5 rounded-xl bg-white border border-stone-200 flex items-center gap-2">
                                 <i class="fa-solid fa-chart-line text-paddy-700 text-sm"></i>
                                 <div>
@@ -1683,41 +1703,37 @@
 
                     <!-- BAGIAN KHUSUS ADMIN: SIMULATOR AGREGAT LUMBUNG RT 13 & TABEL HIBRIDA (Tersembunyi untuk Produsen agar Fokus Produk Kebun Sendiri) -->
                     <div id="aiAdminAggregateSimulatorSection" class="space-y-6">
-                    <!-- Simulator Live Metric Cards -->
+                    <!-- Simulator Live Metric Cards (Disatukan 1 sumber dengan Kartu Atas dalam satuan Kg/mgg - Task 2.7 & 2.9) -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                         <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/90 space-y-1 shadow-2xs">
                             <span
                                 class="text-xs text-slate-600 font-semibold block flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-boxes-stacked text-slate-500 text-[10px]"></i> Estimasi Total
-                                Panen
+                                <i class="fa-solid fa-boxes-stacked text-slate-500 text-[10px]"></i> Stok Lapak Siap Serap
                             </span>
                             <div id="surplusDisplayTotal"
-                                class="serif-heading text-2xl font-bold text-slate-800 mono-num">1.000 Kg</div>
-                            <span class="text-[10px] text-slate-500">Volume Panen Masuk</span>
+                                class="serif-heading text-2xl font-bold text-slate-800 mono-num">0 Kg</div>
+                            <span class="text-[10px] text-slate-500">Stok Siap Serap Seluruh Lapak (di luar 400 Kg Cadangan Lumbung)</span>
                         </div>
 
                         <div class="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-1 shadow-2xs">
                             <span
                                 class="text-xs text-emerald-800 font-semibold block flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-house-chimney text-emerald-600 text-[10px]"></i> Serapan Konsumsi
-                                Lokal RT 13
+                                <i class="fa-solid fa-house-chimney text-emerald-600 text-[10px]"></i> Kebutuhan Konsumsi RT 13
                             </span>
                             <div id="surplusDisplayLocal"
-                                class="serif-heading text-2xl font-bold text-emerald-900 mono-num">600 Kg</div>
+                                class="serif-heading text-2xl font-bold text-emerald-900 mono-num">0 Kg/mgg</div>
                             <span id="surplusDisplayLocalSub"
-                                class="text-[10px] text-emerald-700 font-semibold">Terserap oleh 40 KK</span>
+                                class="text-[10px] text-emerald-700 font-semibold">Daya Serap Mingguan Warga</span>
                         </div>
 
                         <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-200 space-y-1 shadow-2xs">
                             <span
                                 class="text-xs text-amber-800 font-semibold block flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-arrows-split-up-and-left text-amber-600 text-[10px]"></i> Status /
-                                Luapan Surplus
+                                <i class="fa-solid fa-arrows-split-up-and-left text-amber-600 text-[10px]"></i> Neraca / Luapan Surplus
                             </span>
                             <div id="surplusDisplayDiff"
-                                class="serif-heading text-2xl font-bold text-amber-900 mono-num">+400 Kg</div>
-                            <span id="surplusDisplayDiffSub" class="text-[10px] text-amber-700 font-semibold">Spillover
-                                ke Pasar Luar</span>
+                                class="serif-heading text-2xl font-bold text-amber-900 mono-num">0 Kg/mgg</div>
+                            <span id="surplusDisplayDiffSub" class="text-[10px] text-amber-700 font-semibold">Selisih Pasokan vs Kebutuhan</span>
                         </div>
                     </div>
 
@@ -2070,7 +2086,7 @@
                                 Panel Kelola Distribusi Pemasok (Permintaan Agregat AI per SID)
                             </h3>
                             <p class="text-xs text-slate-600 max-w-3xl">
-                                AI menarik dan menjumlahkan kebutuhan konsumsi bulanan dari seluruh SID di Tab 2 menjadi kuota permintaan komoditas. Pemasok dapat mengambil alih kuota lalu mengelola pengiriman langsung ke tiap SID penerima.
+                                AI menarik dan menjumlahkan kebutuhan konsumsi bulanan dari seluruh data KK warga menjadi kuota permintaan komoditas. Pemasok dapat mengambil alih kuota lalu mengelola pengiriman langsung ke tiap keluarga penerima.
                             </p>
                         </div>
 
@@ -2157,7 +2173,7 @@
                             Pangan Warga
                         </h3>
                         <div class="flex items-center gap-2">
-                            <span class="text-xs text-stone-500">Klik "Beri Suara" untuk mewakili SID keluarga Anda</span>
+                            <span id="musyawarahActionRoleHint" class="text-xs text-stone-500">Klik "Beri Suara" untuk mewakili SID keluarga Anda</span>
                         </div>
                     </div>
 
@@ -2209,7 +2225,7 @@
                         <div class="p-4 rounded-xl bg-stone-50 border border-stone-200/80 space-y-1">
                             <span class="text-[11px] text-stone-600 font-semibold uppercase tracking-wider block">Total Transaksi</span>
                             <div class="serif-heading text-xl sm:text-2xl font-bold text-stone-900 mono-num"><span class="dynamic-tx-count">50</span> Pesanan</div>
-                            <p class="text-[11px] text-stone-600">Basis Data Machine Learning</p>
+                            <p class="text-[11px] text-stone-600">Transaksi Pangan Terverifikasi</p>
                         </div>
                     </div>
 
@@ -2359,6 +2375,37 @@
                                 </button>
                             </div>
                         </div>
+                        <!-- Arsip / Riwayat Penyaluran B2B & Dapur MBG (Task 3.4) -->
+                        <div class="pt-4 border-t border-emerald-200/70 space-y-2.5">
+                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                <h4 class="font-bold text-xs sm:text-sm text-stone-900 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-clock-rotate-left text-forest-700"></i>
+                                    <span>Riwayat Penyaluran B2B / MBG</span>
+                                </h4>
+                                <span id="b2bHistoryCountBadge" class="px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700 border border-stone-200 text-[10px] font-mono font-bold">
+                                    0 Penyaluran Tercatat
+                                </span>
+                            </div>
+                            <div class="overflow-x-auto rounded-xl border border-stone-200 bg-white">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-stone-50 border-b border-stone-200 text-stone-600 font-bold uppercase text-[10px]">
+                                            <th class="py-2.5 px-3">Tanggal</th>
+                                            <th class="py-2.5 px-3">Komoditas</th>
+                                            <th class="py-2.5 px-3">Produsen (SID Asli)</th>
+                                            <th class="py-2.5 px-3 text-right">Volume (Kg)</th>
+                                            <th class="py-2.5 px-3 text-right">Nilai (Rp)</th>
+                                            <th class="py-2.5 px-3">Mitra Penerima</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminB2bSurplusHistoryBody" class="divide-y divide-stone-100">
+                                        <tr>
+                                            <td colspan="6" class="py-4 px-3 text-center text-stone-400 text-xs">Belum ada riwayat penyaluran surplus ke mitra B2B / Dapur MBG pada sesi ini.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -2370,8 +2417,8 @@
                             <span class="text-[11px] font-bold uppercase tracking-wider text-stone-500">Total Stok Panen</span>
                             <i class="fa-solid fa-weight-hanging text-forest-700"></i>
                         </div>
-                        <div id="kpiTotalPanganKg" class="serif-heading text-2xl font-bold text-forest-900 mono-num">1.340 Kg</div>
-                        <p class="text-[10px] text-stone-500" id="kpiTotalPanganSub">Daya serap konsumen: 905 Kg</p>
+                        <div id="kpiTotalPanganKg" class="serif-heading text-2xl font-bold text-forest-900 mono-num">0 Kg</div>
+                        <p class="text-[10px] text-stone-500" id="kpiTotalPanganSub">Stok fisik panen yang tersedia</p>
                     </div>
 
                     <!-- KPI 2: FOOD LOSS <= 5% (Dihitung dari Total Stok Panen - Daya Serap Konsumen) -->
@@ -2443,7 +2490,7 @@
                         <div
                             class="pt-2 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
                             <span>Sistem mencegah penumpukan gabah/sayur membusuk.</span>
-                            <span class="font-bold text-forest-700">Efisiensi Serap 89,2%</span>
+                            <span id="chartSurplusEfficiencyLabel" class="font-bold text-forest-700">Efisiensi Serap Live</span>
                         </div>
                     </div>
 
@@ -2499,20 +2546,20 @@
                         </div>
                     </div>
 
-                    <!-- 3 Status Rekonsiliasi -->
+                    <!-- 3 Status Rekonsiliasi (Dihitung Dinamis Satu Pintu - Task 2.11 & 3.3) -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                        <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1">
+                        <div id="reconStatusCard" class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1">
                             <span class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider block">Status Rekonsiliasi Pembayaran</span>
-                            <strong class="text-sm font-bold text-emerald-900 flex items-center gap-1.5">
+                            <strong id="reconStatusBadge" class="text-sm font-bold text-emerald-900 flex items-center gap-1.5">
                                 <i class="fa-solid fa-circle-check text-emerald-600"></i> 100% MATCHED (Nol Selisih)
                             </strong>
-                            <p class="text-[10px] text-emerald-700">Semua pesanan pasar telah disalurkan utuh ke produsen.</p>
+                            <p id="reconStatusSub" class="text-[10px] text-emerald-700">Selisih buku besar vs komponen: Rp 0</p>
                         </div>
 
                         <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200 space-y-1">
-                            <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">Total Pembayaran Terverifikasi</span>
-                            <strong class="text-sm font-mono font-bold text-forest-800">Rp 8.064.000</strong>
-                            <p class="text-[10px] text-stone-500">Transaksi P2P Warga RT 13 (Bebas Potongan Komisi).</p>
+                            <span class="text-[10px] font-bold text-stone-500 uppercase tracking-wider block">Total Perputaran Terverifikasi</span>
+                            <strong id="reconVerifiedTotalRp" class="text-sm font-mono font-bold text-forest-800">Rp 0</strong>
+                            <p id="reconVerifiedBreakdown" class="text-[10px] text-stone-500">Omzet P2P Warga + Penyaluran B2B/Koperasi</p>
                         </div>
 
                         <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200 space-y-1">
@@ -2520,7 +2567,7 @@
                             <strong id="periodStatusBadge" class="text-sm font-bold text-amber-700 flex items-center gap-1.5">
                                 <i class="fa-solid fa-hourglass-half text-amber-600"></i> Periode Berjalan (Oktober 2026)
                             </strong>
-                            <p id="periodAuditSeal" class="text-[10px] text-stone-500 font-mono">Segel Audit: PENDING_CLOSURE</p>
+                            <p id="periodAuditSeal" class="text-[10px] text-stone-500 font-mono">Periode Aktif: 2026-10</p>
                         </div>
                     </div>
                 </div>
@@ -2549,6 +2596,9 @@
                         </div>
                     </div>
 
+                    <!-- Banner Audit Non-Destruktif Data Tidak Valid (Self-Buying / Duplikat / NIK Belum Valid) -->
+                    <div id="adminInvalidDataAuditBanner" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-950 text-xs space-y-1"></div>
+
                     <!-- Ledger Table -->
                     <div class="overflow-x-auto w-full">
                         <table class="w-full min-w-[780px] text-left border-collapse text-xs">
@@ -2556,12 +2606,13 @@
                                 <tr
                                     class="bg-stone-50 border-b border-stone-200 text-stone-500 font-bold uppercase tracking-wider text-[11px]">
                                     <th class="py-3 px-3.5 rounded-l-lg">ID Transaksi</th>
-                                    <th class="py-3 px-3.5">Tanggal & Waktu</th>
+                                    <th class="py-3 px-3.5">Tanggal &amp; Periode</th>
                                     <th class="py-3 px-3.5">Produsen (SID)</th>
                                     <th class="py-3 px-3.5">Konsumen / Penerima (SID)</th>
                                     <th class="py-3 px-3.5">Komoditas (Kg)</th>
-                                    <th class="py-3 px-3.5 text-right">Nilai Transaksi (100% Produsen)</th>
-                                    <th class="py-3 px-3.5">Metode Kirim</th>
+                                    <th class="py-3 px-3.5 text-right">Omzet Produk Bersih Produsen</th>
+                                    <th class="py-3 px-3.5 text-right">Biaya Antar (diterima produsen pengantar)</th>
+                                    <th class="py-3 px-3.5 text-right">Total Pembayaran</th>
                                     <th class="py-3 px-3.5 text-center rounded-r-lg">Status</th>
                                 </tr>
                             </thead>
@@ -2609,8 +2660,8 @@
                         <span id="modalDetailNik" class="font-mono font-bold text-stone-800">187201********02</span>
                     </div>
                     <div>
-                        <span class="text-stone-500 block text-[10px]">Hash Kriptografi NIK</span>
-                        <span id="modalDetailHash" class="font-mono text-stone-600">c4d32f1a</span>
+                        <span class="text-stone-500 block text-[10px]">Status Keamanan Data</span>
+                        <span id="modalDetailHash" class="font-semibold text-emerald-700">Terlindungi</span>
                     </div>
                     <div>
                         <span class="text-stone-500 block text-[10px]">Peran Utama</span>
@@ -2698,14 +2749,16 @@
                     </div>
                 </div>
 
-                <!-- Select Buyer SID -->
+                <!-- Identitas Pembeli Terkunci (Single Identity Lock - Task 1.5) -->
                 <div>
-                    <label class="block font-semibold text-stone-700 mb-1">Pilih Identitas Pembeli (Single Identity)
-                        *</label>
-                    <select id="buyConsumerSidSelect" required
-                        class="w-full px-3 py-2 rounded-lg border border-stone-200 bg-white focus:outline-none focus:border-forest-600">
-                        <!-- Populated by JS -->
-                    </select>
+                    <label class="block font-semibold text-stone-700 mb-1">Pilih Identitas Pembeli (Single Identity)</label>
+                    <div id="buyLockedConsumerDisplay"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-emerald-200 bg-emerald-50/60 text-stone-800 font-semibold flex items-center justify-between gap-2 select-none">
+                        <span id="buyLockedConsumerText" class="truncate">Memuat identitas akun...</span>
+                        <span class="px-2 py-0.5 rounded-md bg-white border border-emerald-200 text-[10px] font-bold text-emerald-800 shrink-0 flex items-center gap-1">
+                            <i class="fa-solid fa-lock text-[9px]"></i> Terkunci Read-Only
+                        </span>
+                    </div>
                 </div>
 
                 <!-- Quantity & Preset Cepat 3-Klik -->
@@ -3534,28 +3587,29 @@
                     <p>di - Tempat</p>
                 </div>
 
-                <!-- Bagian 1: Ringkasan Eksekutif & Statistik Agregat -->
+                <!-- Bagian 1: Ringkasan Eksekutif & Statistik Agregat (Live Data - Task 2.11 & 2.12) -->
                 <div class="space-y-2">
                     <h4 class="font-bold text-xs uppercase text-stone-900 border-b border-stone-300 pb-1 flex items-center gap-1.5">
                         <span class="w-4 h-4 rounded bg-forest-800 text-white inline-flex items-center justify-center text-[10px]">I</span>
-                        STATISTIK KEMANDIRIAN &amp; NERACA PANGAN KOMUNITAS (40 KK)
+                        <span>STATISTIK KEMANDIRIAN &amp; NERACA PANGAN KOMUNITAS (<span class="dynamic-kk-count">40</span> KK)</span>
                     </h4>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[11px]">
                         <div class="p-2.5 rounded-lg border border-stone-200 bg-stone-50">
                             <span class="text-[10px] text-stone-500 block">Populasi Terdata</span>
-                            <strong class="font-bold text-stone-900 text-sm">40 KK / 160 Jiwa</strong>
+                            <strong id="govReportPopulationText" class="font-bold text-stone-900 text-sm">40 KK / 122 Jiwa</strong>
                         </div>
                         <div class="p-2.5 rounded-lg border border-stone-200 bg-stone-50">
-                            <span class="text-[10px] text-stone-500 block">Total Pangan Beredar</span>
-                            <strong class="font-bold text-forest-800 text-sm">624 Kg</strong>
+                            <span class="text-[10px] text-stone-500 block">Total Pangan Tersalurkan</span>
+                            <strong id="govReportCirculatingKgText" class="font-bold text-forest-800 text-sm">0 Kg</strong>
+                            <span id="govReportAvailStockSubText" class="text-[9px] text-stone-500 block">Stok Tersedia: 0 Kg</span>
                         </div>
                         <div class="p-2.5 rounded-lg border border-stone-200 bg-stone-50">
                             <span class="text-[10px] text-stone-500 block">Serapan Panen Lokal</span>
-                            <strong class="font-bold text-emerald-700 text-sm">89,2% (Tinggi)</strong>
+                            <strong id="govReportAbsorptionPctText" class="font-bold text-emerald-700 text-sm">0%</strong>
                         </div>
                         <div class="p-2.5 rounded-lg border border-stone-200 bg-stone-50">
-                            <span class="text-[10px] text-stone-500 block">Omzet Produsen Lokal</span>
-                            <strong class="font-bold text-forest-900 text-sm">Rp 8.064.000</strong>
+                            <span class="text-[10px] text-stone-500 block">Total Perputaran Pangan</span>
+                            <strong id="govReportTurnoverRpText" class="font-bold text-forest-900 text-sm">Rp 0</strong>
                         </div>
                     </div>
                 </div>
@@ -3607,19 +3661,19 @@
                         <span class="w-4 h-4 rounded bg-forest-800 text-white inline-flex items-center justify-center text-[10px]">III</span>
                         INTERVENSI KERENTANAN PANGAN &amp; PENCEGAHAN STUNTING
                     </h4>
-                    <p class="text-[11px] text-stone-600">
-                        Dari total 40 KK, teridentifikasi <strong>5 KK Klaster Rentan Prioritas</strong> (memiliki balita berisiko stunting dan lansia). Seluruh 5 KK telah menerima alokasi bahan pangan bergizi segar 100% tanpa hambatan biaya, dibiayai mandiri melalui dana lumbung kas dan penyerapan surplus panen luar RT (3-5%).
+                    <p id="govReportVulnerabilityPara" class="text-[11px] text-stone-600">
+                        Dari total <span class="dynamic-kk-count">40</span> KK terdaftar, seluruh keluarga klaster Rentan Prioritas telah dipetakan secara terukur untuk menerima alokasi bahan pangan bergizi segar tanpa hambatan biaya.
                     </p>
                 </div>
 
                 <!-- Bagian 4: Rekonsiliasi Keuangan & Validasi Audit Kas -->
                 <div class="p-3 rounded-lg border border-stone-300 bg-stone-50 space-y-1 text-[11px]">
                     <div class="flex items-center justify-between font-bold text-stone-900">
-                        <span>Status Rekonsiliasi Kas: 100% MATCHED (Nol Selisih)</span>
-                        <span class="font-mono text-emerald-800">STATUS: AUDITED &amp; CLOSED</span>
+                        <span id="govReportReconStatusText">Status Rekonsiliasi Kas: 100% MATCHED (Nol Selisih)</span>
+                        <span id="govReportPeriodStatusText" class="font-mono text-emerald-800">PERIODE AKTIF</span>
                     </div>
-                    <p class="text-[10px] text-stone-600">
-                        Total Kas Terverifikasi: Rp 8.064.000,- • Potongan Komisi Warga: 0% • Segel Kriptografis: <span class="font-mono font-bold">SEAL-PKK-YSM-202610-LOCKED-SHA256</span>.
+                    <p id="govReportReconSummaryLine" class="text-[10px] text-stone-600">
+                        Total Kas Terverifikasi: Rp 0,- • Potongan Komisi Warga: 0%.
                     </p>
                 </div>
 
@@ -3662,24 +3716,24 @@
     <!-- =========================================================================
          MODAL KHUSUS WARGA LOGIN: PERBARUI DATA KK KELUARGA SAYA (MENUNGGU VERIFIKASI ADMIN)
          ========================================================================= -->
-    <div id="modalCitizenSelfUpdateKk" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-xl w-full border border-stone-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 my-8">
-            <div class="px-5 py-4 bg-gradient-to-r from-forest-900 via-forest-800 to-emerald-900 text-white flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-xl bg-amber-400 text-forest-950 flex items-center justify-center font-bold text-base shadow-xs">
+    <div id="modalCitizenSelfUpdateKk" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-2.5 sm:p-4">
+        <div class="bg-white rounded-2xl max-w-xl w-full max-h-[90dvh] flex flex-col border border-stone-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 my-auto">
+            <div class="sticky top-0 z-10 shrink-0 px-4 sm:px-5 py-3.5 bg-gradient-to-r from-forest-900 via-forest-800 to-emerald-900 text-white flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-400 text-forest-950 flex items-center justify-center font-bold text-sm sm:text-base shadow-xs shrink-0">
                         <i class="fa-solid fa-user-pen"></i>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-sm sm:text-base leading-tight">Perbarui Data KK Keluarga Saya</h3>
-                        <p class="text-[11px] text-emerald-200">Terkunci ke Akun Login Anda • Wajib Diverifikasi Admin RT 13</p>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-sm sm:text-base leading-tight truncate">Ubah Data Keluarga</h3>
+                        <p class="text-[10px] sm:text-[11px] text-emerald-200 truncate">Terkunci ke Akun Login • Verifikasi Pengurus RT 13</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeModal('modalCitizenSelfUpdateKk')" class="p-1.5 rounded-lg text-stone-300 hover:text-white cursor-pointer">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                <button type="button" onclick="closeModal('modalCitizenSelfUpdateKk')" aria-label="Tutup Modal" class="p-2 rounded-lg bg-white/10 text-white hover:bg-white/20 cursor-pointer shrink-0">
+                    <i class="fa-solid fa-xmark text-base sm:text-lg"></i>
                 </button>
             </div>
 
-            <form onsubmit="handleSubmitCitizenSelfUpdate(event)" class="p-5 sm:p-6 space-y-4 text-xs">
+            <form onsubmit="handleSubmitCitizenSelfUpdate(event)" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem);" class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-4 text-xs">
                 <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 flex items-start gap-2.5">
                     <i class="fa-solid fa-shield-halved text-emerald-700 text-sm mt-0.5"></i>
                     <div class="space-y-0.5 text-[11px]">
@@ -3721,10 +3775,10 @@
                             <span class="text-[10px] text-stone-500 mt-0.5 block">Ubah jumlah jiwa untuk menyesuaikan perkiraan pangan</span>
                         </div>
                         <div>
-                            <label class="block font-bold text-stone-800 mb-1">Total Perkiraan Kebutuhan (Kg/Bulan) *</label>
-                            <input type="number" id="selfUpdateTotalNeedKg" min="5" max="300" required
-                                class="w-full h-10 px-3.5 rounded-xl border border-stone-300 bg-white font-mono font-extrabold text-sm text-forest-900 focus:outline-none">
-                            <span class="text-[10px] text-emerald-700 font-semibold mt-0.5 block">Dapat Anda koreksi sesuai konsumsi riil rumah tangga</span>
+                            <label class="block font-bold text-stone-800 mb-1">Total Perkiraan Kebutuhan (Kg/Bulan)</label>
+                            <input type="number" id="selfUpdateTotalNeedKg" readonly
+                                class="w-full h-10 px-3.5 rounded-xl border border-stone-300 bg-stone-100 cursor-not-allowed font-mono font-extrabold text-sm text-forest-900 focus:outline-none">
+                            <span class="text-[10px] text-emerald-700 font-semibold mt-0.5 block">Dijumlahkan otomatis dari 6 rincian pangan di bawah</span>
                         </div>
                     </div>
 
@@ -3808,34 +3862,37 @@
     <!-- =========================================================================
          MODAL 1: EDIT DATA WARGA (KHUSUS ADMIN)
          ========================================================================= -->
-    <div id="modalEditMember" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-lg w-full border border-stone-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div class="px-5 py-4 bg-gradient-to-r from-forest-900 via-forest-800 to-forest-900 text-white flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-amber-400 text-forest-950 flex items-center justify-center font-bold text-sm">
+    <div id="modalEditMember" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-2.5 sm:p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90dvh] flex flex-col border border-stone-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 my-auto">
+            <div class="sticky top-0 z-10 shrink-0 px-4 sm:px-5 py-3.5 bg-gradient-to-r from-forest-900 via-forest-800 to-forest-900 text-white flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-lg bg-amber-400 text-forest-950 flex items-center justify-center font-bold text-sm shrink-0">
                         <i class="fa-solid fa-user-pen"></i>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-sm sm:text-base leading-tight">Edit Data Kependudukan SID</h3>
-                        <p class="text-[10px] text-emerald-200">Otoritas Pengurus RT 13 • Kelurahan Yosomulyo</p>
+                    <div class="min-w-0">
+                        <h3 class="font-bold text-sm sm:text-base leading-tight truncate">Edit Data Kependudukan SID</h3>
+                        <p class="text-[10px] text-emerald-200 truncate">Otoritas Pengurus RT 13 • Kelurahan Yosomulyo</p>
                     </div>
                 </div>
-                <button type="button" onclick="closeModal('modalEditMember')" class="p-1 rounded-lg text-stone-300 hover:text-white">
-                    <i class="fa-solid fa-xmark text-lg"></i>
+                <button type="button" onclick="closeModal('modalEditMember')" aria-label="Tutup Modal" class="p-2 rounded-lg bg-white/10 text-white hover:bg-white/20 shrink-0 cursor-pointer">
+                    <i class="fa-solid fa-xmark text-base sm:text-lg"></i>
                 </button>
             </div>
 
-            <form onsubmit="handlePromptConfirmMemberEdit(event)" class="p-5 space-y-3.5 text-xs">
+            <form onsubmit="handlePromptConfirmMemberEdit(event)" style="padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1.25rem);" class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-3.5 text-xs">
                 <input type="hidden" id="editMemberSid">
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1">SID Warga</label>
                         <input type="text" id="editMemberSidDisplay" disabled class="w-full px-3 py-2 rounded-xl bg-stone-100 border border-stone-200 font-mono font-bold text-stone-600">
                     </div>
                     <div>
-                        <label class="block font-semibold text-stone-700 mb-1">Nomor Induk Kependudukan (NIK)</label>
-                        <input type="text" id="editMemberNik" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono text-stone-900 focus:outline-none focus:border-forest-600">
+                        <label class="block font-semibold text-stone-700 mb-1">Nomor Induk Kependudukan (NIK 16 Digit) *</label>
+                        <input type="text" id="editMemberNik" inputmode="numeric" maxlength="16" required
+                            oninput="validateEditMemberNikLive(this)"
+                            class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono text-stone-900 focus:outline-none focus:border-forest-600">
+                        <p id="editMemberNikError" class="hidden text-[11px] font-semibold text-rose-600 mt-1">NIK wajib tepat 16 digit angka (tanpa huruf/simbol).</p>
                     </div>
                 </div>
 
@@ -3844,7 +3901,7 @@
                     <input type="text" id="editMemberName" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-forest-600">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1">Alamat Rumah</label>
                         <input type="text" id="editMemberAddress" required class="w-full px-3 py-2 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:border-forest-600">
@@ -3858,7 +3915,7 @@
                 <input type="hidden" id="editMemberIncome" value="2500000">
                 <input type="hidden" id="editMemberTier" value="MANDIRI">
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1">Peran dalam Ekosistem</label>
                         <select id="editMemberRole" class="w-full px-3 py-2 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-forest-600">
@@ -3870,6 +3927,13 @@
                         <label class="block font-semibold text-stone-700 mb-1">Komoditas Panen (Jika Produsen)</label>
                         <input type="text" id="editMemberCommodity" placeholder="Cth: Kangkung, Telur" class="w-full px-3 py-2 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:border-forest-600">
                     </div>
+                </div>
+
+                <div id="editMemberPinSection" class="hidden">
+                    <label class="block font-semibold text-stone-700 mb-1">PIN Warga (4-6 Digit Angka, Khusus Admin)</label>
+                    <input type="text" id="editMemberPin" inputmode="numeric" maxlength="6" pattern="[0-9]{4,6}" placeholder="4-6 digit angka"
+                        class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono text-stone-900 focus:outline-none focus:border-forest-600">
+                    <p class="text-[10px] text-stone-500 mt-0.5">Admin dapat mereset atau memperbarui PIN akun warga (4 sampai 6 digit angka).</p>
                 </div>
 
                 <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] space-y-1">
@@ -3885,7 +3949,7 @@
                     <button type="button" onclick="closeModal('modalEditMember')" class="flex-1 py-2 px-3 rounded-xl border border-stone-300 text-stone-700 font-bold hover:bg-stone-50 transition">
                         Batal
                     </button>
-                    <button type="submit" class="flex-1 py-2 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                    <button type="submit" id="btnSubmitEditMember" class="flex-1 py-2 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 disabled:bg-stone-300 disabled:text-stone-500 disabled:cursor-not-allowed text-white font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
                         <i class="fa-solid fa-check"></i>
                         <span>Lanjutkan &amp; Konfirmasi</span>
                     </button>
@@ -4113,10 +4177,13 @@
                     <input type="text" id="selfRegName" placeholder="Cth: Bpk. Haryono" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-bold text-stone-900 focus:outline-none focus:border-forest-600">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold text-stone-700 mb-1">Nomor Induk Kependudukan (NIK)</label>
-                        <input type="text" id="selfRegNik" placeholder="16 digit NIK" maxlength="16" required class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono text-stone-900 focus:outline-none focus:border-forest-600">
+                        <label class="block font-semibold text-stone-700 mb-1">Nomor Induk Kependudukan (NIK 16 Digit) *</label>
+                        <input type="text" id="selfRegNik" inputmode="numeric" placeholder="16 digit angka NIK" maxlength="16" required
+                            oninput="handleSelfRegNikInput(this)"
+                            class="w-full px-3 py-2 rounded-xl border border-stone-300 font-mono text-stone-900 focus:outline-none focus:border-forest-600">
+                        <p id="selfRegNikError" class="hidden text-[11px] font-semibold text-rose-600 mt-1">NIK wajib tepat 16 digit angka.</p>
                     </div>
                     <div>
                         <label class="block font-semibold text-stone-700 mb-1">Alamat Rumah</label>
@@ -4275,6 +4342,87 @@
         </div>
     </div>
 
+    <!-- MODAL MODERASI KOMODITAS OLEH ADMIN (NONAKTIFKAN SEMENTARA DENGAN ALASAN TERCATAT) -->
+    <div id="modalModerateListing" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-stone-200 space-y-4 animate-in fade-in duration-150 my-auto">
+            <div class="flex items-center justify-between border-b border-stone-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center text-base font-bold">
+                        <i class="fa-solid fa-eye-slash"></i>
+                    </div>
+                    <div>
+                        <h3 class="serif-heading text-base font-bold text-stone-900">Nonaktifkan Sementara (Moderasi)</h3>
+                        <p class="text-[11px] text-stone-500">Produk disembunyikan dari Konsumen tanpa mengubah harga/stok</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalModerateListing')" class="p-1 rounded-lg text-stone-400 hover:text-stone-700">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleSubmitModerateListing(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="moderateListingId">
+                <div class="p-3 rounded-xl bg-stone-50 border border-stone-200 space-y-0.5">
+                    <span class="text-[10px] uppercase tracking-wider text-stone-500 font-bold block">Komoditas &amp; Pemilik Kebun</span>
+                    <strong id="moderateListingTitle" class="text-xs font-bold text-stone-900 block"></strong>
+                    <span id="moderateListingMeta" class="text-[11px] text-stone-500 font-mono block"></span>
+                </div>
+
+                <div>
+                    <label for="moderateListingReason" class="block font-bold text-stone-700 mb-1">Alasan Moderasi / Penonaktifan Sementara *</label>
+                    <textarea id="moderateListingReason" rows="3" required
+                        oninput="document.getElementById('moderateReasonError')?.classList.add('hidden')"
+                        placeholder="Contoh: Kualitas foto/deskripsi perlu diperjelas atau verifikasi kesegaran panen oleh pengurus..."
+                        class="w-full p-3 rounded-xl border border-stone-300 text-stone-900 text-xs focus:outline-none focus:border-amber-600"></textarea>
+                    <p id="moderateReasonError" class="hidden text-[11px] font-semibold text-rose-600 mt-1">Alasan moderasi wajib diisi minimal 5 karakter.</p>
+                </div>
+
+                <label class="flex items-start gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200 cursor-pointer">
+                    <input type="checkbox" id="moderateConfirmCheck" required class="mt-0.5 w-4 h-4 accent-amber-700 rounded">
+                    <span class="text-[11px] text-amber-950 leading-snug">
+                        Saya mengonfirmasi penonaktifan sementara produk ini dari etalase Konsumen. Harga, stok, dan pesanan yang sedang berjalan tetap aman serta produsen pemilik akan melihat alasan ini.
+                    </span>
+                </label>
+
+                <div class="flex items-center gap-2 pt-2 border-t border-stone-100">
+                    <button type="button" onclick="closeModal('modalModerateListing')"
+                        class="flex-1 py-2.5 rounded-xl border border-stone-300 text-stone-700 font-bold hover:bg-stone-50 transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit"
+                        class="flex-1 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold shadow-sm transition cursor-pointer flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-gavel"></i>
+                        <span>Konfirmasi Nonaktifkan</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL KONFIRMASI PEMBATALAN PESANAN KONSUMEN (TASK 3.1) -->
+    <div id="modalConfirmCancelOrder" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-5 sm:p-6 shadow-2xl border border-stone-200 space-y-4 animate-in fade-in duration-150 my-auto text-center">
+            <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-700 mx-auto flex items-center justify-center text-xl">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+            <div class="space-y-1">
+                <h3 class="serif-heading text-base font-bold text-stone-900">Apakah Anda yakin ingin membatalkan pesanan ini?</h3>
+                <p id="cancelOrderSummaryText" class="text-xs text-stone-600"></p>
+            </div>
+            <input type="hidden" id="cancelOrderTargetTxId">
+            <div class="flex items-center gap-2 pt-1">
+                <button type="button" onclick="closeModal('modalConfirmCancelOrder')"
+                    class="flex-1 py-2.5 rounded-xl border border-stone-300 text-stone-700 font-bold text-xs hover:bg-stone-50 transition cursor-pointer">
+                    Tidak, Kembali
+                </button>
+                <button type="button" onclick="executeCancelConsumerOrder()"
+                    class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-sm transition cursor-pointer">
+                    Ya, Batalkan Pesanan
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL EDIT STOK & HARGA PRODUK (PRODUSEN / ADMIN) -->
     <div id="modalEditListing" class="hidden fixed inset-0 z-50 bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-stone-200 space-y-4 animate-in fade-in duration-150 my-auto">
@@ -4285,7 +4433,7 @@
                     </div>
                     <div>
                         <h3 class="serif-heading text-base font-bold text-stone-900">Edit Stok &amp; Harga Produk</h3>
-                        <p class="text-[11px] text-stone-500">Pembaruan tercatat di Buku Besar Audit Inventaris</p>
+                        <p class="text-[11px] text-stone-500">Pembaruan tercatat di Riwayat Perubahan Stok</p>
                     </div>
                 </div>
                 <button type="button" onclick="closeModal('modalEditListing')" class="p-1 rounded-lg text-stone-400 hover:text-stone-700">
@@ -4442,7 +4590,8 @@
          TOAST NOTIFICATION CONTAINER
          ========================================================================= -->
     <div id="toastContainer"
-        class="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:bottom-6 z-50 pointer-events-none max-w-md w-auto sm:w-96 space-y-2.5">
+        style="top: calc(env(safe-area-inset-top, 0px) + 0.75rem);"
+        class="fixed left-1/2 -translate-x-1/2 z-[100] pointer-events-none w-[calc(100%-1.5rem)] max-w-md space-y-2">
     </div>
 
     <!-- =========================================================================

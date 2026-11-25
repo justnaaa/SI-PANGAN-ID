@@ -63,60 +63,14 @@ export function initAuthAndRoleController() {
             const elKpiPanganSub = document.getElementById('kpiTotalPanganSub');
             const elKpiLossPct = document.getElementById('kpiFoodLossPct');
             const elKpiLossDetail = document.getElementById('kpiFoodLossDetail');
-
-            if (elKpiPangan) elKpiPangan.textContent = `${totalHarvestSystemKg.toLocaleString('id-ID')} Kg`;
-            if (elKpiPanganSub) elKpiPanganSub.textContent = `Diserap konsumen: ${totalAbsorbedByConsumersKg.toLocaleString('id-ID')} Kg`;
+            // KPI #kpiTotalPanganKg hanya diisi renderHeaderStats() (sumber tunggal getInventorySummary)
             if (elKpiLossPct) elKpiLossPct.textContent = `${String(foodLossPct).replace('.', ',')}%`;
             if (elKpiLossDetail) {
                 elKpiLossDetail.textContent = `Sisa belum terserap: ${unabsorbedStockKg} Kg (Susut ~ ${rawLossKg} Kg)`;
             }
         }
 
-        // 9.10 Voting Seimbang (1 KK = 1 Suara & Estimasi Proporsional) + Linimasa Benar-Benar Real-Time
-        window.handleVoteDemand = function(demandId) {
-            const list = window.appState.demands || [];
-            const demand = list.find(d => d.id === demandId);
-            if (!demand) return;
-
-            const voterSid = window.appState.activeUserSid || 'SID-RT13-020';
-            demand.voters = Array.isArray(demand.voters) ? demand.voters : [];
-
-            if (demand.voters.includes(voterSid)) {
-                showToast('Suara Sudah Tercatat', `Keluarga Anda (${voterSid}) sudah memberikan dukungan pada komoditas ${demand.name} (1 KK = 1 Suara).`, 'info');
-                return;
-            }
-
-            demand.voters.push(voterSid);
-            const prevVotes = Number(demand.votes) || 0;
-            demand.votes = prevVotes + 1;
-
-            const avgKgPerKk = (demand.category || '').toLowerCase().includes('bumbu') ? 1.5 : 3;
-            demand.totalDemandKg = Math.max(15, Math.round(demand.votes * avgKgPerKk));
-
-            if (demand.votes >= VOTE_THRESHOLD && demand.status !== 'TERPENUHI_LOKAL') {
-                demand.status = 'MENUNGGU_PEMASOK';
-                demand.producerNotes = `Lolos ambang batas voting (${demand.votes} suara KK) • Menunggu Pemasok di Panel Produsen`;
-            }
-
-            if (typeof musyawarahTransparencyState !== 'undefined' && Array.isArray(musyawarahTransparencyState.activities)) {
-                const voterMember = (window.appState.members || []).find(m => m.sid === voterSid);
-                musyawarahTransparencyState.activities.unshift({
-                    id: `act-vote-${Date.now()}`,
-                    time: 'Baru saja',
-                    category: 'Usulan Voting Warga',
-                    description: `${voterMember ? voterMember.name : voterSid} memberikan dukungan suara untuk ${demand.name} (Total: ${demand.votes} Suara KK • Estimasi seimbang: ${demand.totalDemandKg} Kg/bln).`,
-                    isNew: true
-                });
-            }
-
-            renderAll();
-            syncAllDataToSupabaseNow(false);
-            showToast(
-                'Suara Berhasil Dicatat!',
-                `Dukungan ${voterSid} untuk ${demand.name} tercatat. Estimasi kebutuhan disesuaikan seimbang menjadi ${demand.totalDemandKg} Kg/bln (${demand.votes} KK).`,
-                'success'
-            );
-        };
+        // 9.10 Voting Seimbang dikelola terpusat oleh window.handleVoteDemand di coreAppController.js (1 SID = 1 Suara)
 
         window.renderMusyawarahTimeline = function() {
             const listEl = document.getElementById('musyawarahTimelineList');
@@ -223,7 +177,7 @@ export function initAuthAndRoleController() {
             const headerLabel = document.getElementById('headerActiveUserLabel');
             if (headerLabel && window.appState.activeUserSid) {
                 if (window.appState.isAdminLoggedIn || role === 'ADMIN') {
-                    headerLabel.textContent = 'Pengurus RT 13 (Admin)';
+                    headerLabel.textContent = 'Admin RT 13';
                 } else {
                     const m = (window.appState.members || []).find(x => x.sid === window.appState.activeUserSid);
                     const roleText = role === 'PRODUSEN' ? 'Produsen' : 'Konsumen';
@@ -467,7 +421,7 @@ export function initAuthAndRoleController() {
             if (typeof window.renderDemandsBoard === 'function') window.renderDemandsBoard();
             if (typeof window.renderAdminSurplusCenter === 'function') window.renderAdminSurplusCenter();
             if (typeof window.renderTransactionsLedger === 'function') window.renderTransactionsLedger();
-            if (typeof window.syncLiveSurplusData === 'function') window.syncLiveSurplusData();
+            if (typeof window.renderPerProducerAiForecast === 'function') window.renderPerProducerAiForecast();
             if (typeof window.updateCharts === 'function') window.updateCharts();
             if (typeof window.renderFluctuationChart === 'function') window.renderFluctuationChart(window.currentFluctuationCommodity || 'Sayur Kangkung (KWT Pekarangan)');
         };
@@ -481,10 +435,39 @@ export function initAuthAndRoleController() {
 
         // --- A.1 & C.1: Fungsi Memproses Pesanan ("Siapkan Pesanan"), Otomatis Mengurangi Stok, & Membuka Detail Pesanan ---
         window.updateOrderStatus = function(txId, nextStatus) {
+            const D = window.SiPanganDomain;
             const txs = window.appState.transactions || [];
             const tx = txs.find(t => t.id === txId);
             if (!tx) {
                 showToast('Pesanan Tidak Ditemukan', 'Data pesanan tidak ditemukan.', 'error');
+                return;
+            }
+
+            // Guard periode buku besar tertutup (Task 3.3)
+            if (D && D.isOrderPeriodClosed(tx, window.appState)) {
+                showToast('Periode Sudah Ditutup', 'Pesanan ini berada pada periode buku besar yang sudah ditutup dan tidak dapat diubah.', 'error');
+                return;
+            }
+
+            // Izinkan pembeli mengonfirmasi penerimaan barang HANYA saat status SIAP_DIAMBIL -> SELESAI_LUNAS
+            const effectiveRole = D ? D.resolveEffectiveRole(window.appState) : (window.appState.activeRole || 'KONSUMEN');
+            const isBuyerConfirmingReceipt = (
+                effectiveRole === 'KONSUMEN' &&
+                nextStatus === 'SELESAI_LUNAS' &&
+                window.appState.activeUserSid &&
+                tx.consumerSid === window.appState.activeUserSid &&
+                (D ? D.getNormalizedOrderStatus(tx) : tx.orderStatus) === 'SIAP_DIAMBIL'
+            );
+
+            // Guard ketat matriks hak akses (Task 1.1): Admin DILARANG mengubah status pesanan kebun warga (kecuali produk Koperasi/Admin)
+            if (!isBuyerConfirmingReceipt && D && !D.can(window.appState, 'UPDATE_ORDER_STATUS', tx, window.appState)) {
+                showToast(
+                    'Akses Ditolak',
+                    effectiveRole === 'ADMIN'
+                        ? 'Pengurus RT berada dalam Mode Pantau (Read-Only) dan tidak dapat mengubah status pesanan kebun warga.'
+                        : 'Hanya pemilik kebun yang berhak mengubah status pesanan ini.',
+                    'error'
+                );
                 return;
             }
 
@@ -499,16 +482,19 @@ export function initAuthAndRoleController() {
 
             if (nextStatus === 'SIAP_DIAMBIL') {
                 tx.orderStatus = 'SIAP_DIAMBIL';
-                tx.processedAt = new Date().toLocaleString('id-ID');
+                tx.processedAt = D ? D.getJakartaTimestampLabel() : new Date().toLocaleString('id-ID');
                 tx.processedBy = tx.producerName || 'Produsen Kebun RT 13';
 
-                // Otomatis kurangi stok produk produsen saat pesanan diproses (jika belum dikurangi)
+                // Otomatis kurangi stok produk produsen tepat sekali (jika belum dikurangi saat checkout)
                 if (!tx.stockDeducted && listing) {
                     const qty = Number(tx.quantityKg) || 1;
                     const oldStock = Number(listing.availableStockKg) || 0;
-                    const newStock = Math.max(0, oldStock - qty);
-                    listing.availableStockKg = newStock;
-                    listing.localAbsorbedKg = (Number(listing.localAbsorbedKg) || 0) + qty;
+                    const stockRes = D ? D.kurangiStok(listing, qty) : null;
+                    const newStock = stockRes && stockRes.ok ? stockRes.after : Math.max(0, oldStock - qty);
+                    if (!D) {
+                        listing.availableStockKg = newStock;
+                        listing.localAbsorbedKg = (Number(listing.localAbsorbedKg) || 0) + qty;
+                    }
                     tx.stockDeducted = true;
                     tx.stockBefore = oldStock;
                     tx.stockAfter = newStock;
@@ -516,7 +502,7 @@ export function initAuthAndRoleController() {
                     if (!window.appState.inventoryAuditLogs) window.appState.inventoryAuditLogs = [];
                     window.appState.inventoryAuditLogs.unshift({
                         id: 'AUDIT-' + Date.now(),
-                        timestamp: new Date().toLocaleString('id-ID'),
+                        timestamp: tx.processedAt,
                         listingId: listing.id,
                         commodity: listing.commodity,
                         producerSid: listing.producerSid,
@@ -529,8 +515,8 @@ export function initAuthAndRoleController() {
                     });
 
                     showToast(
-                        'Pesanan Diproses & Stok Berkurang Otomatis',
-                        `Pesanan ${tx.id} (${qty} Kg ${tx.commodity}) siap diambil/diantar. Stok produk berkurang dari ${oldStock} Kg menjadi ${newStock} Kg.`,
+                        'Pesanan Diproses & Stok Diperbarui',
+                        `Pesanan ${tx.id} (${qty} Kg ${tx.commodity}) siap diambil/diantar. Stok produk kini ${newStock} Kg.`,
                         'success'
                     );
                 } else {
@@ -538,22 +524,25 @@ export function initAuthAndRoleController() {
                 }
 
                 saveStateToLocal();
+                if (typeof window.syncAllDataToSupabaseNow === 'function') window.syncAllDataToSupabaseNow(false);
                 renderAll();
+                if (typeof window.renderMyOwnKkSummaryCard === 'function') window.renderMyOwnKkSummaryCard();
                 if (typeof window.renderHeaderProducerOrderAlert === 'function') window.renderHeaderProducerOrderAlert();
                 if (typeof window.renderProducerWorkspaceAndAutoAi === 'function') window.renderProducerWorkspaceAndAutoAi();
                 if (typeof window.renderProducerOrders === 'function') window.renderProducerOrders();
                 if (typeof window.renderPersonalConsumerOrders === 'function') window.renderPersonalConsumerOrders();
                 if (typeof window.renderPerProducerAiForecast === 'function') window.renderPerProducerAiForecast();
-                // Tampilkan Detail Pesanan secara otomatis sesuai permintaan A.1
                 viewTransactionReceipt(tx.id);
                 return;
             }
 
             if (nextStatus === 'SELESAI_LUNAS') {
                 tx.orderStatus = 'SELESAI_LUNAS';
-                tx.completedAt = new Date().toLocaleString('id-ID');
+                tx.completedAt = D ? D.getJakartaTimestampLabel() : new Date().toLocaleString('id-ID');
                 saveStateToLocal();
+                if (typeof window.syncAllDataToSupabaseNow === 'function') window.syncAllDataToSupabaseNow(false);
                 renderAll();
+                if (typeof window.renderMyOwnKkSummaryCard === 'function') window.renderMyOwnKkSummaryCard();
                 if (typeof window.renderHeaderProducerOrderAlert === 'function') window.renderHeaderProducerOrderAlert();
                 if (typeof window.renderProducerWorkspaceAndAutoAi === 'function') window.renderProducerWorkspaceAndAutoAi();
                 if (typeof window.renderProducerOrders === 'function') window.renderProducerOrders();
@@ -565,10 +554,11 @@ export function initAuthAndRoleController() {
             }
         };
 
-        // Override viewTransactionReceipt untuk menampilkan Detail Pesanan lengkap & info pengurangan stok
+        // Override viewTransactionReceipt untuk menampilkan Struk Digital konsisten (Task 1.1, 2.10, 2.14, 4.5)
         const _origViewTxReceipt = window.viewTransactionReceipt;
         window.viewTransactionReceipt = function(txId) {
             window.currentReceiptTxId = txId;
+            const D = window.SiPanganDomain;
             const t = (window.appState.transactions || []).find(x => x.id === txId);
             if (!t) {
                 if (typeof _origViewTxReceipt === 'function') return _origViewTxReceipt(txId);
@@ -581,18 +571,28 @@ export function initAuthAndRoleController() {
             const buyerMember = (window.appState.members || []).find(m => m.sid === t.consumerSid);
             const buyerAddress = buyerMember ? buyerMember.address : 'RT 13 Yosomulyo Metro Pusat';
             const producerMember = (window.appState.members || []).find(m => m.sid === t.producerSid);
-            const producerAddress = producerMember ? producerMember.address : 'Pekarangan RT 13';
+            const producerAddress = producerMember ? producerMember.address : (D && D.isCoopOrAdminManaged(t) ? 'Lumbung Koperasi RT 13 Yosomulyo' : 'Pekarangan RT 13');
 
-            const listing = (window.appState.listings || []).find(l => l.id === t.listingId || l.producerSid === t.producerSid);
-            const currentStock = listing ? listing.availableStockKg : '-';
+            const isAmbilSendiri = String(t.deliveryMethod || 'Ambil').toLowerCase().includes('ambil');
+            const targetLocationAddress = isAmbilSendiri ? producerAddress : buyerAddress;
+            const targetLocationLabel = isAmbilSendiri ? 'Lokasi Ambil (Kebun Penjual):' : 'Alamat Pengantaran (Pembeli):';
 
-            const statusBadgeHtml = t.orderStatus === 'MENUNGGU_KONFIRMASI'
+            const normStatus = D ? D.getNormalizedOrderStatus(t) : (t.orderStatus || 'MENUNGGU_KONFIRMASI');
+            const amounts = D ? D.calcTransactionAmounts(t) : {
+                subtotalProduk: Number(t.subtotal) || 0,
+                biayaAntar: Number(t.deliveryFee) || 0,
+                total: Number(t.totalPaid ?? t.subtotal) || 0
+            };
+
+            const statusBadgeHtml = normStatus === 'DIBATALKAN'
+                ? '<span class="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 font-bold text-[11px] border border-rose-300 inline-flex items-center gap-1"><span>✖</span> <span>Pesanan Dibatalkan</span></span>'
+                : normStatus === 'MENUNGGU_KONFIRMASI'
                 ? '<span class="px-2.5 py-1 rounded-full bg-[#FEF3C7] text-[#B45309] font-bold text-[11px] border border-amber-300 inline-flex items-center gap-1"><span>⏳</span> <span>Menunggu Diproses Produsen</span></span>'
-                : t.orderStatus === 'SIAP_DIAMBIL'
-                ? '<span class="px-2.5 py-1 rounded-full bg-blue-100 text-blue-900 font-bold text-[11px] border border-blue-300 inline-flex items-center gap-1"><span>📦</span> <span>Siap Diambil di Kebun</span></span>'
+                : normStatus === 'SIAP_DIAMBIL'
+                ? '<span class="px-2.5 py-1 rounded-full bg-blue-100 text-blue-900 font-bold text-[11px] border border-blue-300 inline-flex items-center gap-1"><span>📦</span> <span>Siap Diambil / Diantar</span></span>'
                 : '<span class="px-2.5 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold text-[11px] border border-emerald-300 inline-flex items-center gap-1"><span>✅</span> <span>Pesanan Selesai &amp; Lunas</span></span>';
 
-            const canProcess = (window.appState.activeRole === 'PRODUSEN' || window.appState.isAdminLoggedIn);
+            const canProcess = D ? D.can(window.appState, 'UPDATE_ORDER_STATUS', t, window.appState) : false;
 
             modalBody.innerHTML = `
                 <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3.5 text-xs font-sans">
@@ -613,7 +613,7 @@ export function initAuthAndRoleController() {
                         </div>
                     </div>
 
-                    <!-- 2. Rincian Pihak Terkait (Responsif di Layar Ponsel) -->
+                    <!-- 2. Rincian Pihak Terkait & Lokasi Tepat (Task 2.14) -->
                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/80 space-y-2 text-xs">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
@@ -623,30 +623,34 @@ export function initAuthAndRoleController() {
                             </div>
                             <div class="text-right">
                                 <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Penjual Kebun:</span>
-                                <strong class="text-slate-900 block font-bold text-xs truncate">${t.producerName}</strong>
+                                <strong class="text-slate-900 block font-bold text-xs truncate">${producerMember ? producerMember.name : t.producerName}</strong>
                                 <span class="text-[10px] text-slate-500 font-mono">${t.producerSid || 'SID-RT13'}</span>
                             </div>
                         </div>
-                        <div class="pt-2 border-t border-slate-200/60 text-[11px] text-slate-600 flex items-center gap-1.5 flex-wrap">
-                            <span class="text-rose-500 text-xs">📍</span>
-                            <span>Metode: <b class="text-slate-800">${t.deliveryMethod || 'Ambil di Kebun'}</b></span>
-                            <span class="text-slate-400">•</span>
-                            <span class="truncate max-w-[220px] text-slate-500">${buyerAddress}</span>
+                        <div class="pt-2 border-t border-slate-200/60 text-[11px] text-slate-600 space-y-0.5">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-rose-500 text-xs">📍</span>
+                                <span>Metode: <b class="text-slate-800">${t.deliveryMethod || 'Ambil Sendiri'}</b></span>
+                            </div>
+                            <div class="pl-4 text-slate-600">
+                                <span class="text-[10px] font-semibold text-slate-500">${targetLocationLabel}</span>
+                                <strong class="text-slate-800 font-semibold ml-1">${targetLocationAddress}</strong>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 3. Rincian Barang & Nominal -->
+                    <!-- 3. Rincian Barang & Nominal Satu Fungsi (Task 2.10) -->
                     <div class="space-y-2 py-2 border-b-2 border-dashed border-slate-200">
                         <div class="flex justify-between items-start gap-2 text-xs">
                             <div class="min-w-0 flex-1">
                                 <strong class="text-slate-900 block font-bold text-sm leading-snug">${t.commodity}</strong>
                                 <span class="text-[11px] text-slate-500 font-mono">${t.quantityKg} Kg × ${formatRupiah(t.unitPrice)}</span>
                             </div>
-                            <span class="font-extrabold text-slate-900 font-mono text-sm shrink-0">${formatRupiah(t.subtotal)}</span>
+                            <span class="font-extrabold text-slate-900 font-mono text-sm shrink-0">${formatRupiah(amounts.subtotalProduk)}</span>
                         </div>
                         <div class="flex justify-between items-center text-[11px] text-slate-500 pt-1">
                             <span>Biaya Serah Terima</span>
-                            <span class="font-mono text-emerald-800 font-semibold">${formatRupiah(t.deliveryFee || 0)} (0% Komisi)</span>
+                            <span class="font-mono text-emerald-800 font-semibold">${formatRupiah(amounts.biayaAntar)} (0% Komisi)</span>
                         </div>
                     </div>
 
@@ -656,21 +660,21 @@ export function initAuthAndRoleController() {
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">TOTAL PEMBAYARAN</span>
                             <span class="text-[10px] text-emerald-800 font-medium">100% diterima utuh produsen</span>
                         </div>
-                        <strong class="text-lg sm:text-xl font-extrabold text-[#0F5132] font-mono">${formatRupiah(t.totalPaid || t.subtotal)}</strong>
+                        <strong class="text-lg sm:text-xl font-extrabold text-[#0F5132] font-mono">${formatRupiah(amounts.total)}</strong>
                     </div>
 
-                    <!-- 5. Tanda Sah Lumbung Pangan -->
+                    <!-- 5. Tanda Sah Lumbung Pangan (Tanpa istilah teknis SHA-256 - Task 4.5) -->
                     <div class="pt-2 text-center text-[10px] text-slate-400 border-t border-slate-100 space-y-1">
                         <span class="inline-flex items-center gap-1 font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                             <i class="fa-solid fa-circle-check text-emerald-600"></i> Sah &amp; Terverifikasi Single Identity RT 13
                         </span>
-                        <p class="text-[9px] text-slate-400 font-mono">
-                            Buku Kas Digital Kel. Yosomulyo • Enkripsi SHA-256
+                        <p class="text-[9px] text-slate-400">
+                            Tercatat Resmi di Buku Kas Digital Kelurahan Yosomulyo
                         </p>
                     </div>
 
-                    <!-- 6. Aksi Cepat Jika Produsen Membuka Struk -->
-                    ${canProcess && t.orderStatus === 'MENUNGGU_KONFIRMASI' ? `
+                    <!-- 6. Aksi Cepat Hanya Jika Pemilik Kebun / Koperasi Berwenang & Periode Terbuka -->
+                    ${canProcess && normStatus === 'MENUNGGU_KONFIRMASI' ? `
                         <div class="pt-1">
                             <button type="button" onclick="closeModal('modalOrderReceipt'); updateOrderStatus('${t.id}', 'SIAP_DIAMBIL');"
                                 class="w-full py-2.5 px-3 rounded-xl bg-[#D97706] hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
@@ -678,7 +682,7 @@ export function initAuthAndRoleController() {
                                 <span>Tandai: Siap Diambil di Kebun</span>
                             </button>
                         </div>
-                    ` : canProcess && t.orderStatus === 'SIAP_DIAMBIL' ? `
+                    ` : canProcess && normStatus === 'SIAP_DIAMBIL' ? `
                         <div class="pt-1">
                             <button type="button" onclick="closeModal('modalOrderReceipt'); updateOrderStatus('${t.id}', 'SELESAI_LUNAS');"
                                 class="w-full py-2.5 px-3 rounded-xl bg-[#0F5132] hover:bg-emerald-900 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
@@ -833,8 +837,8 @@ export function initAuthAndRoleController() {
                 return;
             }
 
-            if (!pinVal || pinVal.length < 4) {
-                showGateLoginError('Silakan masukkan 4 angka PIN Rahasia Anda.');
+            if (!window.SiPanganDomain.isValidPin(pinVal)) {
+                showGateLoginError('PIN tidak sesuai. PIN terdiri dari 4-6 angka.');
                 document.getElementById('gateLoginPin')?.focus();
                 return;
             }
@@ -891,13 +895,11 @@ export function initAuthAndRoleController() {
                 return;
             }
 
-            // Validasi PIN Rahasia 4 Angka secara ketat (mendukung PIN 1234 atau 4 angka terakhir NIK)
-            const validPin1 = member.pinCode ? String(member.pinCode).trim() : '1234';
-            const validPin2 = member.rawNik ? String(member.rawNik).slice(-4) : null;
-            const isPinMatch = (validPin1 && pinVal === validPin1) || (validPin2 && pinVal === validPin2);
+            // Validasi PIN Rahasia 4-6 Angka secara ketat (hanya PIN tersimpan; NIK tidak berlaku sebagai PIN)
+            const isPinMatch = window.SiPanganDomain.verifyMemberPin(member, pinVal);
 
             if (!isPinMatch) {
-                showGateLoginError('PIN Rahasia salah! Tidak dapat masuk ke akun.');
+                showGateLoginError('PIN tidak sesuai.');
                 document.getElementById('gateLoginPin')?.focus();
                 return;
             }
@@ -1002,26 +1004,58 @@ export function initAuthAndRoleController() {
             if (totalEl) totalEl.value = total;
         };
 
+        window.handleGateNikInput = function(inputEl) {
+            const D = window.SiPanganDomain;
+            if (!inputEl) return false;
+            const clean = D ? D.sanitizeNikDigits(inputEl.value) : String(inputEl.value || '').replace(/[^0-9]/g, '').slice(0, 16);
+            if (inputEl.value !== clean) inputEl.value = clean;
+            const errEl = document.getElementById('gateRegNikError');
+            if (errEl) {
+                errEl.classList.toggle('hidden', clean.length === 0 || clean.length === 16);
+                if (clean.length > 0 && clean.length !== 16) {
+                    errEl.textContent = `NIK wajib tepat 16 digit angka (saat ini ${clean.length}/16 digit).`;
+                }
+            }
+            return clean.length === 16;
+        };
+
         window.handleGateRegisterSubmit = function(e) {
             if (e) e.preventDefault();
-            const nik = String(document.getElementById('gateRegNik')?.value || '').trim();
+            const D = window.SiPanganDomain;
+            const rawNikEl = document.getElementById('gateRegNik');
+            const nik = D ? D.sanitizeNikDigits(rawNikEl?.value) : String(rawNikEl?.value || '').replace(/[^0-9]/g, '').slice(0, 16);
+            if (rawNikEl) rawNikEl.value = nik;
+
             const title = String(document.getElementById('gateRegTitle')?.value || 'Bpk.').trim();
             let rawName = String(document.getElementById('gateRegName')?.value || '').trim();
-            // Bersihkan jika warga sudah mengetik prefix sapaan secara manual
             rawName = rawName.replace(/^(bpk\.?|bapak|ibu|pak|bu)\s+/i, '').trim();
             const fullName = `${title} ${rawName}`;
             const role = document.getElementById('gateRegRole')?.value || 'KONSUMEN';
-            const pin = String(document.getElementById('gateRegPin')?.value || '1234').trim();
+            const pin = String(document.getElementById('gateRegPin')?.value || '').trim();
+            if (!window.SiPanganDomain.isValidPin(pin)) {
+                showToast('PIN Tidak Valid', 'PIN 4-6 angka (hanya angka).', 'error');
+                document.getElementById('gateRegPin')?.focus();
+                return;
+            }
             const address = String(document.getElementById('gateRegAddress')?.value || 'RT 13 Yosomulyo').trim();
             const familySize = Math.max(1, Number(document.getElementById('gateRegFamilySize')?.value) || 4);
-            const totalNeed = Math.max(5, Number(document.getElementById('gateRegTotalNeedKg')?.value) || 60);
-            const beras = Number(document.getElementById('gateRegBeras')?.value) || 30;
-            const sayur = Number(document.getElementById('gateRegSayur')?.value) || 12;
-            const telur = Number(document.getElementById('gateRegTelur')?.value) || 6;
-            const ikan = Number(document.getElementById('gateRegIkan')?.value) || 12;
+            const beras = Math.max(0, Number(document.getElementById('gateRegBeras')?.value) || 0);
+            const sayur = Math.max(0, Number(document.getElementById('gateRegSayur')?.value) || 0);
+            const telur = Math.max(0, Number(document.getElementById('gateRegTelur')?.value) || 0);
+            const ikan = Math.max(0, Number(document.getElementById('gateRegIkan')?.value) || 0);
+            const totalNeed = beras + sayur + telur + ikan;
 
-            if (!nik || nik.length < 4 || !rawName) {
-                showToast('Data Belum Lengkap', 'Harap isi NIK dan Nama Lengkap Kepala Keluarga.', 'warning');
+            if (!(D ? D.isValidNik16(nik) : /^[0-9]{16}$/.test(nik))) {
+                const errEl = document.getElementById('gateRegNikError');
+                if (errEl) {
+                    errEl.classList.remove('hidden');
+                    errEl.textContent = 'NIK wajib tepat 16 digit angka sesuai KTP/KK.';
+                }
+                showToast('NIK Tidak Valid', 'Harap isi NIK tepat 16 digit angka.', 'error');
+                return;
+            }
+            if (!rawName) {
+                showToast('Data Belum Lengkap', 'Harap isi Nama Lengkap Kepala Keluarga.', 'warning');
                 return;
             }
 
@@ -1032,8 +1066,8 @@ export function initAuthAndRoleController() {
                 return;
             }
 
-            const nextNum = members.length + 1;
-            const newSid = `SID-RT13-${String(nextNum).padStart(3, '0')}`;
+            const newSid = D ? D.generateNextSid(members) : `SID-RT13-${String(members.length + 1).padStart(3, '0')}`;
+            const nextNum = parseInt(newSid.split('-')[2] || '41', 10);
             const comm = role === 'PRODUSEN' ? (document.getElementById('gateRegCommodity')?.value || 'Sayur Pekarangan KWT') : '-';
             const cap = role === 'PRODUSEN' ? (Number(document.getElementById('gateRegCapacityKg')?.value) || 25) : 0;
 
@@ -1045,15 +1079,17 @@ export function initAuthAndRoleController() {
                 nikHash: Math.random().toString(16).substring(2, 10),
                 maskedNik: nik.slice(0, 6) + '********' + nik.slice(-2),
                 rawNik: nik,
+                hasInvalidNik: false,
                 pinCode: pin,
                 role: role,
                 isDualRole: role === 'PRODUSEN',
+                verifiedProducerByAdmin: role === 'PRODUSEN',
                 producerCommodity: comm,
                 capacityKg: cap,
                 familySize: familySize,
                 monthlyIncome: 2500000,
                 monthlyFoodNeedKg: totalNeed,
-                needs: { beras, sayur, telur, ikan, ayam: 4, tempe: 4 },
+                needs: { beras, sayur, telur, ikan, ayam: 0, tempe: 0 },
                 socialTier: 'MANDIRI',
                 distanceKm: 0.15,
                 walletEarned: 0,
@@ -1095,7 +1131,7 @@ export function initAuthAndRoleController() {
             const headerLabel = document.getElementById('headerActiveUserLabel');
             if (headerLabel && window.appState.activeUserSid) {
                 if (window.appState.isAdminLoggedIn || role === 'ADMIN') {
-                    headerLabel.textContent = 'Pengurus RT 13 (Admin)';
+                    headerLabel.textContent = 'Admin RT 13';
                 } else {
                     const m = (window.appState.members || []).find(x => x.sid === window.appState.activeUserSid);
                     const roleText = role === 'PRODUSEN' ? 'Produsen' : 'Konsumen';
@@ -1188,13 +1224,14 @@ export function initAuthAndRoleController() {
                 titleEl.textContent = `Kebun ${me.name} — ${me.producerCommodity || 'Produsen Pangan RT 13'}`;
             }
 
-            // 1. Notifikasi Pesanan Baru Masuk (MENUNGGU_KONFIRMASI)
-            const myOrders = transactions.filter(t => t.producerSid === activeSid);
-            const pendingOrders = myOrders.filter(t => t.orderStatus === 'MENUNGGU_KONFIRMASI');
+            // 1. Notifikasi Pesanan Baru Masuk (MENUNGGU_KONFIRMASI) — disanitasi dari satu selector bersama (Task 1.4, 2.2, 2.3)
+            const D = window.SiPanganDomain;
+            const myOrders = D ? D.getValidTransactions(transactions, { producerSid: activeSid }) : transactions.filter(t => t.producerSid === activeSid);
+            const pendingOrders = myOrders.filter(t => (D ? D.getNormalizedOrderStatus(t) : t.orderStatus) === 'MENUNGGU_KONFIRMASI');
 
-            // Badge hanya menampilkan jumlah pesanan yang perlu tindakan (pending), jika 0 maka bersih
+            // Badge "Daftar Pesanan Masuk (N)" memakai selector pesanan aktif bersama
             const countBadge = document.getElementById('marketOrdersCountBadge');
-            if (countBadge) countBadge.textContent = pendingOrders.length;
+            if (countBadge) countBadge.textContent = D ? D.getProducerOrderSummary(transactions, activeSid).activeCount : pendingOrders.length;
 
             if (notifBox) {
                 if (pendingOrders.length > 0) {
@@ -1210,12 +1247,14 @@ export function initAuthAndRoleController() {
                                         <h3 class="font-bold text-stone-900 text-sm sm:text-base">
                                             Notifikasi Pesanan Baru Masuk (${pendingOrders.length} Pesanan Menunggu Diproses)
                                         </h3>
-                                        <p class="text-xs text-stone-600">Klik "Siapkan Pesanan" untuk memproses pesanan, melihat detail, dan mengurangi stok otomatis.</p>
+                                        <p class="text-xs text-stone-600">Klik "Siapkan Pesanan" untuk memproses pesanan dan melihat detail pembeli.</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="space-y-2">
-                                ${pendingOrders.map(o => `
+                                ${pendingOrders.map(o => {
+                                    const amtO = D ? D.calcTransactionAmounts(o) : { total: o.totalPaid || o.subtotal || 0 };
+                                    return `
                                     <div class="p-3.5 rounded-xl bg-white border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                         <div class="space-y-0.5">
                                             <div class="flex items-center gap-2 flex-wrap">
@@ -1224,7 +1263,7 @@ export function initAuthAndRoleController() {
                                                 <span class="text-[11px] text-stone-500">• ${o.deliveryMethod || 'Ambil Sendiri'}</span>
                                             </div>
                                             <p class="text-xs text-forest-800 font-semibold">
-                                                Memesan: <strong>${o.quantityKg} Kg ${o.commodity}</strong> (Total: ${formatRupiah(o.totalPaid || o.subtotal)})
+                                                ITEM PESANAN: <strong>${o.quantityKg} Kg ${o.commodity}</strong> (Total: ${formatRupiah(amtO.total)})
                                             </p>
                                         </div>
                                         <div class="flex items-center gap-2 shrink-0">
@@ -1239,7 +1278,7 @@ export function initAuthAndRoleController() {
                                             </button>
                                         </div>
                                     </div>
-                                `).join('')}
+                                `;}).join('')}
                             </div>
                         </div>
                     `;
@@ -1249,37 +1288,33 @@ export function initAuthAndRoleController() {
                 }
             }
 
-            // 2. Panel "Ramalan AI Khusus Kebun Saya" (Sederhana, Bahasa Warga, Tanpa Inflasi Sintetis)
+            // 2. Panel "Ramalan AI Khusus Kebun Saya" (Ambang SURPLUS_THRESHOLD_KG = 5 & satuan Kg/mgg - Task 2.8, 2.9)
             if (aiPanel && me) {
                 const myListings = listings.filter(l => l.producerSid === activeSid);
                 const primaryListing = myListings[0];
                 const commName = primaryListing ? primaryListing.commodity : (me.producerCommodity || 'Sayur Pekarangan KWT');
-                // Stok riil 1:1 dari lapak kebun aktif produsen (tanpa tambahan rumus buatan)
                 const realStock = myListings.reduce((s, l) => s + (Number(l.availableStockKg) || 0), 0);
 
-                // Kebutuhan riil warga dari usulan pangan warga (Papan Musyawarah) & riwayat belanja
-                const demandMatch = (window.appState?.demands || []).find(d => 
-                    d.name && (d.name.toLowerCase().includes(commName.toLowerCase()) || commName.toLowerCase().includes(d.name.toLowerCase()))
-                );
-                const demandKg = demandMatch ? (Number(demandMatch.totalQuantityKg) || Number(demandMatch.targetQtyKg) || 0) : 0;
                 const soldKg = myOrders.reduce((s, t) => s + (Number(t.quantityKg) || 0), 0);
-                const marketDemandEst = demandKg > 0 ? demandKg : Math.max(4, Math.round((soldKg * 0.4) + 5));
+                const marketDemandEst = Math.max(5, Math.round((soldKg / 4) + 8));
                 const surplusDiff = realStock - marketDemandEst;
+                const bal = D ? D.getBalanceStatus(surplusDiff) : { isSurplus: surplusDiff > 5, isDeficit: surplusDiff < 0 };
 
-                const isSurplusRisk = surplusDiff > 4 || Boolean(me.surplusNotified);
-                const isDeficitRisk = surplusDiff < -3;
+                const isSurplusRisk = bal.isSurplus || Boolean(me.surplusNotified);
+                const isDeficitRisk = bal.isDeficit;
+                const snapKg = Number(me.pendingSurplusKg || primaryListing?.pendingSurplusKg) || Math.max(surplusDiff, 1);
 
                 let riskBadge = '';
                 let prodRec = '';
                 if (isSurplusRisk) {
-                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">Surplus +${Math.max(surplusDiff, 5)} Kg</span>`;
-                    prodRec = `Stok lapak kebun Anda untuk ${commName} (${realStock} Kg) melebihi kebutuhan warga RT 13 (${marketDemandEst} Kg). Disarankan tahan penambahan panen baru dan siapkan kelebihan panen untuk disalurkan Admin ke Lumbung / Koperasi.`;
+                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">Surplus +${snapKg} Kg/mgg</span>`;
+                    prodRec = `Stok lapak kebun Anda untuk ${commName} (${realStock} Kg) melebihi kebutuhan mingguan warga RT 13 (${marketDemandEst} Kg/mgg). Disarankan tahan penambahan panen baru dan siapkan kelebihan panen untuk disalurkan Pengurus ke Lumbung / Koperasi.`;
                 } else if (isDeficitRisk) {
-                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">Kurang Stok ${Math.abs(surplusDiff)} Kg</span>`;
-                    prodRec = `Permintaan warga untuk ${commName} tinggi (${marketDemandEst} Kg), sedangkan stok lapak Anda ${realStock} Kg. Disarankan menambah pasokan panen atau menambah stok di lapak.`;
+                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-300">Kurang Stok ${Math.abs(surplusDiff)} Kg/mgg</span>`;
+                    prodRec = `Permintaan mingguan warga untuk ${commName} (${marketDemandEst} Kg/mgg) melebihi stok lapak Anda (${realStock} Kg). Disarankan menambah pasokan panen.`;
                 } else {
-                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">Pasokan Pas &amp; Aman</span>`;
-                    prodRec = `Stok ${commName} (${realStock} Kg) pas memenuhi kebutuhan belanja warga RT 13 (${marketDemandEst} Kg). Pertahankan jadwal panen dan ketersediaan stok Anda.`;
+                    riskBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">Pas &amp; Seimbang</span>`;
+                    prodRec = `Stok ${commName} (${realStock} Kg) seimbang dengan kebutuhan belanja warga RT 13 (${marketDemandEst} Kg/mgg, toleransi ≤ 5 Kg). Pertahankan jadwal panen Anda.`;
                 }
 
                 const showSurplusNotifInWorkspace = !me.surplusConfirmedByProducer && Boolean(me.surplusNotified);
@@ -1289,7 +1324,7 @@ export function initAuthAndRoleController() {
                             <i class="fa-solid fa-triangle-exclamation text-lg mt-0.5 shrink-0"></i>
                             <div class="text-xs leading-snug">
                                 <strong class="block text-sm">Peringatan Resmi Admin: Permintaan Penarikan Surplus (${commName})</strong>
-                                <span>${me.surplusNotifiedMsg || `Admin RT 13 meminta konfirmasi kesiapan surplus +${Math.max(surplusDiff, 5)} Kg dari kebun Anda untuk disalurkan ke Koperasi / Program MBG.`}</span>
+                                <span>${me.surplusNotifiedMsg || `Pengurus RT 13 meminta konfirmasi kesiapan surplus +${snapKg} Kg dari kebun Anda untuk disalurkan ke Koperasi / Program MBG.`}</span>
                             </div>
                         </div>
                         <button type="button" onclick="acknowledgeProducerSurplusAlert()"
@@ -1304,15 +1339,15 @@ export function initAuthAndRoleController() {
                         <div>
                             <div class="flex items-center gap-2">
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-forest-800 text-white">
-                                    <i class="fa-solid fa-wand-magic-sparkles text-emerald-300 mr-1"></i> Ramalan AI Khusus Kebun Saya
+                                    <i class="fa-solid fa-seedling text-emerald-300 mr-1"></i> Ramalan AI Khusus Kebun Saya
                                 </span>
                                 <span class="text-xs font-bold text-forest-800">${commName}</span>
                             </div>
                             <p class="text-xs text-stone-600 mt-1">
-                                Analisis otomatis potensi serapan pasar, permintaan warga, dan risiko surplus untuk kebun <strong>${me.name}</strong>.
+                                Analisis otomatis serapan pasar mingguan dan kondisi pasokan untuk kebun <strong>${me.name}</strong>.
                             </p>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 flex-wrap">
                             ${riskBadge}
                             <button type="button" onclick="openModal('modalPasarIndukBapanas')"
                                 class="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-bold text-xs flex items-center gap-1.5 transition cursor-pointer">
@@ -1332,12 +1367,12 @@ export function initAuthAndRoleController() {
                         </div>
                         <div class="p-3.5 rounded-xl bg-white border border-stone-200 shadow-2xs">
                             <span class="text-[11px] text-stone-500 font-semibold block">👥 Kebutuhan Warga RT 13</span>
-                            <strong class="font-mono text-xl font-extrabold text-emerald-800">${marketDemandEst} Kg</strong>
-                            <span class="text-[10px] text-stone-400 block">Permintaan Belanja Tetangga</span>
+                            <strong class="font-mono text-xl font-extrabold text-emerald-800">${marketDemandEst} Kg/mgg</strong>
+                            <span class="text-[10px] text-stone-400 block">Permintaan Mingguan Tetangga</span>
                         </div>
                         <div class="p-3.5 rounded-xl ${isSurplusRisk ? 'bg-amber-50 border-amber-300 text-amber-950' : isDeficitRisk ? 'bg-rose-50 border-rose-300 text-rose-950' : 'bg-emerald-50 border-emerald-300 text-emerald-950'} border shadow-2xs">
-                            <span class="text-[11px] font-bold block">⚖️ Kondisi Pasokan Pangan</span>
-                            <strong class="font-mono text-xl font-extrabold">${surplusDiff >= 0 ? '+' + surplusDiff : surplusDiff} Kg</strong>
+                            <span class="text-[11px] font-bold block">⚖️ Kondisi Pasokan Mingguan</span>
+                            <strong class="font-mono text-xl font-extrabold">${surplusDiff >= 0 ? '+' + surplusDiff : surplusDiff} Kg/mgg</strong>
                             <span class="text-[10px] font-semibold block">${isSurplusRisk ? 'Siap Disalurkan ke Lumbung' : isDeficitRisk ? 'Perlu Tambah Stok' : 'Pas &amp; Seimbang'}</span>
                         </div>
                     </div>
@@ -1416,27 +1451,28 @@ export function initAuthAndRoleController() {
 
             let items = [];
             if (role === 'ADMIN') {
-                grid.className = 'grid grid-cols-4 gap-1 max-w-md mx-auto';
+                grid.className = 'grid grid-cols-5 gap-1 max-w-md mx-auto';
                 items = [
-                    { id: 'tab-dampak', icon: 'fa-chart-pie', label: 'Monev & Surplus' },
+                    { id: 'tab-dampak', icon: 'fa-chart-pie', label: 'Monev' },
                     { id: 'tab-matching', icon: 'fa-microchip', label: 'Analisis AI' },
-                    { id: 'tab-sid', icon: 'fa-users', label: 'Data 40 KK' },
+                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Usulan' },
+                    { id: 'tab-sid', icon: 'fa-users', label: 'Data KK' },
                     { id: 'tab-orders', icon: 'fa-clipboard-list', label: 'Pesanan' }
                 ];
             } else if (role === 'PRODUSEN') {
                 grid.className = 'grid grid-cols-5 gap-1 max-w-md mx-auto';
-                const pendingCount = (window.appState.transactions || []).filter(t => t.producerSid === window.appState.activeUserSid && t.orderStatus === 'MENUNGGU_KONFIRMASI').length;
+                const pendingCount = window.SiPanganDomain ? window.SiPanganDomain.getProducerOrderSummary(window.appState.transactions || [], window.appState.activeUserSid).activeCount : 0;
                 items = [
                     { id: 'tab-market', icon: 'fa-seedling', label: 'Lapak' },
-                    { id: 'tab-orders', icon: 'fa-clipboard-check', label: pendingCount > 0 ? `Pesanan Masuk (${pendingCount})` : 'Pesanan Masuk' },
+                    { id: 'tab-orders', icon: 'fa-clipboard-check', label: pendingCount > 0 ? `Pesanan (${pendingCount})` : 'Pesanan' },
                     { id: 'tab-matching', icon: 'fa-microchip', label: 'Analisis AI' },
-                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Sinyal' },
+                    { id: 'tab-musyawarah', icon: 'fa-check-to-slot', label: 'Usulan' },
                     { id: 'tab-sid', icon: 'fa-user', label: 'Profile' }
                 ];
             } else {
                 grid.className = 'grid grid-cols-4 gap-1 max-w-md mx-auto';
                 const activeSid = window.appState.activeUserSid;
-                const readyCount = (window.appState.transactions || []).filter(t => t.consumerSid === activeSid && t.orderStatus === 'SIAP_DIAMBIL').length;
+                const readyCount = window.SiPanganDomain ? window.SiPanganDomain.getConsumerOrderSummary(window.appState.transactions || [], activeSid).readyCount : 0;
                 items = [
                     { id: 'tab-market', icon: 'fa-store', label: 'Pasar' },
                     { id: 'tab-orders', icon: 'fa-bag-shopping', label: readyCount > 0 ? `Pesanan Saya (${readyCount})` : 'Pesanan Saya' },
@@ -1474,10 +1510,10 @@ export function initAuthAndRoleController() {
                     badge.classList.add('hidden');
                 }
             } else if (role === 'PRODUSEN') {
-                const prodOrders = (window.appState?.transactions || []).filter(t => t.producerSid === activeSid);
-                const pendingCount = prodOrders.filter(t => t.orderStatus === 'MENUNGGU_KONFIRMASI').length;
-                if (prodOrders.length > 0) {
-                    badge.textContent = prodOrders.length;
+                const sumP = window.SiPanganDomain ? window.SiPanganDomain.getProducerOrderSummary(window.appState?.transactions || [], activeSid) : { activeCount: 0, pendingCount: 0 };
+                const pendingCount = sumP.pendingCount;
+                if (sumP.activeCount > 0) {
+                    badge.textContent = sumP.activeCount;
                     badge.className = `px-2 py-0.5 rounded-full text-[10px] font-bold font-mono ${pendingCount > 0 ? 'bg-amber-100 text-amber-800 animate-pulse' : 'bg-stone-200 text-stone-700'}`;
                     badge.classList.remove('hidden');
                 } else {
@@ -1531,10 +1567,10 @@ export function initAuthAndRoleController() {
 
             if (navOrders) navOrders.classList.remove('hidden');
 
-            // Sembunyikan banner ajakan, pastikan grafik fluktuasi & proyeksi 3 hari tampil untuk Produsen & Admin
+            // Grafik fluktuasi HANYA tampil di halaman Lapak Produsen (Task 1.2: Admin Pasar Warga bersih dari grafik peramal)
             if (consumerBanner) consumerBanner.classList.add('hidden');
             if (aiFluctPanel) {
-                if (role === 'KONSUMEN') {
+                if (role !== 'PRODUSEN') {
                     aiFluctPanel.classList.add('hidden');
                 } else {
                     aiFluctPanel.classList.remove('hidden');
@@ -1569,7 +1605,9 @@ export function initAuthAndRoleController() {
                 if (consumerOrderShortcut) {
                     consumerOrderShortcut.classList.remove('hidden');
                     const activeSid = window.appState.activeUserSid;
-                    const myOrdersCount = (window.appState.transactions || []).filter(t => t.consumerSid === activeSid).length;
+                    const myOrdersCount = window.SiPanganDomain
+                        ? window.SiPanganDomain.getConsumerOrderSummary(window.appState.transactions || [], activeSid).activeCount
+                        : (window.appState.transactions || []).filter(t => t.consumerSid === activeSid && t.orderStatus !== 'DIBATALKAN').length;
                     if (consumerMarketCount) consumerMarketCount.textContent = myOrdersCount;
                 }
 
@@ -1606,7 +1644,9 @@ export function initAuthAndRoleController() {
                 if (sidRegCard) sidRegCard.classList.add('hidden');
                 if (sidDirCard) sidDirCard.classList.remove('hidden');
                 if (myOwnKkCard) myOwnKkCard.classList.remove('hidden');
-                if (catFilterBar) catFilterBar.classList.remove('hidden');
+                if (catFilterBar) catFilterBar.classList.add('hidden');
+                const adminMonitorBar = document.getElementById('adminMarketMonitorBar');
+                if (adminMonitorBar) adminMonitorBar.classList.remove('hidden');
                 if (consumerOrdersView) consumerOrdersView.classList.add('hidden');
                 if (producerOrdersView) producerOrdersView.classList.remove('hidden');
                 if (typeof renderMembersTable === 'function') renderMembersTable();
@@ -1628,7 +1668,7 @@ export function initAuthAndRoleController() {
 
             if (headerLabel) {
                 if (window.appState.isAdminLoggedIn || window.appState.activeRole === 'ADMIN') {
-                    headerLabel.textContent = 'Pengurus RT 13 (Admin)';
+                    headerLabel.textContent = 'Admin RT 13';
                 } else if (window.appState.activeUserSid) {
                     const m = (window.appState.members || []).find(x => x.sid === window.appState.activeUserSid);
                     const roleText = window.appState.activeRole === 'PRODUSEN' ? 'Produsen' : 'Konsumen';

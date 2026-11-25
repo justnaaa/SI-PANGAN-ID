@@ -405,94 +405,147 @@ export function initAiForecastAndSurplusEngine() {
 
 
         window.renderPerProducerAiForecast = function renderPerProducerAiForecast() {
+            const D = window.SiPanganDomain;
             const tbody = document.getElementById('aiPerProducerForecastBody');
             const highlightBox = document.getElementById('aiPersonalProducerHighlightBox');
             const cardsGrid = document.getElementById('aiSpecificProductCardsGrid');
+            const mlBar = document.getElementById('aiTechnicalMlMetricsBar');
 
-            const members = window.appState.members || [];
-            const listings = window.appState.listings || [];
-            const transactions = window.appState.transactions || [];
+            const members = (window.appState.members || []).filter(m => !m.isDemoAccount);
+            const listings = (window.appState.listings || []).filter(l => !l.isDemoListing);
+            const trainingRetailTxs = D ? D.getTrainingTransactions(window.appState.transactions || []) : (window.appState.transactions || []);
+            const validAllTxs = D ? D.getValidTransactions(window.appState.transactions || []) : (window.appState.transactions || []);
             const producers = members.filter(m => m.role === 'PRODUSEN' || m.isDualRole);
+            const baseline = D ? D.computeCommunityBaselineNeeds(members) : null;
+
+            const activeSid = window.appState?.activeUserSid;
+            const currentRole = D ? D.resolveEffectiveRole(window.appState) : (window.appState?.activeRole || 'KONSUMEN');
+            const isAdmin = currentRole === 'ADMIN';
+
+            // Sembunyikan metrik teknis ML ("Confidence", "Elastisitas Harga", "10 Produsen KWT Aktif") untuk non-Admin (Task 4.3)
+            if (mlBar) {
+                mlBar.classList.toggle('hidden', !isAdmin);
+            }
 
             const mlAccEl = document.getElementById('mlAccuracyBadge');
             const mlCapEl = document.getElementById('mlProducerCapLabel');
             const mlPihpsEl = document.getElementById('mlPihpsCommodityCountLabel');
             const mlTxEl = document.getElementById('mlTransactionsCountLabel');
 
-            const confidence = Math.min(99.4, (91.5 + (transactions.length * 0.065))).toFixed(1).replace('.', ',');
+            const confidence = Math.min(99.4, (91.5 + (trainingRetailTxs.length * 0.065))).toFixed(1).replace('.', ',');
             if (mlAccEl) mlAccEl.textContent = `${confidence}% Confidence`;
             if (mlCapEl) mlCapEl.textContent = `${producers.length} Produsen KWT Aktif`;
-            if (mlTxEl) mlTxEl.textContent = `${transactions.length}`;
+            if (mlTxEl) mlTxEl.textContent = `${trainingRetailTxs.length}`;
             if (mlPihpsEl) {
                 const pihpsCount = Object.keys(window.LAMPUNG_MARKET_INTELLIGENCE || {}).length || 11;
                 mlPihpsEl.textContent = `Elastisitas Harga ${pihpsCount} Komoditas`;
             }
             document.querySelectorAll('.dynamic-tx-count').forEach(el => {
-                el.textContent = `${transactions.length}`;
+                el.textContent = `${validAllTxs.length}`;
             });
+
+            // Helper estimasi kebutuhan mingguan (Kg/mgg) dari kombinasi Baseline KK + Transaksi Eceran Tersanitasi (Task 2.9, 5.1, 5.2, 5.3)
+            function estimateWeeklyDemandForCommodity(commodityName, producerSid) {
+                const cLow = String(commodityName || '').toLowerCase();
+                let catBaselineWeekly = 12;
+                let catProducerCount = 1;
+                if (baseline) {
+                    if (cLow.includes('beras') || cLow.includes('padi')) {
+                        catBaselineWeekly = Math.round(baseline.weekly.berasKg * 0.75);
+                    } else if (cLow.includes('telur bebek')) {
+                        catBaselineWeekly = Math.max(6, Math.round(baseline.weekly.telurKg * 0.25));
+                    } else if (cLow.includes('telur')) {
+                        catBaselineWeekly = Math.max(10, Math.round(baseline.weekly.telurKg * 0.45));
+                    } else if (cLow.includes('lele')) {
+                        catBaselineWeekly = Math.max(10, Math.round(baseline.weekly.ikanKg * 0.35));
+                    } else if (cLow.includes('nila') || cLow.includes('ikan')) {
+                        catBaselineWeekly = Math.max(8, Math.round(baseline.weekly.ikanKg * 0.30));
+                    } else if (cLow.includes('ayam')) {
+                        catBaselineWeekly = Math.max(8, Math.round(baseline.weekly.ayamKg * 0.45));
+                    } else if (cLow.includes('kangkung')) {
+                        catBaselineWeekly = Math.max(11, Math.round(baseline.weekly.sayurKg * 0.145));
+                    } else if (cLow.includes('bayam')) {
+                        catBaselineWeekly = Math.max(10, Math.round(baseline.weekly.sayurKg * 0.13));
+                    } else if (cLow.includes('sawi') || cLow.includes('caisim')) {
+                        catBaselineWeekly = Math.max(4, Math.round(baseline.weekly.sayurKg * 0.055));
+                    } else if (cLow.includes('daun bawang') || cLow.includes('bawang')) {
+                        catBaselineWeekly = Math.max(4, Math.round(baseline.weekly.sayurKg * 0.055));
+                    } else if (cLow.includes('cabai') || cLow.includes('cabe')) {
+                        catBaselineWeekly = Math.max(4, Math.round(baseline.weekly.sayurKg * 0.05));
+                    } else {
+                        catBaselineWeekly = Math.max(5, Math.round(baseline.weekly.sayurKg * 0.08));
+                    }
+                }
+                const cleanWords = cLow.replace(/\(.*?\)/g, '').trim().split(/\s+/).filter(Boolean);
+                const keyword = (cleanWords[0] === 'sayur' || cleanWords[0] === 'ikan' || cleanWords[0] === 'telur') && cleanWords[1]
+                    ? cleanWords[1]
+                    : (cleanWords[0] || '');
+                const matchingRetailTxs = trainingRetailTxs.filter(t =>
+                    t.producerSid === producerSid &&
+                    (!keyword || String(t.commodity || '').toLowerCase().includes(keyword))
+                );
+                if (D && typeof D.computeWeightedWeeklyDemand === 'function') {
+                    return D.computeWeightedWeeklyDemand(catBaselineWeekly, matchingRetailTxs, catProducerCount);
+                }
+                return Math.max(4, Math.round(catBaselineWeekly / catProducerCount));
+            }
 
             const forecastList = [];
             producers.forEach(p => {
-                const prodListings = listings.filter(l => l.producerSid === p.sid);
+                // Gunakan SID asli pemilik produk (Task 2.6 - tidak pernah dari index + 1)
+                const realSid = p.sid;
+                const prodListings = listings.filter(l => l.producerSid === realSid);
                 const itemsToProcess = prodListings.length > 0 ? prodListings : [{
                     id: '',
-                    producerSid: p.sid,
+                    producerSid: realSid,
                     commodity: (p.registeredCommodities?.[0]?.name || (p.producerCommodity && p.producerCommodity !== '-' ? p.producerCommodity : 'Sayur Bayam Hijau (KWT Pekarangan)')),
-                    availableStockKg: Math.round((Number(p.capacityKg) || 40) / 3),
+                    availableStockKg: Math.round((Number(p.capacityKg) || 35) / 3),
                     unabsorbedSurplusKg: 0,
                     surplusNotified: Boolean(p.surplusNotified),
-                    surplusConfirmedByProducer: Boolean(p.surplusConfirmedByProducer)
+                    surplusConfirmedByProducer: Boolean(p.surplusConfirmedByProducer),
+                    pendingSurplusKg: Number(p.pendingSurplusKg) || 0
                 }];
 
                 itemsToProcess.forEach((lItem) => {
                     const commodityName = lItem.commodity || 'Sayur Bayam Hijau (KWT Pekarangan)';
-                    // Stok riil 1:1 dari lapak kebun aktif produsen (tanpa penambahan formula sintetis)
                     const realStock = Number(lItem.availableStockKg) || 0;
                     const weeklyCap = realStock;
 
-                    // Ambil kebutuhan riil warga dari usulan pangan warga (Papan Musyawarah)
-                    const demandMatch = (window.appState?.demands || []).find(d => 
-                        d.name && (d.name.toLowerCase().includes(commodityName.toLowerCase()) || commodityName.toLowerCase().includes(d.name.toLowerCase()))
-                    );
-                    const demandKg = demandMatch ? (Number(demandMatch.totalQuantityKg) || Number(demandMatch.targetQtyKg) || 0) : 0;
-
-                    const prodTxKg = transactions
-                        .filter(t => t.producerSid === p.sid && (!lItem.commodity || !t.commodity || t.commodity.toLowerCase().includes(commodityName.split(' ')[0].toLowerCase())))
-                        .reduce((s, t) => s + (Number(t.quantityKg) || 0), 0);
-
-                    // Estimasi kebutuhan warga mingguan (berdasarkan usulan warga & volume belanja riil)
-                    const predictedDemandWeekly = demandKg > 0 ? demandKg : Math.max(4, Math.round((prodTxKg * 0.4) + 5));
+                    const predictedDemandWeekly = estimateWeeklyDemandForCommodity(commodityName, realSid);
                     const diff = realStock - predictedDemandWeekly;
+                    const bal = D ? D.getBalanceStatus(diff) : {
+                        code: diff > 5 ? 'SURPLUS' : (diff < 0 ? 'DEFISIT' : 'SEIMBANG')
+                    };
 
                     const isNotified = Boolean(lItem.surplusNotified || p.surplusNotified);
                     const isConfirmed = Boolean(lItem.surplusConfirmedByProducer || p.surplusConfirmedByProducer);
+                    const snapshotSurplusKg = Number(lItem.pendingSurplusKg || p.pendingSurplusKg) || Math.max(0, diff);
 
-                    let statusType = 'SEIMBANG';
+                    let statusType = bal.code;
                     let statusBadge = '';
                     let cardBorder = 'border-emerald-200 bg-white';
                     let recommendation = '';
 
-                    if (diff > 4) {
-                        statusType = 'SURPLUS';
-                        statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🔴 LEBIH / SURPLUS +${diff} Kg</span>`;
+                    if (statusType === 'SURPLUS') {
+                        statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🔴 LEBIH / SURPLUS (+${diff} Kg/mgg)</span>`;
                         cardBorder = 'border-amber-300 bg-amber-50/40';
-                        recommendation = `Stok lapak (${realStock} Kg) melebihi kebutuhan warga (${predictedDemandWeekly} Kg). Kelebihan +${diff} Kg siap ditarik Admin ke Koperasi / Dapur MBG agar tidak terbuang.`;
-                    } else if (diff < -3) {
-                        statusType = 'DEFISIT';
-                        statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">🟡 KURANG STOK ${diff} Kg</span>`;
+                        recommendation = isAdmin
+                            ? `Stok lapak (${realStock} Kg) melebihi kebutuhan mingguan warga (${predictedDemandWeekly} Kg/mgg). Kelebihan +${diff} Kg siap ditarik ke Koperasi / Dapur MBG.`
+                            : `Stok kebun Anda (${realStock} Kg) melebihi perkiraan belanja tetangga minggu ini (${predictedDemandWeekly} Kg/mgg). Pertahankan mutu simpan dan tahan penambahan panen baru.`;
+                    } else if (statusType === 'DEFISIT') {
+                        statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">🟡 KURANG / DEFISIT (${diff} Kg/mgg)</span>`;
                         cardBorder = 'border-rose-200 bg-rose-50/30';
-                        recommendation = `Permintaan warga tinggi (${predictedDemandWeekly} Kg), sedangkan stok lapak Anda ${realStock} Kg. Disarankan menambah pasokan panen.`;
+                        recommendation = `Kebutuhan warga minggu ini (${predictedDemandWeekly} Kg/mgg) melebihi stok lapak (${realStock} Kg). Disarankan menambah pasokan panen.`;
                     } else {
-                        statusType = 'SEIMBANG';
-                        statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 PAS / SEIMBANG (${diff >= 0 ? '+' + diff : diff} Kg)</span>`;
+                        statusBadge = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 PAS / SEIMBANG (${diff >= 0 ? '+' + diff : diff} Kg/mgg)</span>`;
                         cardBorder = 'border-emerald-200 bg-emerald-50/20';
-                        recommendation = `Stok lapak (${realStock} Kg) pas memenuhi kebutuhan belanja warga RT 13 (${predictedDemandWeekly} Kg). Pertahankan jadwal panen Anda.`;
+                        recommendation = `Stok lapak (${realStock} Kg) seimbang dengan kebutuhan belanja warga RT 13 (${predictedDemandWeekly} Kg/mgg, ambang toleransi ≤ 5 Kg).`;
                     }
 
                     forecastList.push({
                         producer: p,
                         listingId: lItem.id || '',
-                        sid: p.sid,
+                        sid: realSid,
                         name: p.name,
                         address: p.address || 'RT 13 Yosomulyo',
                         commodity: commodityName,
@@ -501,6 +554,7 @@ export function initAiForecastAndSurplusEngine() {
                         weeklyCap,
                         predictedDemandWeekly,
                         diff,
+                        snapshotSurplusKg,
                         statusType,
                         statusBadge,
                         cardBorder,
@@ -511,65 +565,79 @@ export function initAiForecastAndSurplusEngine() {
                 });
             });
 
-            const activeSid = window.appState?.activeUserSid;
-            const currentRole = window.appState?.activeRole || 'KONSUMEN';
-            const isAdmin = Boolean(window.appState?.isAdminLoggedIn || currentRole === 'ADMIN' || activeSid === 'ADMIN-RT13');
             const activeMember = activeSid ? members.find(m => m.sid === activeSid) : null;
             const myForecasts = activeSid ? forecastList.filter(f => f.sid === activeSid) : [];
             let myForecast = myForecasts[0] || null;
-
-            if (activeMember && (activeMember.role === 'PRODUSEN' || activeMember.isDualRole || currentRole === 'PRODUSEN') && !myForecast) {
-                const comm = (activeMember.producerCommodity && activeMember.producerCommodity !== '-')
-                    ? activeMember.producerCommodity
-                    : (activeMember.registeredCommodities?.[0]?.name || 'Sayur Bayam Hijau (KWT Pekarangan)');
-                const myListing = listings.find(l => l.producerSid === activeMember.sid && l.commodity.toLowerCase().includes(comm.toLowerCase())) || listings.find(l => l.producerSid === activeMember.sid);
-                const realStock = myListing ? (Number(myListing.availableStockKg) || 0) : 0;
-                const demandMatch = (window.appState?.demands || []).find(d => 
-                    d.name && (d.name.toLowerCase().includes(comm.toLowerCase()) || comm.toLowerCase().includes(d.name.toLowerCase()))
-                );
-                const predDemand = demandMatch ? (Number(demandMatch.totalQuantityKg) || Number(demandMatch.targetQtyKg) || 0) : 7;
-                const diff = realStock - predDemand;
-                myForecast = {
-                    producer: activeMember,
-                    listingId: myListing ? myListing.id : '',
-                    sid: activeMember.sid,
-                    name: activeMember.name,
-                    address: activeMember.address || 'RT 13 Yosomulyo',
-                    commodity: comm,
-                    cycle: activeMember.harvestCycleWeekly || 'Panen Rutin Setiap Minggu',
-                    realStock: realStock,
-                    weeklyCap: realStock,
-                    predictedDemandWeekly: predDemand,
-                    diff: diff,
-                    statusType: diff > 4 ? 'SURPLUS' : diff < -3 ? 'DEFISIT' : 'SEIMBANG',
-                    statusBadge: diff > 4
-                        ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">🔴 LEBIH / SURPLUS +${diff} Kg</span>`
-                        : diff < -3
-                        ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300">🟡 KURANG STOK ${diff} Kg</span>`
-                        : `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 PAS / SEIMBANG (${diff >= 0 ? '+' + diff : diff} Kg)</span>`,
-                    cardBorder: diff > 4 ? 'border-amber-300 bg-amber-50/40' : diff < -3 ? 'border-rose-200 bg-rose-50/30' : 'border-emerald-200 bg-emerald-50/20',
-                    recommendation: diff > 4
-                        ? `Stok ${comm} (${realStock} Kg) melebihi serapan warga (${predDemand} Kg). Siap disalurkan ke Lumbung/Koperasi.`
-                        : diff < -3
-                        ? `Permintaan warga ${comm} tinggi (${predDemand} Kg). Silakan tambah stok lapak.`
-                        : `Stok ${comm} (${realStock} Kg) pas memenuhi kebutuhan belanja warga RT 13.`,
-                    surplusNotified: Boolean(activeMember.surplusNotified),
-                    surplusConfirmedByProducer: Boolean(activeMember.surplusConfirmedByProducer)
-                };
-                myForecasts.push(myForecast);
-            }
 
             const aggSimulator = document.getElementById('aiAdminAggregateSimulatorSection');
             if (aggSimulator) {
                 aggSimulator.classList.toggle('hidden', !isAdmin);
             }
 
+            // Satu sumber agregat yang sama persis untuk Kartu Atas dan Kartu Tengah Simulator Admin (Task 2.7 & 2.9)
+            const totalCap = forecastList.reduce((s, f) => s + f.weeklyCap, 0);
+            const totalDemand = forecastList.reduce((s, f) => s + f.predictedDemandWeekly, 0);
+            const totalDiff = totalCap - totalDemand;
+            const surplusCount = forecastList.filter(f => f.statusType === 'SURPLUS').length;
+
+            if (isAdmin) {
+                const harvestInput = document.getElementById('surplusHarvestKg');
+                const demandInput = document.getElementById('surplusDemandKg');
+                if (harvestInput) harvestInput.value = totalCap;
+                if (demandInput) demandInput.value = totalDemand;
+
+                const displayTotal = document.getElementById('surplusDisplayTotal');
+                const displayLocal = document.getElementById('surplusDisplayLocal');
+                const displayDiff = document.getElementById('surplusDisplayDiff');
+                const displayLocalSub = document.getElementById('surplusDisplayLocalSub');
+                const displayDiffSub = document.getElementById('surplusDisplayDiffSub');
+                const kkCount = members.length;
+                const totalJiwa = members.reduce((s, m) => s + (Number(m.familySize) || 4), 0);
+
+                if (displayTotal) displayTotal.textContent = `${totalCap.toLocaleString('id-ID')} Kg/mgg`;
+                if (displayLocal) displayLocal.textContent = `${totalDemand.toLocaleString('id-ID')} Kg/mgg`;
+                if (displayLocalSub) displayLocalSub.textContent = `Kebutuhan ${kkCount} KK (${totalJiwa} Jiwa)`;
+                if (displayDiff) {
+                    displayDiff.textContent = `${totalDiff >= 0 ? '+' + totalDiff.toLocaleString('id-ID') : totalDiff.toLocaleString('id-ID')} Kg/mgg`;
+                    displayDiff.className = totalDiff > 5
+                        ? 'serif-heading text-2xl font-bold text-emerald-800 mono-num'
+                        : (totalDiff < 0 ? 'serif-heading text-2xl font-bold text-rose-700 mono-num' : 'serif-heading text-2xl font-bold text-forest-700 mono-num');
+                }
+                if (displayDiffSub) {
+                    displayDiffSub.textContent = totalDiff > 5 ? 'Surplus bersih siap salur' : (totalDiff < 0 ? 'Defisit pasokan lokal' : 'Pasokan seimbang');
+                }
+
+                const localPct = totalCap > 0 ? Math.min(100, Math.round((Math.min(totalCap, totalDemand) / totalCap) * 100)) : 0;
+                const spilloverPct = Math.max(0, 100 - localPct);
+                const barLocal = document.getElementById('surplusBarLocal');
+                const barSpillover = document.getElementById('surplusBarSpillover');
+                const barLocalText = document.getElementById('surplusBarLocalText');
+                const barSpilloverText = document.getElementById('surplusBarSpilloverText');
+                const ratioPill = document.getElementById('surplusRatioPill');
+                const labelLocalDetail = document.getElementById('surplusLabelLocalDetail');
+                const labelSpilloverDetail = document.getElementById('surplusLabelSpilloverDetail');
+
+                if (barLocal) {
+                    barLocal.style.width = `${localPct}%`;
+                    if (barLocalText) barLocalText.textContent = localPct > 15 ? `Lokal: ${localPct}%` : `${localPct}%`;
+                }
+                if (barSpillover) {
+                    barSpillover.style.width = `${spilloverPct}%`;
+                    if (barSpilloverText) barSpilloverText.textContent = spilloverPct > 15 ? `Surplus: ${spilloverPct}%` : (spilloverPct > 0 ? `${spilloverPct}%` : '');
+                }
+                if (ratioPill) {
+                    ratioPill.textContent = `${localPct}% Serapan Warga • ${spilloverPct}% Surplus`;
+                }
+                if (labelLocalDetail) {
+                    labelLocalDetail.innerHTML = `<i class="fa-solid fa-arrow-down-short-wide text-emerald-600"></i> Kebutuhan Warga (${kkCount} KK): ${totalDemand.toLocaleString('id-ID')} Kg/mgg (${localPct}%)`;
+                }
+                if (labelSpilloverDetail) {
+                    labelSpilloverDetail.innerHTML = `Kelebihan Pasokan: ${Math.max(0, totalDiff).toLocaleString('id-ID')} Kg/mgg (${spilloverPct}%) <i class="fa-solid fa-arrow-up-right-from-square text-amber-600"></i>`;
+                }
+            }
+
             if (highlightBox) {
                 if (isAdmin) {
-                    const totalCap = forecastList.reduce((s, f) => s + f.weeklyCap, 0);
-                    const totalDemand = forecastList.reduce((s, f) => s + f.predictedDemandWeekly, 0);
-                    const totalDiff = totalCap - totalDemand;
-                    const surplusCount = forecastList.filter(f => f.statusType === 'SURPLUS').length;
                     highlightBox.innerHTML = `
                         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                             <div class="space-y-1.5">
@@ -580,25 +648,25 @@ export function initAiForecastAndSurplusEngine() {
                                     <span class="font-mono text-xs font-bold text-forest-800">${forecastList.length} Komoditas Kebun Terpantau</span>
                                 </div>
                                 <h4 class="serif-heading text-lg sm:text-xl font-bold text-stone-900">
-                                    Status Kapasitas Panen vs Daya Serap 40 KK Warga
+                                    Stok Lapak Saat Ini vs Kebutuhan Mingguan ${members.length} KK Warga
                                 </h4>
                                 <p class="text-xs text-stone-700 leading-relaxed max-w-2xl">
-                                    <strong>Petunjuk Admin (Alur Penarikan Surplus):</strong> Terdapat <strong>${surplusCount} komoditas mengalami Surplus</strong> di bawah ini. Klik tombol <strong>"Tarik Data Surplus &amp; Beritahu Produsen"</strong> pada kartu komoditas yang surplus. Setelah dikonfirmasi oleh Produsen, komoditas tersebut otomatis masuk ke <strong>Dashboard Monev &amp; Surplus &rarr; Pusat Penarikan Resume Surplus (1 Paket Terpadu)</strong>.
+                                    <strong>Petunjuk Admin:</strong> Terdapat <strong>${surplusCount} komoditas mengalami Surplus (&gt; 5 Kg/mgg)</strong>. Klik tombol <strong>"Tarik Data Surplus &amp; Beritahu Produsen"</strong> untuk mengirim permintaan konfirmasi ke petani tanpa mengubah stok lapak sebelum petani menyetujui.
                                 </p>
                             </div>
 
                             <div class="grid grid-cols-3 gap-2.5 shrink-0 text-center">
                                 <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                                    <span class="text-[10px] text-stone-500 font-semibold block">Total Panen</span>
-                                    <strong class="font-mono text-base font-extrabold text-stone-900">${totalCap} Kg</strong>
+                                    <span class="text-[10px] text-stone-500 font-semibold block">Stok Lapak Saat Ini</span>
+                                    <strong class="font-mono text-base font-extrabold text-stone-900">${totalCap} Kg/mgg</strong>
                                 </div>
                                 <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                                    <span class="text-[10px] text-stone-500 font-semibold block">Serapan 40 KK</span>
-                                    <strong class="font-mono text-base font-extrabold text-emerald-800">${totalDemand} Kg</strong>
+                                    <span class="text-[10px] text-stone-500 font-semibold block">Kebutuhan ${members.length} KK</span>
+                                    <strong class="font-mono text-base font-extrabold text-emerald-800">${totalDemand} Kg/mgg</strong>
                                 </div>
                                 <div class="p-3 rounded-xl bg-amber-100 border-amber-300 text-amber-950 border shadow-2xs">
-                                    <span class="text-[10px] font-bold block">Surplus Luapan</span>
-                                    <strong class="font-mono text-base font-extrabold">+${Math.max(0, totalDiff)} Kg</strong>
+                                    <span class="text-[10px] font-bold block">Neraca Surplus</span>
+                                    <strong class="font-mono text-base font-extrabold">${totalDiff >= 0 ? '+' + totalDiff : totalDiff} Kg/mgg</strong>
                                 </div>
                             </div>
                         </div>
@@ -608,9 +676,11 @@ export function initAiForecastAndSurplusEngine() {
                     const myTotalCap = myForecasts.reduce((s, f) => s + f.weeklyCap, 0);
                     const myTotalDemand = myForecasts.reduce((s, f) => s + f.predictedDemandWeekly, 0);
                     const myTotalDiff = myTotalCap - myTotalDemand;
-                    const isSurplus = myTotalDiff > 5;
-                    const isDefisit = myTotalDiff < -3;
-                    const hasPendingSurplusNotif = Boolean(activeMember && activeMember.surplusNotified && !activeMember.surplusConfirmedByProducer);
+                    const myBal = D ? D.getBalanceStatus(myTotalDiff) : { isSurplus: myTotalDiff > 5, isDeficit: myTotalDiff < 0 };
+                    const isSurplus = myBal.isSurplus;
+                    const isDefisit = myBal.isDeficit;
+                    const hasPendingSurplusNotif = myForecasts.some(f => f.surplusNotified && !f.surplusConfirmedByProducer);
+                    const pendingSnapKg = myForecast.snapshotSurplusKg || Math.max(0, myTotalDiff);
 
                     highlightBox.innerHTML = `
                         <div class="space-y-4">
@@ -619,13 +689,13 @@ export function initAiForecastAndSurplusEngine() {
                                     <div class="flex items-start gap-2.5">
                                         <i class="fa-solid fa-bell text-lg mt-0.5 animate-bounce shrink-0"></i>
                                         <div class="text-xs leading-snug">
-                                            <strong class="block text-sm">Pemberitahuan Admin RT 13: Permintaan Penarikan Surplus Kebun Anda</strong>
-                                            <span>${activeMember.surplusNotifiedMsg || `Admin RT 13 meminta konfirmasi kesiapan panen surplus (${allMyCommodities}) untuk disalurkan ke Koperasi / Program MBG.`}</span>
+                                            <strong class="block text-sm">Pemberitahuan Pengurus RT 13: Konfirmasi Kelebihan Panen (+${pendingSnapKg} Kg)</strong>
+                                            <span>${activeMember?.surplusNotifiedMsg || `Pengurus RT 13 meminta konfirmasi kesiapan surplus +${pendingSnapKg} Kg (${allMyCommodities}) dari kebun Anda.`}</span>
                                         </div>
                                     </div>
                                     <button type="button" onclick="acknowledgeProducerSurplusAlert()"
                                         class="px-4 py-2.5 rounded-xl bg-white text-amber-950 font-bold text-xs shrink-0 hover:bg-amber-50 transition cursor-pointer shadow-xs">
-                                        <i class="fa-solid fa-check-double mr-1"></i> Konfirmasi Siap Salurkan
+                                        <i class="fa-solid fa-check-double mr-1"></i> Konfirmasi Siap Salurkan (+${pendingSnapKg} Kg)
                                     </button>
                                 </div>
                             ` : ''}
@@ -633,30 +703,30 @@ export function initAiForecastAndSurplusEngine() {
                                 <div class="space-y-1.5">
                                     <div class="flex flex-wrap items-center gap-2">
                                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-forest-800 text-white">
-                                            <i class="fa-solid fa-user-check mr-1"></i> Hasil Ramalan AI Khusus Kebun Anda
+                                            <i class="fa-solid fa-user-check mr-1"></i> Perkiraan Kebutuhan Warga untuk Kebun Anda
                                         </span>
-                                        <span class="font-mono text-xs font-bold text-forest-800">${myForecast.name} (${myForecast.sid})</span>
+                                        <span class="font-mono text-xs font-bold text-forest-800">${myForecast.name}</span>
                                     </div>
                                     <h4 class="serif-heading text-lg sm:text-xl font-bold text-stone-900">
-                                        Komoditas yang Dijual: <span class="text-forest-800 underline decoration-emerald-400">${allMyCommodities}</span>
+                                        Komoditas Kebun: <span class="text-forest-800 underline decoration-emerald-400">${allMyCommodities}</span>
                                     </h4>
                                     <p class="text-xs text-stone-700 leading-relaxed max-w-2xl">
-                                        <strong>Kesimpulan AI untuk Komoditas Anda:</strong> ${myForecast.recommendation}
+                                        <strong>Saran untuk Kebun Anda:</strong> ${myForecast.recommendation}
                                     </p>
                                 </div>
 
                                 <div class="grid grid-cols-3 gap-2.5 shrink-0 text-center">
                                     <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
-                                        <span class="text-[10px] text-stone-500 font-semibold block">Stok Lapak Riil</span>
+                                        <span class="text-[10px] text-stone-500 font-semibold block">Stok Lapak Anda</span>
                                         <strong class="font-mono text-base font-extrabold text-stone-900">${myTotalCap} Kg</strong>
                                     </div>
                                     <div class="p-3 rounded-xl bg-white border border-stone-200 shadow-2xs">
                                         <span class="text-[10px] text-stone-500 font-semibold block">Kebutuhan Warga</span>
-                                        <strong class="font-mono text-base font-extrabold text-emerald-800">${myTotalDemand} Kg</strong>
+                                        <strong class="font-mono text-base font-extrabold text-emerald-800">${myTotalDemand} Kg/mgg</strong>
                                     </div>
                                     <div class="p-3 rounded-xl ${isSurplus ? 'bg-amber-100 border-amber-300 text-amber-950' : isDefisit ? 'bg-rose-100 border-rose-300 text-rose-950' : 'bg-emerald-100 border-emerald-300 text-emerald-950'} border shadow-2xs">
-                                        <span class="text-[10px] font-bold block">${isSurplus ? 'Kelebihan / Surplus' : isDefisit ? 'Kurang Stok' : 'Status Pas'}</span>
-                                        <strong class="font-mono text-base font-extrabold">${myTotalDiff >= 0 ? '+' + myTotalDiff : myTotalDiff} Kg</strong>
+                                        <span class="text-[10px] font-bold block">${isSurplus ? 'Kelebihan / Surplus' : isDefisit ? 'Kurang Stok' : 'Pas / Seimbang'}</span>
+                                        <strong class="font-mono text-base font-extrabold">${myTotalDiff >= 0 ? '+' + myTotalDiff : myTotalDiff} Kg/mgg</strong>
                                     </div>
                                 </div>
                             </div>
@@ -720,17 +790,18 @@ export function initAiForecastAndSurplusEngine() {
                         let actionFooterHtml = '';
 
                         if (isAdmin && item.statusType === 'SURPLUS') {
+                            const snapKg = item.snapshotSurplusKg || item.diff;
                             if (item.surplusConfirmedByProducer) {
                                 actionFooterHtml = `
                                     <div class="pt-2.5 mt-2 border-t border-emerald-200 space-y-1.5">
                                         <span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900 border border-emerald-300 text-[11px] font-bold flex items-center gap-1.5">
                                             <i class="fa-solid fa-circle-check text-emerald-700"></i>
-                                            Terkonfirmasi Produsen • Masuk Pusat Surplus
+                                            Terkonfirmasi Produsen (+${snapKg} Kg) • Masuk Pusat Surplus
                                         </span>
                                         <button type="button" onclick="switchTab('tab-dampak')"
                                             class="w-full py-2 px-3 rounded-xl bg-forest-800 hover:bg-forest-900 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs">
                                             <i class="fa-solid fa-truck-fast"></i>
-                                            <span>Lihat di Pusat Penarikan Surplus &rarr;</span>
+                                            <span>Lihat di Pusat Surplus</span>
                                         </button>
                                     </div>
                                 `;
@@ -739,10 +810,10 @@ export function initAiForecastAndSurplusEngine() {
                                     <div class="pt-2.5 mt-2 border-t border-amber-200 space-y-1.5">
                                         <span class="px-2.5 py-1.5 rounded-lg bg-amber-100 text-amber-950 border border-amber-300 text-[11px] font-bold flex items-center gap-1.5">
                                             <i class="fa-solid fa-clock text-amber-700"></i>
-                                            Notif Terkirim • Menunggu Konfirmasi Produsen
+                                            Permintaan +${snapKg} Kg Terkirim • Menunggu Konfirmasi Produsen
                                         </span>
                                         <p class="text-[10px] text-stone-600 leading-tight">
-                                            Menunggu <strong>${item.name}</strong> mengklik konfirmasi di akunnya agar otomatis tampil di Pusat Penarikan Resume Surplus.
+                                            Stok lapak tetap (${item.realStock} Kg) sampai <strong>${item.name}</strong> mengonfirmasi di akunnya.
                                         </p>
                                     </div>
                                 `;
@@ -752,22 +823,23 @@ export function initAiForecastAndSurplusEngine() {
                                         <button type="button" onclick="adminPullAndNotifySurplus('${item.sid}', '${item.listingId}', ${item.diff})"
                                             class="w-full py-2.5 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
                                             <i class="fa-solid fa-bell"></i>
-                                            <span>Tarik Data Surplus &amp; Beritahu Produsen (+${item.diff} Kg)</span>
+                                            <span>Tarik Data Surplus (+${item.diff} Kg)</span>
                                         </button>
                                     </div>
                                 `;
                             }
                         } else if (!isAdmin && item.sid === activeSid && item.surplusNotified && !item.surplusConfirmedByProducer) {
+                            const snapKg = item.snapshotSurplusKg || Math.max(item.diff, 1);
                             actionFooterHtml = `
                                 <div class="pt-2.5 mt-2 border-t border-amber-300 space-y-1.5">
                                     <div class="p-2.5 rounded-xl bg-amber-100 border border-amber-300 text-[11px] text-amber-950 font-semibold">
                                         <i class="fa-solid fa-bell text-amber-700 mr-1"></i>
-                                        Admin meminta konfirmasi kesiapan surplus <strong>+${Math.max(item.diff, 5)} Kg ${item.commodity}</strong> untuk disalurkan ke Koperasi / MBG.
+                                        Pengurus RT meminta konfirmasi kesiapan surplus <strong>+${snapKg} Kg ${item.commodity}</strong>.
                                     </div>
                                     <button type="button" onclick="acknowledgeProducerSurplusAlert('${item.listingId}')"
                                         class="w-full py-2.5 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
                                         <i class="fa-solid fa-check-double"></i>
-                                        <span>Konfirmasi Siap Salurkan Surplus</span>
+                                        <span>Konfirmasi Siap Salurkan (+${snapKg} Kg)</span>
                                     </button>
                                 </div>
                             `;
@@ -790,12 +862,12 @@ export function initAiForecastAndSurplusEngine() {
                                     </div>
                                     <div class="grid grid-cols-2 gap-2 pt-1 text-[11px] font-mono">
                                         <div class="p-2 rounded-lg bg-white/90 border border-stone-200/80">
-                                            <span class="text-[10px] text-stone-500 block">Stok Lapak Riil:</span>
+                                            <span class="text-[10px] text-stone-500 block">Stok Lapak Saat Ini:</span>
                                             <strong class="text-stone-900">${item.realStock ?? item.weeklyCap} Kg</strong>
                                         </div>
                                         <div class="p-2 rounded-lg bg-white/90 border border-stone-200/80">
                                             <span class="text-[10px] text-stone-500 block">Kebutuhan Warga:</span>
-                                            <strong class="text-emerald-800">${item.predictedDemandWeekly} Kg</strong>
+                                            <strong class="text-emerald-800">${item.predictedDemandWeekly} Kg/mgg</strong>
                                         </div>
                                     </div>
                                 </div>
@@ -893,28 +965,30 @@ export function initAiForecastAndSurplusEngine() {
             const surplusItems = [];
 
             listings.forEach(l => {
-                if (l.isDemoListing) return;
+                if (!l || l.isDemoListing || l.isModerated) return;
                 const totalHarvest = Number(l.initialHarvestKg) || 0;
                 const absorbed = Number(l.localAbsorbedKg) || 0;
-                const avail = Number(l.availableStockKg) || 0;
-                const unabsorbed = Number(l.unabsorbedSurplusKg) || 0;
+                const avail = Math.max(0, Number(l.availableStockKg) || 0);
+                const unabsorbed = Math.max(0, Number(l.unabsorbedSurplusKg) || 0);
+                const pendingSnap = Math.max(0, Number(l.pendingSurplusKg) || 0);
                 const daysRemaining = Number(l.freshnessDaysRemaining != null ? l.freshnessDaysRemaining : 3);
                 const isExpired = daysRemaining <= 0 || Boolean(l.isExpiredSurplus);
 
-                // Poin 8: Jika produk melewati masa segar, otomatis menjadi surplus
-                let surplusKg = unabsorbed > 0 ? unabsorbed : avail;
-                if (isExpired && avail > 0) {
+                // Gunakan snapshot surplus saat klik Tarik Data Surplus jika ada (Task 2.5), atau unabsorbedSurplusKg, atau availableStockKg
+                let surplusKg = unabsorbed > 0
+                    ? unabsorbed
+                    : (pendingSnap > 0 ? Math.min(avail, pendingSnap) : avail);
+                if (isExpired && avail > 0 && unabsorbed <= 0) {
                     surplusKg = avail;
                 }
 
                 const prod = members.find(m => m.sid === l.producerSid);
-                // Jika lewat masa segar, otomatis terkonfirmasi untuk penarikan admin ke MBG / Koperasi
-                const isConfirmed = isExpired || Boolean(l.surplusConfirmedByProducer || (prod && prod.surplusConfirmedByProducer));
+                const isConfirmed = isExpired || Boolean(l.surplusConfirmedByProducer);
 
                 if (surplusKg > 0 && isConfirmed) {
                     surplusItems.push({
                         listingId: l.id,
-                        producerSid: l.producerSid,
+                        producerSid: prod ? prod.sid : l.producerSid,
                         producerName: prod ? prod.name : l.producerName,
                         commodity: l.commodity + (isExpired ? ' (Surplus Lewat Masa Segar)' : ''),
                         category: l.category,
@@ -932,6 +1006,60 @@ export function initAiForecastAndSurplusEngine() {
             return surplusItems;
         }
         window.getActiveSurplusItems = getActiveSurplusItems;
+
+        window.renderB2bSurplusHistoryTable = function renderB2bSurplusHistoryTable() {
+            const historyBody = document.getElementById('adminB2bSurplusHistoryBody');
+            const historyBadge = document.getElementById('b2bHistoryCountBadge');
+            if (!historyBody) return;
+
+            // Gabungkan arsip b2bSurplusHistory + transaksi EKSPANSI_PASAR_LUAR yang belum masuk arsip
+            const D = window.SiPanganDomain;
+            const archive = Array.isArray(window.appState?.b2bSurplusHistory) ? [...window.appState.b2bSurplusHistory] : [];
+            const archivedIds = new Set(archive.map(a => a.txId || a.id));
+            (window.appState?.transactions || []).forEach(tx => {
+                if (tx && (tx.type === 'EKSPANSI_PASAR_LUAR' || tx.status === 'TERVERIFIKASI_MBG_KOPERASI') && !archivedIds.has(tx.id)) {
+                    const amt = D ? D.calcTransactionAmounts(tx) : { omzetBersihProdusen: tx.subtotal || 0 };
+                    archive.push({
+                        id: tx.id,
+                        txId: tx.id,
+                        timestamp: tx.timestamp || 'Tercatat',
+                        commodity: tx.commodity,
+                        producerSid: tx.producerSid,
+                        producerName: tx.producerName,
+                        quantityKg: Number(tx.quantityKg) || 0,
+                        totalRp: amt.omzetBersihProdusen,
+                        recipientName: tx.consumerName || 'Mitra Koperasi / MBG'
+                    });
+                }
+            });
+
+            if (historyBadge) {
+                historyBadge.textContent = `${archive.length} Penyaluran Tercatat`;
+            }
+
+            if (archive.length === 0) {
+                historyBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="py-4 px-3 text-center text-stone-400 text-xs">Belum ada riwayat penyaluran surplus ke mitra B2B / Dapur MBG.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            historyBody.innerHTML = archive.map(item => `
+                <tr class="hover:bg-stone-50 transition">
+                    <td class="py-2.5 px-3 font-mono text-[11px] text-stone-600 whitespace-nowrap">${item.timestamp}</td>
+                    <td class="py-2.5 px-3 font-bold text-forest-900">${item.commodity}</td>
+                    <td class="py-2.5 px-3 text-stone-800">
+                        <span class="font-semibold">${item.producerName}</span>
+                        <span class="block text-[10px] font-mono text-stone-500">${item.producerSid}</span>
+                    </td>
+                    <td class="py-2.5 px-3 text-right font-mono font-bold text-amber-800">${item.quantityKg} Kg</td>
+                    <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-800">${formatRupiah(item.totalRp)}</td>
+                    <td class="py-2.5 px-3 text-[11px] text-stone-700">${item.recipientName}</td>
+                </tr>
+            `).join('');
+        };
 
         window.renderAdminSurplusCenter = function renderAdminSurplusCenter() {
             const tbody = document.getElementById('adminWeeklySurplusTableBody');
@@ -959,6 +1087,7 @@ export function initAiForecastAndSurplusEngine() {
             if (countPill) countPill.textContent = `${surplusItems.length} Komoditas Terkonfirmasi Siap Salurkan`;
             if (totalPkgKgEl) totalPkgKgEl.textContent = `${totalSurplusKg.toLocaleString('id-ID')} Kg`;
             if (totalPkgValEl) totalPkgValEl.textContent = `Estimasi Nilai: ${formatRupiah(totalSurplusVal)}`;
+            if (typeof window.renderB2bSurplusHistoryTable === 'function') window.renderB2bSurplusHistoryTable();
 
             if (surplusItems.length === 0) {
                 tbody.innerHTML = `
@@ -1090,8 +1219,19 @@ export function initAiForecastAndSurplusEngine() {
         }
 
         window.dispatchSingleSurplusToDistribution = function(listingId) {
+            const D = window.SiPanganDomain;
+            if (D && !D.can(window.appState, 'DISPATCH_SURPLUS', null, window.appState)) {
+                showToast('Akses Ditolak', 'Hanya Pengurus RT (Admin) yang berhak menyalurkan paket surplus ke mitra B2B/MBG.', 'error');
+                return;
+            }
+
+            const activeQueue = getActiveSurplusItems();
+            const queueItem = activeQueue.find(x => x.listingId === listingId);
             const listing = (window.appState.listings || []).find(l => l.id === listingId);
-            if (!listing) return;
+            if (!listing || !queueItem) {
+                showToast('Sudah Disalurkan / Belum Siap', 'Item surplus ini sudah disalurkan atau belum dikonfirmasi produsen.', 'warning');
+                return;
+            }
 
             const targetInstSelect = document.getElementById('surplusTargetInstitution');
             const targetInst = targetInstSelect ? targetInstSelect.value : 'MBG_METRO';
@@ -1099,7 +1239,7 @@ export function initAiForecastAndSurplusEngine() {
                 ? 'Satuan Pelayanan Pemenuhan Gizi (Dapur MBG) Kota Metro'
                 : 'Koperasi Produsen Kelurahan Yosomulyo';
 
-            const surplusKg = (listing.unabsorbedSurplusKg || 0) > 0 ? listing.unabsorbedSurplusKg : listing.availableStockKg;
+            const surplusKg = queueItem.surplusKg;
             const fairPrice = Number(listing.fairPrice) || 6000;
             const subtotal = surplusKg * fairPrice;
 
@@ -1108,30 +1248,47 @@ export function initAiForecastAndSurplusEngine() {
                 return;
             }
 
-            if ((listing.unabsorbedSurplusKg || 0) > 0) {
-                listing.unabsorbedSurplusKg = 0;
-            } else {
-                listing.availableStockKg = 0;
+            // Kurangi stok panen tepat satu kali (Task 2.4: 591 -> 574 Kg, tidak pernah bertambah!)
+            const fromUnabsorbed = (Number(listing.unabsorbedSurplusKg) || 0) >= surplusKg;
+            const deductRes = D
+                ? D.kurangiStok(listing, surplusKg, { fromUnabsorbedSurplus: fromUnabsorbed, trackB2bDispatched: true })
+                : null;
+            if (deductRes && !deductRes.ok) {
+                showToast('Stok Tidak Mencukupi', 'Jumlah surplus melebihi sisa stok tersedia.', 'error');
+                return;
             }
-            listing.localAbsorbedKg = (listing.localAbsorbedKg || 0) + surplusKg;
+            if (!D) {
+                if (fromUnabsorbed) listing.unabsorbedSurplusKg = Math.max(0, (listing.unabsorbedSurplusKg || 0) - surplusKg);
+                else listing.availableStockKg = Math.max(0, (listing.availableStockKg || 0) - surplusKg);
+                listing.b2bDispatchedKg = (listing.b2bDispatchedKg || 0) + surplusKg;
+            }
+
+            listing.pendingSurplusKg = 0;
             listing.surplusNotified = false;
             listing.surplusConfirmedByProducer = false;
+            listing.isExpiredSurplus = false;
 
             const prod = (window.appState.members || []).find(m => m.sid === listing.producerSid);
             if (prod) {
                 prod.walletEarned = (prod.walletEarned || 0) + subtotal;
+                prod.pendingSurplusKg = 0;
                 prod.surplusNotified = false;
                 prod.surplusConfirmedByProducer = false;
             }
 
-            const txId = `TX-RT13-MBG${Math.floor(100 + Math.random() * 900)}`;
+            const openPeriod = D ? D.getCurrentOpenPeriod(window.appState) : '2026-10';
+            const tsLabel = D ? D.getJakartaTimestampLabel() : new Date().toLocaleString('id-ID');
+            const txId = D ? D.generateUniqueTxId(window.appState.transactions, 'TX-RT13-MBG-') : `TX-RT13-MBG${Date.now().toString().slice(-4)}`;
+
             window.appState.transactions.unshift({
                 id: txId,
-                timestamp: 'Baru Saja • Penyaluran Surplus',
+                timestamp: tsLabel,
+                period: openPeriod,
+                channel: 'koperasi_mbg',
                 type: 'EKSPANSI_PASAR_LUAR',
                 orderStatus: 'SELESAI_LUNAS',
-                producerSid: listing.producerSid,
-                producerName: listing.producerName,
+                producerSid: prod ? prod.sid : listing.producerSid,
+                producerName: prod ? prod.name : listing.producerName,
                 consumerSid: targetInst,
                 consumerName: targetName,
                 commodity: `${listing.commodity} (Surplus Panen)`,
@@ -1145,36 +1302,42 @@ export function initAiForecastAndSurplusEngine() {
                 status: 'TERVERIFIKASI_MBG_KOPERASI'
             });
 
+            // Simpan ke arsip Riwayat Penyaluran B2B / MBG dengan SID asli produsen (Task 3.4)
+            if (!Array.isArray(window.appState.b2bSurplusHistory)) window.appState.b2bSurplusHistory = [];
+            window.appState.b2bSurplusHistory.unshift({
+                id: `B2B-${Date.now()}`,
+                txId,
+                timestamp: tsLabel,
+                period: openPeriod,
+                listingId: listing.id,
+                commodity: listing.commodity,
+                producerSid: prod ? prod.sid : listing.producerSid,
+                producerName: prod ? prod.name : listing.producerName,
+                quantityKg: surplusKg,
+                unitPrice: fairPrice,
+                totalRp: subtotal,
+                recipientName: targetName
+            });
+
             if (typeof musyawarahTransparencyState !== 'undefined' && Array.isArray(musyawarahTransparencyState.activities)) {
                 musyawarahTransparencyState.activities.unshift({
                     id: `act-mbg-${Date.now()}`,
                     time: 'Baru saja',
                     category: 'Penyaluran Surplus MBG/Koperasi',
-                    description: `Admin RT 13 menarik dan menyalurkan ${surplusKg} Kg ${listing.commodity} senilai ${formatRupiah(subtotal)} dari ${listing.producerName} ke ${targetName}.`,
+                    description: `Pengurus RT 13 menyalurkan ${surplusKg} Kg ${listing.commodity} senilai ${formatRupiah(subtotal)} dari ${prod ? prod.name : listing.producerName} ke ${targetName}.`,
                     isNew: true
                 });
             }
 
-            // Reset filter transaksi pesanan agar langsung muncul paling atas
-            const filterSelect = document.getElementById('ordersProducerFilter');
-            if (filterSelect) filterSelect.value = 'ALL';
-            const deliveryFilter = document.getElementById('ordersDeliveryFilter');
-            if (deliveryFilter) deliveryFilter.value = 'ALL';
-            const searchInput = document.getElementById('ordersSearchInput');
-            if (searchInput) searchInput.value = '';
-
+            if (typeof window.saveStateToLocal === 'function') window.saveStateToLocal();
             renderAll();
-            syncAllDataToSupabaseNow(false);
+            if (typeof syncAllDataToSupabaseNow === 'function') syncAllDataToSupabaseNow(false);
 
             showToast(
-                'Surplus Berhasil Ditarik & Disalurkan!',
-                `${surplusKg} Kg ${listing.commodity} berhasil disalurkan ke ${targetName} dan dicatat di Tab Penyaluran & Pesanan.`,
+                'Surplus Berhasil Disalurkan!',
+                `${surplusKg} Kg ${listing.commodity} disalurkan ke ${targetName} dan dipindahkan ke Riwayat Penyaluran B2B / MBG.`,
                 'success'
             );
-
-            setTimeout(() => {
-                switchTab('tab-orders');
-            }, 500);
         };
 
         window.notifyProducerSurplus = function(listingId) {
@@ -1242,29 +1405,61 @@ export function initAiForecastAndSurplusEngine() {
                 `*Total Nilai Transaksi Adil (0% Komisi)*: ${formatRupiah(totalVal)}\n\n` +
                 `Mohon konfirmasi jadwal penjemputan di Hub Pangan RT 13 Kelurahan Yosomulyo. Terima kasih.`;
 
-            surplusItems.forEach(item => {
+            const D = window.SiPanganDomain;
+            if (D && !D.can(window.appState, 'DISPATCH_SURPLUS', null, window.appState)) {
+                showToast('Akses Ditolak', 'Hanya Pengurus RT (Admin) yang dapat menyalurkan paket surplus.', 'error');
+                return;
+            }
+            const openPeriod = D ? D.getCurrentOpenPeriod(window.appState) : '2026-10';
+            const tsLabel = D ? D.getJakartaTimestampLabel() : new Date().toLocaleString('id-ID');
+            const txId = D ? D.generateUniqueTxId(window.appState.transactions, 'TX-RT13-MBG-') : `TX-RT13-MBG${Date.now().toString().slice(-4)}`;
+
+            if (!Array.isArray(window.appState.b2bSurplusHistory)) window.appState.b2bSurplusHistory = [];
+
+            surplusItems.forEach((item, idx) => {
                 const l = (window.appState.listings || []).find(x => x.id === item.listingId);
                 if (l) {
-                    if ((l.unabsorbedSurplusKg || 0) > 0) {
-                        l.unabsorbedSurplusKg = 0;
+                    const fromUnabsorbed = (Number(l.unabsorbedSurplusKg) || 0) >= item.surplusKg;
+                    if (D) {
+                        D.kurangiStok(l, item.surplusKg, { fromUnabsorbedSurplus: fromUnabsorbed, trackB2bDispatched: true });
                     } else {
-                        l.availableStockKg = Math.max(0, (l.availableStockKg || 0) - item.surplusKg);
+                        if (fromUnabsorbed) l.unabsorbedSurplusKg = Math.max(0, (l.unabsorbedSurplusKg || 0) - item.surplusKg);
+                        else l.availableStockKg = Math.max(0, (l.availableStockKg || 0) - item.surplusKg);
+                        l.b2bDispatchedKg = (l.b2bDispatchedKg || 0) + item.surplusKg;
                     }
-                    l.localAbsorbedKg = (l.localAbsorbedKg || 0) + item.surplusKg;
-                    l.surplusNotified = true;
+                    l.pendingSurplusKg = 0;
+                    l.surplusNotified = false;
+                    l.surplusConfirmedByProducer = false;
+                    l.isExpiredSurplus = false;
                 }
                 const prod = (window.appState.members || []).find(m => m.sid === item.producerSid);
                 if (prod) {
                     prod.walletEarned = (prod.walletEarned || 0) + (item.surplusKg * item.fairPrice);
-                    prod.surplusNotified = true;
-                    prod.surplusNotifiedMsg = `Panen surplus Anda (${item.surplusKg} ${item.unit} ${item.commodity}) telah disalurkan oleh Admin RT 13 dalam 1 Paket Kolektif ke ${targetName}.`;
+                    prod.pendingSurplusKg = 0;
+                    prod.surplusNotified = false;
+                    prod.surplusConfirmedByProducer = false;
                 }
+                window.appState.b2bSurplusHistory.unshift({
+                    id: `B2B-${Date.now()}-${idx}`,
+                    txId,
+                    timestamp: tsLabel,
+                    period: openPeriod,
+                    listingId: item.listingId,
+                    commodity: item.commodity,
+                    producerSid: item.producerSid,
+                    producerName: item.producerName,
+                    quantityKg: item.surplusKg,
+                    unitPrice: item.fairPrice,
+                    totalRp: item.surplusKg * item.fairPrice,
+                    recipientName: targetName
+                });
             });
 
-            const txId = `TX-RT13-MBG${Math.floor(100 + Math.random() * 900)}`;
             window.appState.transactions.unshift({
                 id: txId,
-                timestamp: 'Baru Saja • Paket Kolektif',
+                timestamp: tsLabel,
+                period: openPeriod,
+                channel: 'koperasi_mbg',
                 type: 'EKSPANSI_PASAR_LUAR',
                 orderStatus: 'SELESAI_LUNAS',
                 producerSid: 'KOLEKTIF-KWT-RT13',

@@ -26,7 +26,12 @@ $RECYCLE.BIN/
 .idea/
 *.swp
 
+# Scratch directory
+scratch/
+
 # Private Research Documents & Reports (Not for public repo)
+From QA/
+[Ff]rom [Qq][Aa]/
 laporan/
 *.pdf
 *.docx

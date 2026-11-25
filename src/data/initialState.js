@@ -1421,9 +1421,16 @@ export function initAppStateData() {
             ]
         };
 
-        // Helper global validasi produsen yang sah
+        // Helper global validasi produsen yang sah (termasuk Koperasi RT / Lumbung Admin)
         window.isProducerMember = function(sidOrMember) {
             if (!sidOrMember) return false;
+            if (typeof sidOrMember === 'string') {
+                if (['ADMIN-RT13', 'KOPERASI-RT13', 'KOPERASI_YOSOMULYO', 'LUMBUNG-RT13', 'KOLEKTIF-KWT-RT13'].includes(sidOrMember)) {
+                    return true;
+                }
+            } else if (sidOrMember.managedByCoop || sidOrMember.isCoopItem) {
+                return true;
+            }
             const m = typeof sidOrMember === 'object' ? sidOrMember : (window.appState?.members || []).find(x => x.sid === sidOrMember);
             if (!m) return false;
             const num = m.sid ? parseInt(m.sid.split('-')[2] || '0', 10) : 999;
